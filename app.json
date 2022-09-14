@@ -1,0 +1,11 @@
+{
+  "expo": {
+    "name": "GymBit",
+    "slug": "GymBit",
+    "version": "1.0.0",
+    "assetBundlePatterns": [
+      "**/*"
+    ]
+  },
+  "name": "GymBit"
+}
