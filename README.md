@@ -1,4 +1,4 @@
-# Project Name
+# Gymbit
 
 This first paragraph should be a short description of the app. You can add links
 to your wiki pages that have more detailed descriptions.
@@ -9,6 +9,26 @@ can follow to install, compile, run, and test your project. These are not only
 useful to new developers, but also to you when you have to re-install everything
 because your old laptop crashed. Also, the teachers of this class will be
 following your instructions.
+
+Gymbit is an app that combines social media and fitness tracking into one cohesive environment.
+The app allows users to set their fitness goals and track their progress on them while also following
+other users and seeing their progress as well.  Aside from setting goals and seeing other users goals
+and progress a user can post once a day with a photo or video of their workout and a short description
+of what their workout for the day was.  Other users can then see this post on their feed and interact 
+with it through likes and comments.
+
+The files for our Gymbit project can be accessed through (https://github.com/SCCapstone/NunchuckDucks).
+In order to run and compile the project the user will need to install node.js to their local machine, and
+expo go to their phone, the links for both are included in the external requirements section.  After these
+are installed, clone the github repository and navigate to that folder in your terminal.  In the terminal
+type the following commands:
+npm install
+npm audit fix
+Once these commands are executed you can then run the following command to launch the app on a server:
+npx expo start
+Once this is complete there will be a QR code in the terminal that you can scan using the Expo Go app and 
+this will launch the app on your phone.  Now when there are edits made to the source code that will be reflected 
+in the app displayed through expo go.  
 
 ## External Requirements
 
