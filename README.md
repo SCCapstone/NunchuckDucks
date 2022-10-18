@@ -12,18 +12,36 @@ following your instructions.
 
 ## External Requirements
 
-List all the stuff the reader will need to install in order to get you app to
-run in their laptop. For example:
+Below are the external requirements for Windows OS:
 
-In order to build this project you first have to install:
+In order to build this project you first need to complete the steps below:
 
-- [Node.js](https://nodejs.org/en/)
-- [MongoDB](https://www.mongodb.com/)
+Note: All executable commands are in " ", do not use the quotes when running the command in your terminal.
 
-If possible, list the actual commands you used to install these, so the reader
-can just cut-n-paste the commands and get everything setup.
+	1. Below is the required software needed to be installed to run the application:
+		- Computer Installation:
+			§ [Node.js](https://nodejs.org/en/)
+		- Phone Installation:
+			§ Need to download the "EXPO" app of the android or IOS app store.
 
-You only need to add instructions for the OS you are using.
+	2. After installing Node JS, download the application -folder and paste it into a folder on your local device.
+
+	3. Next, we need to install expo-cli through your PowerShell terminal. Open the terminal and navigate to the application directory and run the following command: "Npx install -g expo-cli"
+
+	4. After installing, you may have a few vulnerabilities so we will now run one of the two following commands: "npx audit fix" or "npm audit fix"
+	
+	5. Now we will also need to start the app by running the following command:
+	"npx start"
+	
+	6. Now there should be a QR code you can scan (off of your phone) to run the app. It should redirect and open the EXPO app after scanning the QR code with your camera. The app should automatically download to the device, and then it should run. It may take a minute or so to download if the application hasn’t been ran on the phone before.
+
+	7. If there are errors with a script running you will need to do the following in a separate terminal and then repeat steps 3-6:
+		○ Open another PowerShell terminal on your windows device as an ADMINISTRATOR.
+		○ Run the following command: "get-ExecutionPolicy"
+		○ If your device says "restricted" you may need to set it to unrestricted in order  for the appropriate scripts to run.
+		○ To change this, run the command: "set-ExecutionPolicy"
+		○ Now enter: "unrestricted" and the problem running scripts should be resolved. 
+		○ You can change this back to restricted the exact same way, just change your entry from unrestricted to "restricted".
 
 ## Setup
 
