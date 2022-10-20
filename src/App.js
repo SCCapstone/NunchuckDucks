@@ -13,7 +13,13 @@ import {
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { DataStore } from "@aws-amplify/datastore";
-
+import { SettingsScreen } from "./SettingsScreen.js";
+import { ExploreScreen } from "./ExploreScreen.js";
+import { MutualScreen } from "./MutualScreen.js";
+import { CreatePost } from "./CreatePost.js";
+import { CalendarScreen } from "./CalendarScreen.js";
+import { GoalsScreen } from "./GoalsScreen.js";
+import { ProfileScreen } from "./ProfileScreen.js";
 const Stack = createNativeStackNavigator();
 
 export default function App() {
@@ -179,24 +185,6 @@ function Navbar() {
   );
 }
 
-function SettingsScreen() {
-  const navigation = useNavigation();
-
-  return (
-    <View style={styles.placeholder}>
-      <Text>This is the settings screen</Text>
-    </View>
-  );
-}
-function ExploreScreen() {
-  const navigation = useNavigation();
-  //const navigation = useNavigation();
-  return (
-    <ScrollView contentContainerStyle={styles.placeholder}>
-      <Text>This is the explore screen</Text>
-    </ScrollView>
-  );
-}
 /*function Post() {
   return (
     <View style={styles.post}>
@@ -225,65 +213,3 @@ function ExploreScreen() {
     </View>
   );
 }*/
-function MutualScreen() {
-  const navigation = useNavigation();
-  const [posts, setPosts] = useState([]);
-
-  return (
-    <ScrollView
-      style={styles.scrollplaceholder}
-      contentContainerStyle={{ alignItems: "center", justifyContent: "center" }}
-    >
-      {/*posts.map((post) => (
-        <Text>{post.Post}</Text>
-      ))*/}
-      {/*<Post />
-      <Post />
-      <Button
-        title="Create Post"
-        onPress={() => navigation.navigate("CreatePost")}
-    />*/}
-    </ScrollView>
-  );
-}
-function CreatePost(props) {
-  const navigation = useNavigation();
-  const [text, setText] = useState("");
-
-  return (
-    <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-      <TextInput
-        style={styles.input}
-        placeholder="write your post here"
-        value={text}
-        onChangeText={setText}
-      />
-      <Button title="Submit" style={styles.submit}>
-        Submit
-      </Button>
-    </View>
-  );
-}
-function ProfileScreen(props) {
-  const navigation = useNavigation();
-  return (
-    <View style={styles.placeholder}>
-      <Text>Profile Screen</Text>
-    </View>
-  );
-}
-
-function CalendarScreen() {
-  return (
-    <View style={styles.placeholder}>
-      <Text>This is the calendar screen</Text>
-    </View>
-  );
-}
-function GoalsScreen() {
-  return (
-    <View style={styles.placeholder}>
-      <Text>These are ur goals</Text>
-    </View>
-  );
-}
