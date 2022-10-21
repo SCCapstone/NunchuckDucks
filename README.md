@@ -44,7 +44,13 @@ database for running your webapp locally.
 
 ## Running
 
-Specify the commands for a developer to run the app from the cloned repo.
+To run the app, use one of the following commands.
+`expo start`
+`npm start`
+`yarn start`
+
+The user can then either use a connected emulator or a web browser to use the app.
+The user can also download the Expo Go app and scan the QR code with their smartphone camera to use the app.
 
 # Deployment
 
