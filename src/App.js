@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import { NavigationContainer, useNavigation } from "@react-navigation/native";
 import { useState, useEffect } from "react";
 import {
@@ -42,17 +41,6 @@ export default function App() {
       </Stack.Navigator>
       {<Navbar />}
     </NavigationContainer>
-=======
-import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View } from "react-native";
-
-export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app! Changes!</Text>
-      <StatusBar style="auto" />
-    </View>
->>>>>>> 61afbbdb71a1255b4f5c995a38c728d6457a046d
   );
 }
 
@@ -85,7 +73,6 @@ const styles = StyleSheet.create({
   },
   scrollplaceholder: {
     flex: 1,
-<<<<<<< HEAD
     backgroundColor: "white",
   },
   input: {
@@ -103,11 +90,6 @@ const styles = StyleSheet.create({
     width: "100%",
     borderWidth: 2,
     marginBottom: 20,
-=======
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
->>>>>>> 61afbbdb71a1255b4f5c995a38c728d6457a046d
   },
 });
 
