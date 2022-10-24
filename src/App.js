@@ -1,4 +1,3 @@
-//import { StatusBar } from "expo-status-bar";
 import { NavigationContainer, useNavigation } from "@react-navigation/native";
 import { useState, useEffect } from "react";
 import {
@@ -20,6 +19,7 @@ import { CreatePost } from "./CreatePost.js";
 import { CalendarScreen } from "./CalendarScreen.js";
 import { GoalsScreen } from "./GoalsScreen.js";
 import { ProfileScreen } from "./ProfileScreen.js";
+import { Navbar } from "./Navbar.js";
 const Stack = createNativeStackNavigator();
 
 export default function App() {
@@ -92,98 +92,6 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
 });
-function Navbar() {
-  const navigation = useNavigation();
-  const [clickedElement, setClickedElement] = useState("Mutuals");
-
-  return (
-    <ScrollView
-      name="sc"
-      style={styles.navbar} /*style is for the "view" parent component */
-      contentContainerStyle={
-        styles.nav
-      } /*this one is for the actual scrollable view child */
-      horizontal={true}
-      bounces={false}
-    >
-      <Text
-        title="Settings"
-        onPress={() => {
-          navigation.navigate("Settings");
-          setClickedElement("Settings");
-        }}
-        style={[
-          clickedElement == "Settings" ? styles.bold : {},
-          styles.navbarElement,
-        ]}
-      >
-        Settings
-      </Text>
-      <Text
-        title="Explore"
-        onPress={() => {
-          navigation.navigate("Explore");
-          setClickedElement("Explore");
-        }}
-        style={[
-          clickedElement == "Explore" ? styles.bold : {},
-          styles.navbarElement,
-        ]}
-      >
-        Explore
-      </Text>
-      <Text
-        title="Mutuals"
-        onPress={() => {
-          navigation.navigate("Mutuals");
-          setClickedElement("Mutuals");
-        }}
-        style={[
-          clickedElement == "Mutuals" ? styles.bold : {},
-          styles.navbarElement,
-        ]}
-      >
-        Mutuals
-      </Text>
-      <Text
-        onPress={() => {
-          navigation.navigate("Profile");
-          setClickedElement("Profile");
-        }}
-        style={[
-          clickedElement == "Profile" ? styles.bold : {},
-          styles.navbarElement,
-        ]}
-      >
-        Profile
-      </Text>
-      <Text
-        onPress={() => {
-          navigation.navigate("Calendar");
-          setClickedElement("Calendar");
-        }}
-        style={[
-          clickedElement == "Calendar" ? styles.bold : {},
-          styles.navbarElement,
-        ]}
-      >
-        Calendar
-      </Text>
-      <Text
-        onPress={() => {
-          navigation.navigate("Goals");
-          setClickedElement("Goals");
-        }}
-        style={[
-          clickedElement == "Goals" ? styles.bold : {},
-          styles.navbarElement,
-        ]}
-      >
-        Goals
-      </Text>
-    </ScrollView>
-  );
-}
 
 /*function Post() {
   return (
