@@ -9,7 +9,9 @@
           "defaultAuthentication": {
             "authenticationType": "API_KEY",
             "apiKeyConfig": {
-              "apiKeyExpirationDays": 7
+              "apiKeyExpirationDays": 365,
+              "apiKeyExpirationDate": "2023-10-26T16:37:01.616Z",
+              "description": "default nunchuckducks api key"
             }
           },
           "additionalAuthenticationProviders": []

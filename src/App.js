@@ -1,25 +1,16 @@
-import { NavigationContainer, useNavigation } from "@react-navigation/native";
-import { useState, useEffect } from "react";
-import {
-  Button,
-  StyleSheet,
-  Text,
-  View,
-  ScrollView,
-  TextInput,
-  Image,
-} from "react-native";
+import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { DataStore } from "@aws-amplify/datastore";
-import { SettingsScreen } from "./SettingsScreen.js";
-import { ExploreScreen } from "./ExploreScreen.js";
-import { MutualScreen } from "./MutualScreen.js";
-import { CreatePost } from "./CreatePost.js";
-import { CalendarScreen } from "./CalendarScreen.js";
-import { GoalsScreen } from "./GoalsScreen.js";
-import { ProfileScreen } from "./ProfileScreen.js";
-import { Navbar } from "./Navbar.js";
+import { SettingsScreen } from "./screens/SettingsScreen.js";
+import { ExploreScreen } from "./screens/ExploreScreen.js";
+import { MutualScreen } from "./screens/MutualScreen.js";
+import { CreatePost } from "./screens/CreatePost.js";
+import { CalendarScreen } from "./screens/CalendarScreen.js";
+import { GoalsScreen } from "./screens/GoalsScreen.js";
+import { ProfileScreen } from "./screens/ProfileScreen.js";
+import { Navbar } from "./components/Navbar.js";
+import Amplify from "@aws-amplify/core";
+import awsmobile from "./aws-exports";
+Amplify.configure(awsmobile);
 const Stack = createNativeStackNavigator();
 
 export default function App() {
@@ -43,81 +34,3 @@ export default function App() {
     </NavigationContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  navbar: {
-    flex: 1,
-    overflow: "scroll",
-    flexDirection: "row",
-    height: "10%",
-    maxHeight: "10%",
-    /*justifyContent: "center",*/
-  },
-  nav: { alignItems: "center" },
-  navbarElement: {
-    width: 120,
-    height: 30,
-    textAlign: "center",
-    color: "black",
-    fontSize: 20,
-  },
-  bold: {
-    fontSize: 24,
-    fontWeight: "bold",
-  },
-  placeholder: {
-    flex: 1,
-    alignItems: "center",
-    backgroundColor: "white",
-    justifyContent: "center",
-  },
-  scrollplaceholder: {
-    flex: 1,
-    backgroundColor: "white",
-  },
-  input: {
-    height: 40,
-    width: 200,
-    margin: 12,
-    borderWidth: 1,
-    padding: 10,
-  },
-  submit: {
-    height: 40,
-  },
-  post: {
-    height: 500,
-    width: "100%",
-    borderWidth: 2,
-    marginBottom: 20,
-  },
-});
-
-/*function Post() {
-  return (
-    <View style={styles.post}>
-      <View
-        style={{
-          height: "10%",
-          width: "100%",
-          alignItems: "center",
-          justifyContent: "flex-start",
-        }}
-        flexDirection="row"
-      >
-        <Image
-          style={{ width: 40, height: 40 }}
-          source={require("./pictures/weeknd.jpeg")}
-        />
-        <Text>Header yayyy</Text>
-      </View>
-      <Image
-        style={{ height: "80%", width: "100%" }}
-        source={require("./pictures/weeknd.jpeg")}
-      />
-      <View style={{ height: "10%", width: "100%", justifyContent: "center" }}>
-        <Text>Footer yayyy</Text>
-      </View>
-    </View>
-  );
-}*/

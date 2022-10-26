@@ -10,6 +10,11 @@
       "StackName": "amplify-nunchuckducks-dev-102612",
       "StackId": "arn:aws:cloudformation:us-east-1:982677816577:stack/amplify-nunchuckducks-dev-102612/a71c6360-4e27-11ed-9280-0e20a3b47767",
       "AmplifyAppId": "d18gpp2567jm65"
+    },
+    "categories": {
+      "api": {
+        "nunchuckducks": {}
+      }
     }
   }
 }
