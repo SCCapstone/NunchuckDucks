@@ -8,29 +8,47 @@ import { CalendarScreen } from "./screens/CalendarScreen.js";
 import { GoalsScreen } from "./screens/GoalsScreen.js";
 import { ProfileScreen } from "./screens/ProfileScreen.js";
 import { Navbar } from "./components/Navbar.js";
-import Amplify from "@aws-amplify/core";
-import awsmobile from "./aws-exports";
-Amplify.configure(awsmobile);
+import { LoginScreen } from "./screens/LoginScreen.js";
+import { CreateAccountScreen } from "./screens/CreateAccountScreen.js";
+import { useState } from "react";
+import { Text } from "react-native";
+//import Amplify from "@aws-amplify/core";
+//import awsmobile from "./aws-exports";
+//Amplify.configure(awsmobile);
 const Stack = createNativeStackNavigator();
 
+import { Amplify, Auth } from "aws-amplify";
+import awsconfig from "./aws-exports";
+
+Amplify.configure(awsconfig);
+
 export default function App() {
+  const [userAuthenticated, setUserAuthenticated] = useState(false);
+
   return (
     <NavigationContainer>
-      <Stack.Navigator
-        screenOptions={{
-          headerShown: false,
-        }}
-        initialRouteName="Mutuals"
-      >
-        <Stack.Screen name="Settings" component={SettingsScreen} />
-        <Stack.Screen name="Explore" component={ExploreScreen} />
-        <Stack.Screen name="Mutuals" component={MutualScreen} />
-        <Stack.Screen name="Profile" component={ProfileScreen} />
-        <Stack.Screen name="CreatePost" component={CreatePost} />
-        <Stack.Screen name="Calendar" component={CalendarScreen} />
-        <Stack.Screen name="Goals" component={GoalsScreen} />
-      </Stack.Navigator>
-      {<Navbar />}
+      {userAuthenticated ? (
+        <Stack.Navigator
+          screenOptions={{
+            headerShown: false,
+          }}
+          initialRouteName="Mutuals"
+        >
+          <Stack.Screen name="Settings" component={SettingsScreen} />
+          <Stack.Screen name="Explore" component={ExploreScreen} />
+          <Stack.Screen name="Mutuals" component={MutualScreen} />
+          <Stack.Screen name="Profile" component={ProfileScreen} />
+          <Stack.Screen name="CreatePost" component={CreatePost} />
+          <Stack.Screen name="Calendar" component={CalendarScreen} />
+          <Stack.Screen name="Goals" component={GoalsScreen} />
+        </Stack.Navigator>
+      ) : (
+        <Stack.Navigator initialRouteName="Login">
+          <Stack.Screen name="Login" component={LoginScreen} />
+          <Stack.Screen name="CreateAccount" component={CreateAccountScreen} />
+        </Stack.Navigator>
+      )}
+      {userAuthenticated ? <Navbar /> : <Text></Text>}
     </NavigationContainer>
   );
 }
