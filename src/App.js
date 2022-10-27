@@ -1,24 +1,36 @@
-import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View } from "react-native";
+import { NavigationContainer } from "@react-navigation/native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { SettingsScreen } from "./screens/SettingsScreen.js";
+import { ExploreScreen } from "./screens/ExploreScreen.js";
+import { MutualScreen } from "./screens/MutualScreen.js";
+import { CreatePost } from "./screens/CreatePost.js";
+import { CalendarScreen } from "./screens/CalendarScreen.js";
+import { GoalsScreen } from "./screens/GoalsScreen.js";
+import { ProfileScreen } from "./screens/ProfileScreen.js";
+import { Navbar } from "./components/Navbar.js";
+import Amplify from "@aws-amplify/core";
+import awsmobile from "./aws-exports";
+Amplify.configure(awsmobile);
+const Stack = createNativeStackNavigator();
 
 export default function App() {
   return (
-    <View style={styles.container}>
-<<<<<<< HEAD
-      <Text>Open up App.js to start working on your app!!</Text>
-=======
-      <Text>Open up App.js to start working on your app! Changes!</Text>
->>>>>>> 61afbbdb71a1255b4f5c995a38c728d6457a046d
-      <StatusBar style="auto" />
-    </View>
+    <NavigationContainer>
+      <Stack.Navigator
+        screenOptions={{
+          headerShown: false,
+        }}
+        initialRouteName="Mutuals"
+      >
+        <Stack.Screen name="Settings" component={SettingsScreen} />
+        <Stack.Screen name="Explore" component={ExploreScreen} />
+        <Stack.Screen name="Mutuals" component={MutualScreen} />
+        <Stack.Screen name="Profile" component={ProfileScreen} />
+        <Stack.Screen name="CreatePost" component={CreatePost} />
+        <Stack.Screen name="Calendar" component={CalendarScreen} />
+        <Stack.Screen name="Goals" component={GoalsScreen} />
+      </Stack.Navigator>
+      {<Navbar />}
+    </NavigationContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-});
