@@ -1,9 +1,11 @@
 // @ts-check
-import { initSchema } from "@aws-amplify/datastore";
-import { schema } from "./schema";
-import Amplify from "@aws-amplify/core";
-import awsmobile from "../aws-exports";
-Amplify.configure(awsmobile);
+import { initSchema } from '@aws-amplify/datastore';
+import { schema } from './schema';
+
+
+
 const { Post } = initSchema(schema);
 
-export { Post };
+export {
+  Post
+};

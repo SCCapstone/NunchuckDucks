@@ -2,5 +2,5 @@
   "AppSyncApiName": "nunchuckducks",
   "DynamoDBBillingMode": "PAY_PER_REQUEST",
   "DynamoDBEnableServerSideEncryption": false,
-  "AuthModeLastUpdated": "2022-10-26T16:37:05.293Z"
+  "AuthModeLastUpdated": "2022-10-26T20:21:40.327Z"
 }
