@@ -85,3 +85,4 @@ Explain how to run the automated tests.
 # Authors
 
 Tyler Barrett: tylerbarrett01@gmail.com
+Cort Miles: cort.miles@outlook.com
