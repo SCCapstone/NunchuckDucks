@@ -1,5 +1,50 @@
+type Comment @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  content: String
+  username: String
+  postID: ID! @index(name: "byPost")
+}
+
+type Reaction @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  username: String
+  reactionType: String
+  postID: ID! @index(name: "byPost")
+}
+
+type Goal @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  username: String
+  goalNumber: Int
+  date: AWSDate
+  content: String
+  userID: ID! @index(name: "byUser")
+}
+
+type LogIn @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  username: String
+  password: String
+  LogInInfo: User @hasOne
+}
+
+type User @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  username: String
+  password: String
+  profilepicture: String
+  bio: String
+  PostedBy: [Post] @hasMany(indexName: "byUser", fields: ["id"])
+  IsAGoalOf: [Goal] @hasMany(indexName: "byUser", fields: ["id"])
+}
+
 type Post @model @auth(rules: [{allow: public}]) {
   id: ID!
   caption: String
+  photo: String
+  username: String
+  userID: ID! @index(name: "byUser")
+  CommentedOn: [Comment] @hasMany(indexName: "byPost", fields: ["id"])
+  ReactedTo: [Reaction] @hasMany(indexName: "byPost", fields: ["id"])
 }
  
