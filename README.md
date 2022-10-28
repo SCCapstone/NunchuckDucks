@@ -89,3 +89,5 @@ Tyler Barrett: tylerbarrett01@gmail.com
 Cort Miles: cort.miles@outlook.com
 
 Kennedy Fairey: kgfairey11@gmail.com
+
+Nathan Dolbir: nathandolbir@gmail.com
