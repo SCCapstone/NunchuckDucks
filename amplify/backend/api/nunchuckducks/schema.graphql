@@ -1,8 +1,13 @@
-type Comment @model @auth(rules: [{allow: public}]) {
+type FollowedBy @model @auth(rules: [{allow: public}]) {
   id: ID!
-  content: String
   username: String
-  postID: ID! @index(name: "byPost")
+  userID: ID! @index(name: "byUser")
+}
+
+type Follows @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  username: String
+  userID: ID! @index(name: "byUser")
 }
 
 type Reaction @model @auth(rules: [{allow: public}]) {
@@ -10,6 +15,20 @@ type Reaction @model @auth(rules: [{allow: public}]) {
   username: String
   reactionType: String
   postID: ID! @index(name: "byPost")
+}
+
+type Comment @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  content: String
+  username: String
+  postID: ID! @index(name: "byPost")
+}
+
+type LogIn @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  username: String
+  password: String
+  User: User @hasOne
 }
 
 type Goal @model @auth(rules: [{allow: public}]) {
@@ -21,21 +40,16 @@ type Goal @model @auth(rules: [{allow: public}]) {
   userID: ID! @index(name: "byUser")
 }
 
-type LogIn @model @auth(rules: [{allow: public}]) {
-  id: ID!
-  username: String
-  password: String
-  LogInInfo: User @hasOne
-}
-
 type User @model @auth(rules: [{allow: public}]) {
   id: ID!
   username: String
   password: String
-  profilepicture: String
+  profilePicture: String
   bio: String
-  PostedBy: [Post] @hasMany(indexName: "byUser", fields: ["id"])
-  IsAGoalOf: [Goal] @hasMany(indexName: "byUser", fields: ["id"])
+  Goals: [Goal] @hasMany(indexName: "byUser", fields: ["id"])
+  Posts: [Post] @hasMany(indexName: "byUser", fields: ["id"])
+  Follows: [Follows] @hasMany(indexName: "byUser", fields: ["id"])
+  FollowedBies: [FollowedBy] @hasMany(indexName: "byUser", fields: ["id"])
 }
 
 type Post @model @auth(rules: [{allow: public}]) {
@@ -43,8 +57,8 @@ type Post @model @auth(rules: [{allow: public}]) {
   caption: String
   photo: String
   username: String
+  Comments: [Comment] @hasMany(indexName: "byPost", fields: ["id"])
+  Reactions: [Reaction] @hasMany(indexName: "byPost", fields: ["id"])
   userID: ID! @index(name: "byUser")
-  CommentedOn: [Comment] @hasMany(indexName: "byPost", fields: ["id"])
-  ReactedTo: [Reaction] @hasMany(indexName: "byPost", fields: ["id"])
 }
  
