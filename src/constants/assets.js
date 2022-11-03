@@ -1,4 +1,4 @@
-import backArrow from '../../assets/images/backArrow.jpg';
+import backArrow from '../../assets/icons/Back_Icon.png';
 
 export default {
     backArrow,
