@@ -11,11 +11,6 @@ export function ExploreScreen({navigation}) {
       }}
     >
       <Text>This is the explore screen</Text>
-
-      <Button
-        title="Go to settings screen"
-        onPress = {() => navigation.navigate('Settings')}
-        />
     </ScrollView>
   );
 }

@@ -2,20 +2,20 @@
 import React from 'react';
 import {TouchableOpacity, Text, Image, View} from 'react-native';
 
-
+//Call BackButton on another file by importing BackButton from 'file_path/Buttons' and to call use <BackButton navigation={() => navigation.goBack()}/>
 export const BackButton = ({handlePress}) => {
     return (
         <TouchableOpacity
             style = {{
-                backgroundColor: 'green',
+                backgroundColor: 'white',
                 width: 100,
                 height: 100
             }}
             onPress = {handlePress}
             >
-                <View style={{width: 50, height: 50}}>
+                <View style={{width: 100, height: 100}}>
                     <Image 
-                        source = {'../../assets/icons/Back_Icon.png'}
+                        source = {require('../../assets/icons/Back_Icon.png')}
                         resizeMode='cover'
                         style = {{
                             width: '100%',
