@@ -1,5 +1,7 @@
 import { View, Text } from "react-native";
-export function SettingsScreen() {
+import { BackButton } from "../components/Buttons";
+import { useNavigation } from "@react-navigation/native";
+export function SettingsScreen({navigation}) {
   return (
     <View
       style={{
@@ -10,6 +12,8 @@ export function SettingsScreen() {
       }}
     >
       <Text>This is the settings screen</Text>
+
+      <BackButton handlePress={() => navigation.goBack()}/>
     </View>
   );
 }
