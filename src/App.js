@@ -10,15 +10,22 @@ import { ProfileScreen } from "./screens/ProfileScreen.js";
 import { Navbar } from "./components/Navbar.js";
 import Amplify from "@aws-amplify/core";
 import awsmobile from "./aws-exports";
+
 Amplify.configure(awsmobile);
 const Stack = createNativeStackNavigator();
 
+/**
+ * the main function of the app
+ * contains Stack.Screens and Navbar compoonent which are navigable by seperate NavigationContainers
+ * @returns entire view of the app
+ */
 export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator
         screenOptions={{
-          headerShown: false,
+          //
+          headerShown: false, // view navigator default header is not shown on app
         }}
         initialRouteName="Mutuals"
       >

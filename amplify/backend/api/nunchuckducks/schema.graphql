@@ -1,5 +1,64 @@
+type FollowedBy @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  username: String
+  userID: ID! @index(name: "byUser")
+}
+
+type Follows @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  username: String
+  userID: ID! @index(name: "byUser")
+}
+
+type Reaction @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  username: String
+  reactionType: String
+  postID: ID! @index(name: "byPost")
+}
+
+type Comment @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  content: String
+  username: String
+  postID: ID! @index(name: "byPost")
+}
+
+type LogIn @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  username: String
+  password: String
+  User: User @hasOne
+}
+
+type Goal @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  username: String
+  goalNumber: Int
+  date: AWSDate
+  content: String
+  userID: ID! @index(name: "byUser")
+}
+
+type User @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  username: String
+  password: String
+  profilePicture: String
+  bio: String
+  Goals: [Goal] @hasMany(indexName: "byUser", fields: ["id"])
+  Posts: [Post] @hasMany(indexName: "byUser", fields: ["id"])
+  Follows: [Follows] @hasMany(indexName: "byUser", fields: ["id"])
+  FollowedBies: [FollowedBy] @hasMany(indexName: "byUser", fields: ["id"])
+}
+
 type Post @model @auth(rules: [{allow: public}]) {
   id: ID!
   caption: String
+  photo: String
+  username: String
+  Comments: [Comment] @hasMany(indexName: "byPost", fields: ["id"])
+  Reactions: [Reaction] @hasMany(indexName: "byPost", fields: ["id"])
+  userID: ID! @index(name: "byUser")
 }
  
