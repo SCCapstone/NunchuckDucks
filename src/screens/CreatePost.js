@@ -21,7 +21,7 @@ export function CreatePost() {
   var savePost = async () => {
     await DataStore.save(
       new Post({
-        caption: text,
+        caption: text
       })
     );
   };
