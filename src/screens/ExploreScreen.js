@@ -1,6 +1,12 @@
-import { ScrollView, Text } from "react-native";
-export function ExploreScreen() {
+import { ScrollView, View, Text } from "react-native";
+import HomeHeader from "../components/Header"
+export function ExploreScreen({navigation}) {
   return (
+    <>
+    <View>
+      <HomeHeader />
+    </View>
+    
     <ScrollView
       contentContainerStyle={{
         flex: 1,
@@ -9,7 +15,7 @@ export function ExploreScreen() {
         justifyContent: "center",
       }}
     >
-      <Text>This is the explore screen</Text>
-    </ScrollView>
+        <Text>This is the explore screen</Text>
+      </ScrollView></>
   );
 }
