@@ -14,14 +14,20 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "flex-start",
   },
+  postUsername: {
+    color: "#2E8CFF",
+    fontWeight: "bold",
+    fontSize: 28,
+  },
 });
 export function Post(props) {
   const entry = props.entry;
+
   return (
     <View style={styles.postBox}>
-      <Text>Heloooo</Text>
       <View name="Header" flexDirection="row" style={styles.postHeader}>
-        <Text>{props.entry.username}</Text>
+        <Text style={styles.postUsername}>{props.entry.username}</Text>
+        <Image source={require("../../assets/icons/Applause_Icon.png")} />
       </View>
       <View
         name="Footer"

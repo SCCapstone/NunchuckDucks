@@ -1,4 +1,4 @@
-import { ScrollView, StyleSheet } from "react-native";
+import { ScrollView, StyleSheet, Text } from "react-native";
 import { useState, useEffect } from "react";
 import { DataStore } from "@aws-amplify/datastore";
 import { Post as PostSchema } from "../models";
@@ -15,23 +15,24 @@ export function PostList() {
   useEffect(() => {
     // PostList runs this stuff after every render
     fetchPosts(); // it fetches all posts
-
     /*const subscription = DataStore.observe(PostSchema).subscribe(() =>
       fetchPosts()
     );*/
-  });
+  }, []);
 
   const styles = StyleSheet.create({
     list: {
       alignItems: "center",
       justifyContent: "center",
-      flex: 1,
+      /*width: 500,
+      height: 500,*/
+      display: "flex",
       backgroundColor: "white",
     },
   });
 
   return (
-    <ScrollView style={{ flex: 1 }} contentContainerStyle={styles.list}>
+    <ScrollView contentContainerStyle={styles.list}>
       {posts.map((postEntry) => (
         <Post entry={postEntry} key={postEntry.id} />
       ))}

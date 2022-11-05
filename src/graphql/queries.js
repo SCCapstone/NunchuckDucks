@@ -8,6 +8,7 @@ export const getPost = /* GraphQL */ `
       caption
       createdAt
       updatedAt
+      username
     }
   }
 `;
@@ -23,6 +24,7 @@ export const listPosts = /* GraphQL */ `
         caption
         createdAt
         updatedAt
+        username
       }
       nextToken
     }
