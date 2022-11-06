@@ -13,16 +13,14 @@ export const BackButton = ({handlePress}) => {
             }}
             onPress = {handlePress}
             >
-                <View style={{width: 100, height: 100}}>
-                    <Image 
-                        source = {require('../../assets/icons/Back_Icon.png')}
-                        resizeMode='cover'
-                        style = {{
-                            width: '100%',
-                            height: '100%'
-                        }}
-                    />
-                </View>
+                <Image 
+                    source = {require('../../assets/icons/Back_Icon.png')}
+                    resizeMode='cover'
+                    style = {{
+                        width: '100%',
+                        height: '100%'
+                    }}
+                />
             </TouchableOpacity>
     );
 };
