@@ -1,5 +1,6 @@
-import { ScrollView, Text } from "react-native";
-export function ExploreScreen() {
+import { useNavigation } from "@react-navigation/native";
+import { Button, ScrollView, Text } from "react-native";
+export function ExploreScreen({navigation}) {
   return (
     <ScrollView
       contentContainerStyle={{
