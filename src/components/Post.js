@@ -27,7 +27,6 @@ export function Post(props) {
     <View style={styles.postBox}>
       <View name="Header" flexDirection="row" style={styles.postHeader}>
         <Text style={styles.postUsername}>{props.entry.username}</Text>
-        <Image source={require("../../assets/icons/Applause_Icon.png")} />
       </View>
       <View
         name="Footer"
