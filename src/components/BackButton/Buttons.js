@@ -14,7 +14,7 @@ export const BackButton = ({handlePress}) => {
             onPress = {handlePress}
             >
                 <Image 
-                    source = {require('../../assets/icons/Back_Icon.png')}
+                    source = {require('../../../assets/icons/Back_Icon.png')}
                     resizeMode='cover'
                     style = {{
                         width: '100%',
