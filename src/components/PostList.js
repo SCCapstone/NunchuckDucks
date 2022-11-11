@@ -10,6 +10,7 @@ export function PostList() {
   async function fetchPosts() {
     const allPosts = await DataStore.query(PostSchema); // graphql query for all posts
     setPosts(allPosts); // set posts equal to found posts
+    console.log(allPosts);
   }
 
   useEffect(() => {
@@ -23,7 +24,7 @@ export function PostList() {
   const styles = StyleSheet.create({
     list: {
       alignItems: "center",
-      justifyContent: "center",
+
       /*width: 500,
       height: 500,*/
       display: "flex",

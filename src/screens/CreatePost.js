@@ -13,6 +13,7 @@ import { useState } from "react";
 import { Post } from "../models";
 import { AntDesign } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
+import Storage from "@aws-amplify/storage";
 
 const styles = StyleSheet.create({
   header: {
@@ -85,11 +86,16 @@ export function CreatePost() {
   const [workoutSelection, setWorkoutSelection] = useState([]);
   const [image, setImage] = useState(null);
   var savePost = async () => {
+    await DataStore.start();
     await DataStore.save(
       new Post({
         caption: text,
+        photo: "sample photo text",
+        username: "sample user text",
+        userID: "some_userid123",
       })
     );
+    Storage.put("image.jpg", image);
   };
   return (
     <View style={{ flex: 1 }}>
@@ -122,6 +128,8 @@ function WorkoutSelection(props) {
   const setWorkoutSelection = props.setWorkoutSelection;
   const updateFunction = (text) => {
     setWorkoutSelection([...workoutSelection, text]);
+
+    console.log("hi");
   };
   return (
     <View style={styles.workoutSelectionContainer}>

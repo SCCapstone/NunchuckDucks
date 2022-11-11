@@ -15,6 +15,7 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
   },
   postUsername: {
+    /* #3C8DD9 */
     color: "#2E8CFF",
     fontWeight: "bold",
     fontSize: 28,
@@ -32,7 +33,10 @@ export function Post(props) {
         name="Footer"
         style={{ height: "10%", width: "100%", justifyContent: "center" }}
       >
-        <Text>Footer yayyy</Text>
+        <Image
+          style={{ height: 40, width: 40 }}
+          source={require("../../assets/icons/Applause_Icon.png")}
+        ></Image>
       </View>
     </View>
   );

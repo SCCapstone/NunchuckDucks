@@ -17,6 +17,9 @@
       },
       "auth": {
         "nunchuckducksd6420719": {}
+      },
+      "storage": {
+        "s3nunchuckduckspicturestorage": {}
       }
     }
   }

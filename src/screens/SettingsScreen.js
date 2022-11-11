@@ -1,5 +1,6 @@
 import { View, Text } from "react-native";
-export function SettingsScreen() {
+import { BackButton } from "../components/Buttons";
+export function SettingsScreen({navigation}) {
   return (
     <View
       style={{
