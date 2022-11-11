@@ -12,8 +12,6 @@ export function ExploreScreen({signOut}) {
       }}
     >
       <Text>This is the explore screen</Text>
-
-      <Button title='Sign Out' onPress={Auth.signOut()} />
     </ScrollView>
   );
 }
