@@ -95,7 +95,11 @@ export function CreatePost() {
         userID: "some_userid123",
       })
     );
-    Storage.put("image.jpg", image);
+    try {
+      Storage.put("image.jpg", image);
+    } catch {
+      console.log("Error uploading file");
+    }
   };
   return (
     <View style={{ flex: 1 }}>

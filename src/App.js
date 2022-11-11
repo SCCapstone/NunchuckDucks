@@ -7,7 +7,7 @@ import { CreatePost } from "./screens/CreatePost.js";
 import { CalendarScreen } from "./screens/CalendarScreen.js";
 import { GoalsScreen } from "./screens/GoalsScreen.js";
 import { ProfileScreen } from "./screens/ProfileScreen.js";
-import { Navbar } from "./components/Navbar.js";
+import { Navbar } from "./components/Navbar";
 import Amplify from "@aws-amplify/core";
 import awsmobile from "./aws-exports";
 

@@ -1,5 +1,6 @@
 import { View, Image, Text, StyleSheet } from "react-native";
-
+import { useState, useEffect } from "react";
+import Storage from "@aws-amplify/storage";
 const styles = StyleSheet.create({
   postBox: {
     height: 500,
@@ -23,19 +24,27 @@ const styles = StyleSheet.create({
 });
 export function Post(props) {
   const entry = props.entry;
+  const [picture, setPicture] = useState(null);
 
+  async function getPic() {
+    await Storage.get("pfp.png", {});
+  }
+  useEffect(() => {
+    getPic();
+  }, []);
   return (
     <View style={styles.postBox}>
       <View name="Header" flexDirection="row" style={styles.postHeader}>
         <Text style={styles.postUsername}>{props.entry.username}</Text>
       </View>
+      <Image source={{ uri: picture }} />
       <View
         name="Footer"
         style={{ height: "10%", width: "100%", justifyContent: "center" }}
       >
         <Image
           style={{ height: 40, width: 40 }}
-          source={require("../../assets/icons/Applause_Icon.png")}
+          source={require("../../../assets/icons/Gymbit_Icons_Black/Applause_Icon_Black.png")}
         ></Image>
       </View>
     </View>
