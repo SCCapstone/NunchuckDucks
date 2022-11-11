@@ -9,10 +9,10 @@ import { GoalsScreen } from "./src/screens/GoalsScreen.js";
 import { ProfileScreen } from "./src/screens/ProfileScreen.js";
 import { Navbar } from "./src/components/Navbar.js";
 import { Amplify, Auth } from "aws-amplify";
-import awsconfig from "./src/aws-exports";
+import config from "./src/aws-exports";
 import {withAuthenticator} from "aws-amplify-react-native";
 
-Amplify.configure(awsconfig);
+Amplify.configure(config);
 const Stack = createNativeStackNavigator();
 
 const app = () => {
@@ -37,4 +37,4 @@ const app = () => {
   );
 }
 
-export default withAuthenticator(app);
+export default withAuthenticator(app, true);
