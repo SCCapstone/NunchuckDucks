@@ -1,5 +1,7 @@
-import { ScrollView, Text } from "react-native";
-export function ExploreScreen() {
+import { ScrollView, Text, Button } from "react-native";
+import { Auth } from "aws-amplify";
+
+export function ExploreScreen({signOut}) {
   return (
     <ScrollView
       contentContainerStyle={{
