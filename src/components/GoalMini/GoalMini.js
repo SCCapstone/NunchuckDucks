@@ -9,7 +9,7 @@ export default function GoalMini({ description, onEditHandler }) {
       <Text style={styles.text}>{description}</Text>
       <Pressable onPress={onEditHandler} style={styles.imgContainer}>
         <Image
-          source={require("../../../assets/icons/Settings_Icon.png")} // Placeholder Icon
+          source={require("../../../assets/icons/Gymbit_Icons_Black/Edit_Icon_Black.png")} // Placeholder Icon
           style={styles.icon}
           resizeMethod={"auto"}
         />
