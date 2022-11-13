@@ -1,0 +1,12 @@
+{
+  "resourceName": "s3nunchuckduckspicturestorage",
+  "bucketName": "nunchuckducks-picture-storage",
+  "policyUUID": "37921d60",
+  "storageAccess": "auth",
+  "guestAccess": [],
+  "authAccess": [
+    "CREATE_AND_UPDATE",
+    "READ",
+    "DELETE"
+  ]
+}

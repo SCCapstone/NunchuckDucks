@@ -47,5 +47,12 @@
         ]
       }
     }
+  },
+  "storage": {
+    "s3nunchuckduckspicturestorage": {
+      "service": "S3",
+      "providerPlugin": "awscloudformation",
+      "dependsOn": []
+    }
   }
 }
