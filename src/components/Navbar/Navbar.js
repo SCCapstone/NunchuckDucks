@@ -27,7 +27,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
 });
-export function Navbar() {
+const Navbar = () => {
   const navigation = useNavigation();
   const [clickedElement, setClickedElement] = useState("Mutuals");
 
@@ -115,4 +115,6 @@ export function Navbar() {
       </Text>
     </ScrollView>
   );
-}
+};
+
+export default Navbar;

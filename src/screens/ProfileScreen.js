@@ -1,6 +1,9 @@
 import { View, Text } from "react-native";
+import { Auth } from 'aws-amplify';
+import { withAuthenticator } from "aws-amplify-react-native";
+import Amplify from "aws-amplify";
 
-export function ProfileScreen(props) {
+export function ProfileScreen({user, props}) {
   return (
     <View
       style={{
@@ -11,6 +14,7 @@ export function ProfileScreen(props) {
       }}
     >
       <Text>Profile Screen</Text>
+      <Text>Hello {user.username}</Text>
     </View>
   );
 }
