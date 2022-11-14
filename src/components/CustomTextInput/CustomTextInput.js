@@ -1,14 +1,14 @@
 import { TextInput, StyleSheet } from "react-native";
 
 // Mainly a wrapper for some custom styling.
-export default function CustomTextInput({
+const CustomTextInput = ({
   onChangeHandler,
   onBlurHandler,
   enteredValue,
   placeholder,
   customStyles,
   ...rest
-}) {
+}) => {
   return (
     <TextInput
       onChange={onChangeHandler}
@@ -19,7 +19,7 @@ export default function CustomTextInput({
       {...rest}
     ></TextInput>
   );
-}
+};
 
 const styles = StyleSheet.create({
   TextInput: {
@@ -32,3 +32,5 @@ const styles = StyleSheet.create({
     borderColor: "black",
   },
 });
+
+export default CustomTextInput;

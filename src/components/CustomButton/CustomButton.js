@@ -13,7 +13,7 @@ import { blueThemeColor } from "../../library/constants";
  * @param {*} textStyle Style overrides for text element
  * @returns A JSX Pressable component
  */
-export default function CustomButton({
+const CustomButton = ({
   buttonType,
   isUnderlined,
   isSelected,
@@ -21,7 +21,7 @@ export default function CustomButton({
   text,
   style,
   textStyle,
-}) {
+}) => {
   // Retrieve dynamic styles
   let dynamicContainerStyles = {};
   let dynamicTextStyles = {};
@@ -50,7 +50,7 @@ export default function CustomButton({
       <Text style={textStyles}>{text}</Text>
     </Pressable>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -75,3 +75,5 @@ const styles = StyleSheet.create({
     color: "black",
   },
 });
+
+export default CustomButton;

@@ -21,7 +21,10 @@ export function CreatePost() {
   var savePost = async () => {
     await DataStore.save(
       new Post({
-        caption: text
+        caption: text,
+        photo: "sample photo text",
+        username: "sample user text",
+        userID: "some_userid123",
       })
     );
   };

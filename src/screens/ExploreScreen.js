@@ -1,6 +1,7 @@
-import { useNavigation } from "@react-navigation/native";
-import { Button, ScrollView, Text } from "react-native";
-export function ExploreScreen({navigation}) {
+import { ScrollView, Text, Button } from "react-native";
+import { Auth } from "aws-amplify";
+
+export function ExploreScreen({ signOut }) {
   return (
     <ScrollView
       contentContainerStyle={{
