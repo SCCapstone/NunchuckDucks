@@ -1,3 +1,1 @@
-import { HomeHeader } from "./Header";
-
-export { HomeHeader };
+export { default } from "./Header";
