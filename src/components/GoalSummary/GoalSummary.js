@@ -1,6 +1,7 @@
 import { View, Text, StyleSheet, SafeAreaView} from "react-native";
 import { blueThemeColor, grayThemeColor } from "../../library/constants";
 
+
 const GoalSummary = () => {
     return (
         
