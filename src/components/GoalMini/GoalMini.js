@@ -3,20 +3,20 @@ import { grayThemeColor } from "../../library/constants";
 import React from "react";
 
 // Component that provides a short goal description and handles a custom click event
-export default function GoalMini({ description, onEditHandler }) {
+const GoalMini = ({ description, onEditHandler }) => {
   return (
     <View style={styles.container}>
       <Text style={styles.text}>{description}</Text>
       <Pressable onPress={onEditHandler} style={styles.imgContainer}>
         <Image
-          source={require("../../../assets/icons/Settings_Icon.png")} // Placeholder Icon
+          source={require("../../../assets/icons/Gymbit_Icons_Black/Edit_Icon_Black.png")} // Placeholder Icon
           style={styles.icon}
           resizeMethod={"auto"}
         />
       </Pressable>
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -46,3 +46,5 @@ const styles = StyleSheet.create({
     justifyContent: "space-around",
   },
 });
+
+export default GoalMini;

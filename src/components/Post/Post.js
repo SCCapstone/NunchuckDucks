@@ -1,7 +1,7 @@
 import { View, Image, Text } from "react-native";
-export function Post() {
+export default function Post() {
   return (
-    <View style={styles.post}>
+    <View style={{}}>
       <View
         name="Header"
         style={{

@@ -7,7 +7,7 @@ import { CreatePost } from "./src/screens/CreatePost.js";
 import { CalendarScreen } from "./src/screens/CalendarScreen.js";
 import { GoalsScreen } from "./src/screens/GoalsScreen.js";
 import { ProfileScreen } from "./src/screens/ProfileScreen.js";
-import { Navbar } from "./src/components/Navbar/Navbar";
+import Navbar from "./src/components/Navbar";
 import { Amplify } from "@aws-amplify/core";
 import awsmobile from "./src/aws-exports";
 import { withAuthenticator } from "aws-amplify-react-native";
@@ -32,7 +32,7 @@ const app = () => {
         <Stack.Screen name="Calendar" component={CalendarScreen} />
         <Stack.Screen name="Goals" component={GoalsScreen} />
       </Stack.Navigator>
-      {<Navbar />}
+      <Navbar />
     </NavigationContainer>
   );
 };
