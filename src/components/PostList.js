@@ -4,7 +4,7 @@ import { DataStore } from "@aws-amplify/datastore";
 import { Post as PostSchema } from "../models";
 import { Post } from "./Post";
 
-export function PostList() {
+export default function PostList() {
   const [posts, setPosts] = useState([]); // posts: all graphql post entries
 
   async function fetchPosts() {

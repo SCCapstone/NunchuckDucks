@@ -22,7 +22,7 @@ const styles = StyleSheet.create({
     fontSize: 28,
   },
 });
-export function Post(props) {
+export default function Post(props) {
   const entry = props.entry;
   const [picture, setPicture] = useState(null);
 

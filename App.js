@@ -12,7 +12,12 @@ import { Amplify } from "@aws-amplify/core";
 import awsmobile from "./src/aws-exports";
 import { withAuthenticator } from "aws-amplify-react-native";
 
-Amplify.configure(awsmobile);
+Amplify.configure({
+  ...awsmobile,
+  Analytics: {
+    disabled: true,
+  },
+});
 const Stack = createNativeStackNavigator();
 
 const app = () => {
