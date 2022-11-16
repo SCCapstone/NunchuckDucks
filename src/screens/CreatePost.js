@@ -1,19 +1,15 @@
 import {
   View,
-  Button,
   TextInput,
   StyleSheet,
-  Image,
   TouchableOpacity,
   Text,
-  Touchable,
 } from "react-native";
 import { DataStore } from "@aws-amplify/datastore";
 import { useState } from "react";
 import { Post } from "../models";
-import { AntDesign } from "@expo/vector-icons";
-import * as ImagePicker from "expo-image-picker";
 import Storage from "@aws-amplify/storage";
+import ImageSelector from "../components/ImageSelector";
 
 const styles = StyleSheet.create({
   header: {
@@ -32,29 +28,6 @@ const styles = StyleSheet.create({
     color: "#GG1342",
     width: 150,
     borderRadius: 10,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  container: {
-    elevation: 2,
-    flex: 1,
-    width: 200,
-    backgroundColor: "#efefef",
-    position: "relative",
-    borderWidth: 3,
-    overflow: "hidden",
-  },
-  uploadBtnContainer: {
-    opacity: 0.7,
-    position: "absolute",
-    right: 0,
-    bottom: 0,
-    backgroundColor: "lightgrey",
-    width: "100%",
-    height: "25%",
-  },
-  uploadBtn: {
-    display: "flex",
     alignItems: "center",
     justifyContent: "center",
   },
@@ -82,9 +55,10 @@ const styles = StyleSheet.create({
 });
 
 export function CreatePost() {
-  const [text, setText] = useState("");
-  const [workoutSelection, setWorkoutSelection] = useState([]);
+  const [text, setText] = useState(""); // the caption you write
+  const [workoutSelection, setWorkoutSelection] = useState([]); // array of workouts you selected
   const [image, setImage] = useState(null);
+  Storage.configure({ level: "protected" }); // protected = you can write and read your posts, others can only read
   var savePost = async () => {
     await DataStore.start();
     await DataStore.save(
@@ -96,16 +70,21 @@ export function CreatePost() {
       })
     );
     try {
-      Storage.put("image.jpg", image);
+      // try catch just in case sending the image doesn't work
+      var name = getFileName();
+      const response = await fetch(image);
+      const blob = await response.blob();
+      Storage.put(name, blob);
     } catch {
-      console.log("Error uploading file");
+      console.error("Error uploading file");
+      // TODO make a UI popup thing that lets the user know that their post wasn't uploaded (please try again later)
     }
   };
   return (
     <View style={{ flex: 1 }}>
       <View style={styles.header} />
       <View style={{ flexDirection: "row", flex: 1 }}>
-        <UploadImage image={image} setImage={setImage} />
+        <ImageSelector image={image} setImage={setImage} />
         <WorkoutSelection
           workoutSelection={workoutSelection}
           setWorkoutSelection={setWorkoutSelection}
@@ -127,13 +106,24 @@ export function CreatePost() {
   );
 }
 
+function getFileName() {
+  // used to create a fileName for the image; username/dd--mm-yyyy-timeInMilliseconds
+  /*TODO add folder of person's username*/
+  var today = new Date();
+  var dd = String(today.getDate()).padStart(2, "0");
+  var mm = String(today.getMonth() + 1).padStart(2, "0"); //January is 0!
+  var yyyy = String(today.getFullYear());
+  var time = String(today.getTime());
+
+  var name = mm + "-" + dd + "-" + yyyy + "-" + time;
+  return name;
+}
+
 function WorkoutSelection(props) {
   const workoutSelection = props.workoutSelection;
   const setWorkoutSelection = props.setWorkoutSelection;
   const updateFunction = (text) => {
     setWorkoutSelection([...workoutSelection, text]);
-
-    console.log("hi");
   };
   return (
     <View style={styles.workoutSelectionContainer}>
@@ -174,34 +164,6 @@ function WorkoutSelection(props) {
           <Text>Bike</Text>
         </TouchableOpacity>
         <Text>{workoutSelection}</Text>
-      </View>
-    </View>
-  );
-}
-
-function UploadImage(props) {
-  const image = props.image;
-  const setImage = props.setImage;
-  const addImage = async () => {
-    let _image = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes:
-        ImagePicker.MediaTypeOptions.Images /*Only allow image upload */,
-      allowsEditing: true /*true= pull up an editing interface after image upload */,
-      aspect: [1, 1] /*1:1 image ratio, so it will be a square */,
-      quality: 1 /*highest quality image possible, on a scale of 0-1 we want 1 lol */,
-    });
-    setImage(_image.uri);
-  };
-  return (
-    <View style={styles.container}>
-      {image && (
-        <Image source={{ uri: image }} style={{ width: 200, height: 200 }} />
-      )}
-      <View style={styles.uploadBtnContainer}>
-        <TouchableOpacity onPress={addImage} style={styles.uploadBtn}>
-          <Text>{image ? "Edit" : "Upload"} Image</Text>
-          <AntDesign name="camera" size={20} color="black" />
-        </TouchableOpacity>
       </View>
     </View>
   );

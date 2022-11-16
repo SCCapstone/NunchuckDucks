@@ -1,4 +1,4 @@
-import { View, Image, Text, StyleSheet } from "react-native";
+import { View, Image, Text, StyleSheet, Pressable } from "react-native";
 import { useState, useEffect } from "react";
 import Storage from "@aws-amplify/storage";
 const styles = StyleSheet.create({
@@ -21,13 +21,19 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     fontSize: 28,
   },
+  reaction: {
+    width: 48,
+    height: 48,
+  },
 });
 export default function Post(props) {
   const entry = props.entry;
   const [picture, setPicture] = useState(null);
 
   async function getPic() {
-    await Storage.get("pfp.png", {});
+    const pic = await Storage.get("pfp.png", {});
+    setPicture(pic);
+    console.log(picture);
   }
   useEffect(() => {
     getPic();
@@ -37,16 +43,50 @@ export default function Post(props) {
       <View name="Header" flexDirection="row" style={styles.postHeader}>
         <Text style={styles.postUsername}>{props.entry.username}</Text>
       </View>
-      <Image source={{ uri: picture }} />
+      <Image source={{ uri: picture }} style={{ flex: 1 }} />
       <View
         name="Footer"
         style={{ height: "10%", width: "100%", justifyContent: "center" }}
       >
-        <Image
-          style={{ height: 40, width: 40 }}
-          source={require("../../../assets/icons/Gymbit_Icons_Black/Applause_Icon_Black.png")}
-        ></Image>
+        <Reactions />
       </View>
+    </View>
+  );
+}
+
+function Reactions() {
+  const [applauseClicked, setApplauseClicked] = useState(false);
+  const [strongClicked, setStrongClicked] = useState(false);
+  return (
+    <View flexDirection="row">
+      <Pressable
+        onPress={() => {
+          setApplauseClicked(!applauseClicked);
+        }}
+      >
+        <Image
+          style={styles.reaction}
+          source={
+            applauseClicked
+              ? require("../../../assets/icons/Gymbit_Icons_Trans/Applause_Icon_Trans.png")
+              : require("../../../assets/icons/Gymbit_Icons_Black/Applause_Icon_Black.png")
+          }
+        />
+      </Pressable>
+      <Pressable
+        onPress={() => {
+          setStrongClicked(!strongClicked);
+        }}
+      >
+        <Image
+          style={styles.reaction}
+          source={
+            strongClicked
+              ? require("../../../assets/icons/Gymbit_Icons_Trans/Strong_Icon_Trans.png")
+              : require("../../../assets/icons/Gymbit_Icons_Black/Strong_Icon_Black.png")
+          }
+        />
+      </Pressable>
     </View>
   );
 }
