@@ -22,6 +22,9 @@ export function CreatePost() {
     await DataStore.save(
       new Post({
         caption: text,
+        photo: "sample photo text",
+        username: "sample user text",
+        userID: "some_userid123",
       })
     );
   };
