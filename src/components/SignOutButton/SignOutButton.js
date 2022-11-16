@@ -6,7 +6,7 @@ const SignOutButton = () => {
         try {
             await Auth.signOut();
         } catch (error) {
-            console.log("Error signing out: ", error);
+            console.error("Error signing out: ", error);
         }
     }
 
