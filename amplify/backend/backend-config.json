@@ -23,7 +23,7 @@
     }
   },
   "auth": {
-    "nunchuckducksd6420719": {
+    "NunchuckDucks": {
       "service": "Cognito",
       "providerPlugin": "awscloudformation",
       "dependsOn": [],
@@ -32,11 +32,16 @@
         "socialProviders": [],
         "usernameAttributes": [],
         "signupAttributes": [
+          "PREFERRED_USERNAME",
           "EMAIL"
         ],
         "passwordProtectionSettings": {
           "passwordPolicyMinLength": 8,
-          "passwordPolicyCharacters": []
+          "passwordPolicyCharacters": [
+            "REQUIRES_LOWERCASE",
+            "REQUIRES_NUMBERS",
+            "REQUIRES_UPPERCASE"
+          ]
         },
         "mfaConfiguration": "OFF",
         "mfaTypes": [
