@@ -16,7 +16,8 @@
         "nunchuckducks": {}
       },
       "auth": {
-        "nunchuckducksd6420719": {}
+        "nunchuckducksd6420719": {},
+        "NunchuckDucks": {}
       },
       "storage": {
         "s3nunchuckduckspicturestorage": {}

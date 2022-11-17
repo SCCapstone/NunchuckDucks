@@ -31,6 +31,7 @@ export default function Post(props) {
   const [picture, setPicture] = useState(null);
 
   async function getPic() {
+    // TODO retrieve post picture from the passed entry fileName
     const pic = await Storage.get("pfp.png", {});
     setPicture(pic);
     console.log(picture);
