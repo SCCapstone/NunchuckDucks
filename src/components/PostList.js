@@ -21,13 +21,7 @@ export function PostList(props) {
   useEffect(() => {
     // PostList runs this stuff after every render
     fetchPosts(); // it fetches all posts
-    /*const subscription = DataStore.observe(PostSchema).subscribe(() =>
-      fetchPosts()
-    );*/
-  }, [
-    refresh,
-    /* TODO make a "refresh" variable that, when activated, runs this useEffect */
-  ]);
+  }, [refresh]);
 
   const styles = StyleSheet.create({
     list: {

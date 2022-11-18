@@ -29,7 +29,6 @@ const styles = StyleSheet.create({
 export default function Post(props) {
   const entry = props.entry;
   const refresh = props.refresh;
-  console.log(entry.photo);
   const [picture, setPicture] = useState(null);
 
   async function getPic() {
