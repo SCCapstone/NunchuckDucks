@@ -57,8 +57,10 @@ const styles = StyleSheet.create({
 
 export function CreatePost() {
   const [text, setText] = useState(""); // the caption you write
+  const [usernam, setUsernam] = useState("sample user");
   const [workoutSelection, setWorkoutSelection] = useState([]); // array of workouts you selected
   const [image, setImage] = useState(null);
+  //const [username, setUsername] = useState("usernameNotFound");
   Storage.configure({ level: "protected" }); // protected = you can write and read your posts, others can only read
   async function savePost() {
     await DataStore.start();

@@ -25,6 +25,12 @@ const styles = StyleSheet.create({
     width: 48,
     height: 48,
   },
+  footer: {
+    height: "10%",
+    width: "100%",
+    justifyContent: "flex-start",
+    alignItems: "center",
+  },
 });
 export default function Post(props) {
   const entry = props.entry;
@@ -36,25 +42,18 @@ export default function Post(props) {
     const pic = await Storage.get(entry.photo, { level: "protected" });
     setPicture(pic);
   }
+  // get the pic again after a refresh
   useEffect(() => {
     getPic();
   }, [refresh]);
+
   return (
     <View style={styles.postBox}>
       <View name="Header" flexDirection="row" style={styles.postHeader}>
         <Text style={styles.postUsername}>{props.entry.username}</Text>
       </View>
       <Image source={{ uri: picture }} style={{ flex: 1 }} />
-      <View
-        name="Footer"
-        flexDirection="row"
-        style={{
-          height: "10%",
-          width: "100%",
-          justifyContent: "flex-start",
-          alignItems: "center",
-        }}
-      >
+      <View name="Footer" flexDirection="row" style={styles.footer}>
         <Reactions />
         <Text>{entry.caption}</Text>
       </View>

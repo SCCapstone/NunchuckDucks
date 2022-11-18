@@ -13,7 +13,7 @@ export function PostList(props) {
   // for one user (alphabetically, sorting posts by multiple users would not reflect createdAt date)
   async function fetchPosts() {
     const allPosts = await DataStore.query(PostSchema, Predicates.ALL, {
-      sort: (s) => s.photo(SortDirection.ASCENDING),
+      sort: (s) => s.createdAt(SortDirection.DESCENDING),
     });
     setPosts(allPosts); // set posts equal to found posts
   }
@@ -33,7 +33,8 @@ export function PostList(props) {
       backgroundColor: "white",
     },
   });
-
+  // creates a Post for each postEntry, passes the post info, and refresh prop
+  // so that whenever neew posts created, they grab the picture that they are assigned
   return (
     <ScrollView contentContainerStyle={styles.list}>
       {posts.map((postEntry) => (
