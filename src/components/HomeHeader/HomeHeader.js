@@ -3,10 +3,9 @@
 * them to the settings page
 */
 
-import { Text, Image, View, TouchableOpacity, StyleSheet } from "react-native";
+import { Image, View, TouchableOpacity, StyleSheet } from "react-native";
 import React from "react";
 import { useNavigation } from "@react-navigation/native";
-import { blueThemeColor } from "../../library/constants"
 
 const HomeHeader = () => {
   const navigation = useNavigation();
@@ -15,7 +14,7 @@ const HomeHeader = () => {
     <View style={styles.container}>
       <TouchableOpacity style={styles.notiButton} onPress={() => {navigation.navigate("Goals")}}>
         <Image style={styles.notification}
-        source={require("../../../assets/icons/Gymbit_Icons_Trans/Alert_Icon_Trans.png")}
+        source={require("../../../assets/icons/Gymbit_Icons_Black/Alert_Icon_Black.png")}
         />
       </TouchableOpacity>
 
@@ -24,7 +23,7 @@ const HomeHeader = () => {
       </View>
       
       <TouchableOpacity style={styles.settingsButton} onPress={() => {navigation.navigate('Settings')}}>
-        <Image style={styles.settings} source={require("../../../assets/icons/Gymbit_Icons_Trans/Settings_Icon_Trans.png")} />
+        <Image style={styles.settings} source={require("../../../assets/icons/Gymbit_Icons_Black/Settings_Icon_Black.png")} />
       </TouchableOpacity>
     </View>
   );

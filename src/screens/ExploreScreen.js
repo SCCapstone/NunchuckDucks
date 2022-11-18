@@ -1,5 +1,4 @@
 import { ScrollView, Text, View } from "react-native";
-import  HomeHeader  from "../components/Header";
 export function ExploreScreen() {
   return (
     <ScrollView
