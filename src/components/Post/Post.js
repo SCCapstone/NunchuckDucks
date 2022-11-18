@@ -39,7 +39,7 @@ export default function Post(props) {
 
   async function getPic() {
     // TODO retrieve post picture from the passed entry fileName
-    const pic = await Storage.get(entry.photo, { level: "protected" });
+    const pic = await Storage.get(entry.photo);
     setPicture(pic);
   }
   // get the pic again after a refresh

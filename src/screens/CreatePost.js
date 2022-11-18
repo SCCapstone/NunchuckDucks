@@ -61,7 +61,7 @@ export function CreatePost() {
   const [workoutSelection, setWorkoutSelection] = useState([]); // array of workouts you selected
   const [image, setImage] = useState(null);
   //const [username, setUsername] = useState("usernameNotFound");
-  Storage.configure({ level: "protected" }); // protected = you can write and read your posts, others can only read
+  Storage.configure(); // protected = you can write and read your posts, others can only read
   async function savePost() {
     await DataStore.start();
     try {
