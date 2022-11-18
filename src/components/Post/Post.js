@@ -28,17 +28,18 @@ const styles = StyleSheet.create({
 });
 export default function Post(props) {
   const entry = props.entry;
+  const refresh = props.refresh;
+  console.log(entry.photo);
   const [picture, setPicture] = useState(null);
 
   async function getPic() {
     // TODO retrieve post picture from the passed entry fileName
-    const pic = await Storage.get("pfp.png", {});
+    const pic = await Storage.get(entry.photo, { level: "protected" });
     setPicture(pic);
-    console.log(picture);
   }
   useEffect(() => {
     getPic();
-  }, []);
+  }, [refresh]);
   return (
     <View style={styles.postBox}>
       <View name="Header" flexDirection="row" style={styles.postHeader}>
@@ -47,9 +48,16 @@ export default function Post(props) {
       <Image source={{ uri: picture }} style={{ flex: 1 }} />
       <View
         name="Footer"
-        style={{ height: "10%", width: "100%", justifyContent: "center" }}
+        flexDirection="row"
+        style={{
+          height: "10%",
+          width: "100%",
+          justifyContent: "flex-start",
+          alignItems: "center",
+        }}
       >
         <Reactions />
+        <Text>{entry.caption}</Text>
       </View>
     </View>
   );

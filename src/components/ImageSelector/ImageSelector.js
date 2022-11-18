@@ -27,7 +27,11 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
 });
-
+/**
+ *
+ * @param {*} props MUST USE A useState() [image,setImage] FOR THIS FUNCTION TO BE EFFECTIVE
+ * @returns
+ */
 export default function ImageSelector(props) {
   const image = props.image;
   const setImage = props.setImage;

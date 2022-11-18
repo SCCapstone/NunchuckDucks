@@ -10,6 +10,7 @@ import { useState } from "react";
 import { Post } from "../models";
 import Storage from "@aws-amplify/storage";
 import ImageSelector from "../components/ImageSelector";
+import { Auth } from "aws-amplify";
 
 const styles = StyleSheet.create({
   header: {
@@ -56,30 +57,35 @@ const styles = StyleSheet.create({
 
 export function CreatePost() {
   const [text, setText] = useState(""); // the caption you write
+  const [usernam, setUsernam] = useState("sample user");
   const [workoutSelection, setWorkoutSelection] = useState([]); // array of workouts you selected
   const [image, setImage] = useState(null);
+  //const [username, setUsername] = useState("usernameNotFound");
   Storage.configure({ level: "protected" }); // protected = you can write and read your posts, others can only read
-  var savePost = async () => {
+  async function savePost() {
     await DataStore.start();
-    await DataStore.save(
-      new Post({
-        caption: text,
-        photo: "sample photo text",
-        username: "sample user text",
-        userID: "some_userid123",
-      })
-    );
     try {
       // try catch just in case sending the image doesn't work
-      var name = getFileName();
+      const { attributes } = await Auth.currentAuthenticatedUser();
+      let username = attributes.preferred_username;
+      setUsernam(username);
+      var fileName = username + "/" + getFileName();
       const response = await fetch(image);
       const blob = await response.blob();
-      Storage.put(name, blob);
+      await DataStore.save(
+        new Post({
+          caption: text,
+          photo: fileName,
+          username: username,
+          userID: "some_userid123",
+        })
+      );
+      Storage.put(fileName, blob);
     } catch {
       console.error("Error uploading file");
       // TODO make a UI popup thing that lets the user know that their post wasn't uploaded (please try again later)
     }
-  };
+  }
   return (
     <View style={{ flex: 1 }}>
       <View style={styles.header} />
@@ -109,6 +115,7 @@ export function CreatePost() {
 function getFileName() {
   // used to create a fileName for the image; username/dd--mm-yyyy-timeInMilliseconds
   /*TODO add folder of person's username*/
+
   var today = new Date();
   var dd = String(today.getDate()).padStart(2, "0");
   var mm = String(today.getMonth() + 1).padStart(2, "0"); //January is 0!
