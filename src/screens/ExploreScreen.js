@@ -2,11 +2,6 @@ import { ScrollView, Text, View } from "react-native";
 import  HomeHeader  from "../components/Header";
 export function ExploreScreen() {
   return (
-    <>
-    <View>
-        <HomeHeader />
-    </View>
-    
     <ScrollView
       contentContainerStyle={{
         flex: 1,
@@ -16,6 +11,6 @@ export function ExploreScreen() {
       }}
     >
         <Text>This is the explore screen</Text>
-      </ScrollView></>
+      </ScrollView>
   );
 }
