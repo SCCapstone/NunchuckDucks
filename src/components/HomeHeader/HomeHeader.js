@@ -23,8 +23,8 @@ const HomeHeader = () => {
         <Image style={styles.logo} source={require("../../../assets/icons/Gymbit_Icons_Trans/Logo_Trans.png")} />
       </View>
       
-      <TouchableOpacity style={styles.settingsButton} onPress={() => {navigation.navigate('Settings')}}>
-        <Image style={styles.settings} source={require("../../../assets/icons/Gymbit_Icons_Black/Settings_Icon_Black.png")} />
+      <TouchableOpacity style={styles.settingsButton} onPress={() => {navigation.navigate('CreatePost')}}>
+        <Image style={styles.settings} source={require("../../../assets/icons/Gymbit_Icons_Black/Create_Post_Icon_Black.png")} />
       </TouchableOpacity>
     </View>
   );
