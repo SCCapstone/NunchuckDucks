@@ -1,12 +1,13 @@
-/**
-* This file will create a header to go on top of the home pages (Explore and Mutual), and allows the user to click on the bell to take them to the notification page and the gear to take
-* them to the settings page
-*/
+
 
 import { Image, View, TouchableOpacity, StyleSheet } from "react-native";
 import React from "react";
 import { useNavigation } from "@react-navigation/native";
 
+
+/**
+ * Creates the header that will go above the two home screens (Mutual and Explore)
+ */
 const HomeHeader = () => {
   const navigation = useNavigation();
 
