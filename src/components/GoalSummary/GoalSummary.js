@@ -1,67 +1,69 @@
-import { View, Text, StyleSheet, SafeAreaView} from "react-native";
+import { View, Text, StyleSheet, Pressable} from "react-native";
 import { blueThemeColor, grayThemeColor } from "../../library/constants";
+import React from "react";
 
 
-const GoalSummary = () => {
+const GoalSummary = ({goal}) => {
     return (
-        
-        <SafeAreaView style={{
-            flex: 1,
-            alignItems: "center",
-            backgroundColor: "white",
-            justifyContent: "center",
-          }}
-          >
             <View style={styles.container}>
-                <View style={styles.container2}>
-                    <Text style = {styles.title}>Your Goals</Text>
+                <View style={styles.title}>
+                  <Text style= {styles.title}>Your Goals</Text>
                 </View>
-                <Text style = {styles.goaltext}>Goal 1: Go to the bathroom andlllll be allowed.</Text>
-                <Text style = {styles.goaltext}>Goal 2: Lose 28 pounds by December 31st in 2022.</Text>
-                <Text style = {styles.goaltext}>Goal 3: Lose 28 pounds by December 31st in 2022.</Text>
+
+                <View style = {styles.goaltextcontainer}>
+                  <Text style = {styles.goaltitle}>Goal 1: </Text>
+                  <Text style = {styles.goaltext}>@{goal}This is a placeholder</Text>
+                </View>
+
+                <View style = {styles.goaltextcontainer}>
+                  <Text style = {styles.goaltitle}>Goal 2: </Text>
+                  <Text style = {styles.goaltext}>@{goal}This is a placeholder to show expansion and overflow with text </Text>
+                </View>
+                
+                <View style = {styles.goaltextcontainer}>
+                  <Text style = {styles.goaltitle}>Goal 3: </Text>
+                  <Text style = {styles.goaltext}>@{goal}This is a placeholder to easily visualize the box</Text>
+                </View>
             </View>
-        </SafeAreaView>
     );
   };
 
   const styles = StyleSheet.create({
     container: {
-      width: "80%",
+      width: 310,
       backgroundColor: "white",
       borderColor: blueThemeColor,
-      borderWidth: 3,
-      padding: 0, // inside border before content
-      minHeight: 175,
+      borderWidth: 4.5,
+      minHeight: "auto",
       borderRadius: 10,
       flexDirection: "column",
     },
-    container2:
-    {  
-        width: "100%",
-        backgroundColor: grayThemeColor,
-        paddingTop: 4,
-        height: 35,
-        borderTopRightRadius:7,//curves top right
-        borderTopLeftRadius: 7,//curves top left
-        alignContent: "center",
-    },
     goaltext: {
-      textAlign: "center",
-      paddingLeft:17,
-      paddingRight:21,
-      textAlignVertical: "auto",
-      width: "100%",
       fontSize: 19,
+      maxWidth: 229
+    },
+    goaltextcontainer: {
+      paddingTop: 5,
+      flexDirection:"row",
+      textAlign: "left"
+    },
+    goaltitle:{
+      fontSize:19,
+      paddingLeft:5,
+      fontWeight: "600"
     },
     title: {
         textAlign: "center",
-        textAlignVertical: "center",
-        width: "100%", //this changes length of line/ box the text exits on
+        width: "auto", //this changes length of line/ box the text exits on
         fontSize: 22,
+        paddingTop: 2,
+        height: 33,
+        borderTopRightRadius:7,//curves top right
+        borderTopLeftRadius:7,//curves top left
         color: blueThemeColor,
         fontWeight: "bold",
+        backgroundColor: grayThemeColor,
     },
   });
-
 
 export default GoalSummary;
