@@ -8,6 +8,7 @@ import { CalendarScreen } from "./src/screens/CalendarScreen.js";
 import { GoalsScreen } from "./src/screens/GoalsScreen.js";
 import { ProfileScreen } from "./src/screens/ProfileScreen.js";
 import { FollowerScreen } from "./src/screens/FollowerScreen.js";
+import { CreateGoalScreen } from "./src/screens/CreateGoalScreen.js";
 import Navbar from "./src/components/Navbar";
 import { Amplify } from "@aws-amplify/core";
 import awsmobile from "./src/aws-exports";
@@ -42,6 +43,7 @@ const app = () => {
           component={FollowerScreen}
           initialParams={{ isFollowerPage: false }}
         />
+        <Stack.screen name="CreateGoal" component={}
       </Stack.Navigator>
       <Navbar />
     </NavigationContainer>
