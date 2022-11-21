@@ -113,6 +113,18 @@ const Navbar = () => {
       >
         Goals
       </Text>
+      <Text
+        onPress={() => {
+          navigation.navigate("Followers");
+          setClickedElement("Followers");
+        }}
+        style={[
+          clickedElement == "Followers" ? styles.currentNavbarElement : {},
+          styles.navbarElement,
+        ]}
+      >
+        Followers
+      </Text>
     </ScrollView>
   );
 };
