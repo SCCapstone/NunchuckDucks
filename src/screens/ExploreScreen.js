@@ -1,7 +1,5 @@
-import { ScrollView, Text, Button } from "react-native";
-import { Auth } from "aws-amplify";
-
-export function ExploreScreen({ signOut }) {
+import { ScrollView, View, Text } from "react-native";
+export function ExploreScreen({navigation}) {
   return (
     <ScrollView
       contentContainerStyle={{
@@ -11,7 +9,7 @@ export function ExploreScreen({ signOut }) {
         justifyContent: "center",
       }}
     >
-      <Text>This is the explore screen</Text>
-    </ScrollView>
+        <Text>This is the explore screen</Text>
+      </ScrollView>
   );
 }
