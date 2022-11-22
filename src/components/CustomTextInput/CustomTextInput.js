@@ -11,7 +11,7 @@ const CustomTextInput = ({
 }) => {
   return (
     <TextInput
-      onChange={onChangeHandler}
+      onChangeText={onChangeHandler}
       onBlur={onBlurHandler}
       value={enteredValue}
       placeholder={placeholder}

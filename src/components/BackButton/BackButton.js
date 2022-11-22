@@ -7,7 +7,6 @@ const BackButton = ({ handlePress }) => {
   return (
     <TouchableOpacity
       style={{
-        backgroundColor: "white",
         width: 100,
         height: 100,
       }}

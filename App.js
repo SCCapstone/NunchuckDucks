@@ -7,12 +7,11 @@ import { CreatePost } from "./src/screens/CreatePost.js";
 import { CalendarScreen } from "./src/screens/CalendarScreen.js";
 import { GoalsScreen } from "./src/screens/GoalsScreen.js";
 import { ProfileScreen } from "./src/screens/ProfileScreen.js";
+import { FollowerScreen } from "./src/screens/FollowerScreen.js";
 import Navbar from "./src/components/Navbar";
 import { Amplify } from "@aws-amplify/core";
 import awsmobile from "./src/aws-exports";
 import { withAuthenticator } from "aws-amplify-react-native";
-import { Auth } from "aws-amplify";
-import { isUsernamePasswordOpts } from "@aws-amplify/auth/lib-esm/types/Auth.js";
 
 Amplify.configure({
   ...awsmobile,
@@ -38,6 +37,11 @@ const app = () => {
         <Stack.Screen name="CreatePost" component={CreatePost} />
         <Stack.Screen name="Calendar" component={CalendarScreen} />
         <Stack.Screen name="Goals" component={GoalsScreen} />
+        <Stack.Screen
+          name="Followers"
+          component={FollowerScreen}
+          initialParams={{ isFollowerPage: false }}
+        />
       </Stack.Navigator>
       <Navbar />
     </NavigationContainer>
@@ -79,5 +83,4 @@ const signUpConfig = {
   ],
 };
 
-
-export default withAuthenticator(app, {signUpConfig});
+export default withAuthenticator(app, { signUpConfig });
