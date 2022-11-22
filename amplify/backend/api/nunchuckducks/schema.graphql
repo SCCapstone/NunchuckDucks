@@ -1,49 +1,47 @@
-type FollowedBy @model @auth(rules: [{allow: public}]) {
+type FollowedBy @model @auth(rules: [{allow: public, operations: [read]}]) {
   id: ID!
-  username: String
+  username: String!
   userID: ID! @index(name: "byUser")
 }
 
-type Follows @model @auth(rules: [{allow: public}]) {
+type Follows @model @auth(rules: [{allow: public, operations: [read]}]) {
   id: ID!
-  username: String
+  username: String!
   userID: ID! @index(name: "byUser")
 }
 
-type Reaction @model @auth(rules: [{allow: public}]) {
+type Reaction @model @auth(rules: [{allow: public, operations: [read]}]) {
   id: ID!
-  username: String
-  reactionType: String
+  username: String!
+  reactionType: ReactionType!
   postID: ID! @index(name: "byPost")
 }
 
-type Comment @model @auth(rules: [{allow: public}]) {
+enum ReactionType {
+  LIKE,
+  LOVE,
+  FLEX,
+  CLAP
+}
+
+type Comment @model @auth(rules: [{allow: public, operations: [read]}]) {
   id: ID!
-  content: String
-  username: String
+  content: String!
+  username: String!
   postID: ID! @index(name: "byPost")
 }
 
-type LogIn @model @auth(rules: [{allow: public}]) {
+type Goal @model @auth(rules: [{allow: public, operations: [read]}]) {
   id: ID!
-  username: String
-  password: String
-  User: User @hasOne
-}
-
-type Goal @model @auth(rules: [{allow: public}]) {
-  id: ID!
-  username: String
-  goalNumber: Int
+  username: String!
   date: AWSDate
   content: String
   userID: ID! @index(name: "byUser")
 }
 
-type User @model @auth(rules: [{allow: public}]) {
+type User @model @auth(rules: [{allow: public, operations: [read]}]) {
   id: ID!
-  username: String
-  password: String
+  username: String!
   profilePicture: String
   bio: String
   Goals: [Goal] @hasMany(indexName: "byUser", fields: ["id"])
@@ -52,11 +50,11 @@ type User @model @auth(rules: [{allow: public}]) {
   FollowedBies: [FollowedBy] @hasMany(indexName: "byUser", fields: ["id"])
 }
 
-type Post @model @auth(rules: [{allow: public}]) {
+type Post @model @auth(rules: [{allow: public, operations: [read]}]) {
   id: ID!
-  caption: String
-  photo: String
-  username: String
+  caption: String!
+  photo: String!
+  username: String!
   Comments: [Comment] @hasMany(indexName: "byPost", fields: ["id"])
   Reactions: [Reaction] @hasMany(indexName: "byPost", fields: ["id"])
   userID: ID! @index(name: "byUser")
