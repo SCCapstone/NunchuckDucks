@@ -1,6 +1,8 @@
-import { View, Text } from "react-native";
+import { View, Text, Pressable } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 
 export function GoalsScreen() {
+  const nav = useNavigation();
   return (
     <View
       style={{
@@ -11,6 +13,9 @@ export function GoalsScreen() {
       }}
     >
       <Text>These are ur goals</Text>
+      <Pressable onPress={() => nav.navigate("CreateGoal")}>
+        <Text>Go to goals screen</Text>
+      </Pressable>
     </View>
   );
 }

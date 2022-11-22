@@ -43,7 +43,7 @@ const app = () => {
           component={FollowerScreen}
           initialParams={{ isFollowerPage: false }}
         />
-        <Stack.screen name="CreateGoal" component={}
+        <Stack.Screen name="CreateGoal" component={CreateGoalScreen} />
       </Stack.Navigator>
       <Navbar />
     </NavigationContainer>
