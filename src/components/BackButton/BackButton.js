@@ -14,7 +14,7 @@ const BackButton = ({ handlePress }) => {
       onPress={handlePress}
     >
       <Image
-        source={require("../../../assets/icons/Back_Icon.png")}
+        source={require("../../../assets/icons/Gymbit_Icons_Black/Back_Icon_Black.png")}
         resizeMode="cover"
         style={{
           width: "100%",

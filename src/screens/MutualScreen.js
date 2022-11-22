@@ -1,7 +1,7 @@
 import { View, Button, Text } from "react-native";
 import { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
-import { PostList } from "../components/PostList";
+import PostList from "../components/PostList";
 
 export function MutualScreen() {
   const [refresh, setRefresh] = useState(false);

@@ -1,11 +1,11 @@
 import { ScrollView, StyleSheet, Text } from "react-native";
 import { useState, useEffect } from "react";
 import { DataStore, Predicates, SortDirection } from "@aws-amplify/datastore";
-import { Post as PostSchema } from "../models";
+import { Post as PostSchema } from "../../models";
 // PostSchema, the schema above, and Post, the component below
-import Post from "./Post";
+import Post from "../Post";
 
-export function PostList(props) {
+export default function PostList(props) {
   const [posts, setPosts] = useState([]); // posts: all graphql post entries
   const refresh = props.refresh;
   const setRefresh = props.setRefresh;

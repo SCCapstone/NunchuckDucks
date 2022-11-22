@@ -1,4 +1,4 @@
-import { View, Image, Text, StyleSheet, Pressable } from "react-native";
+import { View, Image, Text, StyleSheet } from "react-native";
 import { useState, useEffect } from "react";
 import Storage from "@aws-amplify/storage";
 import Reactions from "../Reactions";
@@ -10,6 +10,7 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     marginBottom: 20,
   },
+  captionBox: {},
   postHeader: {
     height: "10%",
     width: "100%",
@@ -22,7 +23,6 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     fontSize: 28,
   },
-
   footer: {
     height: "10%",
     width: "100%",
@@ -51,6 +51,7 @@ export default function Post(props) {
         <Text style={styles.postUsername}>{props.entry.username}</Text>
       </View>
       <Image source={{ uri: picture }} style={{ flex: 1 }} />
+      {/*<View style={styles.captionBox} /> Need to implement caption box as intended*/}
       <View name="Footer" flexDirection="row" style={styles.footer}>
         <Reactions />
         <Text>{entry.caption}</Text>

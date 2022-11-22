@@ -11,6 +11,8 @@ import { Post } from "../models";
 import Storage from "@aws-amplify/storage";
 import ImageSelector from "../components/ImageSelector";
 import { Auth } from "aws-amplify";
+import { useNavigation } from "@react-navigation/native";
+import { createPost } from "../crud/PostOperations";
 
 const styles = StyleSheet.create({
   header: {
@@ -57,9 +59,9 @@ const styles = StyleSheet.create({
 
 export function CreatePost() {
   const [text, setText] = useState(""); // the caption you write
-  const [usernam, setUsernam] = useState("sample user");
   const [workoutSelection, setWorkoutSelection] = useState([]); // array of workouts you selected
   const [image, setImage] = useState(null);
+  const navigation = useNavigation();
   //const [username, setUsername] = useState("usernameNotFound");
   Storage.configure(); // protected = you can write and read your posts, others can only read
   async function savePost() {
@@ -68,7 +70,6 @@ export function CreatePost() {
       // try catch just in case sending the image doesn't work
       const { attributes } = await Auth.currentAuthenticatedUser();
       let username = attributes.preferred_username;
-      setUsernam(username);
       var fileName = username + "/" + getFileName();
       const response = await fetch(image);
       const blob = await response.blob();
@@ -85,6 +86,7 @@ export function CreatePost() {
       console.error("Error uploading file");
       // TODO make a UI popup thing that lets the user know that their post wasn't uploaded (please try again later)
     }
+    navigation.navigate("Mutuals");
   }
   return (
     <View style={{ flex: 1 }}>

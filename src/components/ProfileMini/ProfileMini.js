@@ -1,6 +1,6 @@
 import { Image, StyleSheet, Pressable } from "react-native";
 
-const defaultProfile = require("../../../assets/icons/Gymbit_Icons_Black/Username_Icon_Black.png");
+const defaultProfile = require("../../../assets/icons/Gymbit_Icons_Black/Profile_Icon.png");
 
 const ProfileMini = ({ style, src, onClick, imageStyle }) => {
   let containerStyles = { ...styles.container, ...style };
