@@ -21,6 +21,7 @@ export default function PostList(props) {
   useEffect(() => {
     // PostList runs this stuff after every render
     fetchPosts(); // it fetches all posts
+    console.log("PostList refreshed");
   }, [refresh]);
 
   const styles = StyleSheet.create({

@@ -12,7 +12,7 @@ import Storage from "@aws-amplify/storage";
 import ImageSelector from "../components/ImageSelector";
 import { Auth } from "aws-amplify";
 import { useNavigation } from "@react-navigation/native";
-import { createPost } from "../crud/PostOperations";
+//import { createPost } from "../crud/PostOperations";
 
 const styles = StyleSheet.create({
   header: {
