@@ -12,14 +12,17 @@
   },
   "dependencies": {
     "@aws-amplify/cli": "^10.4.0",
-    "@aws-amplify/datastore": "^3.14.0",
     "@aws-amplify/core": "4.7.12",
+    "@aws-amplify/datastore": "^3.14.0",
+    "@aws-amplify/storage": "^4.5.14",
+    "@aws-sdk/eventstream-codec": "^3.208.0",
     "@react-native-async-storage/async-storage": "^1.17.10",
     "@react-native-community/netinfo": "9.3.0",
     "@react-navigation/native": "^6.0.13",
     "@react-navigation/native-stack": "^6.9.1",
     "aws-amplify-react-native": "^6.0.8",
     "expo": "~46.0.16",
+    "expo-image-picker": "^13.3.1",
     "react": "18.0.0",
     "react-native": "0.69.6"
   },
