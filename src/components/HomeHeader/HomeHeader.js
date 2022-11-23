@@ -1,12 +1,13 @@
-import { Image, View, TouchableOpacity, StyleSheet } from "react-native";
+import { Image, View, TouchableOpacity, StyleSheet, Touchable } from "react-native";
 import React from "react";
 import { useNavigation } from "@react-navigation/native";
 
 /**
  * Creates the header that will go above the two home screens (Mutual and Explore)
  */
-const HomeHeader = () => {
+const HomeHeader = ({handlePress}) => {
   const navigation = useNavigation();
+  const [refresh, setRefresh] = React.useState(false);
 
   return (
     <View style={styles.container}>
@@ -22,12 +23,15 @@ const HomeHeader = () => {
         />
       </TouchableOpacity>
 
-      <View style={styles.logoContainer}>
+      <TouchableOpacity 
+        style={styles.logoContainer}
+        onPress={handlePress}  
+      >
         <Image
           style={styles.logo}
           source={require("../../../assets/icons/Gymbit_Icons_Trans/Logo_Trans.png")}
         />
-      </View>
+      </TouchableOpacity>
 
       <TouchableOpacity
         style={styles.settingsButton}

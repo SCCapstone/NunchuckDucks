@@ -2,6 +2,7 @@ import { View, Image, Text, StyleSheet } from "react-native";
 import { useState, useEffect } from "react";
 import Storage from "@aws-amplify/storage";
 import Reactions from "../Reactions";
+import { grayThemeColor } from "../../library/constants";
 const styles = StyleSheet.create({
   postBox: {
     height: 500,
@@ -9,6 +10,7 @@ const styles = StyleSheet.create({
     color: "green",
     borderWidth: 2,
     marginBottom: 20,
+    borderRadius: 20,
   },
   captionBox: {},
   postHeader: {
@@ -16,6 +18,9 @@ const styles = StyleSheet.create({
     width: "100%",
     alignItems: "center",
     justifyContent: "flex-start",
+    backgroundColor: grayThemeColor,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20
   },
   postUsername: {
     /* #3C8DD9 */
@@ -28,6 +33,9 @@ const styles = StyleSheet.create({
     width: "100%",
     justifyContent: "flex-start",
     alignItems: "center",
+    backgroundColor: grayThemeColor,
+    borderBottomRightRadius: 20,
+    borderBottomLeftRadius: 20
   },
 });
 export default function Post(props) {
