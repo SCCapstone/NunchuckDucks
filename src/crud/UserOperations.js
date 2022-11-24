@@ -1,18 +1,17 @@
 import { DataStore } from "aws-amplify";
+import { User } from "../models";
 
 /**
  * Creates a user and saves the new user in the backend
  * @param {String} username 
- * @param {String} password 
  * @param {Image} profilePicture 
  * @param {String} bio 
  */
-export async function createUser(username, password, profilePicture, bio) {
+export async function createUser(username, profilePicture, bio) {
     try {
         await DataStore.save(
             new User ({
                 username: username,
-                password: password,
                 profilePicture: profilePicture,
                 bio: bio
             })
@@ -27,12 +26,31 @@ export async function createUser(username, password, profilePicture, bio) {
  * Queries the database for a specific user, then deletes that user
  * @param {User} user 
  */
-export async function deleteUser(user) {
+export async function deleteUser(username) {
     try {
-        const userToDelete = await DataStore.query(user);
-        DataStore.delete(userToDelete);
-        console.log(`Deleted ${user.username} successfully.`);
+        const userToDelete = findUserByUsername(username);
+        DataStore.delete(userToDelete[0]);
+        console.log(`Deleted ${username} successfully.`);
     } catch (error) {
         console.log("Error deleting user", error);
+    }
+}
+
+/**
+ * Queries the user table by username
+ * @param {String} username 
+ * @returns 
+ */
+export async function findUserByUsername(username) {
+    try {
+        const user = await DataStore.query((u) => u.username("eq", username));
+        if (user.length === 1)
+            return user[0];
+        else {
+            console.log(`Could not find ${username}`);
+            return null;
+        }
+    } catch (error) {
+        console.error(`Error finding ${username}`, error);
     }
 }
