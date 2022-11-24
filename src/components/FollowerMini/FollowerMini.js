@@ -1,17 +1,24 @@
 import { Pressable, Image, StyleSheet, View, Text } from "react-native";
 import ProfileMini from "../ProfileMini";
 import { grayThemeColor } from "../../library/constants";
+import { findUserByUsername } from "../../crud/UserOperations";
+import { useState, useEffect, useCallback } from "react";
 
 const deleteIconPath = require("../../../assets/icons/Gymbit_Icons_Black/X_Icon_Black.png");
 
-const FollowerMini = ({
-  userImageSrc,
-  username,
-  onProfileClick,
-  onDelete,
-  style,
-}) => {
+const FollowerMini = ({ username, onProfileClick, onDelete, style }) => {
   const containerStyles = { ...styles.container, ...style };
+  const [userImageSrc, setUserImageSrc] = useState("");
+
+  useEffect(() => {
+    getUserImageSrc(username);
+  }, [username]);
+
+  const getUserImageSrc = useCallback(async (username) => {
+    const user = await findUserByUsername(username);
+    if (!user || !user.profilePicture) return;
+    setUserImageSrc(user.profilePicture);
+  }, []);
 
   return (
     <View style={containerStyles}>

@@ -1,6 +1,13 @@
 import { ModelInit, MutableModel } from "@aws-amplify/datastore";
 // @ts-ignore
-import { LazyLoading, LazyLoadingDisabled, AsyncItem, AsyncCollection } from "@aws-amplify/datastore";
+import { LazyLoading, LazyLoadingDisabled, AsyncCollection } from "@aws-amplify/datastore";
+
+export enum ReactionType {
+  LIKE = "LIKE",
+  LOVE = "LOVE",
+  FLEX = "FLEX",
+  CLAP = "CLAP"
+}
 
 type FollowedByMetaData = {
   readOnlyFields: 'createdAt' | 'updatedAt';
@@ -18,15 +25,11 @@ type CommentMetaData = {
   readOnlyFields: 'createdAt' | 'updatedAt';
 }
 
-type LogInMetaData = {
+type GoalMetaData = {
   readOnlyFields: 'createdAt' | 'updatedAt';
 }
 
 type UserMetaData = {
-  readOnlyFields: 'createdAt' | 'updatedAt';
-}
-
-type GoalMetaData = {
   readOnlyFields: 'createdAt' | 'updatedAt';
 }
 
@@ -36,7 +39,7 @@ type PostMetaData = {
 
 type EagerFollowedBy = {
   readonly id: string;
-  readonly username?: string | null;
+  readonly username: string;
   readonly userID: string;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
@@ -44,7 +47,7 @@ type EagerFollowedBy = {
 
 type LazyFollowedBy = {
   readonly id: string;
-  readonly username?: string | null;
+  readonly username: string;
   readonly userID: string;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
@@ -58,7 +61,7 @@ export declare const FollowedBy: (new (init: ModelInit<FollowedBy, FollowedByMet
 
 type EagerFollows = {
   readonly id: string;
-  readonly username?: string | null;
+  readonly username: string;
   readonly userID: string;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
@@ -66,7 +69,7 @@ type EagerFollows = {
 
 type LazyFollows = {
   readonly id: string;
-  readonly username?: string | null;
+  readonly username: string;
   readonly userID: string;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
@@ -80,8 +83,8 @@ export declare const Follows: (new (init: ModelInit<Follows, FollowsMetaData>) =
 
 type EagerReaction = {
   readonly id: string;
-  readonly username?: string | null;
-  readonly reactionType?: string | null;
+  readonly username: string;
+  readonly reactionType: ReactionType | keyof typeof ReactionType;
   readonly postID: string;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
@@ -89,8 +92,8 @@ type EagerReaction = {
 
 type LazyReaction = {
   readonly id: string;
-  readonly username?: string | null;
-  readonly reactionType?: string | null;
+  readonly username: string;
+  readonly reactionType: ReactionType | keyof typeof ReactionType;
   readonly postID: string;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
@@ -104,8 +107,8 @@ export declare const Reaction: (new (init: ModelInit<Reaction, ReactionMetaData>
 
 type EagerComment = {
   readonly id: string;
-  readonly content?: string | null;
-  readonly username?: string | null;
+  readonly content: string;
+  readonly username: string;
   readonly postID: string;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
@@ -113,8 +116,8 @@ type EagerComment = {
 
 type LazyComment = {
   readonly id: string;
-  readonly content?: string | null;
-  readonly username?: string | null;
+  readonly content: string;
+  readonly username: string;
   readonly postID: string;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
@@ -126,36 +129,35 @@ export declare const Comment: (new (init: ModelInit<Comment, CommentMetaData>) =
   copyOf(source: Comment, mutator: (draft: MutableModel<Comment, CommentMetaData>) => MutableModel<Comment, CommentMetaData> | void): Comment;
 }
 
-type EagerLogIn = {
+type EagerGoal = {
   readonly id: string;
-  readonly username?: string | null;
-  readonly password?: string | null;
-  readonly User?: User | null;
+  readonly username: string;
+  readonly date?: string | null;
+  readonly content?: string | null;
+  readonly userID: string;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
-  readonly logInUserId?: string | null;
 }
 
-type LazyLogIn = {
+type LazyGoal = {
   readonly id: string;
-  readonly username?: string | null;
-  readonly password?: string | null;
-  readonly User: AsyncItem<User | undefined>;
+  readonly username: string;
+  readonly date?: string | null;
+  readonly content?: string | null;
+  readonly userID: string;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
-  readonly logInUserId?: string | null;
 }
 
-export declare type LogIn = LazyLoading extends LazyLoadingDisabled ? EagerLogIn : LazyLogIn
+export declare type Goal = LazyLoading extends LazyLoadingDisabled ? EagerGoal : LazyGoal
 
-export declare const LogIn: (new (init: ModelInit<LogIn, LogInMetaData>) => LogIn) & {
-  copyOf(source: LogIn, mutator: (draft: MutableModel<LogIn, LogInMetaData>) => MutableModel<LogIn, LogInMetaData> | void): LogIn;
+export declare const Goal: (new (init: ModelInit<Goal, GoalMetaData>) => Goal) & {
+  copyOf(source: Goal, mutator: (draft: MutableModel<Goal, GoalMetaData>) => MutableModel<Goal, GoalMetaData> | void): Goal;
 }
 
 type EagerUser = {
   readonly id: string;
-  readonly username?: string | null;
-  readonly password?: string | null;
+  readonly username: string;
   readonly profilePicture?: string | null;
   readonly bio?: string | null;
   readonly Goals?: (Goal | null)[] | null;
@@ -168,8 +170,7 @@ type EagerUser = {
 
 type LazyUser = {
   readonly id: string;
-  readonly username?: string | null;
-  readonly password?: string | null;
+  readonly username: string;
   readonly profilePicture?: string | null;
   readonly bio?: string | null;
   readonly Goals: AsyncCollection<Goal>;
@@ -186,39 +187,11 @@ export declare const User: (new (init: ModelInit<User, UserMetaData>) => User) &
   copyOf(source: User, mutator: (draft: MutableModel<User, UserMetaData>) => MutableModel<User, UserMetaData> | void): User;
 }
 
-type EagerGoal = {
-  readonly id: string;
-  readonly username?: string | null;
-  readonly goalNumber?: number | null;
-  readonly date?: string | null;
-  readonly content?: string | null;
-  readonly userID: string;
-  readonly createdAt?: string | null;
-  readonly updatedAt?: string | null;
-}
-
-type LazyGoal = {
-  readonly id: string;
-  readonly username?: string | null;
-  readonly goalNumber?: number | null;
-  readonly date?: string | null;
-  readonly content?: string | null;
-  readonly userID: string;
-  readonly createdAt?: string | null;
-  readonly updatedAt?: string | null;
-}
-
-export declare type Goal = LazyLoading extends LazyLoadingDisabled ? EagerGoal : LazyGoal
-
-export declare const Goal: (new (init: ModelInit<Goal, GoalMetaData>) => Goal) & {
-  copyOf(source: Goal, mutator: (draft: MutableModel<Goal, GoalMetaData>) => MutableModel<Goal, GoalMetaData> | void): Goal;
-}
-
 type EagerPost = {
   readonly id: string;
-  readonly caption?: string | null;
-  readonly photo?: string | null;
-  readonly username?: string | null;
+  readonly caption: string;
+  readonly photo: string;
+  readonly username: string;
   readonly Comments?: (Comment | null)[] | null;
   readonly Reactions?: (Reaction | null)[] | null;
   readonly userID: string;
@@ -228,9 +201,9 @@ type EagerPost = {
 
 type LazyPost = {
   readonly id: string;
-  readonly caption?: string | null;
-  readonly photo?: string | null;
-  readonly username?: string | null;
+  readonly caption: string;
+  readonly photo: string;
+  readonly username: string;
   readonly Comments: AsyncCollection<Comment>;
   readonly Reactions: AsyncCollection<Reaction>;
   readonly userID: string;

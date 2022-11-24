@@ -13,13 +13,15 @@ const ProfileMini = ({ style, src, onClick, imageStyle }) => {
         resizeMode={"contain"}
         source={defaultProfile}
       ></Image>
-      <Image
-        style={imageStyles}
-        resizeMode={"center"}
-        source={{
-          uri: src,
-        }}
-      ></Image>
+      {src && (
+        <Image
+          style={imageStyles}
+          resizeMode={"center"}
+          source={{
+            uri: src,
+          }}
+        ></Image>
+      )}
     </Pressable>
   );
 };
