@@ -9,7 +9,7 @@ const Header = ({ title, style }) => {
 
   return (
     <View style={containerStyles}>
-      <BackButton handlePress={navigation.goBack}></BackButton>
+      <BackButton></BackButton>
       <Text style={styles.text}>{title}</Text>
     </View>
   );
