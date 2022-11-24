@@ -8,6 +8,9 @@ import Storage from "@aws-amplify/storage";
 import { Auth } from "aws-amplify";
 import { Goal } from "../models";
 import { useNavigation } from "@react-navigation/native";
+import { createGoal } from "../crud/GoalOperations";
+
+const goalNumber = 1;
 
 export function CreateGoalScreen() {
     const [text, onChangeText] = React.useState(null);
@@ -16,23 +19,11 @@ export function CreateGoalScreen() {
 
     Storage.configure();
     async function saveGoal() {
-        await DataStore.start();
-        try {
-            const { attributes } = await Auth.currentAuthenticatedUser();
-            let username = attributes.preferred_username;
-            var date = getDate();
-            await DataStore.save(
-                new Goal({
-                    username: username,
-                    date: date,
-                    content: text,
-                    userID: "some_userid123",
-                })
-            );
-        } catch {
-            console.error("Error uploading goal");
-        }
-        navigation.navigate("Goals");
+        const { attributes } = Auth.currentAuthenticatedUser();
+        let username = attributes.preferred_username;
+        var date = getDate();
+        createGoal(username, goalNumber, date, text, "userID123");
+        goalNumber += 1;
     }
 
     return (
@@ -61,10 +52,9 @@ function getDate() {
     var dd = String(today.getDate()).padStart(2, "0");
     var mm = String(today.getMonth() + 1).padStart(2, "0"); //January is 0!
     var yyyy = String(today.getFullYear());
-    var time = String(today.getTime());
 
-    var name = mm + "-" + dd + "-" + yyyy + "-" + time;
-    return name;
+    var date = yyyy + "-" + mm  + "-" + dd;
+    return date;
 }
 
 const styles = StyleSheet.create({
