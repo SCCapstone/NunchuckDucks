@@ -3,43 +3,72 @@ import { grayThemeColor } from "../library/constants";
 import Header from "../components/Header";
 import React from 'react';
 import CustomButton from "../components/CustomButton";
+import { DataStore } from "@aws-amplify/datastore";
+import Storage from "@aws-amplify/storage";
+import { Auth } from "aws-amplify";
+import { Goal } from "../models";
+import { useNavigation } from "@react-navigation/native";
 
 export function CreateGoalScreen() {
     const [text, onChangeText] = React.useState(null);
     const [goalType, setGoalType] = React.useState(null);
+    const navigation = useNavigation();
+
+    Storage.configure();
+    async function saveGoal() {
+        await DataStore.start();
+        try {
+            const { attributes } = await Auth.currentAuthenticatedUser();
+            let username = attributes.preferred_username;
+            var date = getDate();
+            await DataStore.save(
+                new Goal({
+                    username: username,
+                    date: date,
+                    content: text,
+                    userID: "some_userid123",
+                })
+            );
+        } catch {
+            console.error("Error uploading goal");
+        }
+        navigation.navigate("Goals");
+    }
 
     return (
         <View>
             <Header title={'Create Goal'} />
 
             <View>
-                <View style={{flexDirection: "row"}}>
-                    <CustomButton 
-                        text="Cardio"
-                        style={{width: 100, margin: 10}}
-                    />
-                    <CustomButton 
-                        text="Weight Lifting"
-                        style={{width: 100, margin: 10}}
-                    />
-                    <CustomButton
-                        text="Weight"
-                        style={{width: 100, margin: 10}}
-                    />
-                </View>
                 <TextInput
-                    style={styles.input}
+                    style={styles.textInput}
                     onChangeText={onChangeText}
                     placeholder={"Enter details about your goal"}
                     value={text}
+                />
+                <CustomButton 
+                    text="Create Goal"
+                    style={styles.button}
+                    onClick={saveGoal}
                 />
             </View>
         </View>
     );
 }
 
+function getDate() {
+    var today = new Date();
+    var dd = String(today.getDate()).padStart(2, "0");
+    var mm = String(today.getMonth() + 1).padStart(2, "0"); //January is 0!
+    var yyyy = String(today.getFullYear());
+    var time = String(today.getTime());
+
+    var name = mm + "-" + dd + "-" + yyyy + "-" + time;
+    return name;
+}
+
 const styles = StyleSheet.create({
-    input: {
+    textInput: {
         textAlign: "center",
         padding: 10,
         borderBottomColor: "black",
@@ -48,52 +77,13 @@ const styles = StyleSheet.create({
         borderRadius: 100
     },
     button: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        backgroundColor: '#efefef',
-        height: 50,
-        width: '90%',
-        paddingHorizontal: 10,
-        zIndex: 1,
-      },
-      buttonText: {
-        flex: 1,
-        textAlign: 'center',
-      },
-      dropdown: {
-        position: 'absolute',
-        backgroundColor: '#fff',
-        top: 50,
-      },
+        width: 100,
+        margin: 10
+    },
+    container: {
+        flexDirection: "row"
+    },
+    text: {
+        textAlign: "center"
+    }
 });
-
-const sampleGoalsList = [
-    {
-        goalType: "Cardio",
-        goalDescription: "Run a 5 minute mile",
-    },
-    {
-        goalType: "Weight Lifting",
-        goalDescription: "225lb bench press PR",
-    },
-    {
-        goalType: "Weight",
-        goalDescription: "Weigh 185lbs by end of year",
-    },
-    {
-        goalType: "Weight Lifting",
-        goalDescription: "405lb squat PR",
-    },
-];
-
-const goalTypes = [
-    {
-        value: "Cardio"
-    },
-    {
-        value: "Weight Lifting"
-    },
-    {
-        value: "Weight"
-    },
-]

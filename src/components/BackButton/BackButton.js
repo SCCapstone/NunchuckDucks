@@ -13,7 +13,7 @@ const BackButton = () => {
         width: 100,
         height: 100,
       }}
-      onPress={navigation.goBack()}
+      onPress={() => navigation.goBack()}
     >
       <Image
         source={require("../../../assets/icons/Gymbit_Icons_Black/Back_Icon_Black.png")}
