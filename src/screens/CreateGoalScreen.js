@@ -10,20 +10,18 @@ import { Goal } from "../models";
 import { useNavigation } from "@react-navigation/native";
 import { createGoal } from "../crud/GoalOperations";
 
-const goalNumber = 1;
-
 export function CreateGoalScreen() {
     const [text, onChangeText] = React.useState(null);
-    const [goalType, setGoalType] = React.useState(null);
     const navigation = useNavigation();
 
     Storage.configure();
     async function saveGoal() {
-        const { attributes } = Auth.currentAuthenticatedUser();
+        const { attributes } = await Auth.currentAuthenticatedUser();
         let username = attributes.preferred_username;
         var date = getDate();
-        createGoal(username, goalNumber, date, text, "userID123");
-        goalNumber += 1;
+        let userId = "some_userid123";
+        createGoal(username, date, text, userId);
+        navigation.navigate("Goals");
     }
 
     return (
@@ -37,11 +35,13 @@ export function CreateGoalScreen() {
                     placeholder={"Enter details about your goal"}
                     value={text}
                 />
+                <View style={styles.miniContainer}>
                 <CustomButton 
                     text="Create Goal"
                     style={styles.button}
                     onClick={saveGoal}
                 />
+                </View>
             </View>
         </View>
     );
@@ -68,12 +68,9 @@ const styles = StyleSheet.create({
     },
     button: {
         width: 100,
-        margin: 10
+        margin: 10,
     },
-    container: {
-        flexDirection: "row"
+    miniContainer: {
+        alignItems: "center",
     },
-    text: {
-        textAlign: "center"
-    }
 });
