@@ -1,5 +1,6 @@
 import { DataStore } from 'aws-amplify';
 import { User, FollowedBy } from "../models";
+import { getUserId } from './UserOperations';
 
 /**
  * This method adds an external user to the primary user's followers list
@@ -8,20 +9,36 @@ import { User, FollowedBy } from "../models";
  */
 export async function createFollower(username, followerUsername) {
     try {
-    const user = await DataStore.query(User, (u) => 
-    u.username('eq', username));
+        const userId = getUserId(username);
 
-    const userId = user[0].id;
-    
+        if (doesFollowExist(followerUsername, userId)) {
+            console.log(`${followerUsername} already follows ${username}`);
+            return false;
+        }
     
         const follower = new FollowedBy ({
             username: followerUsername,
             userId: userId
         })
         await DataStore.save(follower);
-        console.log(`Follower ${follower.id} of ${username} was saved successfully.`);
+        console.log(`Follower ${followerUsername} of ${username} was saved successfully.`);
+        return true;
     } catch (error) {
         console.error("Error saving follower.", error);
+    }
+}
+
+function doesFollowExist(username, userID) {
+    try {
+        const followerList = DataStore.query(FollowedBy, (f) => f.and(f => [
+            f.username("eq", username),
+            f.userID("eq", userID)
+        ]));
+
+        return followerList === undefined ? true : false;
+        
+    } catch (error) {
+        console.error("Error retrieving follower list");
     }
 }
 
@@ -44,4 +61,21 @@ export async function getFollowersList(username) {
         console.error("Error retrieving followers list.");
     }
 
+}
+
+export async function deleteFollower(username, followerUsername) {
+    try {
+        const userId = getUserId(username);
+
+        const followerToDelete = await DataStore.query(FollowedBy, (f) => f.and(f => [
+            f.username("eq",followerUsername),
+            f.userID("eq", userId)
+        ]));
+
+        await DataStore.delete(followerToDelete[0]);
+
+        console.log(`${followerUsername} no longer follows ${username}`);
+    } catch (error) {
+        console.error("There was an error deleting follower.", error);
+    }
 }
