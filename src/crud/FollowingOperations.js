@@ -48,6 +48,12 @@ export async function getFollowsList(username) {
     }
 } 
 
+/**
+ * Check to see if the following relationship exists, this is to prevent someone following the same person twice
+ * @param {String} username the username of the follower
+ * @param {ID} userID the ID of the user being followed
+ * @returns 
+ */
 async function doesFollowExist(username, userID) {
     try {
         const followerList = await DataStore.query(Follows, (f) => f.and(f => [
@@ -62,6 +68,11 @@ async function doesFollowExist(username, userID) {
     }
 }
 
+/**
+ * This method deletes the relationship between a follower and the one being followed
+ * @param {String} username the username of the follower
+ * @param {String} followerUsername the username of the one being followed
+ */
 export async function deleteFollower(username, followerUsername) {
     try {
         const userid = getUserId(username);
