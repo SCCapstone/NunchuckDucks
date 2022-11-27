@@ -55,6 +55,11 @@ export async function findUserByUsername(username) {
     }
 }
 
+/**
+ * This function gets the auto-generated ID of a User from the backend table
+ * @param {String} username the username whose ID we want to retrieve
+ * @returns String userId
+ */
 export async function getUserId(username) {
     try {
         const user = await DataStore.query(User, (u) => u.username(username));
