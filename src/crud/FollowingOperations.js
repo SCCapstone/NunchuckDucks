@@ -48,14 +48,14 @@ export async function getFollowsList(username) {
     }
 } 
 
-function doesFollowExist(username, userID) {
+async function doesFollowExist(username, userID) {
     try {
-        const followerList = DataStore.query(Follows, (f) => f.and(f => [
+        const followerList = await DataStore.query(Follows, (f) => f.and(f => [
             f.username("eq", username),
             f.userID("eq", userID)
         ]));
 
-        return followerList === undefined ? true : false;
+        return followerList.length ? true : false;
         
     } catch (error) {
         console.error("Error retrieving follower list");
