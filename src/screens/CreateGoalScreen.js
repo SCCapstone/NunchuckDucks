@@ -8,11 +8,13 @@ import { useNavigation } from "@react-navigation/native";
 import { createGoal } from "../crud/GoalOperations";
 import { getDate } from "../library/getDate";
 
+//Allow user to create a new goal
 export function CreateGoalScreen() {
-    const [text, onChangeText] = React.useState(null);
+    const [text, onChangeText] = React.useState(null); //Add text for the goal description
     const navigation = useNavigation();
 
     Storage.configure();
+    //Create new goal from users text input
     async function saveGoal() {
         const { attributes } = await Auth.currentAuthenticatedUser();
         let username = attributes.preferred_username;

@@ -7,11 +7,13 @@ import { getGoals, deleteGoal } from "../crud/GoalOperations";
 import { Auth } from "aws-amplify";
 import { useEffect, useState } from "react";
 
+//Display users goals and allow them to navigate to the create goals screen
 export function GoalsScreen() {
   const nav = useNavigation();
-  const [goals, setGoals] = useState([]);
-  const [forceRefresh, setForceRefresh] = useState(true);
+  const [goals, setGoals] = useState([]); //set array of all user goals
+  const [forceRefresh, setForceRefresh] = useState(true); //refresh the goal list
 
+  //retrieve all goals for signed in user
   async function goalList() {
     const { attributes } = await Auth.currentAuthenticatedUser();
     let username = attributes.preferred_username;
@@ -21,10 +23,10 @@ export function GoalsScreen() {
 
   useEffect(() => {
     goalList();
-    const focusHandler = nav.addListener("focus", () => {setForceRefresh(!forceRefresh)})
+    const focusHandler = nav.addListener("focus", () => {setForceRefresh(!forceRefresh)}) //Refresh page when navigated to
   },[forceRefresh, nav]);
   
-
+  //Generate the list of user goals on the screen
   const listGoals = goals.map((goal) => (
     <GoalMini 
       description = {goal.content}
