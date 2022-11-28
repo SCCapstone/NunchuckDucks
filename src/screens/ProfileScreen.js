@@ -6,11 +6,16 @@ import GoalSummary from "../components/GoalSummary";
 import { blueThemeColor, grayThemeColor } from "../library/constants";
 import React from "react";
 import { getFollowsList } from "../crud/FollowingOperations";
+import { ImageSelector} from "../components/ImageSelector";
 import { getFollowersList } from "../crud/FollowersOperations";
+import { findUserByUsername } from "../crud/UserOperations";
 import ProfileMini from "../components/ProfileMini";
 import CustomButton from "../components/CustomButton";
 import { useNavigation } from "@react-navigation/native";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
+import SignOutButton from "../components/signoutbutton/SignOutButton";
+import * as ImagePicker from "expo-image-picker";
+
 
 //Need to also create the buttons to be clickable and call different functions
 export function ProfileScreen(props) {
@@ -18,6 +23,18 @@ export function ProfileScreen(props) {
   const [username, setUsername] = useState("");
   const [followercount, setFollowerCount] = useState("");
   const [followingcount, setFollowingCount] = useState("");
+  const [image, setImage] = useState("");
+  const [userImageSrc, setUserImageSrc] = useState("");
+
+  useEffect(() => {
+    getUserImageSrc(username);
+  }, [username, image]);
+
+  const getUserImageSrc = useCallback(async (username) => {
+    const user = await findUserByUsername(username);
+    if (!user || !user.profilePicture) return;
+    setUserImageSrc(user.profilePicture);
+  }, []);
 
   async function getUsername() {
     try {
@@ -29,6 +46,7 @@ export function ProfileScreen(props) {
     }
   }
 
+  
   async function getFollowerCount() {
     const followercoun = await getFollowersList(username);
     setFollowerCount(followercoun.length);
@@ -38,6 +56,39 @@ export function ProfileScreen(props) {
     const followingcoun = await getFollowsList(username);
     setFollowingCount(followingcoun.length);
   }
+
+  function getFileName() {
+    // used to create a fileName for the image; username/dd--mm-yyyy-timeInMilliseconds
+    /*TODO add folder of person's username*/
+  
+    var today = new Date();
+    var dd = String(today.getDate()).padStart(2, "0");
+    var mm = String(today.getMonth() + 1).padStart(2, "0"); //January is 0!
+    var yyyy = String(today.getFullYear());
+    var time = String(today.getTime());
+  
+    var name = mm + "-" + dd + "-" + yyyy + "-" + time;
+    return name;
+  }
+
+    const addImage = async () => {
+      let _image = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes:
+          ImagePicker.MediaTypeOptions.Images /*Only allow image upload */,
+        allowsEditing: true /*true= pull up an editing interface after image upload */,
+        aspect: [1, 1] /*1:1 image ratio, so it will be a square */,
+        quality: 1 /*highest quality image possible, on a scale of 0-1 we want 1 lol */,
+      });
+      setImage(_image.uri);
+
+      const { attributes } = await Auth.currentAuthenticatedUser();
+      let username = attributes.preferred_username;
+      var fileName = username + "/" + getFileName();
+      const response = await fetch(image);
+      const blob = await response.blob();
+      Storage.put(fileName, blob);
+      
+    }
 
   useEffect(() => {
     getUsername();
@@ -58,7 +109,7 @@ export function ProfileScreen(props) {
       }}
     >
       <View style={{ paddingTop: 25 }}>
-        <ProfileMini></ProfileMini>
+        <ProfileMini onClick={() => addImage()} src={userImageSrc}/>
       </View>
 
       <Text style={styles.username}>@{username}</Text>
@@ -73,6 +124,7 @@ export function ProfileScreen(props) {
         //onClick={needs to add friend here}
         ></CustomButton>
         */}
+        <SignOutButton/>
       </View>
 
       <View style={{ flexDirection: "row", alignContent: "center" }}>
@@ -91,7 +143,7 @@ export function ProfileScreen(props) {
         <CustomButton
           text="Followers"
           style={{ width: 100, borderRadius: 20 }}
-          textStyle={{ fontSize: 15 }}
+          textStyle={{ fontSize: 15, fontWeight: '700' }}
           onClick={() =>
             navigation.navigate("Followers", { isFollowerPage: true })
           }
@@ -102,7 +154,7 @@ export function ProfileScreen(props) {
         <CustomButton
           text="Following"
           style={{ width: 100, borderRadius: 20 }}
-          textStyle={{ fontSize: 15 }}
+          textStyle={{ fontSize: 15, fontWeight: '700' }}
           onClick={() =>
             navigation.navigate("Followers", { isFollowerPage: false })
           }
