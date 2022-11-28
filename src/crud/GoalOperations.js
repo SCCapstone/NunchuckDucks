@@ -19,6 +19,24 @@ export async function createGoal(username, date, content) {
     }
 }
 
+/**
+ * Returns all goals for any given user
+ * @param {String} username 
+ * @returns goals
+ */
+export async function getGoals(username) {
+    try {
+        const userId = getUserId(username);
+        const goals = DataStore.query(Goal, (g) => g.userID("eq", userId));
+
+        console.log(`Successfully retrieved goals for ${username}`);
+
+        return goals;
+    } catch (error) {
+        console.error(`Error retrieving goals for ${username}`);
+    }
+}
+
 export async function deleteGoal(goalID) {
     try {
         const goalToDelete = await DataStore.query(Goal, goalID);
