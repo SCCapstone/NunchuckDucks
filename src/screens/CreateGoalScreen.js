@@ -1,12 +1,9 @@
-import { Text, View, StyleSheet, TextInput, Button } from "react-native";
-import { grayThemeColor } from "../library/constants";
+import { View, StyleSheet, TextInput } from "react-native";
 import Header from "../components/Header";
 import React from 'react';
 import CustomButton from "../components/CustomButton";
-import { DataStore } from "@aws-amplify/datastore";
 import Storage from "@aws-amplify/storage";
 import { Auth } from "aws-amplify";
-import { Goal } from "../models";
 import { useNavigation } from "@react-navigation/native";
 import { createGoal } from "../crud/GoalOperations";
 

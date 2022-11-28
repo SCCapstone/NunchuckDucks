@@ -7,7 +7,7 @@ export async function createGoal(username, date, content, userId) {
             username: username,
             date: date,
             content: content,
-            userId: userId
+            userID: userId
         })
         await DataStore.save(goal);
         console.log(`Goal ${goal.id} successfully created.`);
