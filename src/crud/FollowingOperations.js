@@ -1,5 +1,6 @@
 import { DataStore } from 'aws-amplify';
 import { User, Follows } from "../models";
+import { getUserId } from './UserOperations';
 
 /**
  * Adds a user to the primary user's following list.
@@ -7,19 +8,21 @@ import { User, Follows } from "../models";
  * @param {String} followedUsername username of the user that is to be followed
  */
 export async function createFollowing(username, followedUsername) {
-    const user = await DataStore.query(User, (u) => 
-    u.username('eq', username));
-
-    const userId = user[0].id;
-
     try {
+        const userId = getUserId(username);
+
+        if (doesFollowExist(followedUsername, userId)) {
+            console.log(`${username} already follows ${followedUsername}`);
+            return false;
+        }
+
         const follows = new Follows({
             username: followedUsername,
             userID: userId
         })
         await DataStore.save(follows);
 
-        console.log(`User ${user[0].username} followed ${follows.username} successfully.`);
+        console.log(`User ${username} followed ${follows.username} successfully.`);
     } catch (error) {
         console.error(`There was an error trying to follow the user.}`, error);
     }
@@ -44,3 +47,45 @@ export async function getFollowsList(username) {
         console.error(`Error retrieving follows list for ${username}`);
     }
 } 
+
+/**
+ * Check to see if the following relationship exists, this is to prevent someone following the same person twice
+ * @param {String} username the username of the follower
+ * @param {ID} userID the ID of the user being followed
+ * @returns 
+ */
+async function doesFollowExist(username, userID) {
+    try {
+        const followerList = await DataStore.query(Follows, (f) => f.and(f => [
+            f.username("eq", username),
+            f.userID("eq", userID)
+        ]));
+
+        return followerList.length ? true : false;
+        
+    } catch (error) {
+        console.error("Error retrieving follower list");
+    }
+}
+
+/**
+ * This method deletes the relationship between a follower and the one being followed
+ * @param {String} username the username of the follower
+ * @param {String} followerUsername the username of the one being followed
+ */
+export async function deleteFollower(username, followerUsername) {
+    try {
+        const userid = getUserId(username);
+
+        const followerToDelete = await DataStore.query(Follows, (f) => f.and(f => [
+            f.username("eq",followerUsername),
+            f.userID("eq", userid)
+        ]));
+
+        await DataStore.delete(followerToDelete[0]);
+
+        console.log(`${username} no longer follows ${followerUsername}`);
+    } catch (error) {
+        console.error("There was an error deleting follower.", error);
+    }
+}
