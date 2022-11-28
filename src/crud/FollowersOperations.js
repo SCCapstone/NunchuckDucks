@@ -16,7 +16,7 @@ export async function createFollower(username, followerUsername) {
     
         const follower = new FollowedBy ({
             username: followerUsername,
-            userId: userId
+            userID: userId
         })
         await DataStore.save(follower);
         console.log(`Follower ${follower.id} of ${username} was saved successfully.`);

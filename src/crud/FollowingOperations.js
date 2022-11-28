@@ -15,7 +15,7 @@ export async function createFollowing(username, followedUsername) {
     try {
         const follows = new Follows({
             username: followedUsername,
-            userId: userId
+            userID: userId
         })
         await DataStore.save(follows);
 
