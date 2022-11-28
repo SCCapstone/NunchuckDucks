@@ -1,8 +1,11 @@
 import { DataStore } from 'aws-amplify';
 import { Goal } from '../models';
+import { getUserId } from './UserOperations';
 
-export async function createGoal(username, date, content, userId) {
+export async function createGoal(username, date, content) {
     try {
+        const userId = await getUserId(username);
+
         const goal = new Goal ({
             username: username,
             date: date,
@@ -13,6 +16,24 @@ export async function createGoal(username, date, content, userId) {
         console.log(`Goal ${goal.id} successfully created.`);
     } catch (error) {
         console.error("Error saving goal", error);
+    }
+}
+
+/**
+ * Returns all goals for any given user
+ * @param {String} username 
+ * @returns goals
+ */
+export async function getGoals(username) {
+    try {
+        const userId = await getUserId(username);
+        const goals = DataStore.query(Goal, (g) => g.userID("eq", userId));
+
+        console.log(`Successfully retrieved goals for ${username}`);
+
+        return goals;
+    } catch (error) {
+        console.error(`Error retrieving goals for ${username}`);
     }
 }
 
