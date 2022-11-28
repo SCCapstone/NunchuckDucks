@@ -6,6 +6,7 @@ import Storage from "@aws-amplify/storage";
 import { Auth } from "aws-amplify";
 import { useNavigation } from "@react-navigation/native";
 import { createGoal } from "../crud/GoalOperations";
+import { getDate } from "../library/getDate";
 
 export function CreateGoalScreen() {
     const [text, onChangeText] = React.useState(null);
@@ -16,8 +17,7 @@ export function CreateGoalScreen() {
         const { attributes } = await Auth.currentAuthenticatedUser();
         let username = attributes.preferred_username;
         var date = getDate();
-        let userId = "some_userid123";
-        createGoal(username, date, text, userId);
+        createGoal(username, date, text);
         navigation.navigate("Goals");
     }
 
@@ -42,16 +42,6 @@ export function CreateGoalScreen() {
             </View>
         </View>
     );
-}
-
-function getDate() {
-    var today = new Date();
-    var dd = String(today.getDate()).padStart(2, "0");
-    var mm = String(today.getMonth() + 1).padStart(2, "0"); //January is 0!
-    var yyyy = String(today.getFullYear());
-
-    var date = yyyy + "-" + mm  + "-" + dd;
-    return date;
 }
 
 const styles = StyleSheet.create({
