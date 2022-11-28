@@ -41,23 +41,22 @@ export function GoalsScreen() {
   ));
 
   return (
-    <View>
+    <><View>
       <Header title={"Goals"} />
 
       <View style={styles.container}>
         <CustomButton
-          text = "Create Goal"
-          onClick = {() => nav.navigate("CreateGoal")}
-          style = {styles.button}
-        />
+          text="Create Goal"
+          onClick={() => nav.navigate("CreateGoal")}
+          style={styles.button} />
       </View>
-      <ScrollView
-        contentContainerStyle={styles.list}
-      >
-        {listGoals}
-      </ScrollView>
-      
     </View>
+    
+    <ScrollView
+      contentContainerStyle={styles.list}
+    >
+        {listGoals}
+    </ScrollView></>
   );
 }
 
