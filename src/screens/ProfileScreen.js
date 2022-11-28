@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Image, TouchableOpacity} from "react-native";
+import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
 import { Auth } from "aws-amplify";
 import { DataStore } from "@aws-amplify/datastore";
 import Amplify from "aws-amplify";
@@ -6,11 +6,11 @@ import GoalSummary from "../components/GoalSummary";
 import { blueThemeColor, grayThemeColor } from "../library/constants";
 import React from "react";
 import { getFollowsList } from "../crud/FollowingOperations";
-import { getFollowersList} from "../crud/FollowersOperations";
+import { getFollowersList } from "../crud/FollowersOperations";
 import ProfileMini from "../components/ProfileMini";
 import CustomButton from "../components/CustomButton";
 import { useNavigation } from "@react-navigation/native";
-import { useState, useEffect} from "react";
+import { useState, useEffect } from "react";
 
 //Need to also create the buttons to be clickable and call different functions
 export function ProfileScreen(props) {
@@ -19,39 +19,34 @@ export function ProfileScreen(props) {
   const [followercount, setFollowerCount] = useState("");
   const [followingcount, setFollowingCount] = useState("");
 
-  async function getUsername(){
-    try{
-      
-      const {attributes} = await Auth.currentAuthenticatedUser();
-      let usernam = attributes.preferred_username;
-      setUsername(usernam);
-    } catch{
+  async function getUsername() {
+    try {
+      const { attributes } = await Auth.currentAuthenticatedUser();
+      let username = attributes.preferred_username;
+      setUsername(username);
+    } catch {
       console.error("error getting username");
     }
   }
 
-  async function getFollowerCount(){
+  async function getFollowerCount() {
     const followercoun = await getFollowersList(username);
     setFollowerCount(followercoun.length);
   }
 
-  async function getFollowingCount(){
+  async function getFollowingCount() {
     const followingcoun = await getFollowsList(username);
     setFollowingCount(followingcoun.length);
   }
 
-
-
   useEffect(() => {
     getUsername();
     console.log("Username grabbed to display.");
-    getFollowerCount();
-    console.log("Follower Count Grabbed");
-    getFollowingCount();
-    console.log("Following Count Grabbed");
-  })
-
-
+    // getFollowerCount();
+    // console.log("Follower Count Grabbed");
+    // getFollowingCount();
+    // console.log("Following Count Grabbed");
+  });
 
   return (
     <View
@@ -93,25 +88,27 @@ export function ProfileScreen(props) {
           paddingHorizontal: 80,
         }}
       >
-          <CustomButton
-            text="Followers"
-            style = {{width:100, borderRadius:20}}
-            textStyle={{ fontSize: 15 }}
-            onClick = {() => navigation.navigate("Followers", { isFollowerPage: true })}
-          ></CustomButton>
+        <CustomButton
+          text="Followers"
+          style={{ width: 100, borderRadius: 20 }}
+          textStyle={{ fontSize: 15 }}
+          onClick={() =>
+            navigation.navigate("Followers", { isFollowerPage: true })
+          }
+        ></CustomButton>
 
-        <View style={{ width: 83}}></View>        
-        
+        <View style={{ width: 83 }}></View>
+
         <CustomButton
           text="Following"
-          style = {{width:100, borderRadius:20}}
+          style={{ width: 100, borderRadius: 20 }}
           textStyle={{ fontSize: 15 }}
-          onClick = {() => navigation.navigate("Followers", { isFollowerPage: false })}
+          onClick={() =>
+            navigation.navigate("Followers", { isFollowerPage: false })
+          }
         ></CustomButton>
-        
-
       </View>
-    {/* Need for calendar style.
+      {/* Need for calendar style.
       <View style={{ flexdirection:"row", paddingBottom:30}}>
         
         <TouchableOpacity onPress = {() => navigation.navigate("Calendar")}>
@@ -120,7 +117,7 @@ export function ProfileScreen(props) {
 
       </View>
     */}
-      <TouchableOpacity onPress={() => navigation.navigate("Goals")}> 
+      <TouchableOpacity onPress={() => navigation.navigate("Goals")}>
         <GoalSummary></GoalSummary>
       </TouchableOpacity>
     </View>
