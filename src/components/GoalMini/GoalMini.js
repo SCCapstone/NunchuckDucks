@@ -30,6 +30,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignContent: "center",
+
+    margin: 10,
   },
   text: {
     textAlign: "center",
