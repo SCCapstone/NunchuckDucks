@@ -9,7 +9,7 @@ import { getUserId } from './UserOperations';
  */
 export async function createFollower(username, followerUsername) {
     try {
-        const userId = getUserId(username);
+        const userId = await getUserId(username);
 
         if (doesFollowExist(followerUsername, userId)) {
             console.log(`${followerUsername} already follows ${username}`);
@@ -76,7 +76,7 @@ export async function getFollowersList(username) {
  */
 export async function deleteFollower(username, followerUsername) {
     try {
-        const userId = getUserId(username);
+        const userId = await getUserId(username);
 
         const followerToDelete = await DataStore.query(FollowedBy, (f) => f.and(f => [
             f.username("eq",followerUsername),

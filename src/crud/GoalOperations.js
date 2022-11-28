@@ -4,7 +4,7 @@ import { getUserId } from './UserOperations';
 
 export async function createGoal(username, date, content) {
     try {
-        const userId = getUserId(username);
+        const userId = await getUserId(username);
 
         const goal = new Goal ({
             username: username,
@@ -26,7 +26,7 @@ export async function createGoal(username, date, content) {
  */
 export async function getGoals(username) {
     try {
-        const userId = getUserId(username);
+        const userId = await getUserId(username);
         const goals = DataStore.query(Goal, (g) => g.userID("eq", userId));
 
         console.log(`Successfully retrieved goals for ${username}`);
