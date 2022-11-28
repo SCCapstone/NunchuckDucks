@@ -1,5 +1,6 @@
+import { ConsoleLogger } from "@aws-amplify/core";
 import { DataStore, SortDirection } from "aws-amplify";
-import { Post } from "../models";
+import { Post, Follows } from "../models";
 import { getUserId } from "./UserOperations";
 /**
  * Creates a post and saves the new post in the backend
@@ -43,6 +44,9 @@ export async function getPostsForMutualFeed(username) {
     const userId = await getUserId(username);
 
     const usersFollowed = await DataStore.query(Follows, (uf) => uf.userID("eq", userId));
+
+    if (usersFollowed.length === 0)
+      return [];
 
     console.log(`Retrieved users followed for ${username}`);
 
