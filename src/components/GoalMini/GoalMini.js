@@ -3,13 +3,13 @@ import { grayThemeColor } from "../../library/constants";
 import React from "react";
 
 // Component that provides a short goal description and handles a custom click event
-const GoalMini = ({ description, onEditHandler }) => {
+const GoalMini = ({ description, onDeleteHandler }) => {
   return (
     <View style={styles.container}>
       <Text style={styles.text}>{description}</Text>
-      <Pressable onPress={onEditHandler} style={styles.imgContainer}>
+      <Pressable onPress={onDeleteHandler} style={styles.imgContainer}>
         <Image
-          source={require("../../../assets/icons/Gymbit_Icons_Black/Edit_Icon_Black.png")} // Placeholder Icon
+          source={require("../../../assets/icons/Gymbit_Icons_Black/X_Icon_Black.png")} // Placeholder Icon
           style={styles.icon}
           resizeMethod={"auto"}
         />
@@ -30,6 +30,9 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignContent: "center",
+
+    margin: 10,
+    left: 20,
   },
   text: {
     textAlign: "center",
