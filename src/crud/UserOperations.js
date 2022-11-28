@@ -43,7 +43,7 @@ export async function deleteUser(username) {
  */
 export async function findUserByUsername(username) {
     try {
-        const user = await DataStore.query((u) => u.username("eq", username));
+        const user = await DataStore.query(User, (u) => u.username("eq", username));
         if (user.length === 1)
             return user[0];
         else {
