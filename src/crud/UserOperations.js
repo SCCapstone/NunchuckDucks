@@ -66,3 +66,48 @@ export async function getUserId(username) {
         console.error("Error finding user ID", error);
     }
 }
+
+/**
+ * Updates the profile picture of the given user with a new profile picture.
+ * @param {String} username the username of the user whose profile pic is being changed
+ * @param {String} newProfilePicture the new profile picture
+ */
+export async function updateProfilePicture(username, newProfilePicture) {
+    try {
+        const userId = getUserId(username);
+
+        const original = await DataStore.query(User, userId);
+
+        await DataStore.save(User.copyOf(original, updated => {
+                updated.profilePicture = newProfilePicture
+            })
+        );
+        //We may want to add in some code to delete the S3 file containing the old profile picture.
+        
+        console.log(`Successfully updated profile picture for ${username}.`);
+    } catch (error) {
+        console.error(`Error updating ${username} profile picture.`);
+    }
+}
+
+/**
+ * Updates the bio for the given user
+ * @param {String} username the user whose bio is being changed
+ * @param {String} newBio the new bio
+ */
+export async function updateBio(username, newBio) {
+    try {
+        const userId = getUserId(username);
+
+        const original = await DataStore.query(User, userId);
+
+        await DataStore.save(User.copyOf(original, updated => {
+                updated.bio = newBio
+            })
+        );
+        
+        console.log(`Successfully updated bio for ${username}.`);
+    } catch (error) {
+        console.error(`Error updating ${username} bio.`);
+    }
+}
