@@ -74,7 +74,7 @@ export async function getUserId(username) {
  */
 export async function updateProfilePicture(username, newProfilePicture) {
     try {
-        const userId = getUserId(username);
+        const userId = await getUserId(username);
 
         const original = await DataStore.query(User, userId);
 
@@ -97,7 +97,7 @@ export async function updateProfilePicture(username, newProfilePicture) {
  */
 export async function updateBio(username, newBio) {
     try {
-        const userId = getUserId(username);
+        const userId = await getUserId(username);
 
         const original = await DataStore.query(User, userId);
 
