@@ -1,5 +1,6 @@
-import { DataStore } from "aws-amplify";
+import { DataStore, SortDirection } from "aws-amplify";
 import { Post } from "../models";
+import { getUserId } from "./UserOperations";
 /**
  * Creates a post and saves the new post in the backend
  * @param {String} username
@@ -36,3 +37,36 @@ export async function deletePost(postID) {
     console.log("Error deleting post", error);
   }
 }
+
+export async function getPostsForMutualFeed(username) {
+  try {
+    const userId = await getUserId(username);
+
+    const usersFollowed = await DataStore.query(Follows, (uf) => uf.userID("eq", userId));
+
+    console.log(`Retrieved users followed for ${username}`);
+
+    const usersFollowedIDs = [];
+
+    for (let i = 0; i < usersFollowed.length; i++) {
+      let usersFollowedID = await getUserId(usersFollowed[i].username);
+      usersFollowedIDs.push(usersFollowedID);
+    }
+
+    const posts = [];
+
+    for (let i = 0; i < usersFollowedIDs.length; i++) {
+      let postsToBeAdded = DataStore.query(Post, (p) => p.userID("eq", usersFollowedIDs[i]), {
+        sort: (s) => s.createdAt(SortDirection.DESCENDING)
+      });
+      posts.push(postsToBeAdded);
+    }
+
+    console.log(`Retrieved posts for user ${username}'s mutual page successfully.`);
+
+    return posts;
+  } catch (error) {
+    console.error(`Error retrieving posts for ${username}'s mutual feed`);
+  }
+}
+
