@@ -30,6 +30,7 @@ export function GoalsScreen() {
   const listGoals = goals.map((goal) => (
     <GoalMini 
       description = {goal.content}
+      key = {goal.id}
 
       onDeleteHandler={async() => {
         let goalId = goal.id;

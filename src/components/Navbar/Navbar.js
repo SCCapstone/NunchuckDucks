@@ -38,7 +38,7 @@ const Navbar = () => {
       horizontal={true}
       bounces={false}
     >
-      <Text
+      {/* <Text
         title="Settings"
         onPress={() => {
           navigation.navigate("Settings");
@@ -50,8 +50,8 @@ const Navbar = () => {
         ]}
       >
         Settings
-      </Text>
-      <Text
+      </Text> */}
+      {/* <Text
         title="Explore"
         onPress={() => {
           navigation.navigate("Explore");
@@ -63,7 +63,7 @@ const Navbar = () => {
         ]}
       >
         Explore
-      </Text>
+      </Text> */}
       <Text
         title="Mutuals"
         onPress={() => {
@@ -89,7 +89,7 @@ const Navbar = () => {
       >
         Profile
       </Text>
-      <Text
+      {/* <Text
         onPress={() => {
           navigation.navigate("Calendar");
           setClickedElement("Calendar");
@@ -100,7 +100,7 @@ const Navbar = () => {
         ]}
       >
         Calendar
-      </Text>
+      </Text> */}
       <Text
         onPress={() => {
           navigation.navigate("Goals");
