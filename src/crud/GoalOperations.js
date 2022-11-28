@@ -40,7 +40,7 @@ export async function getGoals(username) {
 export async function deleteGoal(goalID) {
     try {
         const goalToDelete = await DataStore.query(Goal, goalID);
-        DataStore.delete(goalToDelete);
+        await DataStore.delete(goalToDelete);
         console.log(`Successfully delete goal ${goalToDelete.id}`);
     } catch (error) {
         console.error("Error saving goal", error);

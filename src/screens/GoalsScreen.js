@@ -3,13 +3,14 @@ import { useNavigation } from "@react-navigation/native";
 import Header from "../components/Header/Header";
 import CustomButton from "../components/CustomButton/CustomButton";
 import GoalMini from "../components/GoalMini/GoalMini";
-import { getGoals } from "../crud/GoalOperations";
+import { getGoals, deleteGoal } from "../crud/GoalOperations";
 import { Auth } from "aws-amplify";
 import { useEffect, useState } from "react";
 
 export function GoalsScreen() {
   const nav = useNavigation();
   const [goals, setGoals] = useState([]);
+  const [forceRefresh, setForceRefresh] = useState(true);
 
   async function goalList() {
     const { attributes } = await Auth.currentAuthenticatedUser();
@@ -20,12 +21,19 @@ export function GoalsScreen() {
 
   useEffect(() => {
     goalList();
-  },[]);
+    const focusHandler = nav.addListener("focus", () => {setForceRefresh(!forceRefresh)})
+  },[forceRefresh, nav]);
   
 
   const listGoals = goals.map((goal) => (
     <GoalMini 
       description = {goal.content}
+
+      onDeleteHandler={async() => {
+        let goalId = goal.id;
+        await deleteGoal(goalId);
+        setForceRefresh(!forceRefresh);
+      }}
     />
   ));
 
@@ -53,7 +61,6 @@ export function GoalsScreen() {
 const styles = StyleSheet.create({
   container: {
     alignItems: "center",
-    justifyContent: "center"
   },
   button: {
     margin: 20
