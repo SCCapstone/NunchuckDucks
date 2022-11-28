@@ -105,7 +105,7 @@ export function CreatePost() {
           value={text}
           onChangeText={setText}
         />
-        <Text>{workoutSelection}</Text>
+        <Text>{workoutSelection.join(", ")}</Text>
         <TouchableOpacity style={styles.submit} onPress={savePost}>
           <Text style={styles.submitText}>Post Gymbit</Text>
         </TouchableOpacity>
@@ -132,7 +132,7 @@ function WorkoutSelection(props) {
   const workoutSelection = props.workoutSelection;
   const setWorkoutSelection = props.setWorkoutSelection;
   const updateFunction = (text) => {
-    setWorkoutSelection([...workoutSelection, text]);
+    setWorkoutSelection([...new Set([...workoutSelection, text])]);
   };
   return (
     <View style={styles.workoutSelectionContainer}>
@@ -172,7 +172,7 @@ function WorkoutSelection(props) {
         >
           <Text>Bike</Text>
         </TouchableOpacity>
-        <Text>{workoutSelection}</Text>
+        <Text>{workoutSelection.join(", ")}</Text>
       </View>
     </View>
   );
