@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Pressable} from "react-native";
+import { View, Text, StyleSheet} from "react-native";
 import { blueThemeColor, grayThemeColor } from "../../library/constants";
 import React from "react";
 
