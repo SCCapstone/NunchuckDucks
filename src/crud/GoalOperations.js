@@ -1,8 +1,11 @@
 import { DataStore } from 'aws-amplify';
 import { Goal } from '../models';
+import { getUserId } from './UserOperations';
 
-export async function createGoal(username, date, content, userId) {
+export async function createGoal(username, date, content) {
     try {
+        const userId = getUserId(username);
+
         const goal = new Goal ({
             username: username,
             date: date,
