@@ -64,7 +64,7 @@ export async function getUserId(username) {
     try {
             const user = await DataStore.query(User, (u) => u.username("eq", username));
 
-            console.log(`Found userID ${user[0].id} successfully.`);
+            console.log(`Found userID ${user[0].id} for ${username} successfully.`);
 
             return user[0].id;
     } catch (error) {

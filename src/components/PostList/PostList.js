@@ -2,6 +2,8 @@ import { ScrollView, StyleSheet, Text } from "react-native";
 import { useState, useEffect } from "react";
 import { DataStore, Predicates, SortDirection } from "@aws-amplify/datastore";
 import { Post as PostSchema } from "../../models";
+import { getPostsForMutualFeed } from "../../crud/PostOperations";
+import { getCurrentAuthenticatedUser } from "../../library/GetAuthenticatedUser";
 // PostSchema, the schema above, and Post, the component below
 import Post from "../Post";
 
@@ -12,10 +14,9 @@ export default function PostList(props) {
   // TODO make function that sorts all posts by CREATED AT date, as sorting by photoname will only work
   // for one user (alphabetically, sorting posts by multiple users would not reflect createdAt date)
   async function fetchPosts() {
-    const allPosts = await DataStore.query(PostSchema, Predicates.ALL, {
-      sort: (s) => s.createdAt(SortDirection.DESCENDING),
-    });
-    setPosts(allPosts); // set posts equal to found posts
+    const username = await getCurrentAuthenticatedUser();
+    setPosts(await getPostsForMutualFeed(username));
+     // set posts equal to found posts
   }
 
   useEffect(() => {
