@@ -74,14 +74,6 @@ export function CreatePost() {
       var fileName = username + "/" + getFileName();
       const response = await fetch(image);
       const blob = await response.blob();
-      /*await DataStore.save(
-        new Post({
-          caption: text,
-          photo: fileName,
-          username: username,
-          userID: "some_userid123",
-        })
-      );*/
       await createPost(text, fileName, username);
       Storage.put(fileName, blob);
     } catch {
