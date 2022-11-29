@@ -57,8 +57,6 @@ export async function getPostsForMutualFeed(username) {
       usersFollowedIDs.push(usersFollowedID);
     }
 
-    console.log(`here are the userfollowed ids ${usersFollowedIDs}`);
-
     const posts = [];
 
     for (let i = 0; i < usersFollowedIDs.length; i++) {
@@ -71,8 +69,6 @@ export async function getPostsForMutualFeed(username) {
     }
 
     console.log(`Retrieved posts for user ${username}'s mutual page successfully.`);
-
-    console.log(`here are the posts ${posts}`);
 
     return posts;
   } catch (error) {
