@@ -12,6 +12,7 @@ import Storage from "@aws-amplify/storage";
 import ImageSelector from "../components/ImageSelector";
 import { Auth } from "aws-amplify";
 import { useNavigation } from "@react-navigation/native";
+import { createPost } from "../crud/PostOperations";
 //import { createPost } from "../crud/PostOperations";
 
 const styles = StyleSheet.create({
@@ -73,14 +74,7 @@ export function CreatePost() {
       var fileName = username + "/" + getFileName();
       const response = await fetch(image);
       const blob = await response.blob();
-      await DataStore.save(
-        new Post({
-          caption: text,
-          photo: fileName,
-          username: username,
-          userID: "some_userid123",
-        })
-      );
+      await createPost(text, fileName, username);
       Storage.put(fileName, blob);
     } catch {
       console.error("Error uploading file");
