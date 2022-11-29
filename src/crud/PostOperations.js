@@ -52,8 +52,6 @@ export async function getPostsForMutualFeed(username) {
     );
     const usersFollowedIDs = [userId];
 
-    if (usersFollowed.length === 0) return usersFollowedIDs;
-
     console.log(`Retrieved users followed for ${username}`);
 
     for (let i = 0; i < usersFollowed.length; i++) {
