@@ -1,11 +1,17 @@
-import { Image, View, TouchableOpacity, StyleSheet, Touchable } from "react-native";
+import {
+  Image,
+  View,
+  TouchableOpacity,
+  StyleSheet,
+  Touchable,
+} from "react-native";
 import React from "react";
 import { useNavigation } from "@react-navigation/native";
 
 /**
  * Creates the header that will go above the two home screens (Mutual and Explore)
  */
-const HomeHeader = ({handlePress}) => {
+const HomeHeader = ({ handlePress }) => {
   const navigation = useNavigation();
   const [refresh, setRefresh] = React.useState(false);
 
@@ -23,10 +29,7 @@ const HomeHeader = ({handlePress}) => {
         />
       </TouchableOpacity>
 
-      <TouchableOpacity 
-        style={styles.logoContainer}
-        onPress={handlePress}  
-      >
+      <TouchableOpacity style={styles.logoContainer} onPress={handlePress}>
         <Image
           style={styles.logo}
           source={require("../../../assets/icons/Gymbit_Icons_Trans/Logo_Trans.png")}
@@ -54,14 +57,14 @@ const styles = StyleSheet.create({
     height: 100,
     paddingTop: 30,
     backgroundColor: "white",
-    display: "flex",
     flexDirection: "row",
   },
 
   notiButton: {
     width: 50,
     height: 50,
-    paddingLeft: 10,
+    flex: 1,
+    paddingLeft: 15,
   },
 
   notification: {
@@ -70,9 +73,10 @@ const styles = StyleSheet.create({
   },
 
   logoContainer: {
+    alignItems: "center",
     width: 100,
     height: 50,
-    left: 75,
+    flex: 1,
   },
 
   logo: {
@@ -84,7 +88,9 @@ const styles = StyleSheet.create({
   settingsButton: {
     width: 50,
     height: 50,
-    left: 150,
+    flex: 1,
+    alignItems: "flex-end",
+    paddingRight: 15,
   },
 
   settings: {
