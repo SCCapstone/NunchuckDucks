@@ -57,16 +57,22 @@ export async function getPostsForMutualFeed(username) {
       usersFollowedIDs.push(usersFollowedID);
     }
 
+    console.log(`here are the userfollowed ids ${usersFollowedIDs}`);
+
     const posts = [];
 
     for (let i = 0; i < usersFollowedIDs.length; i++) {
-      let postsToBeAdded = DataStore.query(Post, (p) => p.userID("eq", usersFollowedIDs[i]), {
+      let postsToBeAdded = await DataStore.query(Post, (p) => p.userID("eq", usersFollowedIDs[i]), {
         sort: (s) => s.createdAt(SortDirection.DESCENDING)
       });
-      posts.push(postsToBeAdded);
+      for (let j = 0; j < postsToBeAdded.length; j++) {
+        posts.push(postsToBeAdded[j]);
+      }
     }
 
     console.log(`Retrieved posts for user ${username}'s mutual page successfully.`);
+
+    console.log(`here are the posts ${posts}`);
 
     return posts;
   } catch (error) {
