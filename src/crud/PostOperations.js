@@ -1,5 +1,6 @@
 import { ConsoleLogger } from "@aws-amplify/core";
 import { DataStore, SortDirection } from "aws-amplify";
+import { getCurrentAuthenticatedUser } from "../library/GetAuthenticatedUser";
 import { Post, Follows } from "../models";
 import { getUserId } from "./UserOperations";
 /**
@@ -9,14 +10,18 @@ import { getUserId } from "./UserOperations";
  * @param {Image} profilePicture
  * @param {String} bio
  */
-export async function createPost(caption, photo, username, userID) {
+export async function createPost(caption, photo, username) {
   try {
+    const user = await getCurrentAuthenticatedUser();
+
+    const userId = await getUserId(user);
+
     await DataStore.save(
       new Post({
         caption: caption,
         photo: photo,
         username: username,
-        userID: userID,
+        userID: userId,
       })
     );
     console.log(`Post  successfully created.`);
