@@ -20,7 +20,7 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
     backgroundColor: grayThemeColor,
     borderTopLeftRadius: 20,
-    borderTopRightRadius: 20
+    borderTopRightRadius: 20,
   },
   postUsername: {
     /* #3C8DD9 */
@@ -35,7 +35,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: grayThemeColor,
     borderBottomRightRadius: 20,
-    borderBottomLeftRadius: 20
+    borderBottomLeftRadius: 20,
   },
 });
 export default function Post(props) {
@@ -56,7 +56,8 @@ export default function Post(props) {
   return (
     <View style={styles.postBox}>
       <View name="Header" flexDirection="row" style={styles.postHeader}>
-        <Text style={styles.postUsername}>{props.entry.username}</Text>
+        <Text style={styles.postUsername}>{entry.username}</Text>
+        <Text>{getTimeElapsed(entry.createdAt)} days ago</Text>
       </View>
       <Image source={{ uri: picture }} style={{ flex: 1 }} />
       {/*<View style={styles.captionBox} /> Need to implement caption box as intended*/}
@@ -66,4 +67,24 @@ export default function Post(props) {
       </View>
     </View>
   );
+}
+
+function getTimeElapsed(createdAt) {
+  // The string is 2022-11-25T18:44:00.308Z
+  /*var year = parseInt(createdAt.substring(0,4));
+  var month = parseInt(createdAt.substring(5,7));
+  var day = parseInt(createdAt.substring(8,10));
+  var hour = parseInt(createdAt.substring(11,13));
+  var min = parseInt(createdAt.substring(14,16));
+  var sec = parseInt(createdAt.substring(17,19));*/
+  var createdAtFormatted = createdAt.substring(0, 19);
+  var currDate = new Date();
+  var dateUploaded = new Date(createdAtFormatted);
+  var diff = currDate.getTime() - dateUploaded.getTime();
+  var daysDifference = (diff / (1000 * 60 * 60 * 24)).toString();
+  var roundedDaysDiff = daysDifference.substring(
+    0,
+    daysDifference.indexOf(".") + 3
+  );
+  return roundedDaysDiff;
 }

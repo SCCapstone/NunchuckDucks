@@ -1,8 +1,8 @@
+import { processCompositeKeys } from "@aws-amplify/datastore/lib-esm/util";
 import { DataStore, SortDirection } from "aws-amplify";
 import { getCurrentAuthenticatedUser } from "../library/GetAuthenticatedUser";
 import { Post, Follows } from "../models";
 import { getUserId } from "./UserOperations";
-import getCreatedAtNumber from "../library/getCreatedAtNumber";
 /**
  * Creates a post and saves the new post in the backend
  * @param {String} username
@@ -51,8 +51,7 @@ export async function getPostsForMutualFeed(username) {
     const usersFollowed = await DataStore.query(Follows, (uf) =>
       uf.userID("eq", userId)
     );
-
-    if (usersFollowed.length === 0) return [];
+    const usersFollowedIDs = [userId];
 
     console.log(`Retrieved users followed for ${username}`);
 
@@ -75,17 +74,14 @@ export async function getPostsForMutualFeed(username) {
         posts.push(postsToBeAdded[j]);
       }
     }
-    if (posts.length > 1) {
-      posts.sort(function (a, b) {
-        var thisPost = getCreatedAtNumber(a.createdAt); // get createdAt numbers
-        var thatPost = getCreatedAtNumber(b.createdAt); // and compare them to sort
-        if (thatPost > thisPost) {
-          return 1; // if that post is newer (higher number), then keep them in order; a then b
-        } else {
-          return -1; // if not, then reverse; b then a
-        }
-      });
-    }
+
+    posts.sort(function (a, b) {
+      if (b.createdAt > a.createdAt) {
+        return 1; // if that post is newer (higher number), then keep them in order; a then b
+      } else {
+        return -1; // if not, then reverse; b then a
+      }
+    });
 
     console.log(
       `Retrieved posts for user ${username}'s mutual page successfully.`
