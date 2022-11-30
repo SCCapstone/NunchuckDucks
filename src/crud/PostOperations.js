@@ -1,4 +1,3 @@
-import { ConsoleLogger } from "@aws-amplify/core";
 import { DataStore, SortDirection } from "aws-amplify";
 import { getCurrentAuthenticatedUser } from "../library/GetAuthenticatedUser";
 import { Post, Follows } from "../models";
@@ -56,8 +55,6 @@ export async function getPostsForMutualFeed(username) {
     if (usersFollowed.length === 0) return [];
 
     console.log(`Retrieved users followed for ${username}`);
-
-    const usersFollowedIDs = [];
 
     for (let i = 0; i < usersFollowed.length; i++) {
       let usersFollowedID = await getUserId(usersFollowed[i].username);
