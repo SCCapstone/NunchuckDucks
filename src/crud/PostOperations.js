@@ -3,6 +3,7 @@ import { DataStore, SortDirection } from "aws-amplify";
 import { getCurrentAuthenticatedUser } from "../library/GetAuthenticatedUser";
 import { Post, Follows } from "../models";
 import { getUserId } from "./UserOperations";
+import getCreatedAtNumber from "../library/getCreatedAtNumber";
 /**
  * Creates a post and saves the new post in the backend
  * @param {String} username
@@ -48,10 +49,11 @@ export async function getPostsForMutualFeed(username) {
   try {
     const userId = await getUserId(username);
 
-    const usersFollowed = await DataStore.query(Follows, (uf) => uf.userID("eq", userId));
+    const usersFollowed = await DataStore.query(Follows, (uf) =>
+      uf.userID("eq", userId)
+    );
 
-    if (usersFollowed.length === 0)
-      return [];
+    if (usersFollowed.length === 0) return [];
 
     console.log(`Retrieved users followed for ${username}`);
 
@@ -65,19 +67,35 @@ export async function getPostsForMutualFeed(username) {
     const posts = [];
 
     for (let i = 0; i < usersFollowedIDs.length; i++) {
-      let postsToBeAdded = await DataStore.query(Post, (p) => p.userID("eq", usersFollowedIDs[i]), {
-        sort: (s) => s.createdAt(SortDirection.DESCENDING)
-      });
+      let postsToBeAdded = await DataStore.query(
+        Post,
+        (p) => p.userID("eq", usersFollowedIDs[i]),
+        {
+          sort: (s) => s.createdAt(SortDirection.DESCENDING),
+        }
+      );
       for (let j = 0; j < postsToBeAdded.length; j++) {
         posts.push(postsToBeAdded[j]);
       }
     }
+    if (posts.length > 1) {
+      posts.sort(function (a, b) {
+        var bee = getCreatedAtNumber(b.createdAt);
+        var ayy = getCreatedAtNumber(a.createdAt);
+        if (bee > ayy) {
+          return 1;
+        } else {
+          return -1;
+        }
+      });
+    }
 
-    console.log(`Retrieved posts for user ${username}'s mutual page successfully.`);
+    console.log(
+      `Retrieved posts for user ${username}'s mutual page successfully.`
+    );
 
     return posts;
   } catch (error) {
     console.error(`Error retrieving posts for ${username}'s mutual feed`);
   }
 }
-
