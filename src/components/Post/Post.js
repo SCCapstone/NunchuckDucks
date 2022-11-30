@@ -63,9 +63,7 @@ export default function Post(props) {
     <View style={styles.postBox}>
       <View name="Header" flexDirection="row" style={styles.postHeader}>
         <Text style={styles.postUsername}>{entry.username}</Text>
-        <Text style={styles.createdAt}>
-          {getTimeElapsed(entry.createdAt)} days ago
-        </Text>
+        <Text style={styles.createdAt}>{getTimeElapsed(entry.createdAt)}</Text>
       </View>
       <Image source={{ uri: picture }} style={{ flex: 8 }} />
       {/*<View style={styles.captionBox} /> Need to implement caption box as intended*/}
@@ -78,26 +76,42 @@ export default function Post(props) {
 }
 
 function getTimeElapsed(createdAt) {
-  // The string is 2022-11-25T18:44:00.308Z
-  /*var year = parseInt(createdAt.substring(0, 4));
-  var month = parseInt(createdAt.substring(5, 7)) - 1;
-  var day = parseInt(createdAt.substring(8, 10));
-  var hour = parseInt(createdAt.substring(11, 13)) - 1;
-  var min = parseInt(createdAt.substring(14, 16));
-  var sec = parseInt(createdAt.substring(17, 19));*/
-  var createdAtFormatted = createdAt.substring(0, 19);
-  var currDate = new Date();
-  //currDate = currDate.toUTCString();
-  //currDate = new Date(currDate);
-  var dateUploaded = new Date(createdAtFormatted);
-  dateUploaded = dateUploaded.toUTCString();
-  dateUploaded = new Date(dateUploaded);
-  var diff = currDate.getTime() - dateUploaded.getTime();
-  console.log(diff);
-  var daysDifference = (diff / (1000 * 60 * 60 * 24)).toString();
-  var roundedDaysDiff = daysDifference.substring(
-    0,
-    daysDifference.indexOf(".") + 3
-  );
-  return roundedDaysDiff;
+  // returns time elapsed since post was posted, in varying levels of time
+  var ans = ""; // the output
+  if (createdAt == undefined) {
+    // preliminary check to stop error that occurs
+    return ans; // when post is expectd after creation, but createdAt cannot be retrieved yet
+  }
+  var createdAtFormatted = createdAt.substring(0, 19); //gets rid of a few milliseconds to make it proper format
+  var currDate = new Date(); // current date and time
+  var dateUploaded = new Date(createdAtFormatted); // date and time of upload
+
+  const round = (numString) => {
+    // round the output to two decimals
+    return numString.substring(0, numString.indexOf(".") + 3);
+  };
+  // The answer will be correct for UTC time, which is  6 hours ahead of Eastern time
+  // therefore, add 1800000 ms (6 hours); this will need to be addressed according to user's timezonee
+  var diff = currDate.getTime() - dateUploaded.getTime() + 18000000; // get the difference between the two + 6 hrs
+  var minutesDifference = diff / (1000 * 60);
+
+  if (minutesDifference > 60) {
+    // if more then 60 minutes, switch to hours
+    var hoursDifference = minutesDifference / 60;
+    if (hoursDifference > 24) {
+      // if more than 24 hours, switch to days
+      var daysDifference = hoursDifference / 24;
+      ans = round(daysDifference.toString()) + " days ago";
+    } else {
+      ans = round(hoursDifference.toString()) + " hours ago";
+    }
+  } else {
+    if (minutesDifference < 1) {
+      // if less than a minute has passed
+      ans = "less than a minute ago";
+    } else {
+      ans = round(minutesDifference.toString()) + " minutes ago";
+    }
+  }
+  return ans;
 }
