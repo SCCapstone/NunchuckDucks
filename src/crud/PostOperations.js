@@ -1,3 +1,4 @@
+import { processCompositeKeys } from "@aws-amplify/datastore/lib-esm/util";
 import { DataStore, SortDirection } from "aws-amplify";
 import { getCurrentAuthenticatedUser } from "../library/GetAuthenticatedUser";
 import { Post, Follows } from "../models";
@@ -73,6 +74,14 @@ export async function getPostsForMutualFeed(username) {
         posts.push(postsToBeAdded[j]);
       }
     }
+
+    posts.sort(function (a, b) {
+      if (b.createdAt > a.createdAt) {
+        return 1; // if that post is newer (higher number), then keep them in order; a then b
+      } else {
+        return -1; // if not, then reverse; b then a
+      }
+    });
 
     console.log(
       `Retrieved posts for user ${username}'s mutual page successfully.`

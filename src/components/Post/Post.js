@@ -15,12 +15,13 @@ const styles = StyleSheet.create({
   captionBox: {},
   postHeader: {
     height: "10%",
-    width: "100%",
+    flex: 1,
+    //width: "100%",
     alignItems: "center",
-    justifyContent: "flex-start",
+    //justifyContent: "flex-start",
     backgroundColor: grayThemeColor,
     borderTopLeftRadius: 20,
-    borderTopRightRadius: 20
+    borderTopRightRadius: 20,
   },
   postUsername: {
     /* #3C8DD9 */
@@ -31,11 +32,16 @@ const styles = StyleSheet.create({
   footer: {
     height: "10%",
     width: "100%",
+    flex: 1,
     justifyContent: "flex-start",
     alignItems: "center",
     backgroundColor: grayThemeColor,
     borderBottomRightRadius: 20,
-    borderBottomLeftRadius: 20
+    borderBottomLeftRadius: 20,
+  },
+  createdAt: {
+    marginLeft: "auto", // gives 95% of margin to the left of createdAt
+    marginRight: "5%", // effectively pushing it to the right
   },
 });
 export default function Post(props) {
@@ -56,9 +62,10 @@ export default function Post(props) {
   return (
     <View style={styles.postBox}>
       <View name="Header" flexDirection="row" style={styles.postHeader}>
-        <Text style={styles.postUsername}>{props.entry.username}</Text>
+        <Text style={styles.postUsername}>{entry.username}</Text>
+        <Text style={styles.createdAt}>{getTimeElapsed(entry.createdAt)}</Text>
       </View>
-      <Image source={{ uri: picture }} style={{ flex: 1 }} />
+      <Image source={{ uri: picture }} style={{ flex: 8 }} />
       {/*<View style={styles.captionBox} /> Need to implement caption box as intended*/}
       <View name="Footer" flexDirection="row" style={styles.footer}>
         <Reactions />
@@ -66,4 +73,45 @@ export default function Post(props) {
       </View>
     </View>
   );
+}
+
+function getTimeElapsed(createdAt) {
+  // returns time elapsed since post was posted, in varying levels of time
+  var ans = ""; // the output
+  if (createdAt == undefined) {
+    // preliminary check to stop error that occurs
+    return ans; // when post is expectd after creation, but createdAt cannot be retrieved yet
+  }
+  var createdAtFormatted = createdAt.substring(0, 19); //gets rid of a few milliseconds to make it proper format
+  var currDate = new Date(); // current date and time
+  var dateUploaded = new Date(createdAtFormatted); // date and time of upload
+
+  const round = (numString) => {
+    // round the output to two decimals
+    return numString.substring(0, numString.indexOf(".") + 3);
+  };
+  // The answer will be correct for UTC time, which is  6 hours ahead of Eastern time
+  // therefore, add 1800000 ms (6 hours); this will need to be addressed according to user's timezonee
+  var diff = currDate.getTime() - dateUploaded.getTime() + 18000000; // get the difference between the two + 6 hrs
+  var minutesDifference = diff / (1000 * 60);
+
+  if (minutesDifference > 60) {
+    // if more then 60 minutes, switch to hours
+    var hoursDifference = minutesDifference / 60;
+    if (hoursDifference > 24) {
+      // if more than 24 hours, switch to days
+      var daysDifference = hoursDifference / 24;
+      ans = round(daysDifference.toString()) + " days ago";
+    } else {
+      ans = round(hoursDifference.toString()) + " hours ago";
+    }
+  } else {
+    if (minutesDifference < 1) {
+      // if less than a minute has passed
+      ans = "less than a minute ago";
+    } else {
+      ans = round(minutesDifference.toString()) + " minutes ago";
+    }
+  }
+  return ans;
 }
