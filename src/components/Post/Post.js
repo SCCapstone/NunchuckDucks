@@ -15,9 +15,10 @@ const styles = StyleSheet.create({
   captionBox: {},
   postHeader: {
     height: "10%",
-    width: "100%",
+    flex: 1,
+    //width: "100%",
     alignItems: "center",
-    justifyContent: "flex-start",
+    //justifyContent: "flex-start",
     backgroundColor: grayThemeColor,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
@@ -31,11 +32,16 @@ const styles = StyleSheet.create({
   footer: {
     height: "10%",
     width: "100%",
+    flex: 1,
     justifyContent: "flex-start",
     alignItems: "center",
     backgroundColor: grayThemeColor,
     borderBottomRightRadius: 20,
     borderBottomLeftRadius: 20,
+  },
+  createdAt: {
+    marginLeft: "auto", // gives 95% of margin to the left of createdAt
+    marginRight: "5%", // effectively pushing it to the right
   },
 });
 export default function Post(props) {
@@ -57,9 +63,11 @@ export default function Post(props) {
     <View style={styles.postBox}>
       <View name="Header" flexDirection="row" style={styles.postHeader}>
         <Text style={styles.postUsername}>{entry.username}</Text>
-        <Text>{getTimeElapsed(entry.createdAt)} days ago</Text>
+        <Text style={styles.createdAt}>
+          {getTimeElapsed(entry.createdAt)} days ago
+        </Text>
       </View>
-      <Image source={{ uri: picture }} style={{ flex: 1 }} />
+      <Image source={{ uri: picture }} style={{ flex: 8 }} />
       {/*<View style={styles.captionBox} /> Need to implement caption box as intended*/}
       <View name="Footer" flexDirection="row" style={styles.footer}>
         <Reactions />
@@ -71,16 +79,21 @@ export default function Post(props) {
 
 function getTimeElapsed(createdAt) {
   // The string is 2022-11-25T18:44:00.308Z
-  /*var year = parseInt(createdAt.substring(0,4));
-  var month = parseInt(createdAt.substring(5,7));
-  var day = parseInt(createdAt.substring(8,10));
-  var hour = parseInt(createdAt.substring(11,13));
-  var min = parseInt(createdAt.substring(14,16));
-  var sec = parseInt(createdAt.substring(17,19));*/
+  /*var year = parseInt(createdAt.substring(0, 4));
+  var month = parseInt(createdAt.substring(5, 7)) - 1;
+  var day = parseInt(createdAt.substring(8, 10));
+  var hour = parseInt(createdAt.substring(11, 13)) - 1;
+  var min = parseInt(createdAt.substring(14, 16));
+  var sec = parseInt(createdAt.substring(17, 19));*/
   var createdAtFormatted = createdAt.substring(0, 19);
   var currDate = new Date();
+  //currDate = currDate.toUTCString();
+  //currDate = new Date(currDate);
   var dateUploaded = new Date(createdAtFormatted);
+  dateUploaded = dateUploaded.toUTCString();
+  dateUploaded = new Date(dateUploaded);
   var diff = currDate.getTime() - dateUploaded.getTime();
+  console.log(diff);
   var daysDifference = (diff / (1000 * 60 * 60 * 24)).toString();
   var roundedDaysDiff = daysDifference.substring(
     0,
