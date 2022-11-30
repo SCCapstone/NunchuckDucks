@@ -80,12 +80,12 @@ export async function getPostsForMutualFeed(username) {
     }
     if (posts.length > 1) {
       posts.sort(function (a, b) {
-        var bee = getCreatedAtNumber(b.createdAt);
-        var ayy = getCreatedAtNumber(a.createdAt);
-        if (bee > ayy) {
-          return 1;
+        var thisPost = getCreatedAtNumber(a.createdAt); // get createdAt numbers
+        var thatPost = getCreatedAtNumber(b.createdAt); // and compare them to sort
+        if (thatPost > thisPost) {
+          return 1; // if that post is newer (higher number), then keep them in order; a then b
         } else {
-          return -1;
+          return -1; // if not, then reverse; b then a
         }
       });
     }
