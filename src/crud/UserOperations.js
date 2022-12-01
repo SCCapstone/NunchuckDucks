@@ -3,56 +3,66 @@ import { User } from "../models";
 
 /**
  * Creates a user and saves the new user in the backend
- * @param {String} username 
- * @param {Image} profilePicture 
- * @param {String} bio 
+ * @param {String} username
+ * @param {Image} profilePicture
+ * @param {String} bio
  */
 export async function createUser(username, profilePicture, bio) {
-    try {
-        await DataStore.save(
-            new User ({
-                username: username,
-                profilePicture: profilePicture,
-                bio: bio
-            })
-        );
-        console.log(`User ${username} successfully created.`);
-    } catch (error) {
-        console.error("Error saving post", error);
-    }
+  try {
+    await DataStore.save(
+      new User({
+        username: username,
+        profilePicture: profilePicture,
+        bio: bio,
+      })
+    );
+    console.log(`User ${username} successfully created.`);
+  } catch (error) {
+    console.error("Error saving post", error);
+  }
 }
 
 /**
  * Queries the database for a specific user, then deletes that user
- * @param {User} user 
+ * @param {User} user
  */
 export async function deleteUser(username) {
-    try {
-        const userToDelete = findUserByUsername(username);
-        DataStore.delete(userToDelete[0]);
-        console.log(`Deleted ${username} successfully.`);
-    } catch (error) {
-        console.log("Error deleting user", error);
-    }
+  try {
+    const userToDelete = findUserByUsername(username);
+    DataStore.delete(userToDelete[0]);
+    console.log(`Deleted ${username} successfully.`);
+  } catch (error) {
+    console.log("Error deleting user", error);
+  }
 }
 
 /**
  * Queries the user table by username
- * @param {String} username 
- * @returns 
+ * @param {String} username
+ * @returns
  */
 export async function findUserByUsername(username) {
-    try {
-        const user = await DataStore.query(User, (u) => u.username("eq", username));
-        if (user.length === 1)
-            return user[0];
-        else {
-            console.log(`Could not find ${username}`);
-            return null;
-        }
-    } catch (error) {
-        console.error(`Error finding ${username}`, error);
+  try {
+    const user = await DataStore.query(User, (u) => u.username("eq", username));
+    if (user.length === 1) return user[0];
+    else {
+      console.log(`Could not find ${username}`);
+      return null;
     }
+  } catch (error) {
+    console.error(`Error finding ${username}`, error);
+  }
+}
+export async function getProfilePicture(username) {
+  try {
+    const user = await DataStore.query(User, (u) => u.username("eq", username));
+    const photoPath = user.photo; //string path of photo
+    const pic = await Storage.get(photoPath);
+    return pic;
+  } catch {
+    return "";
+    console.error("error getting image of current authenticated user");
+  }
 }
 
 /**
@@ -61,15 +71,15 @@ export async function findUserByUsername(username) {
  * @returns String userId
  */
 export async function getUserId(username) {
-    try {
-            const user = await DataStore.query(User, (u) => u.username("eq", username));
+  try {
+    const user = await DataStore.query(User, (u) => u.username("eq", username));
 
-            console.log(`Found userID ${user[0].id} for ${username} successfully.`);
+    console.log(`Found userID ${user[0].id} for ${username} successfully.`);
 
-            return user[0].id;
-    } catch (error) {
-        console.error("Error finding user ID", error);
-    }
+    return user[0].id;
+  } catch (error) {
+    console.error("Error finding user ID", error);
+  }
 }
 
 /**
@@ -78,21 +88,22 @@ export async function getUserId(username) {
  * @param {String} newProfilePicture the new profile picture
  */
 export async function updateProfilePicture(username, newProfilePicture) {
-    try {
-        const userId = await getUserId(username);
+  try {
+    const userId = await getUserId(username);
 
-        const original = await DataStore.query(User, userId);
+    const original = await DataStore.query(User, userId);
 
-        await DataStore.save(User.copyOf(original, updated => {
-                updated.profilePicture = newProfilePicture
-            })
-        );
-        //We may want to add in some code to delete the S3 file containing the old profile picture.
-        
-        console.log(`Successfully updated profile picture for ${username}.`);
-    } catch (error) {
-        console.error(`Error updating ${username} profile picture.`);
-    }
+    await DataStore.save(
+      User.copyOf(original, (updated) => {
+        updated.profilePicture = newProfilePicture;
+      })
+    );
+    //We may want to add in some code to delete the S3 file containing the old profile picture.
+
+    console.log(`Successfully updated profile picture for ${username}.`);
+  } catch (error) {
+    console.error(`Error updating ${username} profile picture.`);
+  }
 }
 
 /**
@@ -101,18 +112,19 @@ export async function updateProfilePicture(username, newProfilePicture) {
  * @param {String} newBio the new bio
  */
 export async function updateBio(username, newBio) {
-    try {
-        const userId = await getUserId(username);
+  try {
+    const userId = await getUserId(username);
 
-        const original = await DataStore.query(User, userId);
+    const original = await DataStore.query(User, userId);
 
-        await DataStore.save(User.copyOf(original, updated => {
-                updated.bio = newBio
-            })
-        );
-        
-        console.log(`Successfully updated bio for ${username}.`);
-    } catch (error) {
-        console.error(`Error updating ${username} bio.`);
-    }
+    await DataStore.save(
+      User.copyOf(original, (updated) => {
+        updated.bio = newBio;
+      })
+    );
+
+    console.log(`Successfully updated bio for ${username}.`);
+  } catch (error) {
+    console.error(`Error updating ${username} bio.`);
+  }
 }

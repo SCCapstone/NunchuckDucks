@@ -16,7 +16,7 @@ const ProfileMini = ({ style, src, onClick, imageStyle }) => {
       {src && (
         <Image
           style={imageStyles}
-          resizeMode={"contain"}//was center
+          resizeMode={"contain"} //was center
           source={{
             uri: src,
           }}

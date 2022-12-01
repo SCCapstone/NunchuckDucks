@@ -10,10 +10,10 @@ import { findUserByUsername } from "../crud/UserOperations";
 import ProfileMini from "../components/ProfileMini";
 import CustomButton from "../components/CustomButton";
 import { useNavigation } from "@react-navigation/native";
-import { useState, useEffect, useCallback} from "react";
+import { useState, useEffect, useCallback } from "react";
 import SignOutButton from "../components/signoutbutton/SignOutButton";
 import * as ImagePicker from "expo-image-picker";
-
+import { getProfilePicture } from "../crud/UserOperations";
 
 //Need to also create the buttons to be clickable and call different functions
 export function ProfileScreen(props) {
@@ -21,16 +21,29 @@ export function ProfileScreen(props) {
   const [username, setUsername] = useState("");
   const [followercount, setFollowerCount] = useState("");
   const [followingcount, setFollowingCount] = useState("");
-  const [image, setImage] = useState("");
-  
-  useEffect(() => {
+  const [image, setImage] = useState(""); // the image src to be displayed
+  const [imageFromAWS, setImageFromAWS] = useState("");
+
+  /*useEffect(() => {
     getUserImageSrc(username);
-  }, [username]);
+  }, [username]);*/
+
+  useEffect(() => {
+    getUsername(); // sets username state
+
+    //setImage(username + "/pfp.png");
+    getUserImageSrc(username); // sets image src
+    console.log("Username grabbed to display.");
+    // getFollowerCount();
+    // console.log("Follower Count Grabbed");
+    // getFollowingCount();
+    // console.log("Following Count Grabbed");
+  }, []);
 
   const getUserImageSrc = useCallback(async (username) => {
     const user = await findUserByUsername(username);
     if (!user || !user.profilePicture) return;
-    setImage(user.profilePicture);
+    setImageFromAWS(user.profilePicture);
   }, []);
 
   async function getUsername() {
@@ -39,7 +52,7 @@ export function ProfileScreen(props) {
       let username = attributes.preferred_username;
       setUsername(username);
     } catch {
-      console.error("error getting username of current authenticated user");
+      console.error("Error getting username of current authenticated user");
     }
   }
 
@@ -53,26 +66,26 @@ export function ProfileScreen(props) {
     setFollowingCount(followingcoun.length);
   }
 
-    const addProfileImage = async () => {
-      let _image = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes:
-          ImagePicker.MediaTypeOptions.Images /*Only allow image upload */,
-        allowsEditing: true /*true= pull up an editing interface after image upload */,
-        aspect: [1, 1] /*1:1 image ratio, so it will be a square */,
-        quality: 1 /*highest quality image possible, on a scale of 0-1 we want 1 lol */,
-      });
-      setImage(_image.uri);
-      updateProfilePicture(username,image);
+  const addProfileImage = async () => {
+    let _image = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes:
+        ImagePicker.MediaTypeOptions.Images /*Only allow image upload */,
+      allowsEditing: true /*true= pull up an editing interface after image upload */,
+      aspect: [1, 1] /*1:1 image ratio, so it will be a square */,
+      quality: 1 /*highest quality image possible, on a scale of 0-1 we want 1 lol */,
+    });
+    setImage(_image.uri);
+    try {
+      const response = await fetch(image);
+      const blob = await response.blob();
+      const fileName = username + "/pfp.png";
+      console.log(fileName);
+      Storage.put(fileName, blob);
+    } catch {
+      console.log("Error uploading image to S3");
     }
-
-  useEffect(() => {
-    getUsername();
-    console.log("Username grabbed to display.");
-    // getFollowerCount();
-    // console.log("Follower Count Grabbed");
-    // getFollowingCount();
-    // console.log("Following Count Grabbed");
-  });
+    //updateProfilePicture(username,image);
+  };
 
   return (
     <View
@@ -84,7 +97,7 @@ export function ProfileScreen(props) {
       }}
     >
       <View style={{ paddingTop: 25 }}>
-        <ProfileMini onClick={() => addProfileImage()} src={image}/>
+        <ProfileMini onClick={() => addProfileImage()} src={imageFromAWS} />
       </View>
 
       <Text style={styles.username}>@{username}</Text>
@@ -99,7 +112,7 @@ export function ProfileScreen(props) {
         //onClick={needs to add friend here}
         ></CustomButton>
         */}
-        <SignOutButton/>
+        <SignOutButton />
       </View>
 
       <View style={{ flexDirection: "row", alignContent: "center" }}>
@@ -118,7 +131,7 @@ export function ProfileScreen(props) {
         <CustomButton
           text="Followers"
           style={{ width: 100, borderRadius: 20 }}
-          textStyle={{ fontSize: 15, fontWeight: '700' }}
+          textStyle={{ fontSize: 15, fontWeight: "700" }}
           onClick={() =>
             navigation.navigate("Followers", { isFollowerPage: true })
           }
@@ -129,7 +142,7 @@ export function ProfileScreen(props) {
         <CustomButton
           text="Following"
           style={{ width: 100, borderRadius: 20 }}
-          textStyle={{ fontSize: 15, fontWeight: '700' }}
+          textStyle={{ fontSize: 15, fontWeight: "700" }}
           onClick={() =>
             navigation.navigate("Followers", { isFollowerPage: false })
           }
