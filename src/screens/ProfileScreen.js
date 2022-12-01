@@ -1,18 +1,16 @@
-import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { Auth } from "aws-amplify";
-import { DataStore } from "@aws-amplify/datastore";
-import Amplify from "aws-amplify";
 import GoalSummary from "../components/GoalSummary";
 import { blueThemeColor, grayThemeColor } from "../library/constants";
 import React from "react";
 import { getFollowsList } from "../crud/FollowingOperations";
-import { ImageSelector} from "../components/ImageSelector";
 import { getFollowersList } from "../crud/FollowersOperations";
+import { updateProfilePicture } from "../crud/UserOperations";
 import { findUserByUsername } from "../crud/UserOperations";
 import ProfileMini from "../components/ProfileMini";
 import CustomButton from "../components/CustomButton";
 import { useNavigation } from "@react-navigation/native";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback} from "react";
 import SignOutButton from "../components/signoutbutton/SignOutButton";
 import * as ImagePicker from "expo-image-picker";
 
@@ -24,16 +22,15 @@ export function ProfileScreen(props) {
   const [followercount, setFollowerCount] = useState("");
   const [followingcount, setFollowingCount] = useState("");
   const [image, setImage] = useState("");
-  const [userImageSrc, setUserImageSrc] = useState("");
-
+  
   useEffect(() => {
     getUserImageSrc(username);
-  }, [username, image]);
+  }, [username]);
 
   const getUserImageSrc = useCallback(async (username) => {
     const user = await findUserByUsername(username);
     if (!user || !user.profilePicture) return;
-    setUserImageSrc(user.profilePicture);
+    setImage(user.profilePicture);
   }, []);
 
   async function getUsername() {
@@ -42,11 +39,10 @@ export function ProfileScreen(props) {
       let username = attributes.preferred_username;
       setUsername(username);
     } catch {
-      console.error("error getting username");
+      console.error("error getting username of current authenticated user");
     }
   }
 
-  
   async function getFollowerCount() {
     const followercoun = await getFollowersList(username);
     setFollowerCount(followercoun.length);
@@ -57,21 +53,7 @@ export function ProfileScreen(props) {
     setFollowingCount(followingcoun.length);
   }
 
-  function getFileName() {
-    // used to create a fileName for the image; username/dd--mm-yyyy-timeInMilliseconds
-    /*TODO add folder of person's username*/
-  
-    var today = new Date();
-    var dd = String(today.getDate()).padStart(2, "0");
-    var mm = String(today.getMonth() + 1).padStart(2, "0"); //January is 0!
-    var yyyy = String(today.getFullYear());
-    var time = String(today.getTime());
-  
-    var name = mm + "-" + dd + "-" + yyyy + "-" + time;
-    return name;
-  }
-
-    const addImage = async () => {
+    const addProfileImage = async () => {
       let _image = await ImagePicker.launchImageLibraryAsync({
         mediaTypes:
           ImagePicker.MediaTypeOptions.Images /*Only allow image upload */,
@@ -80,14 +62,7 @@ export function ProfileScreen(props) {
         quality: 1 /*highest quality image possible, on a scale of 0-1 we want 1 lol */,
       });
       setImage(_image.uri);
-
-      const { attributes } = await Auth.currentAuthenticatedUser();
-      let username = attributes.preferred_username;
-      var fileName = username + "/" + getFileName();
-      const response = await fetch(image);
-      const blob = await response.blob();
-      Storage.put(fileName, blob);
-      
+      updateProfilePicture(username,image);
     }
 
   useEffect(() => {
@@ -109,7 +84,7 @@ export function ProfileScreen(props) {
       }}
     >
       <View style={{ paddingTop: 25 }}>
-        <ProfileMini onClick={() => addImage()} src={userImageSrc}/>
+        <ProfileMini onClick={() => addProfileImage()} src={image}/>
       </View>
 
       <Text style={styles.username}>@{username}</Text>
