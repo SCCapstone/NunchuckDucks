@@ -54,6 +54,12 @@ export async function findUserByUsername(username) {
     console.error(`Error finding ${username}`, error);
   }
 }
+
+/**
+ * This function returns the profile picture
+ * @param {String} username 
+ * @returns image
+ */
 export async function getProfilePicture(username) {
   try {
     const user = await DataStore.query(User, (u) => u.username("eq", username));
