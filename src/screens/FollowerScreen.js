@@ -33,6 +33,8 @@ export function FollowerScreen({ route, navigation }) {
     const list = isFollowerPage
       ? await getFollowersList(currUser)
       : await getFollowsList(currUser);
+    // Maybe include guard clause to guarantee array
+    if (!Array.isArray(list)) return;
     setList(list);
   }, []);
 

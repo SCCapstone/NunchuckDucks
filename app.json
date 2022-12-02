@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "NunchuckDucks",
-    "slug": "NunchuckDucks",
+    "slug": "gymbit",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -28,6 +28,12 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "0777130d-6706-4342-aa9d-630e787674cd"
+      }
+    },
+    "owner": "jewzydee"
   }
 }

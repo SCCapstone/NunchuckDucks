@@ -12,7 +12,7 @@ import Storage from "@aws-amplify/storage";
 import ImageSelector from "../components/ImageSelector";
 import { Auth } from "aws-amplify";
 import { useNavigation } from "@react-navigation/native";
-import { createPost } from "../crud/PostOperations";
+import getPictureFileName from "../library/getPictureFileName";
 //import { createPost } from "../crud/PostOperations";
 
 const styles = StyleSheet.create({
@@ -71,7 +71,7 @@ export function CreatePost() {
       // try catch just in case sending the image doesn't work
       const { attributes } = await Auth.currentAuthenticatedUser();
       let username = attributes.preferred_username;
-      var fileName = username + "/" + getFileName();
+      var fileName = username + "/" + getPictureFileName();
       const response = await fetch(image);
       const blob = await response.blob();
       await createPost(text, fileName, username);
@@ -106,20 +106,6 @@ export function CreatePost() {
       </View>
     </View>
   );
-}
-
-function getFileName() {
-  // used to create a fileName for the image; username/dd--mm-yyyy-timeInMilliseconds
-  /*TODO add folder of person's username*/
-
-  var today = new Date();
-  var dd = String(today.getDate()).padStart(2, "0");
-  var mm = String(today.getMonth() + 1).padStart(2, "0"); //January is 0!
-  var yyyy = String(today.getFullYear());
-  var time = String(today.getTime());
-
-  var name = mm + "-" + dd + "-" + yyyy + "-" + time;
-  return name;
 }
 
 function WorkoutSelection(props) {

@@ -14,12 +14,13 @@ const SignOutButton = () => {
     return (
         <Pressable style={{
             backgroundColor: '#2e8cff',
-            width: 80,
-            height: 50,
+            width: 100,
+            height: 40,
+            borderRadius: 30,
             justifyContent: 'center',
         }}
         onPress ={() => signOut()}>
-                <Text style={{fontWeight: 'bold', textAlign: 'center', fontSize: 15, color: 'white'}}>Sign Out</Text>
+                <Text style={{fontWeight: 'bold', textAlign: 'center', fontSize: 18, color: 'white'}}>Sign Out</Text>
         </Pressable>
     )
 }

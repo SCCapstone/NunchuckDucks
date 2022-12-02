@@ -1,17 +1,112 @@
-import { View, Text, StyleSheet, Image } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { Auth } from "aws-amplify";
-import { withAuthenticator } from "aws-amplify-react-native";
-import Amplify from "aws-amplify";
-import SignOutButton from "../components/signoutbutton/SignOutButton";
 import GoalSummary from "../components/GoalSummary";
 import { blueThemeColor, grayThemeColor } from "../library/constants";
 import React from "react";
+import { getFollowsList } from "../crud/FollowingOperations";
+import { getFollowersList } from "../crud/FollowersOperations";
+import { updateProfilePicture } from "../crud/UserOperations";
+import { findUserByUsername } from "../crud/UserOperations";
 import ProfileMini from "../components/ProfileMini";
 import CustomButton from "../components/CustomButton";
-import { Header } from "react-native/Libraries/NewAppScreen";
+import { useNavigation } from "@react-navigation/native";
+import { useState, useEffect, useCallback } from "react";
+import SignOutButton from "../components/signoutbutton/SignOutButton";
+import * as ImagePicker from "expo-image-picker";
+import { getProfilePicture } from "../crud/UserOperations";
+import Storage from "@aws-amplify/storage";
+import { DataStore } from "aws-amplify";
 
 //Need to also create the buttons to be clickable and call different functions
-export function ProfileScreen({ username }) {
+export function ProfileScreen(props) {
+  const navigation = useNavigation();
+  const [username, setUsername] = useState("");
+  const [followercount, setFollowerCount] = useState("");
+  const [followingcount, setFollowingCount] = useState("");
+  // const [image, setImage] = useState(""); // the image src to be displayed
+  const [imageFromAWS, setImageFromAWS] = useState("");
+  const [reload, setReload] = useState(false);
+  /*useEffect(() => {
+    getUserImageSrc(username);
+  }, [username]);*/
+
+  useEffect(() => {
+    getUsernameAndImageSRC();
+    //setImage(username + "/pfp.png");
+
+    /*delay(2000);
+    console.log("hi");
+    setReload(true);*/
+    // getFollowerCount();
+    // console.log("Follower Count Grabbed");
+    // getFollowingCount();
+    // console.log("Following Count Grabbed");*/
+  }, []);
+
+  async function getUsernameAndImageSRC() {
+    await getUsername(); // sets username state
+    await getImageSRC();
+  }
+
+  const getImageSRC = async () => {
+    const { attributes } = await Auth.currentAuthenticatedUser();
+    let username = attributes.preferred_username;
+    const pic = await Storage.get(username + "/pfp.png");
+    setImageFromAWS(pic);
+  };
+
+  // const getUserImageSrc = useCallback(async (username) => {
+  //   /*const user = await findUserByUsername(username);
+  //   if (!user || !user.profilePicture) return;*/
+  //   const pic = await Storage.get(username + "/pfp.png");
+  //   setImageFromAWS(pic);
+  // }, []);
+
+  // const delay = (ms) => new Promise((res) => setTimeout(res, ms));
+
+  async function getUsername() {
+    try {
+      const { attributes } = await Auth.currentAuthenticatedUser();
+      let username = attributes.preferred_username;
+      setUsername(username);
+    } catch {
+      console.error("Error getting username of current authenticated user");
+    }
+  }
+
+  // async function getFollowerCount() {
+  //   const followercoun = await getFollowersList(username);
+  //   setFollowerCount(followercoun.length);
+  // }
+
+  // async function getFollowingCount() {
+  //   const followingcoun = await getFollowsList(username);
+  //   setFollowingCount(followingcoun.length);
+  // }
+
+  const addProfileImage = async () => {
+    let _image = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes:
+        ImagePicker.MediaTypeOptions.Images /*Only allow image upload */,
+      allowsEditing: true /*true= pull up an editing interface after image upload */,
+      aspect: [1, 1] /*1:1 image ratio, so it will be a square */,
+      quality: 1 /*highest quality image possible, on a scale of 0-1 we want 1 lol */,
+    });
+    // setImage(_image.uri);
+    try {
+      const { attributes } = await Auth.currentAuthenticatedUser();
+      let username = attributes.preferred_username;
+      const response = await fetch(_image.uri);
+      const blob = await response.blob();
+      const fileName = username + "/pfp.png";
+      //updateProfilePicture(username, fileName);
+      Storage.put(fileName, blob);
+    } catch (error) {
+      console.log("Error uploading image to S3", error);
+    }
+    //updateProfilePicture(username,image);
+  };
+
   return (
     <View
       style={{
@@ -22,19 +117,28 @@ export function ProfileScreen({ username }) {
       }}
     >
       <View style={{ paddingTop: 25 }}>
-        <ProfileMini></ProfileMini>
+        <ProfileMini onClick={() => addProfileImage()} src={imageFromAWS} />
       </View>
 
-      <Text style={styles.username}>@{username}Example</Text>
-
+      <Text style={styles.username}>@{username}</Text>
       <View style={{ flexDirection: "row", paddingBottom: 15, maxWidth: 250 }}>
-        <CustomButton text="Add Friend +"></CustomButton>
+        {/*
+        <CustomButton 
+        text="Add Friend"
+        textStyle = {{fontSize: 17}}
+        style = {{borderRadius:20}}
+        //onClick = {() => }
+        //TO-DO 
+        //onClick={needs to add friend here}
+        ></CustomButton>
+        */}
+        <SignOutButton />
       </View>
 
       <View style={{ flexDirection: "row", alignContent: "center" }}>
-        <Text style={styles.followercount}>74</Text>
+        <Text style={styles.followercount}>{followercount}</Text>
         <View style={{ width: 157 }}></View>
-        <Text style={styles.followercount}>86</Text>
+        <Text style={styles.followercount}>{followingcount}</Text>
       </View>
 
       <View
@@ -46,19 +150,36 @@ export function ProfileScreen({ username }) {
       >
         <CustomButton
           text="Followers"
-          textStyle={{ fontSize: 15 }}
+          style={{ width: 100, borderRadius: 20 }}
+          textStyle={{ fontSize: 15, fontWeight: "700" }}
+          onClick={() =>
+            navigation.navigate("Followers", { isFollowerPage: true })
+          }
         ></CustomButton>
-        <View style={{ width: 60 }}></View>
+
+        <View style={{ width: 83 }}></View>
+
         <CustomButton
           text="Following"
-          textStyle={{ fontSize: 15 }}
+          style={{ width: 100, borderRadius: 20 }}
+          textStyle={{ fontSize: 15, fontWeight: "700" }}
+          onClick={() =>
+            navigation.navigate("Followers", { isFollowerPage: false })
+          }
         ></CustomButton>
       </View>
-      <View style={{ flexDirection: "row", paddingBottom: 30 }}>
+      {/* Need for calendar style.
+      <View style={{ flexdirection:"row", paddingBottom:30}}>
+        
+        <TouchableOpacity onPress = {() => navigation.navigate("Calendar")}>
         <View style={styles.calendar} />
-      </View>
+        </TouchableOpacity>
 
-      <GoalSummary></GoalSummary>
+      </View>
+    */}
+      <TouchableOpacity onPress={() => navigation.navigate("Goals")}>
+        <GoalSummary></GoalSummary>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -66,7 +187,7 @@ const styles = StyleSheet.create({
   username: {
     paddingTop: 20,
     paddingBottom: 3,
-    fontSize: 18,
+    fontSize: 22,
     fontWeight: "bold",
   },
   mainbutton: {
@@ -78,7 +199,7 @@ const styles = StyleSheet.create({
   },
   //calendar style is placeholder for calendar mini.
   calendar: {
-    width: "70%",
+    width: 250,
     height: 180,
     borderWidth: 2,
     borderRadius: 9,
