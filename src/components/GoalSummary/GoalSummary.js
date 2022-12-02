@@ -20,7 +20,7 @@ const GoalSummary = () => {
   }, []);
 
   const listGoals = goals.slice(0, 3).map((goal, index) => (
-    <View style={styles.goaltextcontainer}>
+    <View key={goal.id} style={styles.goaltextcontainer}>
       <Text style={styles.goaltitle}>Goal {index + 1}: </Text>
       <Text style={styles.goaltext}>{goal.content}</Text>
     </View>
