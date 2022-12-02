@@ -13,7 +13,7 @@ import ImageSelector from "../components/ImageSelector";
 import { Auth } from "aws-amplify";
 import { useNavigation } from "@react-navigation/native";
 import getPictureFileName from "../library/getPictureFileName";
-//import { createPost } from "../crud/PostOperations";
+import { createPost } from "../crud/PostOperations";
 
 const styles = StyleSheet.create({
   header: {
