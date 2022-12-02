@@ -1,5 +1,6 @@
 import { DataStore } from "aws-amplify";
 import { User } from "../models";
+import Storage from "aws-amplify";
 
 /**
  * Creates a user and saves the new user in the backend
@@ -56,7 +57,7 @@ export async function findUserByUsername(username) {
 export async function getProfilePicture(username) {
   try {
     const user = await DataStore.query(User, (u) => u.username("eq", username));
-    const photoPath = user.photo; //string path of photo
+    const photoPath = user.profilePicture; //string path of photo
     const pic = await Storage.get(photoPath);
     return pic;
   } catch {

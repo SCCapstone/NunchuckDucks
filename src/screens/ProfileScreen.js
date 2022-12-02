@@ -14,6 +14,8 @@ import { useState, useEffect, useCallback } from "react";
 import SignOutButton from "../components/signoutbutton/SignOutButton";
 import * as ImagePicker from "expo-image-picker";
 import { getProfilePicture } from "../crud/UserOperations";
+import Storage from "@aws-amplify/storage";
+import { DataStore } from "aws-amplify";
 
 //Need to also create the buttons to be clickable and call different functions
 export function ProfileScreen(props) {
@@ -21,30 +23,46 @@ export function ProfileScreen(props) {
   const [username, setUsername] = useState("");
   const [followercount, setFollowerCount] = useState("");
   const [followingcount, setFollowingCount] = useState("");
-  const [image, setImage] = useState(""); // the image src to be displayed
+  // const [image, setImage] = useState(""); // the image src to be displayed
   const [imageFromAWS, setImageFromAWS] = useState("");
-
+  const [reload, setReload] = useState(false);
   /*useEffect(() => {
     getUserImageSrc(username);
   }, [username]);*/
 
   useEffect(() => {
-    getUsername(); // sets username state
-
+    getUsernameAndImageSRC();
     //setImage(username + "/pfp.png");
-    getUserImageSrc(username); // sets image src
-    console.log("Username grabbed to display.");
+
+    /*delay(2000);
+    console.log("hi");
+    setReload(true);*/
     // getFollowerCount();
     // console.log("Follower Count Grabbed");
     // getFollowingCount();
-    // console.log("Following Count Grabbed");
+    // console.log("Following Count Grabbed");*/
   }, []);
 
-  const getUserImageSrc = useCallback(async (username) => {
-    const user = await findUserByUsername(username);
-    if (!user || !user.profilePicture) return;
-    setImageFromAWS(user.profilePicture);
-  }, []);
+  async function getUsernameAndImageSRC() {
+    await getUsername(); // sets username state
+    await getImageSRC();
+  }
+
+  const getImageSRC = async () => {
+    const { attributes } = await Auth.currentAuthenticatedUser();
+    let username = attributes.preferred_username;
+    const pic = await Storage.get(username + "/pfp.png");
+    setImageFromAWS(pic);
+  };
+
+  // const getUserImageSrc = useCallback(async (username) => {
+  //   /*const user = await findUserByUsername(username);
+  //   if (!user || !user.profilePicture) return;*/
+  //   const pic = await Storage.get(username + "/pfp.png");
+  //   setImageFromAWS(pic);
+  // }, []);
+
+  // const delay = (ms) => new Promise((res) => setTimeout(res, ms));
 
   async function getUsername() {
     try {
@@ -56,15 +74,15 @@ export function ProfileScreen(props) {
     }
   }
 
-  async function getFollowerCount() {
-    const followercoun = await getFollowersList(username);
-    setFollowerCount(followercoun.length);
-  }
+  // async function getFollowerCount() {
+  //   const followercoun = await getFollowersList(username);
+  //   setFollowerCount(followercoun.length);
+  // }
 
-  async function getFollowingCount() {
-    const followingcoun = await getFollowsList(username);
-    setFollowingCount(followingcoun.length);
-  }
+  // async function getFollowingCount() {
+  //   const followingcoun = await getFollowsList(username);
+  //   setFollowingCount(followingcoun.length);
+  // }
 
   const addProfileImage = async () => {
     let _image = await ImagePicker.launchImageLibraryAsync({
@@ -74,15 +92,17 @@ export function ProfileScreen(props) {
       aspect: [1, 1] /*1:1 image ratio, so it will be a square */,
       quality: 1 /*highest quality image possible, on a scale of 0-1 we want 1 lol */,
     });
-    setImage(_image.uri);
+    // setImage(_image.uri);
     try {
-      const response = await fetch(image);
+      const { attributes } = await Auth.currentAuthenticatedUser();
+      let username = attributes.preferred_username;
+      const response = await fetch(_image.uri);
       const blob = await response.blob();
       const fileName = username + "/pfp.png";
-      console.log(fileName);
+      //updateProfilePicture(username, fileName);
       Storage.put(fileName, blob);
-    } catch {
-      console.log("Error uploading image to S3");
+    } catch (error) {
+      console.log("Error uploading image to S3", error);
     }
     //updateProfilePicture(username,image);
   };
