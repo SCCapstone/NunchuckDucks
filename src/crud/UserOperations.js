@@ -57,7 +57,7 @@ export async function findUserByUsername(username) {
 
 /**
  * This function returns the profile picture
- * @param {String} username 
+ * @param {String} username
  * @returns image
  */
 export async function getProfilePicture(username) {
@@ -81,6 +81,7 @@ export async function getUserId(username) {
   try {
     const user = await DataStore.query(User, (u) => u.username("eq", username));
 
+    if (!user || !user.length) return "";
     console.log(`Found userID ${user[0].id} for ${username} successfully.`);
 
     return user[0].id;
