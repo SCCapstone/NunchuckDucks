@@ -22,6 +22,7 @@ export function GoalsScreen() {
   }
 
   useEffect(() => {
+    console.log("refreshing goals screen");
     goalList();
     const focusHandler = nav.addListener("focus", () => {setForceRefresh(!forceRefresh)}) //Refresh page when navigated to
   },[forceRefresh, nav]);

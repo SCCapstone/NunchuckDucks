@@ -52,12 +52,12 @@ export default function Post(props) {
   const [pfp, setPfp] = useState("");
 
   async function getPic() {
+    console.log("Retrieving pic");
     // TODO retrieve post picture from the passed entry fileName
     const pic = await Storage.get(entry.photo);
     setPicture(pic);
     try {
       const pfps3 = await Storage.get(entry.username + "/pfp.png");
-      console.log(typeof pfps3);
       setPfp(pfps3);
     } catch (error) {
       console.log("Error retrieving pfp: " + error);

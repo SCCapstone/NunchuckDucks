@@ -16,6 +16,7 @@ import * as ImagePicker from "expo-image-picker";
 import { getProfilePicture } from "../crud/UserOperations";
 import Storage from "@aws-amplify/storage";
 import { DataStore } from "aws-amplify";
+import * as FileSystem from "expo-file-system";
 
 //Need to also create the buttons to be clickable and call different functions
 export function ProfileScreen(props) {
@@ -31,6 +32,7 @@ export function ProfileScreen(props) {
   }, [username]);*/
 
   useEffect(() => {
+    console.log(imageFromAWS);
     getUsernameAndImageSRC();
     //setImage(username + "/pfp.png");
 
@@ -43,16 +45,61 @@ export function ProfileScreen(props) {
     // console.log("Following Count Grabbed");*/
   }, []);
 
+  async function findImageInCache(uri) {
+    try {
+      let info = await FileSystem.getInfoAsync(uri);
+      return { ...info, err: false };
+    } catch (error) {
+      return {
+        exists: false,
+        err: true,
+        msg: error,
+      };
+    }
+  }
+  async function cacheImage(uri, cacheUri) {
+    try {
+      const downloadImage = FileSystem.createDownloadResumable(uri, cacheUri);
+      const downloaded = await downloadImage.downloadAsync();
+      return {
+        cached: true,
+        err: false,
+        path: downloaded.uri,
+      };
+    } catch (error) {
+      return {
+        cached: false,
+        err: true,
+        msg: error,
+      };
+    }
+  }
+
   async function getUsernameAndImageSRC() {
     await getUsername(); // sets username state
     await getImageSRC();
   }
 
   const getImageSRC = async () => {
-    const { attributes } = await Auth.currentAuthenticatedUser();
-    let username = attributes.preferred_username;
-    const pic = await Storage.get(username + "/pfp.png");
-    setImageFromAWS(pic);
+    //downloadBlob(pic.Body, username + "/pfp.png");
+    let cacheDirectory = FileSystem.cacheDirectory;
+    const cacheFileUri = cacheDirectory + "pfp.png";
+    let imageExistsInCache = await findImageInCache(cacheFileUri);
+    if (imageExistsInCache.exists) {
+      setImageFromAWS(cacheFileUri);
+      console.log("Profile pic exists in cache and will be displayed");
+    } else {
+      const { attributes } = await Auth.currentAuthenticatedUser();
+      let username = attributes.preferred_username;
+      const uriAWS = await Storage.get(username + "/pfp.png");
+      let cached = await cacheImage(uriAWS, cacheFileUri);
+      if (cached.cached) {
+        console.log("cached new pfp.png");
+        setImageFromAWS(cached.path);
+      } else {
+        console.log("Error caching new pfp: ", cached.msg);
+      }
+    }
   };
 
   // const getUserImageSrc = useCallback(async (username) => {

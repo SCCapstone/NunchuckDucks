@@ -10,9 +10,9 @@ export function MutualScreen() {
   const [refresh, setRefresh] = useState(false);
   const nav = useNavigation();
   useEffect(() => {
-    const focusHandler = nav.addListener("focus", () => {
+    /*const focusHandler = nav.addListener("focus", () => {
       setRefresh(!refresh);
-    });
+    });*/
   }, [refresh, nav]);
 
   return (
