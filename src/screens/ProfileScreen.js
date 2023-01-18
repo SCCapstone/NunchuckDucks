@@ -15,9 +15,15 @@ import SignOutButton from "../components/signoutbutton/SignOutButton";
 import * as ImagePicker from "expo-image-picker";
 import { getProfilePicture } from "../crud/UserOperations";
 import Storage from "@aws-amplify/storage";
-import { DataStore } from "aws-amplify";
+import { DataStore, API, Amplify } from "aws-amplify";
 import * as FileSystem from "expo-file-system";
-
+import {
+  S3Client,
+  GetObjectAttributesCommand,
+  GetObjectCommand,
+} from "@aws-sdk/client-s3";
+import "react-native-url-polyfill/auto";
+import "react-native-get-random-values";
 //Need to also create the buttons to be clickable and call different functions
 export function ProfileScreen(props) {
   const navigation = useNavigation();
@@ -27,25 +33,85 @@ export function ProfileScreen(props) {
   // const [image, setImage] = useState(""); // the image src to be displayed
   const [imageFromAWS, setImageFromAWS] = useState("");
   const [reload, setReload] = useState(false);
+  let cacheDirectory = FileSystem.cacheDirectory;
+  const cacheImageFileUri = cacheDirectory + "pfp.png";
+  const cacheLastModifiedUri = cacheDirectory + "pfpLastModified.txt";
   /*useEffect(() => {
-    getUserImageSrc(username);
+    getUserImageSrc(username)
   }, [username]);*/
 
   useEffect(() => {
-    console.log(imageFromAWS);
-    getUsernameAndImageSRC();
-    //setImage(username + "/pfp.png");
-
-    /*delay(2000);
-    console.log("hi");
-    setReload(true);*/
-    // getFollowerCount();
-    // console.log("Follower Count Grabbed");
-    // getFollowingCount();
-    // console.log("Following Count Grabbed");*/
+    renderProfileInfo();
   }, []);
 
-  async function findImageInCache(uri) {
+  async function renderProfileInfo() {
+    await getUsername(); // sets username state
+    //console.log(username);
+    const imageCached = await getImageFromCache();
+    const lastModifiedAWS = await getLastModifiedAWS();
+
+    // we are assuming that if the image exists in client then it should exist in the backend as well
+    if (imageCached === true) {
+      console.log("Profile pic found in cache");
+      const lastModifiedCache = await getLastModifiedCache();
+      if (lastModifiedCache !== null) {
+        console.log(
+          "lastModified same in AWS and cache:",
+          lastModifiedAWS === lastModifiedCache
+        );
+        if (lastModifiedAWS > lastModifiedCache) {
+          //lastModifiedAWS has a higher alphabetical order (newer) than lastModifiedCache
+          await cacheLastModified(lastModifiedAWS);
+        }
+      } else {
+        // lastModified file not found; creating lastModified file and caching lastModifiedAWS
+        await cacheLastModified(lastModifiedAWS);
+      }
+    } else {
+      console.log("Profile pic not found in cache; pulling from AWS");
+      const { attributes } = await Auth.currentAuthenticatedUser();
+      let username = attributes.preferred_username;
+      cacheImageFromAWS(username);
+    }
+  }
+
+  async function cacheLastModified(lastModified) {
+    await FileSystem.writeAsStringAsync(cacheLastModifiedUri, lastModified, {
+      encoding: "utf8",
+    });
+  }
+
+  async function getLastModifiedCache() {
+    let lastModified = await FileSystem.readAsStringAsync(
+      cacheLastModifiedUri,
+      { encoding: "utf8" }
+    );
+    return lastModified;
+  }
+
+  async function getLastModifiedAWS() {
+    const { attributes } = await Auth.currentAuthenticatedUser();
+    let username = attributes.preferred_username;
+    let lastModified = null;
+    const myInit = {
+      queryStringParameters: {
+        username: username, // OPTIONAL
+      },
+    };
+    await API.get("getLastModified", "/getLastModified", myInit)
+      .then((response) => {
+        lastModified = response;
+      })
+      .catch((error) => {
+        console.log("Error: " + error.response);
+      });
+    return lastModified;
+  }
+  /*function setLastModifed(lastModified) {
+
+  }*/
+
+  async function findFileInCache(uri) {
     try {
       let info = await FileSystem.getInfoAsync(uri);
       return { ...info, err: false };
@@ -75,47 +141,34 @@ export function ProfileScreen(props) {
     }
   }
 
-  async function getUsernameAndImageSRC() {
-    await getUsername(); // sets username state
-    await getImageSRC();
+  async function getImageFromCache() {
+    let imageExistsInCache = await findFileInCache(cacheImageFileUri);
+    if (imageExistsInCache.exists) {
+      setImageFromAWS(cacheImageFileUri);
+      console.log("Profile pic exists in cache and will be displayed");
+      return true;
+    } else {
+      return false;
+    }
   }
 
-  const getImageSRC = async () => {
-    //downloadBlob(pic.Body, username + "/pfp.png");
-    let cacheDirectory = FileSystem.cacheDirectory;
-    const cacheFileUri = cacheDirectory + "pfp.png";
-    let imageExistsInCache = await findImageInCache(cacheFileUri);
-    if (imageExistsInCache.exists) {
-      setImageFromAWS(cacheFileUri);
-      console.log("Profile pic exists in cache and will be displayed");
+  async function cacheImageFromAWS(username) {
+    const uriAWS = await Storage.get(username + "/pfp.png");
+    let cached = await cacheImage(uriAWS, cacheImageFileUri);
+    if (cached.cached) {
+      console.log("cached new pfp.png");
+      setImageFromAWS(cached.path);
     } else {
-      const { attributes } = await Auth.currentAuthenticatedUser();
-      let username = attributes.preferred_username;
-      const uriAWS = await Storage.get(username + "/pfp.png");
-      let cached = await cacheImage(uriAWS, cacheFileUri);
-      if (cached.cached) {
-        console.log("cached new pfp.png");
-        setImageFromAWS(cached.path);
-      } else {
-        console.log("Error caching new pfp: ", cached.msg);
-      }
+      console.log("Error caching new pfp: ", cached.msg);
     }
-  };
-
-  // const getUserImageSrc = useCallback(async (username) => {
-  //   /*const user = await findUserByUsername(username);
-  //   if (!user || !user.profilePicture) return;*/
-  //   const pic = await Storage.get(username + "/pfp.png");
-  //   setImageFromAWS(pic);
-  // }, []);
-
-  // const delay = (ms) => new Promise((res) => setTimeout(res, ms));
+  }
 
   async function getUsername() {
     try {
       const { attributes } = await Auth.currentAuthenticatedUser();
       let username = attributes.preferred_username;
       setUsername(username);
+      return username;
     } catch {
       console.error("Error getting username of current authenticated user");
     }
@@ -141,13 +194,14 @@ export function ProfileScreen(props) {
     });
     // setImage(_image.uri);
     try {
-      const { attributes } = await Auth.currentAuthenticatedUser();
-      let username = attributes.preferred_username;
+      //const { attributes } = await Auth.currentAuthenticatedUser();
+      //let username = attributes.preferred_username;
       const response = await fetch(_image.uri);
       const blob = await response.blob();
       const fileName = username + "/pfp.png";
       //updateProfilePicture(username, fileName);
-      Storage.put(fileName, blob);
+      await Storage.put(fileName, blob);
+      const uriAWS = await Storage.get(username + "/pfp.png");
     } catch (error) {
       console.log("Error uploading image to S3", error);
     }

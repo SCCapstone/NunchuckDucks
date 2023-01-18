@@ -10,7 +10,7 @@ import { ProfileScreen } from "./src/screens/ProfileScreen.js";
 import { FollowerScreen } from "./src/screens/FollowerScreen.js";
 import { CreateGoalScreen } from "./src/screens/CreateGoalScreen.js";
 import Navbar from "./src/components/Navbar";
-import { Amplify } from "@aws-amplify/core";
+import { Amplify, API } from "@aws-amplify/core";
 import awsmobile from "./src/aws-exports";
 import { withAuthenticator } from "aws-amplify-react-native";
 
@@ -18,6 +18,14 @@ Amplify.configure({
   ...awsmobile,
   Analytics: {
     disabled: true,
+  },
+  API: {
+    endpoints: [
+      {
+        name: "getLastModified",
+        endpoint: "https://5rr13okysb.execute-api.us-east-1.amazonaws.com",
+      },
+    ],
   },
 });
 const Stack = createNativeStackNavigator();
