@@ -7,6 +7,16 @@ import { getFollowsList } from "../crud/FollowingOperations";
 import { getFollowersList } from "../crud/FollowersOperations";
 import { updateProfilePicture } from "../crud/UserOperations";
 import { findUserByUsername } from "../crud/UserOperations";
+import {
+  getLastModifiedCache,
+  getLastModifiedAWS,
+  cacheLastModified,
+  getImageFromCache,
+  cacheImageFromAWS,
+  saveImageToAWS,
+  getCacheImageFileUri,
+  getCacheLastModifiedUri,
+} from "../crud/CacheOperations";
 import ProfileMini from "../components/ProfileMini";
 import CustomButton from "../components/CustomButton";
 import { useNavigation } from "@react-navigation/native";
@@ -17,11 +27,6 @@ import { getProfilePicture } from "../crud/UserOperations";
 import Storage from "@aws-amplify/storage";
 import { DataStore, API, Amplify } from "aws-amplify";
 import * as FileSystem from "expo-file-system";
-import {
-  S3Client,
-  GetObjectAttributesCommand,
-  GetObjectCommand,
-} from "@aws-sdk/client-s3";
 import "react-native-url-polyfill/auto";
 import "react-native-get-random-values";
 //Need to also create the buttons to be clickable and call different functions
@@ -30,12 +35,13 @@ export function ProfileScreen(props) {
   const [username, setUsername] = useState("");
   const [followercount, setFollowerCount] = useState("");
   const [followingcount, setFollowingCount] = useState("");
+  const [showMakePfp, setShowMakePfp] = useState(false);
   // const [image, setImage] = useState(""); // the image src to be displayed
-  const [imageFromAWS, setImageFromAWS] = useState("");
+  const [profilePic, setProfilePic] = useState("");
   const [reload, setReload] = useState(false);
-  let cacheDirectory = FileSystem.cacheDirectory;
-  const cacheImageFileUri = cacheDirectory + "pfp.png";
-  const cacheLastModifiedUri = cacheDirectory + "pfpLastModified.txt";
+
+  // const cacheImageFileUri = cacheDirectory + "pfp.png";
+  //const cacheLastModifiedUri = cacheDirectory + "pfpLastModified.txt";
   /*useEffect(() => {
     getUserImageSrc(username)
   }, [username]);*/
@@ -45,121 +51,73 @@ export function ProfileScreen(props) {
   }, []);
 
   async function renderProfileInfo() {
-    await getUsername(); // sets username state
-    //console.log(username);
-    const imageCached = await getImageFromCache();
-    const lastModifiedAWS = await getLastModifiedAWS();
+    // sets username state, however it doesn't work? The reason I set the username
+    // in future cases is because otherwise username would be "" and not what this function intends to do
+    //await getUsername();
+    // just command f and search for "let username". All those instances SHOULD be
+    // commented/deleted but at this point they are still necessary.
 
-    // we are assuming that if the image exists in client then it should exist in the backend as well
-    if (imageCached === true) {
-      console.log("Profile pic found in cache");
-      const lastModifiedCache = await getLastModifiedCache();
-      if (lastModifiedCache !== null) {
-        console.log(
-          "lastModified same in AWS and cache:",
-          lastModifiedAWS === lastModifiedCache
-        );
-        if (lastModifiedAWS > lastModifiedCache) {
-          //lastModifiedAWS has a higher alphabetical order (newer) than lastModifiedCache
-          await cacheLastModified(lastModifiedAWS);
-        }
-      } else {
-        // lastModified file not found; creating lastModified file and caching lastModifiedAWS
-        await cacheLastModified(lastModifiedAWS);
-      }
-    } else {
-      console.log("Profile pic not found in cache; pulling from AWS");
-      const { attributes } = await Auth.currentAuthenticatedUser();
-      let username = attributes.preferred_username;
-      cacheImageFromAWS(username);
-    }
-  }
-
-  async function cacheLastModified(lastModified) {
-    await FileSystem.writeAsStringAsync(cacheLastModifiedUri, lastModified, {
-      encoding: "utf8",
-    });
-  }
-
-  async function getLastModifiedCache() {
-    let lastModified = await FileSystem.readAsStringAsync(
-      cacheLastModifiedUri,
-      { encoding: "utf8" }
-    );
-    return lastModified;
-  }
-
-  async function getLastModifiedAWS() {
     const { attributes } = await Auth.currentAuthenticatedUser();
     let username = attributes.preferred_username;
-    let lastModified = null;
-    const myInit = {
-      queryStringParameters: {
-        username: username, // OPTIONAL
-      },
-    };
-    await API.get("getLastModified", "/getLastModified", myInit)
-      .then((response) => {
-        lastModified = response;
-      })
-      .catch((error) => {
-        console.log("Error: " + error.response);
-      });
-    return lastModified;
-  }
-  /*function setLastModifed(lastModified) {
+    console.log(lastModifiedAWS);
+    //const cacheImageFileUri = cacheDirectory + username + "pfp.png";
+    //const cacheLastModifiedUri = cacheDirectory + username + "pfp.png";
+    const cachedImage = await getImageFromCache();
 
-  }*/
-
-  async function findFileInCache(uri) {
-    try {
-      let info = await FileSystem.getInfoAsync(uri);
-      return { ...info, err: false };
-    } catch (error) {
-      return {
-        exists: false,
-        err: true,
-        msg: error,
-      };
-    }
-  }
-  async function cacheImage(uri, cacheUri) {
-    try {
-      const downloadImage = FileSystem.createDownloadResumable(uri, cacheUri);
-      const downloaded = await downloadImage.downloadAsync();
-      return {
-        cached: true,
-        err: false,
-        path: downloaded.uri,
-      };
-    } catch (error) {
-      return {
-        cached: false,
-        err: true,
-        msg: error,
-      };
-    }
-  }
-
-  async function getImageFromCache() {
-    let imageExistsInCache = await findFileInCache(cacheImageFileUri);
-    if (imageExistsInCache.exists) {
-      setImageFromAWS(cacheImageFileUri);
-      console.log("Profile pic exists in cache and will be displayed");
-      return true;
+    // we are assuming that if the image exists in client then it should exist in the backend as well
+    if (cachedImage !== "") {
+      console.log(
+        "Profile pic found in cache; displaying and checking if it is most recent version"
+      );
+      setProfilePic(cachedImage);
+      const lastModifiedAWS = await getLastModifiedAWS(username);
+      const lastModifiedCache = await getLastModifiedCache(username);
+      if (lastModifiedCache !== null) {
+        if (lastModifiedAWS > lastModifiedCache) {
+          //lastModifiedAWS has a higher alphabetical order (newer) than lastModifiedCache
+          console.log(
+            "lastModifiedAWS found to be newer than lastModifiedCache; updating pfp and lastModified"
+          );
+          let imageFromAWS = await cacheImageFromAWS(username);
+          await cacheLastModified(username, lastModifiedAWS);
+          setProfilePic(imageFromAWS);
+        } else if (lastModifiedCache < lastModifiedAWS) {
+          console.log(
+            "lastModifiedCache found to be newer than lastModifiedAWS; updating pfp in the backend"
+          );
+          let fileName = username + "/pfp.png";
+          saveImageToAWS(fileName, getCacheImageFileUri);
+        } else {
+          console.log(
+            "lastModifiedCache matches lastModifiedAWS; nothing to be done"
+          );
+        }
+      } else {
+        console.log(
+          "lastModified file not found; caching lastModified val found in AWS and updating pic just in case"
+        );
+        let imageFromAWS = await cacheImageFromAWS(username);
+        await cacheLastModified(username, lastModifiedAWS);
+        setProfilePic(imageFromAWS);
+      }
     } else {
-      return false;
-    }
-  }
-
-  async function cacheImageFromAWS(username) {
-    const uriAWS = await Storage.get(username + "/pfp.png");
-    let cached = await cacheImage(uriAWS, cacheImageFileUri);
-    if (cached.cached) {
-      console.log("cached new pfp.png");
-      setImageFromAWS(cached.path);
-    } else {
-      console.log("Error caching new pfp: ", cached.msg);
+      console.log(
+        "Profile pic not found in cache; checking if it is in the backend"
+      );
+      const lastModifiedAWS = await getLastModifiedAWS(username);
+      if (lastModifiedAWS === "None") {
+        console.log(
+          "no pfp found in backend; suggesting the user to make a pfp"
+        );
+        setShowMakePfp(true);
+      } else {
+        console.log(
+          "pfp was found in backend; caching pfp and lastModified val"
+        );
+        let imageFromAWS = await cacheImageFromAWS(username);
+        await cacheLastModified(username, lastModifiedAWS);
+        setProfilePic(imageFromAWS);
+      }
     }
   }
 
@@ -194,8 +152,8 @@ export function ProfileScreen(props) {
     });
     // setImage(_image.uri);
     try {
-      //const { attributes } = await Auth.currentAuthenticatedUser();
-      //let username = attributes.preferred_username;
+      const { attributes } = await Auth.currentAuthenticatedUser();
+      let username = attributes.preferred_username;
       const response = await fetch(_image.uri);
       const blob = await response.blob();
       const fileName = username + "/pfp.png";
@@ -218,7 +176,7 @@ export function ProfileScreen(props) {
       }}
     >
       <View style={{ paddingTop: 25 }}>
-        <ProfileMini onClick={() => addProfileImage()} src={imageFromAWS} />
+        <ProfileMini onClick={() => addProfileImage()} src={profilePic} />
       </View>
 
       <Text style={styles.username}>@{username}</Text>
