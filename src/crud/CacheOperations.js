@@ -15,13 +15,18 @@ export async function getCacheImageFileUri(username) {
 
 export async function cacheLastModified(username, lastModifiedMessage) {
   const cacheLastModifiedUri = cacheDirectory + username + "lastModified.txt";
-  await FileSystem.writeAsStringAsync(
-    cacheLastModifiedUri,
-    lastModifiedMessage,
-    {
-      encoding: "utf8",
-    }
-  );
+  try {
+    await FileSystem.writeAsStringAsync(
+      cacheLastModifiedUri,
+      lastModifiedMessage,
+      {
+        encoding: "utf8",
+      }
+    );
+    console.log("Success: cached lastModified attribute");
+  } catch (error) {
+    console.log("Error: Could not cache last modified attribute", error);
+  }
 }
 
 export async function getLastModifiedCache(username) {
@@ -42,6 +47,7 @@ export async function getLastModifiedAWS(username) {
   await API.get("getLastModified", "/getLastModified", myInit)
     .then((response) => {
       lastModified = response;
+      console.log("Success: got lastModified from AWS");
     })
     .catch((error) => {
       console.log("Error: " + error.response);
@@ -68,12 +74,14 @@ export async function cacheImage(uri, cacheUri) {
   try {
     const downloadImage = FileSystem.createDownloadResumable(uri, cacheUri);
     const downloaded = await downloadImage.downloadAsync();
+    console.log("Success: cached image");
     return {
       cached: true,
       err: false,
       path: downloaded.uri,
     };
   } catch (error) {
+    console.log("Error: couldn't cache image");
     return {
       cached: false,
       err: true,
@@ -82,7 +90,7 @@ export async function cacheImage(uri, cacheUri) {
   }
 }
 
-export async function getImageFromCache() {
+export async function getImageFromCache(username) {
   const cacheImageFileUri = cacheDirectory + username + "pfp.png";
   let imageExistsInCache = await findFileInCache(cacheImageFileUri);
   if (imageExistsInCache.exists) {
@@ -99,7 +107,7 @@ export async function cacheImageFromAWS(username) {
   //if uriAWS does not exist
   let cached = await cacheImage(uriAWS, cacheImageFileUri);
   if (cached.cached) {
-    console.log("cached new pfp.png");
+    console.log("Success: cached new pfp.png");
     return cached.path;
   } else {
     console.log("Error caching new pfp: ", cached.msg);

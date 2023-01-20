@@ -59,15 +59,15 @@ export function ProfileScreen(props) {
 
     const { attributes } = await Auth.currentAuthenticatedUser();
     let username = attributes.preferred_username;
-    console.log(lastModifiedAWS);
+    setUsername(username);
     //const cacheImageFileUri = cacheDirectory + username + "pfp.png";
     //const cacheLastModifiedUri = cacheDirectory + username + "pfp.png";
-    const cachedImage = await getImageFromCache();
+    const cachedImage = await getImageFromCache(username);
 
     // we are assuming that if the image exists in client then it should exist in the backend as well
     if (cachedImage !== "") {
       console.log(
-        "Profile pic found in cache; displaying and checking if it is most recent version"
+        "Profile pic found in cache; displaying and checking if it is the most recent version"
       );
       setProfilePic(cachedImage);
       const lastModifiedAWS = await getLastModifiedAWS(username);
@@ -121,7 +121,7 @@ export function ProfileScreen(props) {
     }
   }
 
-  async function getUsername() {
+  /*async function getUsername() {
     try {
       const { attributes } = await Auth.currentAuthenticatedUser();
       let username = attributes.preferred_username;
@@ -130,7 +130,7 @@ export function ProfileScreen(props) {
     } catch {
       console.error("Error getting username of current authenticated user");
     }
-  }
+  }*/
 
   // async function getFollowerCount() {
   //   const followercoun = await getFollowersList(username);
@@ -158,8 +158,14 @@ export function ProfileScreen(props) {
       const blob = await response.blob();
       const fileName = username + "/pfp.png";
       //updateProfilePicture(username, fileName);
-      await Storage.put(fileName, blob);
-      const uriAWS = await Storage.get(username + "/pfp.png");
+      await saveImageToAWS(fileName, blob);
+      let lastModified = await getLastModifiedAWS(username);
+      cacheLastModified(username, lastModified);
+      let path = await cacheImageFromAWS(username);
+      if (path !== "") {
+        setProfilePic(path);
+      }
+      setShowMakePfp(false);
     } catch (error) {
       console.log("Error uploading image to S3", error);
     }
@@ -227,6 +233,11 @@ export function ProfileScreen(props) {
           }
         ></CustomButton>
       </View>
+      {showMakePfp ? (
+        <Text>Make a profile picture by tapping the icon!</Text>
+      ) : (
+        <Text></Text>
+      )}
       {/* Need for calendar style.
       <View style={{ flexdirection:"row", paddingBottom:30}}>
         
