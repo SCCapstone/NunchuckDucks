@@ -1,6 +1,6 @@
 import { View, Image, Text, StyleSheet } from "react-native";
 import { useState, useEffect } from "react";
-import Storage from "@aws-amplify/storage";
+import { Storage } from "@aws-amplify/storage";
 import Reactions from "../Reactions";
 import { grayThemeColor } from "../../library/constants";
 import ProfileMini from "../ProfileMini";

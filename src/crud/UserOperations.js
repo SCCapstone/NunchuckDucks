@@ -1,6 +1,6 @@
 import { DataStore } from "aws-amplify";
 import { User } from "../models";
-import Storage from "aws-amplify";
+import { Storage } from "aws-amplify";
 
 /**
  * Creates a user and saves the new user in the backend
@@ -44,7 +44,7 @@ export async function deleteUser(username) {
  */
 export async function findUserByUsername(username) {
   try {
-    const user = await DataStore.query(User, (u) => u.username("eq", username));
+    const user = await DataStore.query(User, (u) => u.username.eq(username));
     if (user.length === 1) return user[0];
     else {
       console.log(`Could not find ${username}`);
@@ -62,7 +62,7 @@ export async function findUserByUsername(username) {
  */
 export async function getProfilePicture(username) {
   try {
-    const user = await DataStore.query(User, (u) => u.username("eq", username));
+    const user = await DataStore.query(User, (u) => u.username.eq(username));
     const photoPath = user.profilePicture; //string path of photo
     const pic = await Storage.get(photoPath);
     return pic;
@@ -79,7 +79,9 @@ export async function getProfilePicture(username) {
  */
 export async function getUserId(username) {
   try {
-    const user = await DataStore.query(User, (u) => u.username("eq", username));
+    const user = await DataStore.query(User, (u) => {
+      return u.username.eq(username);
+    });
 
     if (!user || !user.length) return "";
     console.log(`Found userID ${user[0].id} for ${username} successfully.`);

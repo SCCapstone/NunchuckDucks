@@ -14,7 +14,7 @@ import { useState, useEffect, useCallback } from "react";
 import SignOutButton from "../components/signoutbutton/SignOutButton";
 import * as ImagePicker from "expo-image-picker";
 import { getProfilePicture } from "../crud/UserOperations";
-import Storage from "@aws-amplify/storage";
+import { Storage } from "@aws-amplify/storage";
 import { DataStore } from "aws-amplify";
 
 //Need to also create the buttons to be clickable and call different functions

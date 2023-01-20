@@ -36,10 +36,10 @@ export async function createFollowing(username, followedUsername) {
 export async function getFollowsList(username) {
   try {
     const rootUser = await DataStore.query(User, (u) =>
-      u.username("eq", username)
+      u.username.eq(username)
     );
     const followsList = await DataStore.query(Follows, (f) =>
-      f.userID("eq", rootUser[0].id)
+      f.userID.eq(rootUser[0].id)
     );
 
     console.log(`Successfully retrieved follows list for ${username}.`);
@@ -59,7 +59,7 @@ export async function getFollowsList(username) {
 async function doesFollowExist(username, userID) {
   try {
     const followerList = await DataStore.query(Follows, (f) =>
-      f.and((f) => [f.username("eq", username), f.userID("eq", userID)])
+      f.and((f) => [f.username.eq(username), f.userID.eq(userID)])
     );
     return followerList.length >= 1 ? true : false;
   } catch (error) {
@@ -76,7 +76,7 @@ export async function deleteFollower(username, followerUsername) {
   try {
     const userid = await getUserId(username);
     const followerToDelete = await DataStore.query(Follows, (f) =>
-      f.and((f) => [f.username("eq", followerUsername), f.userID("eq", userid)])
+      f.and((f) => [f.username.eq(followerUsername), f.userID.eq(userid)])
     );
 
     await DataStore.delete(followerToDelete[0]);

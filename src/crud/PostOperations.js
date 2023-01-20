@@ -49,7 +49,7 @@ export async function getPostsForMutualFeed(username) {
     const userId = await getUserId(username);
 
     const usersFollowed = await DataStore.query(Follows, (uf) =>
-      uf.userID("eq", userId)
+      uf.userID.eq(userId)
     );
     const usersFollowedIDs = [userId];
 
@@ -65,7 +65,7 @@ export async function getPostsForMutualFeed(username) {
     for (let i = 0; i < usersFollowedIDs.length; i++) {
       let postsToBeAdded = await DataStore.query(
         Post,
-        (p) => p.userID("eq", usersFollowedIDs[i]),
+        (p) => p.userID.eq(usersFollowedIDs[i]),
         {
           sort: (s) => s.createdAt(SortDirection.DESCENDING),
         }
@@ -89,6 +89,8 @@ export async function getPostsForMutualFeed(username) {
 
     return posts;
   } catch (error) {
-    console.error(`Error retrieving posts for ${username}'s mutual feed`);
+    console.error(
+      `Error retrieving posts for ${username}'s mutual feed, ${error}`
+    );
   }
 }
