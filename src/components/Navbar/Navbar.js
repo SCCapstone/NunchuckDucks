@@ -38,7 +38,7 @@ const Navbar = () => {
       horizontal={true}
       bounces={false}
     >
-      {/* <Text
+      <Text
         title="Settings"
         onPress={() => {
           navigation.navigate("Settings");
@@ -50,7 +50,7 @@ const Navbar = () => {
         ]}
       >
         Settings
-      </Text> */}
+      </Text>
       {/* <Text
         title="Explore"
         onPress={() => {
