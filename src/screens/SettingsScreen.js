@@ -1,13 +1,9 @@
-import { View, Text } from "react-native";
-import { BackButton } from "../components/BackButton";
+import { View, Text, StyleSheet } from "react-native";
 import Header from "../components/Header/Header";
 export function SettingsScreen({navigation}) {
   return (
     <View
-      style={{
-        flex: 1,
-        alignItems: "center"
-      }}
+      style={style.container}
     >
       <Header title={"Settings"} />
 
@@ -15,3 +11,9 @@ export function SettingsScreen({navigation}) {
     </View>
   );
 }
+
+const style = StyleSheet.create({
+  container: {
+    alignItems: "center",
+  },
+})
