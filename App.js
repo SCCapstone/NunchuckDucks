@@ -14,7 +14,6 @@ import Navbar from "./src/components/Navbar";
 import { Amplify } from "@aws-amplify/core";
 import awsmobile from "./src/aws-exports";
 import { withAuthenticator } from "aws-amplify-react-native";
-import Swiper from "react-native-swiper";
 import { StyleSheet, View, TitleText } from "react-native";
 
 Amplify.configure({
@@ -31,11 +30,17 @@ const app = () => {
       <Stack.Navigator
         screenOptions={{
           headerShown: false,
-          tabBarShowLabel: false,
-          tabBarIndicatorStyle: {backgroundColor: "transparent"}
+          tabBarShowLabel: true,
+          tabBarScrollEnabled: true,
+          lazy: true,
+          tabBarLabelStyle: {width: 120,
+            height: 30,
+            textAlign: "center",
+            color: "black",
+            fontSize: 20,}
         }}
         initialRouteName="Mutuals"
-        style={{flex: 1, overflow: "scroll"}}
+        tabBarPosition="bottom"
       >
         <Stack.Screen name="Settings" component={SettingsScreen} />
         <Stack.Screen name="Explore" component={ExploreScreen} />
@@ -50,7 +55,6 @@ const app = () => {
           initialParams={{ isFollowerPage: false }} />
         <Stack.Screen name="CreateGoal" component={CreateGoalScreen} />
       </Stack.Navigator>
-      <Navbar />
     </NavigationContainer>    
   );
 };
