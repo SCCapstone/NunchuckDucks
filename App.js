@@ -1,5 +1,6 @@
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { SettingsScreen } from "./src/screens/SettingsScreen.js";
 import { ExploreScreen } from "./src/screens/ExploreScreen.js";
 import { MutualScreen } from "./src/screens/MutualScreen.js";
@@ -13,6 +14,8 @@ import Navbar from "./src/components/Navbar";
 import { Amplify } from "@aws-amplify/core";
 import awsmobile from "./src/aws-exports";
 import { withAuthenticator } from "aws-amplify-react-native";
+import Swiper from "react-native-swiper";
+import { StyleSheet, View, TitleText } from "react-native";
 
 Amplify.configure({
   ...awsmobile,
@@ -20,7 +23,7 @@ Amplify.configure({
     disabled: true,
   },
 });
-const Stack = createNativeStackNavigator();
+const Stack = createMaterialTopTabNavigator();
 
 const app = () => {
   return (
@@ -28,8 +31,11 @@ const app = () => {
       <Stack.Navigator
         screenOptions={{
           headerShown: false,
+          tabBarShowLabel: false,
+          tabBarIndicatorStyle: {backgroundColor: "transparent"}
         }}
         initialRouteName="Mutuals"
+        style={{flex: 1, overflow: "scroll"}}
       >
         <Stack.Screen name="Settings" component={SettingsScreen} />
         <Stack.Screen name="Explore" component={ExploreScreen} />
@@ -41,12 +47,11 @@ const app = () => {
         <Stack.Screen
           name="Followers"
           component={FollowerScreen}
-          initialParams={{ isFollowerPage: false }}
-        />
+          initialParams={{ isFollowerPage: false }} />
         <Stack.Screen name="CreateGoal" component={CreateGoalScreen} />
       </Stack.Navigator>
       <Navbar />
-    </NavigationContainer>
+    </NavigationContainer>    
   );
 };
 
