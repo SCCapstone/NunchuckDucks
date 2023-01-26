@@ -51,70 +51,48 @@ export function ProfileScreen(props) {
   }, []);
 
   async function renderProfileInfo() {
-    // sets username state, however it doesn't work? The reason I set the username
-    // in future cases is because otherwise username would be "" and not what this function intends to do
-    //await getUsername();
-    // just command f and search for "let username". All those instances SHOULD be
-    // commented/deleted but at this point they are still necessary.
-
     const { attributes } = await Auth.currentAuthenticatedUser();
     let username = attributes.preferred_username;
     setUsername(username);
     //const cacheImageFileUri = cacheDirectory + username + "pfp.png";
     //const cacheLastModifiedUri = cacheDirectory + username + "pfp.png";
-    const cachedImage = await getImageFromCache(username);
+    const cachedImage = await getImageFromCache(username, "pfp.png");
 
     // we are assuming that if the image exists in client then it should exist in the backend as well
     if (cachedImage !== "") {
-      console.log(
-        "Profile pic found in cache; displaying and checking if it is the most recent version"
-      );
+      console.log("Profile pic found in cache; displaying and checking if it is the most recent version");
       setProfilePic(cachedImage);
-      const lastModifiedAWS = await getLastModifiedAWS(username);
-      const lastModifiedCache = await getLastModifiedCache(username);
+      const lastModifiedAWS = await getLastModifiedAWS(username, "pfp.png");
+      const lastModifiedCache = await getLastModifiedCache(username, "pfp");
       if (lastModifiedCache !== null) {
         if (lastModifiedAWS > lastModifiedCache) {
           //lastModifiedAWS has a higher alphabetical order (newer) than lastModifiedCache
-          console.log(
-            "lastModifiedAWS found to be newer than lastModifiedCache; updating pfp and lastModified"
-          );
-          let imageFromAWS = await cacheImageFromAWS(username);
+          console.log("lastModifiedAWS found to be newer than lastModifiedCache; updating pfp and lastModified");
+          let imageFromAWS = await cacheImageFromAWS(username, "pfp.png");
           await cacheLastModified(username, lastModifiedAWS);
           setProfilePic(imageFromAWS);
         } else if (lastModifiedCache < lastModifiedAWS) {
-          console.log(
-            "lastModifiedCache found to be newer than lastModifiedAWS; updating pfp in the backend"
-          );
+          console.log("lastModifiedCache found to be newer than lastModifiedAWS; updating pfp in the backend");
           let fileName = username + "/pfp.png";
-          saveImageToAWS(fileName, getCacheImageFileUri);
+          saveImageToAWS(fileName, getCacheImageFileUri(username, "pfp.png"));
         } else {
-          console.log(
-            "lastModifiedCache matches lastModifiedAWS; nothing to be done"
-          );
+          console.log("lastModifiedCache matches lastModifiedAWS; nothing to be done");
         }
       } else {
-        console.log(
-          "lastModified file not found; caching lastModified val found in AWS and updating pic just in case"
-        );
-        let imageFromAWS = await cacheImageFromAWS(username);
+        console.log("lastModified file not found; caching lastModified val found in AWS and updating pic just in case");
+        let imageFromAWS = await cacheImageFromAWS(username, "pfp.png");
         await cacheLastModified(username, lastModifiedAWS);
         setProfilePic(imageFromAWS);
       }
     } else {
-      console.log(
-        "Profile pic not found in cache; checking if it is in the backend"
-      );
-      const lastModifiedAWS = await getLastModifiedAWS(username);
+      console.log("Profile pic not found in cache; checking if it is in the backend");
+      const lastModifiedAWS = await getLastModifiedAWS(username, "pfp.png");
       if (lastModifiedAWS === "None") {
-        console.log(
-          "no pfp found in backend; suggesting the user to make a pfp"
-        );
+        console.log("no pfp found in backend; suggesting the user to make a pfp");
         setShowMakePfp(true);
       } else {
-        console.log(
-          "pfp was found in backend; caching pfp and lastModified val"
-        );
-        let imageFromAWS = await cacheImageFromAWS(username);
+        console.log("pfp was found in backend; caching pfp and lastModified val");
+        let imageFromAWS = await cacheImageFromAWS(username, "pfp.png");
         await cacheLastModified(username, lastModifiedAWS);
         setProfilePic(imageFromAWS);
       }
@@ -144,8 +122,7 @@ export function ProfileScreen(props) {
 
   const addProfileImage = async () => {
     let _image = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes:
-        ImagePicker.MediaTypeOptions.Images /*Only allow image upload */,
+      mediaTypes: ImagePicker.MediaTypeOptions.Images /*Only allow image upload */,
       allowsEditing: true /*true= pull up an editing interface after image upload */,
       aspect: [1, 1] /*1:1 image ratio, so it will be a square */,
       quality: 1 /*highest quality image possible, on a scale of 0-1 we want 1 lol */,
@@ -159,9 +136,9 @@ export function ProfileScreen(props) {
       const fileName = username + "/pfp.png";
       //updateProfilePicture(username, fileName);
       await saveImageToAWS(fileName, blob);
-      let lastModified = await getLastModifiedAWS(username);
+      let lastModified = await getLastModifiedAWS(username, "pfp.png");
       cacheLastModified(username, lastModified);
-      let path = await cacheImageFromAWS(username);
+      let path = await cacheImageFromAWS(username, "pfp.png");
       if (path !== "") {
         setProfilePic(path);
       }
@@ -217,9 +194,7 @@ export function ProfileScreen(props) {
           text="Followers"
           style={{ width: 100, borderRadius: 20 }}
           textStyle={{ fontSize: 15, fontWeight: "700" }}
-          onClick={() =>
-            navigation.navigate("Followers", { isFollowerPage: true })
-          }
+          onClick={() => navigation.navigate("Followers", { isFollowerPage: true })}
         ></CustomButton>
 
         <View style={{ width: 83 }}></View>
@@ -228,16 +203,10 @@ export function ProfileScreen(props) {
           text="Following"
           style={{ width: 100, borderRadius: 20 }}
           textStyle={{ fontSize: 15, fontWeight: "700" }}
-          onClick={() =>
-            navigation.navigate("Followers", { isFollowerPage: false })
-          }
+          onClick={() => navigation.navigate("Followers", { isFollowerPage: false })}
         ></CustomButton>
       </View>
-      {showMakePfp ? (
-        <Text>Make a profile picture by tapping the icon!</Text>
-      ) : (
-        <Text></Text>
-      )}
+      {showMakePfp ? <Text>Make a profile picture by tapping the icon!</Text> : <Text></Text>}
       {/* Need for calendar style.
       <View style={{ flexdirection:"row", paddingBottom:30}}>
         

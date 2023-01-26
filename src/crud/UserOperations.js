@@ -57,7 +57,7 @@ export async function findUserByUsername(username) {
 
 /**
  * This function returns the profile picture
- * @param {String} username 
+ * @param {String} username
  * @returns image
  */
 export async function getProfilePicture(username) {

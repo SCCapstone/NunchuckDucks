@@ -1,10 +1,4 @@
-import {
-  View,
-  TextInput,
-  StyleSheet,
-  TouchableOpacity,
-  Text,
-} from "react-native";
+import { View, TextInput, StyleSheet, TouchableOpacity, Text } from "react-native";
 import { DataStore } from "@aws-amplify/datastore";
 import { useState } from "react";
 import { Post } from "../models";
@@ -76,8 +70,8 @@ export function CreatePost() {
       const blob = await response.blob();
       await createPost(text, fileName, username);
       Storage.put(fileName, blob);
-    } catch {
-      console.error("Error uploading file");
+    } catch (error) {
+      console.error("Error uploading file", error);
       // TODO make a UI popup thing that lets the user know that their post wasn't uploaded (please try again later)
     }
     navigation.navigate("Mutuals");
@@ -87,18 +81,10 @@ export function CreatePost() {
       <View style={styles.header} />
       <View style={{ flexDirection: "row", flex: 1 }}>
         <ImageSelector image={image} setImage={setImage} />
-        <WorkoutSelection
-          workoutSelection={workoutSelection}
-          setWorkoutSelection={setWorkoutSelection}
-        />
+        <WorkoutSelection workoutSelection={workoutSelection} setWorkoutSelection={setWorkoutSelection} />
       </View>
       <View style={{ alignItems: "center", flex: 2 }}>
-        <TextInput
-          style={styles.input}
-          placeholder="Write your caption here"
-          value={text}
-          onChangeText={setText}
-        />
+        <TextInput style={styles.input} placeholder="Write your caption here" value={text} onChangeText={setText} />
         <Text>{workoutSelection.join(", ")}</Text>
         <TouchableOpacity style={styles.submit} onPress={savePost}>
           <Text style={styles.submitText}>Post Gymbit</Text>
@@ -117,39 +103,22 @@ function WorkoutSelection(props) {
   return (
     <View style={styles.workoutSelectionContainer}>
       <View style={styles.what}>
-        <Text style={{ color: "white", fontSize: 14 }}>
-          What did you do today?
-        </Text>
+        <Text style={{ color: "white", fontSize: 14 }}>What did you do today?</Text>
       </View>
       <View style={{ alignItems: "center", flex: 1 }}>
-        <TouchableOpacity
-          onPress={(event) => updateFunction("Run")}
-          style={styles.workoutSelection}
-        >
+        <TouchableOpacity onPress={(event) => updateFunction("Run")} style={styles.workoutSelection}>
           <Text>Run</Text>
         </TouchableOpacity>
-        <TouchableOpacity
-          onPress={(event) => updateFunction("Leg Day")}
-          style={styles.workoutSelection}
-        >
+        <TouchableOpacity onPress={(event) => updateFunction("Leg Day")} style={styles.workoutSelection}>
           <Text>Leg Day</Text>
         </TouchableOpacity>
-        <TouchableOpacity
-          onPress={(event) => updateFunction("Back and Biceps")}
-          style={styles.workoutSelection}
-        >
+        <TouchableOpacity onPress={(event) => updateFunction("Back and Biceps")} style={styles.workoutSelection}>
           <Text>Back and Biceps</Text>
         </TouchableOpacity>
-        <TouchableOpacity
-          onPress={(event) => updateFunction("Chest and Triceps")}
-          style={styles.workoutSelection}
-        >
+        <TouchableOpacity onPress={(event) => updateFunction("Chest and Triceps")} style={styles.workoutSelection}>
           <Text>Chest and Triceps</Text>
         </TouchableOpacity>
-        <TouchableOpacity
-          onPress={(event) => updateFunction("Bike")}
-          style={styles.workoutSelection}
-        >
+        <TouchableOpacity onPress={(event) => updateFunction("Bike")} style={styles.workoutSelection}>
           <Text>Bike</Text>
         </TouchableOpacity>
         <Text>{workoutSelection.join(", ")}</Text>

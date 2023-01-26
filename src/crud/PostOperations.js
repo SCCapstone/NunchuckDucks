@@ -43,14 +43,27 @@ export async function deletePost(postID) {
     console.log("Error deleting post", error);
   }
 }
+export async function getUsersFollowed(username) {
+  try {
+    const userId = await getUserId(username);
 
+    const usersFollowed = await DataStore.query(Follows, (uf) => uf.userID("eq", userId));
+    let usernames = [];
+    for (let i = 0; i < usersFollowed.length; i++) {
+      console.log(usersFollowed);
+      usernames.push(usersFollowed[i].username);
+    }
+    return usernames;
+  } catch (error) {
+    console.log(error);
+    return "";
+  }
+}
 export async function getPostsForMutualFeed(username) {
   try {
     const userId = await getUserId(username);
 
-    const usersFollowed = await DataStore.query(Follows, (uf) =>
-      uf.userID("eq", userId)
-    );
+    const usersFollowed = await DataStore.query(Follows, (uf) => uf.userID("eq", userId));
     const usersFollowedIDs = [userId];
 
     console.log(`Retrieved users followed for ${username}`);
@@ -63,13 +76,9 @@ export async function getPostsForMutualFeed(username) {
     const posts = [];
 
     for (let i = 0; i < usersFollowedIDs.length; i++) {
-      let postsToBeAdded = await DataStore.query(
-        Post,
-        (p) => p.userID("eq", usersFollowedIDs[i]),
-        {
-          sort: (s) => s.createdAt(SortDirection.DESCENDING),
-        }
-      );
+      let postsToBeAdded = await DataStore.query(Post, (p) => p.userID("eq", usersFollowedIDs[i]), {
+        sort: (s) => s.createdAt(SortDirection.DESCENDING),
+      });
       for (let j = 0; j < postsToBeAdded.length; j++) {
         posts.push(postsToBeAdded[j]);
       }
@@ -83,9 +92,7 @@ export async function getPostsForMutualFeed(username) {
       }
     });
 
-    console.log(
-      `Retrieved posts for user ${username}'s mutual page successfully.`
-    );
+    console.log(`Retrieved posts for user ${username}'s mutual page successfully.`);
 
     return posts;
   } catch (error) {

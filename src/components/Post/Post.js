@@ -4,6 +4,7 @@ import Storage from "@aws-amplify/storage";
 import Reactions from "../Reactions";
 import { grayThemeColor } from "../../library/constants";
 import ProfileMini from "../ProfileMini";
+import { cacheImageFromAWS, getImageFromCache } from "../../crud/CacheOperations";
 const styles = StyleSheet.create({
   postBox: {
     height: 500,
@@ -47,35 +48,42 @@ const styles = StyleSheet.create({
 });
 export default function Post(props) {
   const entry = props.entry;
+  const username = entry.username;
   const refresh = props.refresh;
+  const photoStr = entry.photo;
+  const picName = photoStr.substring(photoStr.indexOf("/") + 1);
   const [picture, setPicture] = useState(null);
+
   const [pfp, setPfp] = useState("");
 
-  async function getPic() {
+  async function getPictures() {
     console.log("Retrieving pic");
     // TODO retrieve post picture from the passed entry fileName
-    const pic = await Storage.get(entry.photo);
-    setPicture(pic);
-    try {
-      const pfps3 = await Storage.get(entry.username + "/pfp.png");
-      setPfp(pfps3);
-    } catch (error) {
-      console.log("Error retrieving pfp: " + error);
+    const postPfp = await getImageFromCache(username, "pfp.png");
+    if (postPfp !== "") {
+      setPfp(postPfp);
     }
+    const pic = await Storage.get(photoStr);
+    setPicture(pic);
+    /*const pic = await getImageFromCache(username,picName);
+    if (pic !== "")
+    {
+      setPicture(pic);
+    } else {
+      const newlyCachedPic = await cacheImageFromAWS(username,picName);
+      setPicture(newlyCachedPic);
+    }*/
+    //const postPic = await getImageFromCache(username,)
   }
   // get the pic again after a refresh
   useEffect(() => {
-    getPic();
+    getPictures();
   }, [refresh]);
 
   return (
     <View style={styles.postBox}>
       <View name="Header" flexDirection="row" style={styles.postHeader}>
-        <ProfileMini
-          src={pfp}
-          style={{ height: 42, width: 42, marginLeft: 6, marginRight: 6 }}
-          imageStyle={{ height: 42, width: 42 }}
-        />
+        <ProfileMini src={pfp} style={{ height: 42, width: 42, marginLeft: 6, marginRight: 6 }} imageStyle={{ height: 42, width: 42 }} />
         <Text style={styles.postUsername}>{entry.username}</Text>
         <Text style={styles.createdAt}>{getTimeElapsed(entry.createdAt)}</Text>
       </View>
