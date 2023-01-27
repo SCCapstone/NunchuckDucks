@@ -31,8 +31,8 @@ export default function PostList(props) {
 
   useEffect(() => {
     // PostList runs this stuff after every render
-    updatePfpCacheForFollowing();
     fetchPosts(); // it fetches all posts
+    updatePfpCacheForFollowing();
     console.log("PostList refreshed");
   }, [refresh]);
 

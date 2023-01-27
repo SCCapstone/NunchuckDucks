@@ -59,7 +59,7 @@ export default function Post(props) {
   async function getPictures() {
     console.log("Retrieving pic");
     // TODO retrieve post picture from the passed entry fileName
-    const postPfp = await getImageFromCache(username, "pfp.png");
+    const postPfp = await getImageFromCache(username, "pfp.png"); // console logs pic "pfp.png found for user x..."
     if (postPfp !== "") {
       setPfp(postPfp);
     }
@@ -75,7 +75,6 @@ export default function Post(props) {
     }*/
     //const postPic = await getImageFromCache(username,)
   }
-  // get the pic again after a refresh
   useEffect(() => {
     getPictures();
   }, [refresh]);

@@ -104,7 +104,7 @@ export async function getImageFromCache(username, ending) {
 
 export async function cacheImageFromAWS(username, ending) {
   const uriAWS = await Storage.get(username + "/" + ending);
-  console.log(uriAWS);
+  //console.log(uriAWS);
   const cacheImageFileUri = cacheDirectory + username + ending;
   //if uriAWS does not exist
   let cached = await cacheImage(uriAWS, cacheImageFileUri);

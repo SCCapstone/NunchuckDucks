@@ -50,7 +50,7 @@ export async function getUsersFollowed(username) {
     const usersFollowed = await DataStore.query(Follows, (uf) => uf.userID("eq", userId));
     let usernames = [];
     for (let i = 0; i < usersFollowed.length; i++) {
-      console.log(usersFollowed);
+      //console.log(usersFollowed);
       usernames.push(usersFollowed[i].username);
     }
     return usernames;
@@ -91,6 +91,11 @@ export async function getPostsForMutualFeed(username) {
         return -1; // if not, then reverse; b then a
       }
     });
+
+    for (i = 0; i < posts.length; i++) {
+      posts[i].count = i;
+    }
+    console.log(posts[3].count);
 
     console.log(`Retrieved posts for user ${username}'s mutual page successfully.`);
 
