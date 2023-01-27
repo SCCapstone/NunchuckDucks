@@ -43,11 +43,11 @@ const app = () => {
         tabBarPosition="bottom"
       >
         <Stack.Screen name="Settings" component={SettingsScreen} />
-        <Stack.Screen name="Explore" component={ExploreScreen} />
+        {/* <Stack.Screen name="Explore" component={ExploreScreen} /> */}
         <Stack.Screen name="Mutuals" component={MutualScreen} />
         <Stack.Screen name="Profile" component={ProfileScreen} />
         <Stack.Screen name="CreatePost" component={CreatePost} />
-        <Stack.Screen name="Calendar" component={CalendarScreen} />
+        {/* <Stack.Screen name="Calendar" component={CalendarScreen} /> */}
         <Stack.Screen name="Goals" component={GoalsScreen} />
         <Stack.Screen
           name="Followers"
