@@ -16,7 +16,7 @@ export function MutualScreen() {
   }, [refresh, nav]);
 
   return (
-    <View style={{ marginBottom: "22%" }}>
+    <View testID="mutualScreen" style={{ marginBottom: "22%" }}>
       <HomeHeader handlePress={() => setRefresh(!refresh)} />
       <PostList refresh={refresh} setRefresh={setRefresh} />
       <Text>hi</Text>

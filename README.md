@@ -80,15 +80,21 @@ section that explains how to run them.
 
 The unit tests are in `/test/unit`.
 
-The behavioral tests are in `/test/casper/`.
-
 ## Testing Technology
 
-In some cases you need to install test runners, etc. Explain how.
+No test runners required
 
-## Running Tests
+## Behavioral Tests
 
-Explain how to run the automated tests.
+The behavioral (end-to-end) tests are in `/e2e/starter.test.js`
+
+To run the end-to-end test, perform these steps:
+
+1. Download the application binary from the Expo Dev builds section. Decompress the file; it should become a folder of type Application, and named "NunchuckDucks.app".
+2. Open two terminals. In one, run the app with `npm start`
+3. In the other, enter the command `detox test --configuration <config>`
+   1. `<config>` should be one of the configurations listed under .detoxrc.js
+      1. If using an iOS emulator, consider using **ios.sim.release for `<config>`**
 
 # Authors
 
