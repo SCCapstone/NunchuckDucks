@@ -67,15 +67,26 @@ emulator or in a physical phone.
 
 # Testing
 
-The unit tests are in `/test/unit`.
+## Unit Tests
 
-The behavioral (end-to-end) tests is in `/e2e/starter.test.js`
+To run unit tests, simply run the command `npm test`
+
+- You may need to run `npm i` before running npm test to ensure all dependencies are downloaded
+
+The Unit tests are located at ./src/library/\*.test.js
+
+In 492 you will write automated tests. When you do you will need to add a
+section that explains how to run them.
+
+The unit tests are in `/test/unit`.
 
 ## Testing Technology
 
-In some cases you need to install test runners, etc. Explain how.
+No test runners required
 
-## Running Tests
+## Behavioral Tests
+
+The behavioral (end-to-end) tests are in `/e2e/starter.test.js`
 
 To run the end-to-end test, perform these steps:
 

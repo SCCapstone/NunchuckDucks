@@ -57,7 +57,6 @@ export default function Post(props) {
     setPicture(pic);
     try {
       const pfps3 = await Storage.get(entry.username + "/pfp.png");
-      console.log(typeof pfps3);
       setPfp(pfps3);
     } catch (error) {
       console.log("Error retrieving pfp: " + error);
