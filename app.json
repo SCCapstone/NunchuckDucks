@@ -14,11 +14,10 @@
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.jewzydee.gymbit"
     },
     "android": {
       "adaptiveIcon": {
@@ -30,6 +29,7 @@
     "web": {
       "favicon": "./assets/favicon.png"
     },
+    "plugins": ["@config-plugins/detox"],
     "extra": {
       "eas": {
         "projectId": "0777130d-6706-4342-aa9d-630e787674cd"
