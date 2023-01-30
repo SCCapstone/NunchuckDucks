@@ -67,6 +67,14 @@ emulator or in a physical phone.
 
 # Testing
 
+## Unit Tests
+
+To run unit tests, simply run the command `npm test`
+
+- You may need to run `npm i` before running npm test to ensure all dependencies are downloaded
+
+The Unit tests are located at ./src/library/\*.test.js
+
 In 492 you will write automated tests. When you do you will need to add a
 section that explains how to run them.
 
