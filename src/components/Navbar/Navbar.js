@@ -125,6 +125,18 @@ const Navbar = () => {
       >
         Followers
       </Text>
+      <Text
+        onPress={() => {
+          navigation.navigate("TestNotificationScreen");
+          setClickedElement("TestNotificationScreen");
+        }}
+        style={[
+          clickedElement == "TestNotificationScreen" ? styles.currentNavbarElement : {},
+          styles.navbarElement,
+        ]}
+      >
+        Test Noti
+      </Text>
     </ScrollView>
   );
 };
