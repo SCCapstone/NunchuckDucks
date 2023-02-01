@@ -95,3 +95,6 @@ web-build/
 dist/
 
 # @end expo-cli
+
+# app binary
+NunchuckDucks.app/
