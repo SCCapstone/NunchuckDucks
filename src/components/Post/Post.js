@@ -89,42 +89,36 @@ export default function Post(props) {
 }
 
 function getTimeElapsed(createdAt) {
-  // returns time elapsed since post was posted, in varying levels of time
   var ans = ""; // the output
   if (createdAt == undefined) {
-    // preliminary check to stop error that occurs
-    return ans; // when post is expectd after creation, but createdAt cannot be retrieved yet
+    // Checks that createdAt exists
+    // Will not exist when DataStore is not connected to remote
+    return ans;
   }
   var createdAtFormatted = createdAt.substring(0, 19); //gets rid of a few milliseconds to make it proper format
-  var currDate = new Date(); // current date and time
-  var dateUploaded = new Date(createdAtFormatted); // date and time of upload
+  var currDate = new Date(); // current date and time in UTC
+  var dateUploaded = new Date(createdAtFormatted); // date and time of upload in UTC
 
-  const round = (numString) => {
-    // round the output to two decimals
-    return numString.substring(0, numString.indexOf(".") + 3);
-  };
-  // The answer will be correct for UTC time, which is  6 hours ahead of Eastern time
-  // therefore, add 1800000 ms (6 hours); this will need to be addressed according to user's timezonee
-  var diff = currDate.getTime() - dateUploaded.getTime() + 18000000; // get the difference between the two + 6 hrs
+  // Both dates are already in UTC, this just gets the time difference
+  var diff = currDate.getTime() - dateUploaded.getTime();
   var minutesDifference = diff / (1000 * 60);
+  var hoursDifference = Math.floor(minutesDifference / 60);
+  var daysDifference = Math.floor(hoursDifference / 24);
+  var monthsDifference = Math.floor(daysDifference / 30);
+  var yearsDifference = Math.floor(monthsDifference / 12);
 
-  if (minutesDifference > 60) {
-    // if more then 60 minutes, switch to hours
-    var hoursDifference = minutesDifference / 60;
-    if (hoursDifference > 24) {
-      // if more than 24 hours, switch to days
-      var daysDifference = hoursDifference / 24;
-      ans = round(daysDifference.toString()) + " days ago";
-    } else {
-      ans = round(hoursDifference.toString()) + " hours ago";
-    }
+  if (minutesDifference < 1) {
+    ans = "less than a minute ago";
+  } else if (minutesDifference <= 60) {
+    ans = Math.round(minutesDifference.toString()) + " minutes ago";
+  } else if (hoursDifference <= 24) {
+    ans = Math.round(hoursDifference.toString()) + " hours ago";
+  } else if (daysDifference <= 30) {
+    ans = Math.round(daysDifference.toString()) + " days ago";
+  } else if (monthsDifference <= 12) {
+    ans = Math.round(monthsDifference.toString()) + " months ago";
   } else {
-    if (minutesDifference < 1) {
-      // if less than a minute has passed
-      ans = "less than a minute ago";
-    } else {
-      ans = round(minutesDifference.toString()) + " minutes ago";
-    }
+    ans = Math.round(yearsDifference.toString()) + " years ago";
   }
   return ans;
 }
