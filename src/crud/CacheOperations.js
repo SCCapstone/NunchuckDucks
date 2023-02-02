@@ -5,6 +5,15 @@ import Storage from "@aws-amplify/storage";
 
 const cacheDirectory = FileSystem.cacheDirectory;
 
+export async function deleteCachedFile(username, ending) {
+  try {
+    const cachedFile = cacheDirectory + username + ending;
+    FileSystem.deleteAsync(cachedFile);
+    console.log("Success: deleted cached file");
+  } catch (error) {
+    console.log("Error: Could not delete cached file", error);
+  }
+}
 export async function getCacheLastModifiedUri(username, ending) {
   return cacheDirectory + username + ending + "lastModified.txt";
 }
@@ -26,6 +35,7 @@ export async function cacheLastModified(username, lastModifiedMessage) {
 }
 
 export async function getLastModifiedCache(username, ending) {
+  console.log("HOY", cacheDirectory);
   const cacheLastModifiedUri = cacheDirectory + username + ending + "lastModified.txt";
   let lastModified = await FileSystem.readAsStringAsync(cacheLastModifiedUri, {
     encoding: "utf8",
@@ -44,7 +54,7 @@ export async function getLastModifiedAWS(username, file) {
   await API.get("getLastModified", "/getLastModified", myInit)
     .then((response) => {
       lastModified = response;
-      console.log("Success: got lastModified from AWS");
+      console.log("Success: got lastModified from AWS for", file);
     })
     .catch((error) => {
       console.log("Error: " + error.response);
@@ -102,10 +112,13 @@ export async function getImageFromCache(username, ending) {
   }
 }
 
-export async function cacheImageFromAWS(username, ending) {
+export async function cacheImageFromAWS(username, ending, addPng = false) {
   const uriAWS = await Storage.get(username + "/" + ending);
   //console.log(uriAWS);
-  const cacheImageFileUri = cacheDirectory + username + ending;
+  let cacheImageFileUri = cacheDirectory + username + ending;
+  if ((addPng = true)) {
+    cacheImageFileUri = cacheImageFileUri + ".png";
+  }
   //if uriAWS does not exist
   let cached = await cacheImage(uriAWS, cacheImageFileUri);
   if (cached.cached) {
@@ -122,8 +135,11 @@ export async function saveImageToAWS(fileName, blob) {
 }
 
 export async function updatePfpCache(username) {
+  console.log("cache directory:?", cacheDirectory);
+  let files = await FileSystem.readDirectoryAsync(cacheDirectory);
+  console.log("files:", files);
   const cachedImage = await getImageFromCache(username, "pfp.png");
-  console.log("this", cachedImage, "is it");
+  console.log("this", cachedImage, "is the hopefully cached pfp for", username);
   // we are assuming that if the image exists in client then it should exist in the backend as well
   if (cachedImage !== "") {
     console.log("Profile pic for", username, "found in cache; checking if it is the most recent version");

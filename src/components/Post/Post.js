@@ -60,11 +60,18 @@ export default function Post(props) {
     console.log("Retrieving pic");
     // TODO retrieve post picture from the passed entry fileName
     const postPfp = await getImageFromCache(username, "pfp.png"); // console logs pic "pfp.png found for user x..."
+    console.log("here is pfp for post:", postPfp);
     if (postPfp !== "") {
       setPfp(postPfp);
     }
-    const pic = await Storage.get(photoStr);
-    setPicture(pic);
+    const pic = await getImageFromCache(username, picName + ".png");
+    console.log("here is post pic:", pic);
+    if (pic !== "") {
+      setPicture(pic);
+    } else {
+      let picha = await Storage.get(photoStr);
+      setPicture(picha);
+    }
     /*const pic = await getImageFromCache(username,picName);
     if (pic !== "")
     {

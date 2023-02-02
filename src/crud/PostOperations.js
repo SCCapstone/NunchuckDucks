@@ -1,4 +1,5 @@
 import { processCompositeKeys } from "@aws-amplify/datastore/lib-esm/util";
+import { Int64 } from "@aws-sdk/eventstream-codec";
 import { DataStore, SortDirection } from "aws-amplify";
 import { getCurrentAuthenticatedUser } from "../library/GetAuthenticatedUser";
 import { Post, Follows } from "../models";
@@ -92,10 +93,9 @@ export async function getPostsForMutualFeed(username) {
       }
     });
 
-    for (i = 0; i < posts.length; i++) {
-      posts[i].count = i;
-    }
-    console.log(posts[3].count);
+    /*for (let i = 0; i < posts.length; i++) {
+      posts[i].count = parseInt
+    }*/
 
     console.log(`Retrieved posts for user ${username}'s mutual page successfully.`);
 

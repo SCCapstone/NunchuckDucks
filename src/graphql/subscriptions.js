@@ -181,141 +181,11 @@ export const onDeleteComment = /* GraphQL */ `
     }
   }
 `;
-export const onCreateLogIn = /* GraphQL */ `
-  subscription OnCreateLogIn($filter: ModelSubscriptionLogInFilterInput) {
-    onCreateLogIn(filter: $filter) {
-      id
-      username
-      password
-      User {
-        id
-        username
-        password
-        profilePicture
-        bio
-        Goals {
-          nextToken
-          startedAt
-        }
-        Posts {
-          nextToken
-          startedAt
-        }
-        Follows {
-          nextToken
-          startedAt
-        }
-        FollowedBies {
-          nextToken
-          startedAt
-        }
-        createdAt
-        updatedAt
-        _version
-        _deleted
-        _lastChangedAt
-      }
-      createdAt
-      updatedAt
-      _version
-      _deleted
-      _lastChangedAt
-      logInUserId
-    }
-  }
-`;
-export const onUpdateLogIn = /* GraphQL */ `
-  subscription OnUpdateLogIn($filter: ModelSubscriptionLogInFilterInput) {
-    onUpdateLogIn(filter: $filter) {
-      id
-      username
-      password
-      User {
-        id
-        username
-        password
-        profilePicture
-        bio
-        Goals {
-          nextToken
-          startedAt
-        }
-        Posts {
-          nextToken
-          startedAt
-        }
-        Follows {
-          nextToken
-          startedAt
-        }
-        FollowedBies {
-          nextToken
-          startedAt
-        }
-        createdAt
-        updatedAt
-        _version
-        _deleted
-        _lastChangedAt
-      }
-      createdAt
-      updatedAt
-      _version
-      _deleted
-      _lastChangedAt
-      logInUserId
-    }
-  }
-`;
-export const onDeleteLogIn = /* GraphQL */ `
-  subscription OnDeleteLogIn($filter: ModelSubscriptionLogInFilterInput) {
-    onDeleteLogIn(filter: $filter) {
-      id
-      username
-      password
-      User {
-        id
-        username
-        password
-        profilePicture
-        bio
-        Goals {
-          nextToken
-          startedAt
-        }
-        Posts {
-          nextToken
-          startedAt
-        }
-        Follows {
-          nextToken
-          startedAt
-        }
-        FollowedBies {
-          nextToken
-          startedAt
-        }
-        createdAt
-        updatedAt
-        _version
-        _deleted
-        _lastChangedAt
-      }
-      createdAt
-      updatedAt
-      _version
-      _deleted
-      _lastChangedAt
-      logInUserId
-    }
-  }
-`;
 export const onCreateGoal = /* GraphQL */ `
   subscription OnCreateGoal($filter: ModelSubscriptionGoalFilterInput) {
     onCreateGoal(filter: $filter) {
       id
       username
-      goalNumber
       date
       content
       userID
@@ -332,7 +202,6 @@ export const onUpdateGoal = /* GraphQL */ `
     onUpdateGoal(filter: $filter) {
       id
       username
-      goalNumber
       date
       content
       userID
@@ -349,7 +218,6 @@ export const onDeleteGoal = /* GraphQL */ `
     onDeleteGoal(filter: $filter) {
       id
       username
-      goalNumber
       date
       content
       userID
@@ -366,14 +234,12 @@ export const onCreateUser = /* GraphQL */ `
     onCreateUser(filter: $filter) {
       id
       username
-      password
       profilePicture
       bio
       Goals {
         items {
           id
           username
-          goalNumber
           date
           content
           userID
@@ -443,14 +309,12 @@ export const onUpdateUser = /* GraphQL */ `
     onUpdateUser(filter: $filter) {
       id
       username
-      password
       profilePicture
       bio
       Goals {
         items {
           id
           username
-          goalNumber
           date
           content
           userID
@@ -520,14 +384,12 @@ export const onDeleteUser = /* GraphQL */ `
     onDeleteUser(filter: $filter) {
       id
       username
-      password
       profilePicture
       bio
       Goals {
         items {
           id
           username
-          goalNumber
           date
           content
           userID
