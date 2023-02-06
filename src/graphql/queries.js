@@ -203,6 +203,7 @@ export const getComment = /* GraphQL */ `
       content
       username
       postID
+      reply
       createdAt
       updatedAt
       _version
@@ -223,6 +224,7 @@ export const listComments = /* GraphQL */ `
         content
         username
         postID
+        reply
         createdAt
         updatedAt
         _version
@@ -252,130 +254,12 @@ export const syncComments = /* GraphQL */ `
         content
         username
         postID
+        reply
         createdAt
         updatedAt
         _version
         _deleted
         _lastChangedAt
-      }
-      nextToken
-      startedAt
-    }
-  }
-`;
-export const getLogIn = /* GraphQL */ `
-  query GetLogIn($id: ID!) {
-    getLogIn(id: $id) {
-      id
-      username
-      password
-      User {
-        id
-        username
-        password
-        profilePicture
-        bio
-        Goals {
-          nextToken
-          startedAt
-        }
-        Posts {
-          nextToken
-          startedAt
-        }
-        Follows {
-          nextToken
-          startedAt
-        }
-        FollowedBies {
-          nextToken
-          startedAt
-        }
-        createdAt
-        updatedAt
-        _version
-        _deleted
-        _lastChangedAt
-      }
-      createdAt
-      updatedAt
-      _version
-      _deleted
-      _lastChangedAt
-      logInUserId
-    }
-  }
-`;
-export const listLogIns = /* GraphQL */ `
-  query ListLogIns(
-    $filter: ModelLogInFilterInput
-    $limit: Int
-    $nextToken: String
-  ) {
-    listLogIns(filter: $filter, limit: $limit, nextToken: $nextToken) {
-      items {
-        id
-        username
-        password
-        User {
-          id
-          username
-          password
-          profilePicture
-          bio
-          createdAt
-          updatedAt
-          _version
-          _deleted
-          _lastChangedAt
-        }
-        createdAt
-        updatedAt
-        _version
-        _deleted
-        _lastChangedAt
-        logInUserId
-      }
-      nextToken
-      startedAt
-    }
-  }
-`;
-export const syncLogIns = /* GraphQL */ `
-  query SyncLogIns(
-    $filter: ModelLogInFilterInput
-    $limit: Int
-    $nextToken: String
-    $lastSync: AWSTimestamp
-  ) {
-    syncLogIns(
-      filter: $filter
-      limit: $limit
-      nextToken: $nextToken
-      lastSync: $lastSync
-    ) {
-      items {
-        id
-        username
-        password
-        User {
-          id
-          username
-          password
-          profilePicture
-          bio
-          createdAt
-          updatedAt
-          _version
-          _deleted
-          _lastChangedAt
-        }
-        createdAt
-        updatedAt
-        _version
-        _deleted
-        _lastChangedAt
-        logInUserId
       }
       nextToken
       startedAt
@@ -387,7 +271,6 @@ export const getGoal = /* GraphQL */ `
     getGoal(id: $id) {
       id
       username
-      goalNumber
       date
       content
       userID
@@ -409,7 +292,6 @@ export const listGoals = /* GraphQL */ `
       items {
         id
         username
-        goalNumber
         date
         content
         userID
@@ -440,7 +322,6 @@ export const syncGoals = /* GraphQL */ `
       items {
         id
         username
-        goalNumber
         date
         content
         userID
@@ -460,14 +341,12 @@ export const getUser = /* GraphQL */ `
     getUser(id: $id) {
       id
       username
-      password
       profilePicture
       bio
       Goals {
         items {
           id
           username
-          goalNumber
           date
           content
           userID
@@ -542,7 +421,6 @@ export const listUsers = /* GraphQL */ `
       items {
         id
         username
-        password
         profilePicture
         bio
         Goals {
@@ -588,7 +466,6 @@ export const syncUsers = /* GraphQL */ `
       items {
         id
         username
-        password
         profilePicture
         bio
         Goals {
@@ -631,6 +508,7 @@ export const getPost = /* GraphQL */ `
           content
           username
           postID
+          reply
           createdAt
           updatedAt
           _version

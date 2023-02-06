@@ -167,6 +167,7 @@ export const createComment = /* GraphQL */ `
       content
       username
       postID
+      reply
       createdAt
       updatedAt
       _version
@@ -185,6 +186,7 @@ export const updateComment = /* GraphQL */ `
       content
       username
       postID
+      reply
       createdAt
       updatedAt
       _version
@@ -203,149 +205,12 @@ export const deleteComment = /* GraphQL */ `
       content
       username
       postID
+      reply
       createdAt
       updatedAt
       _version
       _deleted
       _lastChangedAt
-    }
-  }
-`;
-export const createLogIn = /* GraphQL */ `
-  mutation CreateLogIn(
-    $input: CreateLogInInput!
-    $condition: ModelLogInConditionInput
-  ) {
-    createLogIn(input: $input, condition: $condition) {
-      id
-      username
-      password
-      User {
-        id
-        username
-        password
-        profilePicture
-        bio
-        Goals {
-          nextToken
-          startedAt
-        }
-        Posts {
-          nextToken
-          startedAt
-        }
-        Follows {
-          nextToken
-          startedAt
-        }
-        FollowedBies {
-          nextToken
-          startedAt
-        }
-        createdAt
-        updatedAt
-        _version
-        _deleted
-        _lastChangedAt
-      }
-      createdAt
-      updatedAt
-      _version
-      _deleted
-      _lastChangedAt
-      logInUserId
-    }
-  }
-`;
-export const updateLogIn = /* GraphQL */ `
-  mutation UpdateLogIn(
-    $input: UpdateLogInInput!
-    $condition: ModelLogInConditionInput
-  ) {
-    updateLogIn(input: $input, condition: $condition) {
-      id
-      username
-      password
-      User {
-        id
-        username
-        password
-        profilePicture
-        bio
-        Goals {
-          nextToken
-          startedAt
-        }
-        Posts {
-          nextToken
-          startedAt
-        }
-        Follows {
-          nextToken
-          startedAt
-        }
-        FollowedBies {
-          nextToken
-          startedAt
-        }
-        createdAt
-        updatedAt
-        _version
-        _deleted
-        _lastChangedAt
-      }
-      createdAt
-      updatedAt
-      _version
-      _deleted
-      _lastChangedAt
-      logInUserId
-    }
-  }
-`;
-export const deleteLogIn = /* GraphQL */ `
-  mutation DeleteLogIn(
-    $input: DeleteLogInInput!
-    $condition: ModelLogInConditionInput
-  ) {
-    deleteLogIn(input: $input, condition: $condition) {
-      id
-      username
-      password
-      User {
-        id
-        username
-        password
-        profilePicture
-        bio
-        Goals {
-          nextToken
-          startedAt
-        }
-        Posts {
-          nextToken
-          startedAt
-        }
-        Follows {
-          nextToken
-          startedAt
-        }
-        FollowedBies {
-          nextToken
-          startedAt
-        }
-        createdAt
-        updatedAt
-        _version
-        _deleted
-        _lastChangedAt
-      }
-      createdAt
-      updatedAt
-      _version
-      _deleted
-      _lastChangedAt
-      logInUserId
     }
   }
 `;
@@ -357,7 +222,6 @@ export const createGoal = /* GraphQL */ `
     createGoal(input: $input, condition: $condition) {
       id
       username
-      goalNumber
       date
       content
       userID
@@ -377,7 +241,6 @@ export const updateGoal = /* GraphQL */ `
     updateGoal(input: $input, condition: $condition) {
       id
       username
-      goalNumber
       date
       content
       userID
@@ -397,7 +260,6 @@ export const deleteGoal = /* GraphQL */ `
     deleteGoal(input: $input, condition: $condition) {
       id
       username
-      goalNumber
       date
       content
       userID
@@ -417,14 +279,12 @@ export const createUser = /* GraphQL */ `
     createUser(input: $input, condition: $condition) {
       id
       username
-      password
       profilePicture
       bio
       Goals {
         items {
           id
           username
-          goalNumber
           date
           content
           userID
@@ -497,14 +357,12 @@ export const updateUser = /* GraphQL */ `
     updateUser(input: $input, condition: $condition) {
       id
       username
-      password
       profilePicture
       bio
       Goals {
         items {
           id
           username
-          goalNumber
           date
           content
           userID
@@ -577,14 +435,12 @@ export const deleteUser = /* GraphQL */ `
     deleteUser(input: $input, condition: $condition) {
       id
       username
-      password
       profilePicture
       bio
       Goals {
         items {
           id
           username
-          goalNumber
           date
           content
           userID
@@ -665,6 +521,7 @@ export const createPost = /* GraphQL */ `
           content
           username
           postID
+          reply
           createdAt
           updatedAt
           _version
@@ -714,6 +571,7 @@ export const updatePost = /* GraphQL */ `
           content
           username
           postID
+          reply
           createdAt
           updatedAt
           _version
@@ -763,6 +621,7 @@ export const deletePost = /* GraphQL */ `
           content
           username
           postID
+          reply
           createdAt
           updatedAt
           _version
