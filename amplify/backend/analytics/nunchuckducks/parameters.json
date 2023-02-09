@@ -1,0 +1,21 @@
+{
+    "appName": "nunchuckducks",
+    "roleName": "pinpointLambdaRole490664d6",
+    "cloudformationPolicyName": "cloudformationPolicy490664d6",
+    "cloudWatchPolicyName": "cloudWatchPolicy490664d6",
+    "pinpointPolicyName": "pinpointPolicy490664d6",
+    "authPolicyName": "pinpoint_amplify_490664d6",
+    "unauthPolicyName": "pinpoint_amplify_490664d6",
+    "authRoleName": {
+        "Ref": "AuthRoleName"
+    },
+    "unauthRoleName": {
+        "Ref": "UnauthRoleName"
+    },
+    "authRoleArn": {
+        "Fn::GetAtt": [
+            "AuthRole",
+            "Arn"
+        ]
+    }
+}

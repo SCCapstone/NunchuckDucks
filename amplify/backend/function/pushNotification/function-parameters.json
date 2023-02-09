@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "api": {
+      "nunchuckducks": [
+        "Query"
+      ]
+    }
+  },
+  "lambdaLayers": []
+}

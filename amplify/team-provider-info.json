@@ -17,10 +17,15 @@
       },
       "auth": {
         "nunchuckducksd6420719": {},
-        "NunchuckDucks": {}
+        "NunchuckDucks": {},
+        "nunchuckducks96c9bf4196c9bf41": {}
       },
       "storage": {
         "s3nunchuckduckspicturestorage": {}
+      },
+      "function": {
+        "pushNotification": {},
+        "pinpoint": {}
       }
     }
   }

@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "analytics": {
+      "nunchuckducks": [
+        "create",
+        "read",
+        "update",
+        "delete"
+      ]
+    }
+  },
+  "lambdaLayers": []
+}

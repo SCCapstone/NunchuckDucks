@@ -796,3 +796,12 @@ export const deletePost = /* GraphQL */ `
     }
   }
 `;
+
+export const pinpoint = /* GraphQL */ `
+  mutation pinpoint($input: pinpointInput!) {
+    pinpoint(input: $input) {
+      statusCode
+      body
+    }
+  }
+`;

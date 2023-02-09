@@ -48,6 +48,7 @@ type User @model @auth(rules: [{ allow: public }]) {
   Posts: [Post] @hasMany(indexName: "byUser", fields: ["id"])
   Follows: [Follows] @hasMany(indexName: "byUser", fields: ["id"])
   FollowedBies: [FollowedBy] @hasMany(indexName: "byUser", fields: ["id"])
+  expoToken: String
 }
 
 type Post @model @auth(rules: [{ allow: public }]) {
@@ -58,4 +59,22 @@ type Post @model @auth(rules: [{ allow: public }]) {
   Comments: [Comment] @hasMany(indexName: "byPost", fields: ["id"])
   Reactions: [Reaction] @hasMany(indexName: "byPost", fields: ["id"])
   userID: ID! @index(name: "byUser")
+}
+
+type Mutation {
+  pinpoint(input: pinpointInput): pinpointResult
+    @function(name: "pinpoint-${env}")
+}
+
+type pinpointResult {
+  statusCode: Int
+  body: String
+}
+
+input pinpointInput {
+  token: String!
+  name: String!
+  email: String!
+  message: String!
+  id: String!
 }

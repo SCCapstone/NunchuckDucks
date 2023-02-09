@@ -10,8 +10,7 @@ import { GoalsScreen } from "./src/screens/GoalsScreen.js";
 import { ProfileScreen } from "./src/screens/ProfileScreen.js";
 import { FollowerScreen } from "./src/screens/FollowerScreen.js";
 import { CreateGoalScreen } from "./src/screens/CreateGoalScreen.js";
-import { TestNotificationScreen } from "./src/screens/TestNotificationScreen.js";
-import Navbar from "./src/components/Navbar";
+import { NotificationsScreen } from "./src/screens/NotificationsScreen.js";
 import { Amplify } from "@aws-amplify/core";
 import awsmobile from "./src/aws-exports";
 import { withAuthenticator } from "aws-amplify-react-native";
@@ -23,6 +22,7 @@ Amplify.configure({
     disabled: true,
   },
 });
+
 const Stack = createMaterialTopTabNavigator();
 
 const app = () => {
@@ -52,7 +52,7 @@ const app = () => {
         <Stack.Screen name="Goals" component={GoalsScreen} />
         <Stack.Screen name="Followers" component={FollowerScreen} initialParams={{ isFollowerPage: false }} />
         <Stack.Screen name="CreateGoal" component={CreateGoalScreen} />
-        <Stack.Screen name="TestNotificationScreen" component={TestNotificationScreen} />
+        <Stack.Screen name="Notifications" component={NotificationsScreen} />
       </Stack.Navigator>
     </NavigationContainer>    
   );
