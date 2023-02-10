@@ -13,6 +13,7 @@ import Navbar from "./src/components/Navbar";
 import { Amplify, API } from "@aws-amplify/core";
 import awsmobile from "./src/aws-exports";
 import { withAuthenticator } from "aws-amplify-react-native";
+import { useEffect } from "react";
 
 Amplify.configure({
   ...awsmobile,

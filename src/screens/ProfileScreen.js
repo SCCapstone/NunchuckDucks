@@ -16,6 +16,7 @@ import {
   saveImageToAWS,
   getCacheImageFileUri,
   getCacheLastModifiedUri,
+  getCachedCurrUser,
 } from "../crud/CacheOperations";
 import ProfileMini from "../components/ProfileMini";
 import CustomButton from "../components/CustomButton";
@@ -51,8 +52,11 @@ export function ProfileScreen(props) {
   }, []);
 
   async function renderProfileInfo() {
-    const { attributes } = await Auth.currentAuthenticatedUser();
-    let username = attributes.preferred_username;
+    let username = await getCachedCurrUser();
+    if (username === null) {
+      const { attributes } = await Auth.currentAuthenticatedUser();
+      username = attributes.preferred_username;
+    }
     setUsername(username);
     //const cacheImageFileUri = cacheDirectory + username + "pfp.png";
     //const cacheLastModifiedUri = cacheDirectory + username + "pfp.png";

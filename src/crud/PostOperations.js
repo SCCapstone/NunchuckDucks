@@ -60,7 +60,8 @@ export async function getUsersFollowed(username) {
     return "";
   }
 }
-export async function getPostsForMutualFeed(username) {
+
+export async function getPostsForMutualFeedFromAWS(username) {
   try {
     const userId = await getUserId(username);
 

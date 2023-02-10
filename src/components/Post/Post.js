@@ -1,10 +1,11 @@
 import { View, Image, Text, StyleSheet } from "react-native";
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import Storage from "@aws-amplify/storage";
 import Reactions from "../Reactions";
 import { grayThemeColor } from "../../library/constants";
 import ProfileMini from "../ProfileMini";
 import { cacheImageFromAWS, getImageFromCache } from "../../crud/CacheOperations";
+import { useNetInfo } from "@react-native-community/netinfo";
 const styles = StyleSheet.create({
   postBox: {
     height: 500,
@@ -59,18 +60,33 @@ export default function Post(props) {
   async function getPictures() {
     console.log("Retrieving pic");
     // TODO retrieve post picture from the passed entry fileName
-    const postPfp = await getImageFromCache(username, "pfp.png"); // console logs pic "pfp.png found for user x..."
-    console.log("here is pfp for post:", postPfp);
+    //const postPfp = await getImageFromCache(username, "pfp.png"); // console logs pic "pfp.png found for user x..."
+    const postPfp = entry.cachedPfp;
+
     if (postPfp !== "") {
       setPfp(postPfp);
     }
-    const pic = await getImageFromCache(username, picName + ".png");
-    console.log("here is post pic:", pic);
+    const pic = entry.cachedPostPicture;
+
+    //const pic = await getImageFromCache(username, picName);
     if (pic !== "") {
+      console.log("Pic", picName, "for", username, "found in cache");
       setPicture(pic);
+    } else if (entry.shouldBeCached === true) {
+      console.log("Pic not in cache but it should be", entry.caption);
+      let picCached = await cacheImageFromAWS(username, picName);
+      //let picha = await Storage.get(photoStr);
+      setPicture(picCached);
     } else {
-      let picha = await Storage.get(photoStr);
-      setPicture(picha);
+      networkConnection = useNetInfo();
+      console.log("Else Happened to ", username, "caption", entry.caption);
+      console.log("PEE", entry);
+      if (networkConnection.isConnected === true) {
+        let picFromAWS = await Storage.get(photoStr);
+        setPicture(picFromAWS);
+      } else {
+        console.log("Connection unavailable to render post", photoStr);
+      }
     }
     /*const pic = await getImageFromCache(username,picName);
     if (pic !== "")
@@ -83,6 +99,7 @@ export default function Post(props) {
     //const postPic = await getImageFromCache(username,)
   }
   useEffect(() => {
+    console.log("Reached useEffect for Post", username);
     getPictures();
   }, [refresh]);
 
