@@ -2,6 +2,7 @@ import { View, ScrollView, StyleSheet } from "react-native";
 import { useState, useEffect, useCallback } from "react";
 import { Auth } from "aws-amplify";
 
+import { DataStore } from "aws-amplify";
 import Header from "../components/Header";
 import CustomButton from "../components/CustomButton";
 import CustomTextInput from "../components/CustomTextInput";
@@ -52,11 +53,11 @@ export function FollowerScreen({ route, navigation }) {
           let currUser = attributes.preferred_username;
           if (isFollowerPage) {
             await deleteFollower(currUser, val.username);
-            await deleteFollowing(val.username, currUser);
+            //await deleteFollowing(val.username, currUser);
           } else {
             console.log(currUser);
             await deleteFollower(val.username, currUser);
-            await deleteFollowing(currUser, val.username);
+            //await deleteFollowing(currUser, val.username);
           }
           console.log("WOW done");
           setForceRefresh(!forceRefresh);

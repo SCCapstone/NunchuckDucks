@@ -167,6 +167,7 @@ export const createComment = /* GraphQL */ `
       content
       username
       postID
+      reply
       createdAt
       updatedAt
       _version
@@ -185,6 +186,7 @@ export const updateComment = /* GraphQL */ `
       content
       username
       postID
+      reply
       createdAt
       updatedAt
       _version
@@ -203,6 +205,7 @@ export const deleteComment = /* GraphQL */ `
       content
       username
       postID
+      reply
       createdAt
       updatedAt
       _version
@@ -518,6 +521,7 @@ export const createPost = /* GraphQL */ `
           content
           username
           postID
+          reply
           createdAt
           updatedAt
           _version
@@ -567,6 +571,7 @@ export const updatePost = /* GraphQL */ `
           content
           username
           postID
+          reply
           createdAt
           updatedAt
           _version
@@ -616,6 +621,7 @@ export const deletePost = /* GraphQL */ `
           content
           username
           postID
+          reply
           createdAt
           updatedAt
           _version

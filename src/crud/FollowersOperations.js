@@ -1,6 +1,6 @@
 import { DataStore } from "aws-amplify";
-import { User, FollowedBy } from "../models";
-import { getUserId } from "./UserOperations";
+import { User, Follows } from "../models";
+import { doesUserExist, getUserId, isCurrUser } from "./UserOperations";
 
 /**
  * This method adds an external user to the primary user's followers list
@@ -9,14 +9,13 @@ import { getUserId } from "./UserOperations";
  */
 export async function createFollower(username, followerUsername) {
   try {
+    if (await checkFollowRequirements(username, followerUsername)) {
+      return;
+    }
+
     const userId = await getUserId(username);
 
-    // if (doesFollowExist(followerUsername, userId)) {
-    //     console.log(`${followerUsername} already follows ${username}`);
-    //     return false;
-    // }
-
-    const follower = new FollowedBy({
+    const follower = new Follows({
       username: followerUsername,
       userID: userId,
     });
@@ -27,7 +26,19 @@ export async function createFollower(username, followerUsername) {
     return true;
   } catch (error) {
     console.error("Error saving follower.", error);
+    return false;
   }
+}
+
+/**
+ * This method checks the user that the current user to trying to follow for anything that
+ * would not permit them to follow them.
+ * @param {String} username 
+ * @param {String} followerUsername 
+ * @returns Boolean
+ */
+async function checkFollowRequirements(username, followerUsername) {
+  return await isCurrUser(username) || await doesUserExist(username) || await doesFollowExist(username, followerUsername);
 }
 
 /**
@@ -36,13 +47,15 @@ export async function createFollower(username, followerUsername) {
  * @param {ID} userID the ID of the user being followed
  * @returns
  */
-async function doesFollowExist(username, userID) {
+async function doesFollowExist(username, followerUsername) {
   try {
-    const followerList = await DataStore.query(FollowedBy, (f) =>
-      f.and((f) => [f.username("eq", username), f.userID("eq", userID)])
+    const userId = await getUserId(username);
+
+    const followerList = await DataStore.query(Follows, (f) =>
+      f.and((f) => [f.username.eq(followerUsername), f.userID.eq(userId)])
     );
 
-    return followerList.length >= 1 ? true : false;
+    return followerList[0] !== undefined ? true : false;
   } catch (error) {
     console.error("Error retrieving follower list");
   }
@@ -55,11 +68,9 @@ async function doesFollowExist(username, userID) {
  */
 export async function getFollowersList(username) {
   try {
-    const rootUser = await DataStore.query(User, (u) =>
-      u.username("eq", username)
-    );
-    const followersList = await DataStore.query(FollowedBy, (f) =>
-      f.userID("eq", rootUser[0].id)
+    const userId = await getUserId(username);
+    const followersList = await DataStore.query(Follows, (f) =>
+      f.userID.eq(userId)
     );
 
     console.log(`Retrieve followers of ${username} succesfully.`);
@@ -79,8 +90,8 @@ export async function deleteFollower(username, followerUsername) {
   try {
     const userId = await getUserId(username);
 
-    const followerToDelete = await DataStore.query(FollowedBy, (f) =>
-      f.and((f) => [f.username("eq", followerUsername), f.userID("eq", userId)])
+    const followerToDelete = await DataStore.query(Follows, (f) =>
+      f.and((f) => [f.username.eq(followerUsername), f.userID.eq(userId)])
     );
 
     await DataStore.delete(followerToDelete[0]);

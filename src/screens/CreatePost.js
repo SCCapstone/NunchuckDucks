@@ -2,7 +2,7 @@ import { View, TextInput, StyleSheet, TouchableOpacity, Text } from "react-nativ
 import { DataStore } from "@aws-amplify/datastore";
 import { useState } from "react";
 import { Post } from "../models";
-import Storage from "@aws-amplify/storage";
+import { Storage } from "@aws-amplify/storage";
 import ImageSelector from "../components/ImageSelector";
 import { Auth } from "aws-amplify";
 import { useNavigation } from "@react-navigation/native";

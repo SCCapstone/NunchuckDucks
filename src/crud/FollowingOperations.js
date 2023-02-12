@@ -1,5 +1,5 @@
 import { DataStore } from "aws-amplify";
-import { User, Follows } from "../models";
+import { User, Follows, FollowedBy } from "../models";
 import { getUserId } from "./UserOperations";
 
 /**
@@ -7,14 +7,10 @@ import { getUserId } from "./UserOperations";
  * @param {String} username username of the root user i.e. the one who will be following the external user
  * @param {String} followedUsername username of the user that is to be followed
  */
+/*
 export async function createFollowing(username, followedUsername) {
   try {
     const userId = await getUserId(username);
-
-    // if (doesFollowExist(followedUsername, userId)) {
-    //   console.log(`${username} already follows ${followedUsername}`);
-    //   return false;
-    // }
 
     const follows = new Follows({
       username: followedUsername,
@@ -27,7 +23,7 @@ export async function createFollowing(username, followedUsername) {
     console.error(`There was an error trying to follow the user.}`, error);
   }
 }
-
+*/
 /**
  * Returns a list of all the people that a user follows
  * @param {String} username the user whose following list we're trying to get
@@ -35,16 +31,19 @@ export async function createFollowing(username, followedUsername) {
  */
 export async function getFollowsList(username) {
   try {
-    const rootUser = await DataStore.query(User, (u) =>
-      u.username("eq", username)
-    );
     const followsList = await DataStore.query(Follows, (f) =>
-      f.userID("eq", rootUser[0].id)
+      f.username.eq(username)
     );
 
+    const newFollowsList = [];
+
+    for (let i = 0; i < followsList.length; i++) {
+      let follow = await DataStore.query(User, followsList[i].userID);
+      newFollowsList.push(follow);
+    }
     console.log(`Successfully retrieved follows list for ${username}.`);
 
-    return followsList;
+    return newFollowsList;
   } catch (error) {
     console.error(`Error retrieving follows list for ${username}`);
   }
@@ -56,27 +55,29 @@ export async function getFollowsList(username) {
  * @param {ID} userID the ID of the user being followed
  * @returns
  */
+/*
 async function doesFollowExist(username, userID) {
   try {
     const followerList = await DataStore.query(Follows, (f) =>
-      f.and((f) => [f.username("eq", username), f.userID("eq", userID)])
+      f.and((f) => [f.username.eq(username), f.userID.eq(userID)])
     );
     return followerList.length >= 1 ? true : false;
   } catch (error) {
     console.error("Error retrieving follower list");
   }
 }
-
+*/
 /**
  * This method deletes the relationship between a follower and the one being followed
  * @param {String} username the username of the follower
  * @param {String} followerUsername the username of the one being followed
  */
+/*
 export async function deleteFollower(username, followerUsername) {
   try {
     const userid = await getUserId(username);
     const followerToDelete = await DataStore.query(Follows, (f) =>
-      f.and((f) => [f.username("eq", followerUsername), f.userID("eq", userid)])
+      f.and((f) => [f.username.eq(followerUsername), f.userID.eq(userid)])
     );
 
     await DataStore.delete(followerToDelete[0]);
@@ -85,4 +86,6 @@ export async function deleteFollower(username, followerUsername) {
   } catch (error) {
     console.error("There was an error deleting follower.", error);
   }
+  
 }
+*/

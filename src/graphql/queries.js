@@ -203,6 +203,7 @@ export const getComment = /* GraphQL */ `
       content
       username
       postID
+      reply
       createdAt
       updatedAt
       _version
@@ -223,6 +224,7 @@ export const listComments = /* GraphQL */ `
         content
         username
         postID
+        reply
         createdAt
         updatedAt
         _version
@@ -252,6 +254,7 @@ export const syncComments = /* GraphQL */ `
         content
         username
         postID
+        reply
         createdAt
         updatedAt
         _version
@@ -505,6 +508,7 @@ export const getPost = /* GraphQL */ `
           content
           username
           postID
+          reply
           createdAt
           updatedAt
           _version

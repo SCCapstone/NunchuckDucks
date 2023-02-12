@@ -6,16 +6,17 @@ import { Auth } from "aws-amplify";
 
 import CustomTextInput from "../../CustomTextInput";
 import CustomButton from "../../CustomButton";
+import { getCurrentAuthenticatedUser } from "../../../library/GetAuthenticatedUser";
 
 const AddFollowerModal = ({ modalVisible, setModalVisible }) => {
   const [addFriendValue, setAddFriendValue] = useState("");
 
   async function addNewFollower() {
     try {
-      const { attributes } = await Auth.currentAuthenticatedUser();
-      let currUser = attributes.preferred_username;
+      let currUser = await getCurrentAuthenticatedUser();
       await createFollower(addFriendValue, currUser);
-      await createFollowing(currUser, addFriendValue);
+      //need to add some sort of modal for when you can't follow a user
+      //await createFollowing(currUser, addFriendValue);
     } catch (err) {
       console.error(err);
     }

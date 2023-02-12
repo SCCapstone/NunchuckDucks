@@ -1,5 +1,6 @@
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { SettingsScreen } from "./src/screens/SettingsScreen.js";
 import { ExploreScreen } from "./src/screens/ExploreScreen.js";
 import { MutualScreen } from "./src/screens/MutualScreen.js";
@@ -13,7 +14,7 @@ import Navbar from "./src/components/Navbar";
 import { Amplify, API } from "@aws-amplify/core";
 import awsmobile from "./src/aws-exports";
 import { withAuthenticator } from "aws-amplify-react-native";
-import { useEffect } from "react";
+import { StyleSheet, View, TitleText } from "react-native";
 
 Amplify.configure({
   ...awsmobile,
@@ -29,7 +30,7 @@ Amplify.configure({
     ],
   },
 });
-const Stack = createNativeStackNavigator();
+const Stack = createMaterialTopTabNavigator();
 
 const app = () => {
   return (
@@ -37,21 +38,29 @@ const app = () => {
       <Stack.Navigator
         screenOptions={{
           headerShown: false,
+          tabBarShowLabel: true,
+          tabBarScrollEnabled: true,
+          lazy: true,
+          tabBarLabelStyle: {width: 120,
+            height: 30,
+            textAlign: "center",
+            color: "black",
+            fontSize: 20,}
         }}
         initialRouteName="Mutuals"
+        tabBarPosition="bottom"
       >
         <Stack.Screen name="Settings" component={SettingsScreen} />
-        <Stack.Screen name="Explore" component={ExploreScreen} />
+        {/* <Stack.Screen name="Explore" component={ExploreScreen} /> */}
         <Stack.Screen name="Mutuals" component={MutualScreen} />
         <Stack.Screen name="Profile" component={ProfileScreen} />
         <Stack.Screen name="CreatePost" component={CreatePost} />
-        <Stack.Screen name="Calendar" component={CalendarScreen} />
+        {/* <Stack.Screen name="Calendar" component={CalendarScreen} /> */}
         <Stack.Screen name="Goals" component={GoalsScreen} />
         <Stack.Screen name="Followers" component={FollowerScreen} initialParams={{ isFollowerPage: false }} />
         <Stack.Screen name="CreateGoal" component={CreateGoalScreen} />
       </Stack.Navigator>
-      <Navbar />
-    </NavigationContainer>
+    </NavigationContainer>    
   );
 };
 

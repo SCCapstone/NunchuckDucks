@@ -1,4 +1,5 @@
-import { View, Text, TouchableOpacity } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import Header from "../components/Header/Header";
 import { BackButton } from "../components/BackButton";
 import { getPostsThatShouldBeCached, getAllCachedFiles, deleteCachedFile } from "../crud/CacheOperations";
 
@@ -33,18 +34,19 @@ export function SettingsScreen({ navigation }) {
       alignItems: "center",
       justifyContent: "center",
     },
+    container: {
+      alignItems: "center",
+    }
   });
-
+  
   return (
     <View
-      style={{
-        flex: 1,
-        alignItems: "center",
-        backgroundColor: "white",
-        justifyContent: "center",
-      }}
+      style={style.container}
     >
       <TouchableOpacity style={styles.deleteCacheButton}></TouchableOpacity>
+      <Header title={"Settings"} />
+
+      <Text>Toggle private account eventually goes here</Text>
     </View>
   );
 }
