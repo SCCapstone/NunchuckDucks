@@ -1,26 +1,26 @@
 export type AmplifyDependentResourcesAttributes = {
-    "api": {
-        "nunchuckducks": {
-            "GraphQLAPIKeyOutput": "string",
-            "GraphQLAPIIdOutput": "string",
-            "GraphQLAPIEndpointOutput": "string"
-        }
-    },
-    "auth": {
-        "NunchuckDucks": {
-            "IdentityPoolId": "string",
-            "IdentityPoolName": "string",
-            "UserPoolId": "string",
-            "UserPoolArn": "string",
-            "UserPoolName": "string",
-            "AppClientIDWeb": "string",
-            "AppClientID": "string"
-        }
-    },
-    "storage": {
-        "s3nunchuckduckspicturestorage": {
-            "BucketName": "string",
-            "Region": "string"
-        }
+  "api": {
+    "nunchuckducks": {
+      "GraphQLAPIEndpointOutput": "string",
+      "GraphQLAPIIdOutput": "string",
+      "GraphQLAPIKeyOutput": "string"
     }
+  },
+  "auth": {
+    "NunchuckDucks": {
+      "AppClientID": "string",
+      "AppClientIDWeb": "string",
+      "IdentityPoolId": "string",
+      "IdentityPoolName": "string",
+      "UserPoolArn": "string",
+      "UserPoolId": "string",
+      "UserPoolName": "string"
+    }
+  },
+  "storage": {
+    "s3nunchuckduckspicturestorage": {
+      "BucketName": "string",
+      "Region": "string"
+    }
+  }
 }

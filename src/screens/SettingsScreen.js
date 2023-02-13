@@ -36,14 +36,12 @@ export function SettingsScreen({ navigation }) {
     },
     container: {
       alignItems: "center",
-    }
+    },
   });
-  
+
   return (
-    <View
-      style={style.container}
-    >
-      <TouchableOpacity style={styles.deleteCacheButton}></TouchableOpacity>
+    <View style={style.container}>
+      <TouchableOpacity style={styles.deleteCacheButton} onPress={(event) => deleteOldCache()}></TouchableOpacity>
       <Header title={"Settings"} />
 
       <Text>Toggle private account eventually goes here</Text>
