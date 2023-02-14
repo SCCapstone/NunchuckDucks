@@ -13,6 +13,7 @@ import {
   getFollowsList,
   deleteFollower as deleteFollowing,
 } from "../crud/FollowingOperations";
+import { getCurrentAuthenticatedUser } from "../library/GetAuthenticatedUser";
 
 // TODO convert to FlatList of other lazy loading schema so rendering doesn't take 1+ second for large lists
 export function FollowerScreen({ route, navigation }) {
@@ -29,8 +30,7 @@ export function FollowerScreen({ route, navigation }) {
   }, [getLists, route.params, modalVisible, forceRefresh]);
 
   const getLists = useCallback(async (isFollowerPage) => {
-    const { attributes } = await Auth.currentAuthenticatedUser();
-    let currUser = attributes.preferred_username;
+    const currUser = await getCurrentAuthenticatedUser();
     const list = isFollowerPage
       ? await getFollowersList(currUser)
       : await getFollowsList(currUser);

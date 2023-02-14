@@ -5,9 +5,10 @@ import { blueThemeColor, grayThemeColor } from "../library/constants";
 import React from "react";
 import { getFollowsList } from "../crud/FollowingOperations";
 import { getFollowersList } from "../crud/FollowersOperations";
-import { updateProfilePicture } from "../crud/UserOperations";
+import { getBio, updateProfilePicture } from "../crud/UserOperations";
 import { findUserByUsername } from "../crud/UserOperations";
 import ProfileMini from "../components/ProfileMini";
+import Bio from "../components/Bio";
 import CustomButton from "../components/CustomButton";
 import { useNavigation } from "@react-navigation/native";
 import { useState, useEffect, useCallback } from "react";
@@ -16,6 +17,8 @@ import * as ImagePicker from "expo-image-picker";
 import { getProfilePicture } from "../crud/UserOperations";
 import { Storage } from "@aws-amplify/storage";
 import { DataStore } from "aws-amplify";
+import { getCurrentAuthenticatedUser } from "../library/GetAuthenticatedUser";
+import ChangeBioModal from "../components/modals/ChangeBioModal";
 
 //Need to also create the buttons to be clickable and call different functions
 export function ProfileScreen(props) {
@@ -23,6 +26,7 @@ export function ProfileScreen(props) {
   const [username, setUsername] = useState("");
   const [followercount, setFollowerCount] = useState("");
   const [followingcount, setFollowingCount] = useState("");
+  const [modalVisible, setModalVisible] = useState(false);
   // const [image, setImage] = useState(""); // the image src to be displayed
   const [imageFromAWS, setImageFromAWS] = useState("");
   const [reload, setReload] = useState(false);
@@ -41,7 +45,7 @@ export function ProfileScreen(props) {
     // console.log("Follower Count Grabbed");
     // getFollowingCount();
     // console.log("Following Count Grabbed");*/
-  }, []);
+  }, [modalVisible]);
 
   async function getUsernameAndImageSRC() {
     await getUsername(); // sets username state
@@ -49,8 +53,7 @@ export function ProfileScreen(props) {
   }
 
   const getImageSRC = async () => {
-    const { attributes } = await Auth.currentAuthenticatedUser();
-    let username = attributes.preferred_username;
+    let username = await getCurrentAuthenticatedUser();
     const pic = await Storage.get(username + "/pfp.png");
     setImageFromAWS(pic);
   };
@@ -66,11 +69,10 @@ export function ProfileScreen(props) {
 
   async function getUsername() {
     try {
-      const { attributes } = await Auth.currentAuthenticatedUser();
-      let username = attributes.preferred_username;
+      let username = await getCurrentAuthenticatedUser();
       setUsername(username);
     } catch {
-      console.error("Error getting username of current authenticated user");
+      console.error("Error getting username of current authenticated user", error);
     }
   }
 
@@ -94,8 +96,7 @@ export function ProfileScreen(props) {
     });
     // setImage(_image.uri);
     try {
-      const { attributes } = await Auth.currentAuthenticatedUser();
-      let username = attributes.preferred_username;
+      let username = await getCurrentAuthenticatedUser();
       const response = await fetch(_image.uri);
       const blob = await response.blob();
       const fileName = username + "/pfp.png";
@@ -116,12 +117,20 @@ export function ProfileScreen(props) {
         justifyContent: "center",
       }}
     >
-      <View style={{ paddingTop: 25 }}>
+      <ChangeBioModal
+        modalVisible={modalVisible}
+        setModalVisible={setModalVisible}>
+    </ChangeBioModal>
+      <View style={{ paddingTop: 0, paddingBottom: 10, flexDirection: "row", alignContent: "center" }}>
         <ProfileMini onClick={() => addProfileImage()} src={imageFromAWS} />
+        <Text style={styles.username}>@{username}</Text>
       </View>
-
-      <Text style={styles.username}>@{username}</Text>
-      <View style={{ flexDirection: "row", paddingBottom: 15, maxWidth: 250 }}>
+      <TouchableOpacity onPress={() => setModalVisible(true)}>
+        <Bio>
+        </Bio>
+      </TouchableOpacity>
+      {/*<Text style={styles.username}>@{username}</Text>*/}
+      <View style={{ flexDirection: "row", paddingTop: 15, paddingBottom: 15, maxWidth: 250 }}>
         {/*
         <CustomButton 
         text="Add Friend"
@@ -182,12 +191,13 @@ export function ProfileScreen(props) {
       </TouchableOpacity>
     </View>
   );
-}
+};
 const styles = StyleSheet.create({
   username: {
-    paddingTop: 20,
-    paddingBottom: 3,
-    fontSize: 22,
+    paddingTop: 30,
+    paddingBottom: 0,
+    paddingLeft: 15,
+    fontSize: 15,
     fontWeight: "bold",
   },
   mainbutton: {
@@ -205,5 +215,5 @@ const styles = StyleSheet.create({
     borderRadius: 9,
     borderColor: blueThemeColor,
     backgroundColor: grayThemeColor,
-  },
+  }
 });
