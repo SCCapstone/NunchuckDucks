@@ -1,9 +1,10 @@
-import { View, Image, Text, StyleSheet } from "react-native";
+import { View, Image, Text, StyleSheet, Pressable } from "react-native";
 import { useState, useEffect } from "react";
 import { Storage } from "@aws-amplify/storage";
 import Reactions from "../Reactions";
-import { grayThemeColor } from "../../library/constants";
+import { blueThemeColor, grayThemeColor } from "../../library/constants";
 import ProfileMini from "../ProfileMini";
+import { useNavigation } from "@react-navigation/native";
 const styles = StyleSheet.create({
   postBox: {
     height: 500,
@@ -44,12 +45,52 @@ const styles = StyleSheet.create({
     marginLeft: "auto", // gives 95% of margin to the left of createdAt
     marginRight: "5%", // effectively pushing it to the right
   },
+  blowupmain: {
+    width:"100%",
+    height: 250,
+    marginTop:20,
+    position:"absolute",
+    right:0,
+    bottom:0,
+    backgroundColor: 'rgba(200,212,225,0.7)',
+    borderRightWidth:0,
+    borderLeftWidth:0,
+    borderWidth: 2,
+    borderTopWidth:3,
+    borderRightColor:"black",
+    
+  },
+  blowupheader: {
+    height:53,
+    borderColor: "black",
+    color:blueThemeColor,
+    fontSize: 35,
+    fontWeight:"bold",
+    marginTop:2,
+    textAlign:"center",
+    borderBottomWidth:3,
+    
+  },
+  blowupbody: {
+    fontSize: 21,
+    textAlign:"left",
+    paddingLeft:20,
+    marginTop:5
+  }
+
+
 });
 export default function Post(props) {
   const entry = props.entry;
   const refresh = props.refresh;
   const [picture, setPicture] = useState(null);
   const [pfp, setPfp] = useState("");
+  const [blowup,setBlowup]= useState(false);
+  const navigation = useNavigation();
+
+  const handleBlowUp=()=>{
+    setBlowup(!blowup);
+  }
 
   async function getPic() {
     // TODO retrieve post picture from the passed entry fileName
@@ -65,6 +106,7 @@ export default function Post(props) {
   // get the pic again after a refresh
   useEffect(() => {
     getPic();
+    setBlowup(false);
   }, [refresh]);
 
   return (
@@ -74,11 +116,28 @@ export default function Post(props) {
           src={pfp}
           style={{ height: 42, width: 42, marginLeft: 6, marginRight: 6 }}
           imageStyle={{ height: 42, width: 42 }}
-        />
+          onClick={() =>
+            navigation.navigate("Profile")
+          }
+        />{/*Need to make it navigate to users specific profile*/}
         <Text style={styles.postUsername}>{entry.username}</Text>
         <Text style={styles.createdAt}>{getTimeElapsed(entry.createdAt)}</Text>
       </View>
-      <Image source={{ uri: picture }} style={{ flex: 8 }} />
+      <Pressable onPress={handleBlowUp} style={{backgroundColor:"rgba(30,144,255,0.5)", height:"78%", bottom:-20, marginTop:-20}}>
+      <Image source={{ uri: picture }} style={{ flex: 8,}}/>
+      </Pressable>
+      <View> 
+        {blowup ?
+        <View style={styles.blowupmain}>
+          <View style={styles.blowupheader}>
+            <Text style = {styles.blowupheader}>Today's Workout</Text>
+          </View>
+          <View>
+            <Text style={styles.blowupbody}>- {entry.caption}</Text>
+          </View>
+        </View>:<Text></Text>}
+      </View>
+      {/*replace get time elapsed w/ actual on click utility*/}
       {/*<View style={styles.captionBox} /> Need to implement caption box as intended*/}
       <View name="Footer" flexDirection="row" style={styles.footer}>
         <Reactions />
