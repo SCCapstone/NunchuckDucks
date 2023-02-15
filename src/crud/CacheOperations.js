@@ -67,6 +67,7 @@ export async function getPostsFromCache() {
 
 export async function getCachedCurrUser() {
   try {
+    console.log(cacheDirectory);
     const cachedUserUri = cacheDirectory + "currUser.txt";
     let cachedUserString = await FileSystem.readAsStringAsync(cachedUserUri, { encoding: "utf8" });
     return cachedUserString;
