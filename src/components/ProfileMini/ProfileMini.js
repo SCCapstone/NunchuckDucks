@@ -29,13 +29,13 @@ const ProfileMini = ({ style, src, onClick, imageStyle }) => {
 const styles = StyleSheet.create({
   container: {
     backgroundColor: "white",
-    width: 60,
-    height: 60,
+    width: 80,
+    height: 80,
     borderRadius: 100,
   },
   image: {
-    width: 60,
-    height: 60,
+    width: 80,
+    height: 80,
     position: "absolute",
     left: 0,
     top: 0,

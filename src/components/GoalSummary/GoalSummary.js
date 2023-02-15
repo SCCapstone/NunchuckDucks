@@ -4,13 +4,13 @@ import { Auth } from "aws-amplify";
 
 import { getGoals } from "../../crud/GoalOperations";
 import { blueThemeColor, grayThemeColor } from "../../library/constants";
+import { getCurrentAuthenticatedUser } from "../../library/GetAuthenticatedUser";
 
 const GoalSummary = () => {
   const [goals, setGoals] = useState([]);
 
   async function goalList() {
-    const { attributes } = await Auth.currentAuthenticatedUser();
-    let username = attributes.preferred_username;
+    let username = await getCurrentAuthenticatedUser();
     const goals = await getGoals(username);
     setGoals(goals);
   }

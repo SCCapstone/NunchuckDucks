@@ -140,6 +140,20 @@ export async function updateBio(username, newBio) {
   }
 }
 
+export async function getBio(username) {
+  try {
+    const userId = await getUserId(username);
+
+    const user = await DataStore.query(User, userId);
+
+    console.log(`Successfully retrieved the bio for ${username}`);
+
+    return user.bio;
+  } catch (error) {
+    console.error(`Error retrieving the bio for ${username}`, error);
+  }
+}
+
 /**
  * Checks to see if the given username is the same as the current user
  * @param {String} username 

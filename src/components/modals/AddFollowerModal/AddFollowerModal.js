@@ -13,7 +13,7 @@ const AddFollowerModal = ({ modalVisible, setModalVisible }) => {
 
   async function addNewFollower() {
     try {
-      let currUser = await getCurrentAuthenticatedUser();
+      const currUser = await getCurrentAuthenticatedUser();
       await createFollower(addFriendValue, currUser);
       //need to add some sort of modal for when you can't follow a user
       //await createFollowing(currUser, addFriendValue);
