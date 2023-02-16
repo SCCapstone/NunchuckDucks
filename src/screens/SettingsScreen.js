@@ -40,7 +40,7 @@ export function SettingsScreen({ navigation }) {
   });
 
   return (
-    <View style={style.container}>
+    <View style={styles.container}>
       <TouchableOpacity style={styles.deleteCacheButton} onPress={(event) => deleteOldCache()}></TouchableOpacity>
       <Header title={"Settings"} />
 

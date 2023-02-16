@@ -89,6 +89,7 @@ export default function Post(props) {
   const [pfp, setPfp] = useState("");
   const [blowup, setBlowup] = useState(false);
   const navigation = useNavigation();
+  const networkConnection = useNetInfo();
 
   const handleBlowUp = () => {
     setBlowup(!blowup);
@@ -97,24 +98,33 @@ export default function Post(props) {
   async function getPictures() {
     console.log("Retrieving pic");
     // TODO retrieve post picture from the passed entry fileName
-    const pic = await Storage.get(entry.photo);
-    setPicture(pic);
-    try {
-      const pfps3 = await Storage.get(entry.username + "/pfp.png");
-      console.log(typeof pfps3);
-      setPfp(pfps3);
-    } catch (error) {
-      console.log("Error retrieving pfp: " + error);
+    //const postPfp = await getImageFromCache(username, "pfp.png"); // console logs pic "pfp.png found for user x..."
+    const postPfp = entry.cachedPfp;
+
+    if (postPfp !== "") {
+      setPfp(postPfp);
     }
-    /*const pic = await getImageFromCache(username,picName);
-    if (pic !== "")
-    {
+    const pic = entry.cachedPostPicture;
+
+    //const pic = await getImageFromCache(username, picName);
+    if (pic !== "") {
+      console.log("Pic", picName, "for", username, "found in cache");
       setPicture(pic);
+    } else if (entry.shouldBeCached === true) {
+      console.log("Pic not in cache but it should be", entry.caption);
+      let picCached = await cacheImageFromAWS(username, picName);
+      //let picha = await Storage.get(photoStr);
+      setPicture(picCached);
     } else {
-      const newlyCachedPic = await cacheImageFromAWS(username,picName);
-      setPicture(newlyCachedPic);
-    }*/
-    //const postPic = await getImageFromCache(username,)
+      console.log("Else Happened to ", username, "caption", entry.caption);
+      console.log("PEE", entry);
+      if (networkConnection.isConnected === true) {
+        let picFromAWS = await Storage.get(photoStr);
+        setPicture(picFromAWS);
+      } else {
+        console.log("Connection unavailable to render post", photoStr);
+      }
+    }
   }
   useEffect(() => {
     console.log("Reached useEffect for Post", username);
