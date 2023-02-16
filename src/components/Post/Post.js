@@ -1,10 +1,11 @@
-import { View, Image, Text, StyleSheet, Pressable } from "react-native";
+import { View, Image, Text, StyleSheet, Pressable, TouchableOpacity } from "react-native";
 import { useState, useEffect } from "react";
 import { Storage } from "@aws-amplify/storage";
 import Reactions from "../Reactions";
 import { blueThemeColor, grayThemeColor } from "../../library/constants";
 import ProfileMini from "../ProfileMini";
 import { useNavigation } from "@react-navigation/native";
+import NonCurrUserProfileModal from "../modals/NonCurrUserProfileModal.js/NonCurrUserProfileModal";
 const styles = StyleSheet.create({
   postBox: {
     height: 500,
@@ -87,6 +88,7 @@ export default function Post(props) {
   const [pfp, setPfp] = useState("");
   const [blowup,setBlowup]= useState(false);
   const navigation = useNavigation();
+  const [modalVisible, setModalVisible] = useState("");
 
   const handleBlowUp=()=>{
     setBlowup(!blowup);
@@ -107,20 +109,26 @@ export default function Post(props) {
   useEffect(() => {
     getPic();
     setBlowup(false);
-  }, [refresh]);
+  }, [refresh, modalVisible]);
 
   return (
     <View style={styles.postBox}>
+      <NonCurrUserProfileModal
+        modalVisible={modalVisible}
+        setModalVisible={setModalVisible}
+        entry={entry}>
+      </NonCurrUserProfileModal>
       <View name="Header" flexDirection="row" style={styles.postHeader}>
         <ProfileMini
           src={pfp}
           style={{ height: 42, width: 42, marginLeft: 6, marginRight: 6 }}
           imageStyle={{ height: 42, width: 42 }}
           onClick={() =>
-            navigation.navigate("Profile")
+            setModalVisible(true)
           }
-        />{/*Need to make it navigate to users specific profile*/}
-        <Text style={styles.postUsername}>{entry.username}</Text>
+        />
+        {/*Need to make it navigate to users specific profile*/}
+          <Text style={styles.postUsername}>{entry.username}</Text>
         <Text style={styles.createdAt}>{getTimeElapsed(entry.createdAt)}</Text>
       </View>
       <Pressable onPress={handleBlowUp} style={{backgroundColor:"rgba(30,144,255,0.5)", height:"78%", bottom:-20, marginTop:-20}}>
