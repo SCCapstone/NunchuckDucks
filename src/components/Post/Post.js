@@ -1,6 +1,6 @@
 import { View, Image, Text, StyleSheet, Pressable } from "react-native";
 import React, { useState, useEffect } from "react";
-import Storage from "@aws-amplify/storage";
+import { Storage } from "@aws-amplify/storage";
 import Reactions from "../Reactions";
 import { blueThemeColor, grayThemeColor } from "../../library/constants";
 import ProfileMini from "../ProfileMini";
@@ -117,7 +117,6 @@ export default function Post(props) {
       setPicture(picCached);
     } else {
       console.log("Else Happened to ", username, "caption", entry.caption);
-      console.log("PEE", entry);
       if (networkConnection.isConnected === true) {
         let picFromAWS = await Storage.get(photoStr);
         setPicture(picFromAWS);
