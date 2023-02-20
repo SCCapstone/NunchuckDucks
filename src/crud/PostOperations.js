@@ -49,15 +49,14 @@ export async function getPostsForMutualFeed(username) {
     const userId = await getUserId(username);
 
     const usersFollowed = await DataStore.query(Follows, (uf) =>
-      uf.userID.eq(userId)
+      uf.username.eq(username)
     );
     const usersFollowedIDs = [userId];
 
     console.log(`Retrieved users followed for ${username}`);
 
     for (let i = 0; i < usersFollowed.length; i++) {
-      let usersFollowedID = await getUserId(usersFollowed[i].username);
-      usersFollowedIDs.push(usersFollowedID);
+      usersFollowedIDs.push(usersFollowed[i].userID);
     }
 
     const posts = [];
