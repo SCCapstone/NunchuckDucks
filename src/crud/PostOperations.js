@@ -48,11 +48,11 @@ export async function getUsersFollowed(username) {
   try {
     const userId = await getUserId(username);
 
-    const usersFollowed = await DataStore.query(Follows, (uf) => uf.userID("eq", userId));
+    const usersFollowed = await DataStore.query(Follows, (uf) => uf.username.eq(username));
     let usernames = [];
     for (let i = 0; i < usersFollowed.length; i++) {
       //console.log(usersFollowed);
-      usernames.push(usersFollowed[i].username);
+      usersFollowed.push(usersFollowed[i].userID);
     }
     return usernames;
   } catch (error) {
@@ -65,14 +65,13 @@ export async function getPostsForMutualFeedFromAWS(username) {
   try {
     const userId = await getUserId(username);
 
-    const usersFollowed = await DataStore.query(Follows, (uf) => uf.userID.eq(userId));
+    const usersFollowed = await DataStore.query(Follows, (uf) => uf.username.eq(username));
     const usersFollowedIDs = [userId];
 
     console.log(`Retrieved users followed for ${username}`);
 
     for (let i = 0; i < usersFollowed.length; i++) {
-      let usersFollowedID = await getUserId(usersFollowed[i].username);
-      usersFollowedIDs.push(usersFollowedID);
+      usersFollowedIDs.push(usersFollowed[i].userID);
     }
 
     const posts = [];

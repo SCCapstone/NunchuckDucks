@@ -41,9 +41,10 @@ export function SettingsScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity style={styles.deleteCacheButton} onPress={(event) => deleteOldCache()}></TouchableOpacity>
       <Header title={"Settings"} />
-
+      <TouchableOpacity style={styles.deleteCacheButton} onPress={(event) => deleteOldCache()}>
+        <Text style={{ color: "#FFFFFF" }}>Delete old cache</Text>
+      </TouchableOpacity>
       <Text>Toggle private account eventually goes here</Text>
     </View>
   );

@@ -1,7 +1,7 @@
 import { DataStore, API, Amplify } from "aws-amplify";
 import * as FileSystem from "expo-file-system";
 import { Auth } from "aws-amplify";
-import Storage from "@aws-amplify/storage";
+import { Storage } from "@aws-amplify/storage";
 import { getCurrentAuthenticatedUser } from "../library/GetAuthenticatedUser";
 
 const cacheDirectory = FileSystem.cacheDirectory;
@@ -55,6 +55,8 @@ export async function getLastModifiedCache(username, ending) {
 
 export async function getPostsFromCache() {
   try {
+    let files = await FileSystem.readDirectoryAsync(cacheDirectory);
+    console.log("filichkas", files);
     const cachedPostsUri = cacheDirectory + "posts.txt";
     let postsString = await FileSystem.readAsStringAsync(cachedPostsUri, { encoding: "utf8" });
     let posts = JSON.parse(postsString);
@@ -116,7 +118,7 @@ export async function getLastModifiedAWS(username, file) {
       console.log("Success: got lastModified from AWS for", file);
     })
     .catch((error) => {
-      console.log("Error: " + error.response);
+      console.log("Error: could not get last modified" + error.response);
     });
   return lastModified;
 }
@@ -138,7 +140,7 @@ export async function getPostsThatShouldBeCached() {
   try {
     const cachedPostsUri = cacheDirectory + "postsCached.txt";
     let cachedPostsString = await FileSystem.readAsStringAsync(cachedPostsUri, { encoding: "utf8" });
-    return cachedPostString;
+    return cachedPostsString;
   } catch (e) {
     console.log("Could not read what the cached posts are supposed to be", e);
     return null;
@@ -218,7 +220,6 @@ export async function saveImageToAWS(fileName, blob) {
 }
 
 export async function updatePfpCache(username) {
-  let files = await FileSystem.readDirectoryAsync(cacheDirectory);
   const cachedImage = await getImageFromCache(username, "pfp.png");
   console.log("this", cachedImage, "is the hopefully cached pfp for", username);
   // we are assuming that if the image exists in client then it should exist in the backend as well

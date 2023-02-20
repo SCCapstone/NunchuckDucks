@@ -117,10 +117,10 @@ export default function Post(props) {
       setPicture(picCached);
     } else {
       console.log("Else Happened to ", username, "caption", entry.caption);
-      if (networkConnection.isConnected === true) {
+      try {
         let picFromAWS = await Storage.get(photoStr);
         setPicture(picFromAWS);
-      } else {
+      } catch (e) {
         console.log("Connection unavailable to render post", photoStr);
       }
     }
