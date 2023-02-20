@@ -73,7 +73,6 @@ export async function getPostsForMutualFeedFromAWS(username) {
 
     for (let i = 0; i < usersFollowed.length; i++) {
       usersFollowedIDs.push(usersFollowed[i].userID);
-      console.log(usersFollowed[i].userID);
     }
 
     const posts = [];

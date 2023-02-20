@@ -64,11 +64,11 @@ const app = () => {
         {/* <Stack.Screen name="Explore" component={ExploreScreen} /> */}
         <Stack.Screen name="Mutuals" component={MutualScreen} />
         <Stack.Screen name="Profile" component={ProfileScreen} />
-        <Stack.Screen name="CreatePost" component={CreatePost} />
+        {/* <Stack.Screen name="CreatePost" component={CreatePost} /> */}
         {/* <Stack.Screen name="Calendar" component={CalendarScreen} /> */}
         <Stack.Screen name="Goals" component={GoalsScreen} />
         <Stack.Screen name="Followers" component={FollowerScreen} initialParams={{ isFollowerPage: false }} />
-        <Stack.Screen name="CreateGoal" component={CreateGoalScreen} />
+        {/* <Stack.Screen name="CreateGoal" component={CreateGoalScreen} /> */}
       </Stack.Navigator>
     </NavigationContainer>
   );

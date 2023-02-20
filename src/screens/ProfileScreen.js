@@ -33,6 +33,8 @@ import ChangeBioModal from "../components/modals/ChangeBioModal";
 import * as FileSystem from "expo-file-system";
 import "react-native-url-polyfill/auto";
 import "react-native-get-random-values";
+import Header from "../components/Header";
+
 //Need to also create the buttons to be clickable and call different functions
 export function ProfileScreen(props) {
   const navigation = useNavigation();
@@ -146,80 +148,84 @@ export function ProfileScreen(props) {
   };
 
   return (
-    <View
-      style={{
-        flex: 1,
-        alignItems: "center",
-        backgroundColor: "white",
-        justifyContent: "center",
-      }}
-    >
-      <ChangeBioModal modalVisible={modalVisible} setModalVisible={setModalVisible}></ChangeBioModal>
-      <View style={{ paddingTop: 0, paddingBottom: 10, flexDirection: "row", alignContent: "center" }}>
-        <ProfileMini onClick={() => addProfileImage()} src={profilePic} />
-        <Text style={styles.username}>@{username}</Text>
+    <>
+      <View>
+        <Header title={"Profile"} />
       </View>
-      <TouchableOpacity onPress={() => setModalVisible(true)}>
-        <Bio></Bio>
-      </TouchableOpacity>
-      {/*<Text style={styles.username}>@{username}</Text>*/}
-      <View style={{ flexDirection: "row", paddingTop: 15, paddingBottom: 15, maxWidth: 250 }}>
-        {/*
-        <CustomButton 
-        text="Add Friend"
-        textStyle = {{fontSize: 17}}
-        style = {{borderRadius:20}}
-        //onClick = {() => }
-        //TO-DO 
-        //onClick={needs to add friend here}
-        ></CustomButton>
-        */}
-        <SignOutButton />
-      </View>
-
-      <View style={{ flexDirection: "row", alignContent: "center" }}>
-        <Text style={styles.followercount}>{followercount}</Text>
-        <View style={{ width: 157 }}></View>
-        <Text style={styles.followercount}>{followingcount}</Text>
-      </View>
-
       <View
         style={{
-          flexDirection: "row",
-          paddingBottom: 30,
-          paddingHorizontal: 80,
+          flex: 1,
+          alignItems: "center",
+          backgroundColor: "white",
+          justifyContent: "center",
         }}
       >
-        <CustomButton
-          text="Followers"
-          style={{ width: 100, borderRadius: 20 }}
-          textStyle={{ fontSize: 15, fontWeight: "700" }}
-          onClick={() => navigation.navigate("Followers", { isFollowerPage: true })}
-        ></CustomButton>
-
-        <View style={{ width: 83 }}></View>
-
-        <CustomButton
-          text="Following"
-          style={{ width: 100, borderRadius: 20 }}
-          textStyle={{ fontSize: 15, fontWeight: "700" }}
-          onClick={() => navigation.navigate("Followers", { isFollowerPage: false })}
-        ></CustomButton>
-      </View>
-      {showMakePfp ? <Text>Make a profile picture by tapping the icon!</Text> : <Text></Text>}
-      {/* Need for calendar style.
-      <View style={{ flexdirection:"row", paddingBottom:30}}>
-        
-        <TouchableOpacity onPress = {() => navigation.navigate("Calendar")}>
-        <View style={styles.calendar} />
+        <ChangeBioModal modalVisible={modalVisible} setModalVisible={setModalVisible}></ChangeBioModal>
+        <View style={{ paddingTop: 0, paddingBottom: 10, flexDirection: "row", alignContent: "center" }}>
+          <ProfileMini onClick={() => addProfileImage()} src={imageFromAWS} />
+          <Text style={styles.username}>@{username}</Text>
+        </View>
+        <TouchableOpacity onPress={() => setModalVisible(true)}>
+          <Bio></Bio>
         </TouchableOpacity>
-
-      </View>
+        {/*<Text style={styles.username}>@{username}</Text>*/}
+        <View style={{ flexDirection: "row", paddingTop: 15, paddingBottom: 15, maxWidth: 250 }}>
+          {/*
+    <CustomButton
+    text="Add Friend"
+    textStyle = {{fontSize: 17}}
+    style = {{borderRadius:20}}
+    //onClick = {() => }
+    //TO-DO
+    //onClick={needs to add friend here}
+    ></CustomButton>
     */}
-      <TouchableOpacity onPress={() => navigation.navigate("Goals")}>
-        <GoalSummary></GoalSummary>
+          <SignOutButton />
+        </View>
+
+        <View style={{ flexDirection: "row", alignContent: "center" }}>
+          <Text style={styles.followercount}>{followercount}</Text>
+          <View style={{ width: 157 }}></View>
+          <Text style={styles.followercount}>{followingcount}</Text>
+        </View>
+
+        <View
+          style={{
+            flexDirection: "row",
+            paddingBottom: 30,
+            paddingHorizontal: 80,
+          }}
+        >
+          <CustomButton
+            text="Followers"
+            style={{ width: 100, borderRadius: 20 }}
+            textStyle={{ fontSize: 15, fontWeight: "700" }}
+            onClick={() => navigation.navigate("Followers", { isFollowerPage: true })}
+          ></CustomButton>
+
+          <View style={{ width: 83 }}></View>
+
+          <CustomButton
+            text="Following"
+            style={{ width: 100, borderRadius: 20 }}
+            textStyle={{ fontSize: 15, fontWeight: "700" }}
+            onClick={() => navigation.navigate("Followers", { isFollowerPage: false })}
+          ></CustomButton>
+        </View>
+        {/* Need for calendar style.
+    <View style={{ flexdirection:"row", paddingBottom:30}}>
+      
+      <TouchableOpacity onPress = {() => navigation.navigate("Calendar")}>
+      <View style={styles.calendar} />
       </TouchableOpacity>
+
     </View>
+  */}
+        <TouchableOpacity onPress={() => navigation.navigate("Goals")}>
+          <GoalSummary></GoalSummary>
+        </TouchableOpacity>
+      </View>
+    </>
   );
 }
 const styles = StyleSheet.create({
