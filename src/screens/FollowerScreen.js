@@ -81,7 +81,7 @@ export function FollowerScreen({ route, navigation }) {
         setModalVisible={setModalVisible}
       ></AddFollowerModal>
       <View style={styles.stickyHeader}>
-        <Header></Header>
+        <Header title={"Followers"}></Header>
         <View style={styles.pageChangeButtons}>
           <CustomButton
             buttonType={"hyperlink"}

@@ -76,9 +76,7 @@ const styles = StyleSheet.create({
     textAlign:"left",
     paddingLeft:20,
     marginTop:5
-  }
-
-
+  },
 });
 export default function Post(props) {
   const entry = props.entry;
