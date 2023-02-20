@@ -20,6 +20,7 @@ import {
   getAllCachedFiles,
   cachePostsThatShouldBeCached,
 } from "../../crud/CacheOperations";
+import { getFollowsList } from "../../crud/FollowingOperations";
 
 export default function PostList(props) {
   const [posts, setPosts] = useState([]); // posts: all graphql post entries
@@ -71,16 +72,20 @@ export default function PostList(props) {
       let postImageName = postImage.substring(postImage.indexOf("/") + 1);
       let postPfp = await getImageFromCache(username, "pfp.png");
       let postImgCache = await getImageFromCache(username, postImageName);
-      postsFromAWS[i].cachedPostPicture = postImgCache;
+      console.log("Username:", username, "Filename:", postImageName, "ExistsIfNotBlank:", postImgCache);
       postsFromAWS[i].cachedPfp = postPfp;
-      if (i < 20) {
-        // only first 20 posts should be cached
+
+      /*// Disabling the 20 post checker rule; not necessary for right now
+      postNames.push(username + "pfp.png"); // add the pfps that should be cached (redundant pfps will exist)
+      postNames.push(username + postImageName); // add the posts that should be cached
+      postsFromAWS[i].shouldBeCached = true;*/
+      if (i < 30) {
+        // only first 30 posts should be cached
         postNames.push(username + "pfp.png"); // add the pfps that should be cached (redundant pfps will exist)
         postNames.push(username + postImageName); // add the posts that should be cached
         postsFromAWS[i].shouldBeCached = true;
       } else {
         postsFromAWS[i].shouldBeCached = false;
-        postsFromAWS[i].cachedPostPicture = "";
       }
     }
     await cachePosts(postsFromAWS);
@@ -95,7 +100,6 @@ export default function PostList(props) {
     const username = await getCurrentAuthenticatedUser();
     const followers = await getUsersFollowed(username);
     await updatePfpCache(username); // updating pfp cache for the current user
-    console.log("Heres the people you follow:", followers);
     for (let i = 0; i < followers.length; i++) {
       await updatePfpCache(followers[i]); // updating pfp cache for all people you are following
     } // TODO: delete pfp cache of a user when you unfollow them

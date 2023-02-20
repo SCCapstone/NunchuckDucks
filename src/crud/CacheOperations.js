@@ -56,7 +56,6 @@ export async function getLastModifiedCache(username, ending) {
 export async function getPostsFromCache() {
   try {
     let files = await FileSystem.readDirectoryAsync(cacheDirectory);
-    console.log("filichkas", files);
     const cachedPostsUri = cacheDirectory + "posts.txt";
     let postsString = await FileSystem.readAsStringAsync(cachedPostsUri, { encoding: "utf8" });
     let posts = JSON.parse(postsString);
@@ -126,7 +125,8 @@ export async function getLastModifiedAWS(username, file) {
 export async function cachePostsThatShouldBeCached(posts) {
   const cachedPostsUri = cacheDirectory + "postsCached.txt";
   try {
-    let postsString = toString(posts);
+    let postsString = posts.toString();
+    console.log("postsString", postsString);
     let po = await FileSystem.writeAsStringAsync(cachedPostsUri, postsString, {
       encoding: "utf8",
     });
@@ -140,7 +140,8 @@ export async function getPostsThatShouldBeCached() {
   try {
     const cachedPostsUri = cacheDirectory + "postsCached.txt";
     let cachedPostsString = await FileSystem.readAsStringAsync(cachedPostsUri, { encoding: "utf8" });
-    return cachedPostsString;
+    let cachedPostsArray = cachedPostsString.split(",");
+    return cachedPostsArray;
   } catch (e) {
     console.log("Could not read what the cached posts are supposed to be", e);
     return null;
@@ -248,7 +249,7 @@ export async function updatePfpCache(username) {
   } else {
     console.log("Profile pic not found in cache; checking if it is in the backend");
     const lastModifiedAWS = await getLastModifiedAWS(username, "pfp.png");
-    if (lastModifiedAWS === "None") {
+    if (lastModifiedAWS === "None" || lastModifiedAWS === null) {
       console.log("no pfp found in backend for", username);
     } else {
       console.log("pfp was found in backend; caching pfp and lastModified val");

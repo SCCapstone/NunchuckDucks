@@ -2,7 +2,7 @@ import { processCompositeKeys } from "@aws-amplify/datastore/lib-esm/util";
 import { Int64 } from "@aws-sdk/eventstream-codec";
 import { DataStore, SortDirection } from "aws-amplify";
 import { getCurrentAuthenticatedUser } from "../library/GetAuthenticatedUser";
-import { Post, Follows } from "../models";
+import { Post, Follows, User } from "../models";
 import { getUserId } from "./UserOperations";
 /**
  * Creates a post and saves the new post in the backend
@@ -46,18 +46,19 @@ export async function deletePost(postID) {
 }
 export async function getUsersFollowed(username) {
   try {
-    const userId = await getUserId(username);
+    const followsList = await DataStore.query(Follows, (f) => f.username.eq(username));
 
-    const usersFollowed = await DataStore.query(Follows, (uf) => uf.username.eq(username));
-    let usernames = [];
-    for (let i = 0; i < usersFollowed.length; i++) {
-      //console.log(usersFollowed);
-      usersFollowed.push(usersFollowed[i].userID);
+    const newFollowsList = [];
+
+    for (let i = 0; i < followsList.length; i++) {
+      let follow = await DataStore.query(User, followsList[i].userID);
+      newFollowsList.push(follow.username);
     }
-    return usernames;
+    console.log(`Successfully retrieved follows list for ${username}.`);
+
+    return newFollowsList;
   } catch (error) {
-    console.log(error);
-    return "";
+    console.error(`Error retrieving follows list for ${username}`);
   }
 }
 
@@ -72,6 +73,7 @@ export async function getPostsForMutualFeedFromAWS(username) {
 
     for (let i = 0; i < usersFollowed.length; i++) {
       usersFollowedIDs.push(usersFollowed[i].userID);
+      console.log(usersFollowed[i].userID);
     }
 
     const posts = [];

@@ -1,7 +1,7 @@
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import Header from "../components/Header/Header";
 import { BackButton } from "../components/BackButton";
-import { getPostsThatShouldBeCached, getAllCachedFiles, deleteCachedFile } from "../crud/CacheOperations";
+import { getPostsThatShouldBeCached, getAllCachedFiles, deleteCachedFile, getCachedCurrUser } from "../crud/CacheOperations";
 
 export function SettingsScreen({ navigation }) {
   async function deleteOldCache() {

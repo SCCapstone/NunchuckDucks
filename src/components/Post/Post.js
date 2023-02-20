@@ -104,9 +104,8 @@ export default function Post(props) {
     if (postPfp !== "") {
       setPfp(postPfp);
     }
-    const pic = entry.cachedPostPicture;
-
-    //const pic = await getImageFromCache(username, picName);
+    //const pic = entry.cachedPostPicture;
+    const pic = await getImageFromCache(username, picName);
     if (pic !== "") {
       console.log("Pic", picName, "for", username, "found in cache");
       setPicture(pic);
