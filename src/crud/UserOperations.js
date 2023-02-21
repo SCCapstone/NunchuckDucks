@@ -184,3 +184,22 @@ export async function doesUserExist(username) {
     console.error(`Error checking if user exists.`, error);
   }
 }
+
+/**
+ * Checks to see if the current user is a private user
+ * @param {String} username
+ * @returns Boolean
+ */
+export async function isUserPrivate(username) {
+  try {
+    const userId = await getUserId(username);
+
+    const user = await DataStore.query(User, userId);
+
+    console.log(`Successfully retrieved privacy status for ${username}`);
+
+    return user.isPrivate;
+  } catch (error) {
+    console.error(`Error retrieving privacy status for ${username}`, error);
+  }
+}
