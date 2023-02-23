@@ -1,12 +1,14 @@
 import React from "react";
 import { View, TextInput, Button } from "react-native";
-import { API, graphqlOperation, Auth, DataStore } from "aws-amplify";
+import { API, graphqlOperation, Auth, DataStore, } from "aws-amplify";
 import { Notifications } from "expo";
 import * as mutations from "../graphql/mutations.js";
 import * as queries from "../graphql/queries.js";
 import * as Permissions from "expo-permissions";
 import { useState, useEffect } from "react";
 import { User } from "../models";
+import { getCurrentAuthenticatedUser } from "../library/GetAuthenticatedUser.js";
+import { getUserId } from "../crud/UserOperations.js";
 
 export function NotificationsScreen() {
   useEffect(() => {
@@ -14,70 +16,61 @@ export function NotificationsScreen() {
   })
 
   const [Message, setMessage] = useState("");
-  const [Profile, setProfile] = useState({})
-  const [currUser, setCurrUser] = useState({})
+  const [Profile, setProfile] = useState({});
+  const [currUser, setCurrUser] = useState({});
+  const [id, setId] = useState("");
 
   async function componentDidMount() {
-    const user = await Auth.currentSession()
-      .then(data => {
-        this.setCurrUser(data.idToken.payload.sub);
-        return data.idToken.payload.sub;
-      })
-      .catch(err => console.log(err));
-    const profile = await getUserProfile(currUser);
-    console.log("Profile: " + profile);
+    const user = await getCurrentAuthenticatedUser();
+    setCurrUser(user);
+    console.log("User: " + currUser);
+    const ID = getUserId(currUser);
+    setId(ID);
+    console.log("id: " + id);
     // There is no expoToken available yet, so we will request that and save it into the profile
-    if (profile.expoToken === null) {
-      const { status } = await Permissions.askAsync(Permissions.NOTIFICATIONS);
-      if (status !== "granted") {
-        alert("No notification permissions!");
-        return;
-      }
-      let token = await Notifications.getExpoPushTokenAsync();
-      // Only update the profile with the expoToken if it not exists yet
-      if (token !== "") {
-        const inputParams = {
-          id: currUser,
-          expoToken: token
-        };
-        console.log("These are the input params: " + inputParams);
-        await API.graphql(
-          graphqlOperation(mutations.updateUser, { input: inputParams })
-        )
-          .then(result => {
-            console.log(result);
-          })
-          .catch(err => console.log(err));
-      }
-    }
+    // if (getUserId(currUser).expoToken === null) {
+    //   const { status } = await Permissions.askAsync(Permissions.NOTIFICATIONS);
+    //   if (status !== "granted") {
+    //     alert("No notification permissions!");
+    //     return;
+    //   }
+    //   let token = await Notifications.getExpoPushTokenAsync();
+    //   // Only update the profile with the expoToken if it not exists yet
+    //   if (token !== "") {
+    //     const inputParams = {
+    //       id: currUser,
+    //       expoToken: token
+    //     };
+    //     console.log("These are the input params: " + inputParams);
+    //     await API.graphql(
+    //       graphqlOperation(mutations.updateUser, { input: inputParams })
+    //     )
+    //       .then(result => {
+    //         console.log(result);
+    //       })
+    //       .catch(err => console.log(err));
+    //   }
+    // }
   }
   async function getUserProfile(sub) {
-    // const result = await API.graphql(
-    //   graphqlOperation(queries.getUser, { id: sub })
-    // )
-    const result = await DataStore.query(User,sub)
-      // .then(result => {
-      //   this.setProfile(result.data.getCurrUser);
-      //   return result.data.getCurrUser;
-      // })
-      .catch(err => console.log(err));
+    const result = await API.graphql(
+      graphqlOperation(queries.getUser, { id: sub })
+    ).catch(err => console.log(err));
     return result;
   }
 
   async function handleSubmit() {
-
     const inputParams = {
       message: Message,
-      token: Profile.expoToken,
-      name: Profile.name,
-      email: Profile.email,
-      id: currUser
+      //token: getUserId(currUser).expoToken,
+      name: currUser,
+      id: id,
     };
     console.log("This is the input params message: " + inputParams.message);
-    // console.log("Profole Expo Token: " + inputParams.Profile.expoToken);
-    // console.log("Name: " + inputParams.Profile.name);
+    //console.log("Profole Expo Token: " + inputParams.Profile.expoToken);
+    console.log("Name: " + inputParams.name);
     // console.log("Email: " + inputParams.Profile.email);
-    // console.log("Id: " + inputParams.id);
+    console.log("Id: " + inputParams.id);
     await API.graphql(
       graphqlOperation(mutations.pinpoint, { input: inputParams })
     )
