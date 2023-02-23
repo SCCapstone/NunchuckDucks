@@ -41,7 +41,6 @@ export async function getFollowsList(username) {
       let follow = await DataStore.query(User, followsList[i].userID);
       newFollowsList.push(follow);
     }
-    console.log(`Successfully retrieved follows list for ${username}.`);
 
     return newFollowsList;
   } catch (error) {

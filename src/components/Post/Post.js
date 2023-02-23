@@ -114,7 +114,8 @@ export default function Post(props) {
       <NonCurrUserProfileModal
         modalVisible={modalVisible}
         setModalVisible={setModalVisible}
-        entry={entry}>
+        entry={entry}
+        image={pfp}>
       </NonCurrUserProfileModal>
       <View name="Header" flexDirection="row" style={styles.postHeader}>
         <ProfileMini
@@ -126,7 +127,10 @@ export default function Post(props) {
           }
         />
         {/*Need to make it navigate to users specific profile*/}
-          <Text style={styles.postUsername}>{entry.username}</Text>
+          <Text style={styles.postUsername} 
+          onPress={() =>
+            setModalVisible(true)
+          }>{entry.username}</Text>
         <Text style={styles.createdAt}>{getTimeElapsed(entry.createdAt)}</Text>
       </View>
       <Pressable onPress={handleBlowUp} style={{backgroundColor:"rgba(30,144,255,0.5)", height:"78%", bottom:-20, marginTop:-20}}>
