@@ -166,6 +166,8 @@ type EagerUser = {
   readonly Posts?: (Post | null)[] | null;
   readonly Follows?: (Follows | null)[] | null;
   readonly FollowedBies?: (FollowedBy | null)[] | null;
+  readonly expoToken?: string | null;
+  readonly isPrivate?: boolean | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -179,6 +181,8 @@ type LazyUser = {
   readonly Posts: AsyncCollection<Post>;
   readonly Follows: AsyncCollection<Follows>;
   readonly FollowedBies: AsyncCollection<FollowedBy>;
+  readonly expoToken?: string | null;
+  readonly isPrivate?: boolean | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
