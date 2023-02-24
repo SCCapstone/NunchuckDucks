@@ -205,19 +205,38 @@ export async function isUserPrivate(username) {
   }
 }
 
-export async function toggleUserPrivacy(username) {
+export async function setPrivate(username) {
   try {
     const userId = await getUserId(username);
-    console.log(userId);
 
     const original = await DataStore.query(User, userId);
 
     await DataStore.save(
-      User.update(!User.isPrivate)
-      );
+      User.copyOf(original, (updated) => {
+        updated.isPrivate = true;
+      })
+    );
 
-    console.log(`Successfully toggled privacy of ${username}.`);
+    console.log(`${username} is now a private user`);
   } catch(error) {
-    console.error(`Error toggling privacy of ${username}.`);
+    console.error(`Error making ${username} a private user`);
+  }
+}
+
+export async function setPublic(username) {
+  try {
+    const userId = await getUserId(username);
+
+    const original = await DataStore.query(User, userId);
+    
+    await DataStore.save(
+      User.copyOf(original, (updated) => {
+        updated.isPrivate = false;
+      })
+    );
+
+    console.log(`${username} is now a public user`);
+  } catch(error) {
+    console.error(`Error making ${username} a public user`);
   }
 }
