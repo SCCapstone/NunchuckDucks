@@ -206,7 +206,7 @@ export async function cacheImageFromAWS(username, ending, addPng = false) {
   //if uriAWS does not exist
   let cached = await cacheImage(uriAWS, cacheImageFileUri);
   if (cached.cached) {
-    console.log("Success: cached new " + ending);
+    console.log("Success: cached new", ending, "for", username);
     return cached.path;
   } else {
     console.log("Error: Could not cache new pic", ending, ":", cached.msg);

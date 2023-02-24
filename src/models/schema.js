@@ -361,6 +361,13 @@ export const schema = {
                     "isRequired": true,
                     "attributes": []
                 },
+                "isCompleted": {
+                    "name": "isCompleted",
+                    "isArray": false,
+                    "type": "Boolean",
+                    "isRequired": false,
+                    "attributes": []
+                },
                 "createdAt": {
                     "name": "createdAt",
                     "isArray": false,
@@ -686,5 +693,5 @@ export const schema = {
     },
     "nonModels": {},
     "codegenVersion": "3.3.5",
-    "version": "1c614a06c7e079e50a2474b3a68dda11"
+    "version": "4eb4253a58e2a25652b8f8b361474fb6"
 };

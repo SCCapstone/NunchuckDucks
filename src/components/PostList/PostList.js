@@ -92,10 +92,10 @@ export default function PostList(props) {
     await cachePostsThatShouldBeCached(postNames);
   }
 
-  async function updatePfpCacheForFollowing() {
-    const username = await getCurrentAuthenticatedUser();
-    const followers = await getUsersFollowed(username);
-    await updatePfpCache(username); // updating pfp cache for the current user
+  async function updatePfpCacheForFollowing(usernameFromAWS) {
+    //const username = await getCurrentAuthenticatedUser();
+    const followers = await getUsersFollowed(usernameFromAWS);
+    await updatePfpCache(usernameFromAWS); // updating pfp cache for the current user
     for (let i = 0; i < followers.length; i++) {
       await updatePfpCache(followers[i]); // updating pfp cache for all people you are following
     } // TODO: delete pfp cache of a user when you unfollow them
