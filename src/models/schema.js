@@ -499,6 +499,20 @@ export const schema = {
                         "associatedWith": "userID"
                     }
                 },
+                "expoToken": {
+                    "name": "expoToken",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "isPrivate": {
+                    "name": "isPrivate",
+                    "isArray": false,
+                    "type": "Boolean",
+                    "isRequired": false,
+                    "attributes": []
+                },
                 "createdAt": {
                     "name": "createdAt",
                     "isArray": false,
@@ -672,5 +686,5 @@ export const schema = {
     },
     "nonModels": {},
     "codegenVersion": "3.3.5",
-    "version": "d99bf7a4557ba3df478f40cc7354d3bf"
+    "version": "1c614a06c7e079e50a2474b3a68dda11"
 };

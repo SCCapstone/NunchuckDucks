@@ -1,6 +1,5 @@
-import { DataStore, API, Amplify } from "aws-amplify";
+import { API } from "aws-amplify";
 import * as FileSystem from "expo-file-system";
-import { Auth } from "aws-amplify";
 import { Storage } from "@aws-amplify/storage";
 import { getCurrentAuthenticatedUser } from "../library/GetAuthenticatedUser";
 
@@ -73,7 +72,7 @@ export async function getCachedCurrUser() {
     let cachedUserString = await FileSystem.readAsStringAsync(cachedUserUri, { encoding: "utf8" });
     return cachedUserString;
   } catch (e) {
-    console.log("Could not read who the current user is from cache", e);
+    console.log("Error: Could not read who the current user is from cache", e);
     return null;
   }
 }
@@ -86,7 +85,7 @@ export async function cacheCurrUser() {
     console.log("Success: cached username of logged in user");
     return username;
   } catch (e) {
-    console.log("Could not cache username from backend", e);
+    console.log("Error: Could not cache username from backend", e);
   }
 }
 
@@ -117,7 +116,7 @@ export async function getLastModifiedAWS(username, file) {
       console.log("Success: got lastModified from AWS for", file);
     })
     .catch((error) => {
-      console.log("Error: could not get last modified" + error.response);
+      console.log("Error: could not get last modified using API call" + error.response);
     });
   return lastModified;
 }
@@ -126,7 +125,6 @@ export async function cachePostsThatShouldBeCached(posts) {
   const cachedPostsUri = cacheDirectory + "postsCached.txt";
   try {
     let postsString = posts.toString();
-    console.log("postsString", postsString);
     let po = await FileSystem.writeAsStringAsync(cachedPostsUri, postsString, {
       encoding: "utf8",
     });
@@ -143,7 +141,7 @@ export async function getPostsThatShouldBeCached() {
     let cachedPostsArray = cachedPostsString.split(",");
     return cachedPostsArray;
   } catch (e) {
-    console.log("Could not read what the cached posts are supposed to be", e);
+    console.log("Error: Could not read what the cached posts are supposed to be", e);
     return null;
   }
 }
@@ -193,7 +191,7 @@ export async function getImageFromCache(username, ending) {
     console.log("Pic", ending, "for", username, "exists in cache and will be displayed");
     return cacheImageFileUri;
   } else {
-    console.log("Pic", ending, "for", username, " does not exist");
+    console.log("Pic", ending, "for", username, " does not exist in cache");
     return "";
   }
 }
@@ -211,7 +209,7 @@ export async function cacheImageFromAWS(username, ending, addPng = false) {
     console.log("Success: cached new " + ending);
     return cached.path;
   } else {
-    console.log("Error caching new pic", ending, ":", cached.msg);
+    console.log("Error: Could not cache new pic", ending, ":", cached.msg);
     return "";
   }
 }
@@ -221,8 +219,8 @@ export async function saveImageToAWS(fileName, blob) {
 }
 
 export async function updatePfpCache(username) {
+  console.log("Updating pfp cache for", username);
   const cachedImage = await getImageFromCache(username, "pfp.png");
-  console.log("this", cachedImage, "is the hopefully cached pfp for", username);
   // we are assuming that if the image exists in client then it should exist in the backend as well
   if (cachedImage !== "") {
     console.log("Profile pic for", username, "found in cache; checking if it is the most recent version");

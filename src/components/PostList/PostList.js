@@ -2,7 +2,7 @@ import { ScrollView, StyleSheet, Text, FlatList } from "react-native";
 import { useState, useEffect } from "react";
 import { DataStore, Predicates, SortDirection } from "@aws-amplify/datastore";
 import { Post as PostSchema } from "../../models";
-import { getPostsForMutualFeedFromAWS, getUsersFollowed } from "../../crud/PostOperations";
+import { getPostsForMutualFeedFromAWS, getUsersFollowed, getUsersFollowedIds } from "../../crud/PostOperations";
 import { getCurrentAuthenticatedUser } from "../../library/GetAuthenticatedUser";
 import { useNetInfo } from "@react-native-community/netinfo";
 // PostSchema, the schema above, and Post, the component below
@@ -36,9 +36,9 @@ export default function PostList(props) {
   // used to avoid doing backend queries if no connection is available yet
   const networkConnection = useNetInfo();
 
-  async function fetchPostsFromAWS() {
+  async function fetchPostsFromAWS(usernameFromAWS) {
     // gets JSON Object full of Post types; these are read as JSON, but are NOT augmentable.
-    let postsFromAWS = await getPostsForMutualFeedFromAWS(username);
+    let postsFromAWS = await getPostsForMutualFeedFromAWS(usernameFromAWS);
 
     // turns posts into a true JSON object, allowing for augmentation as needed
     let postsString = JSON.stringify(postsFromAWS);
@@ -71,14 +71,9 @@ export default function PostList(props) {
       // postImage equals username/filename.png
       let postImageName = postImage.substring(postImage.indexOf("/") + 1);
       let postPfp = await getImageFromCache(username, "pfp.png");
-      let postImgCache = await getImageFromCache(username, postImageName);
-      console.log("Username:", username, "Filename:", postImageName, "ExistsIfNotBlank:", postImgCache);
+      //let postImgCache = await getImageFromCache(username, postImageName);
       postsFromAWS[i].cachedPfp = postPfp;
 
-      /*// Disabling the 20 post checker rule; not necessary for right now
-      postNames.push(username + "pfp.png"); // add the pfps that should be cached (redundant pfps will exist)
-      postNames.push(username + postImageName); // add the posts that should be cached
-      postsFromAWS[i].shouldBeCached = true;*/
       if (i < 30) {
         // only first 30 posts should be cached
         postNames.push(username + "pfp.png"); // add the pfps that should be cached (redundant pfps will exist)
@@ -93,6 +88,7 @@ export default function PostList(props) {
     await setPostLength(postsFromAWS.length);
     // we may want to move this to the settings page? Probably unnecessary to do every cacheAWS call
 
+    //this is used to set what should be cached so deleteOldCache in settings can delete unnecessary cache
     await cachePostsThatShouldBeCached(postNames);
   }
 
@@ -106,24 +102,53 @@ export default function PostList(props) {
     console.log("performed updatepfpcache for everybody");
   }
 
-  async function doStuff() {
+  async function doStuffWithAWS() {
     console.log("Network connection acquired");
 
+    // Username not cached; cache username
+    let usernameFromAWS = "";
     if (usernameNeeded === true) {
       console.log("Fetching username of current user from AWS");
-      let usernameFromAWS = await cacheCurrUser();
+      usernameFromAWS = await cacheCurrUser();
       await setUsername(usernameFromAWS);
       await setUsernameNeeded(false);
     }
-    await updatePfpCacheForFollowing(username);
-    let postsFromAWS = await fetchPostsFromAWS(username);
-    if (postsFromAWS.length !== postLength) {
+    // Update pfp cache for all follows; causes few seconds delay in rendering posts :((
+    console.log("username 1", usernameFromAWS);
+
+    if (usernameFromAWS === "") {
+      usernameFromAWS = username;
+    }
+    await updatePfpCacheForFollowing(usernameFromAWS);
+
+    // Fetching posts from AWS
+    console.log("username 2", usernameFromAWS);
+    let postsFromAWS = await fetchPostsFromAWS(usernameFromAWS);
+    let isCacheRefreshNeeded = await checkIfRefreshCacheNeeded(postsFromAWS);
+    if (isCacheRefreshNeeded === true) {
       console.log("looks like we need to cache");
       cacheAllPostsFromAWS(postsFromAWS);
     }
   }
 
-  async function getPostCache() {
+  async function checkIfRefreshCacheNeeded(postsFromAWS) {
+    // comparison saves computational time
+    if (postsFromAWS.length !== postLength) {
+      console.log("Cached posts are of a different length than posts from AWS; need to cache");
+      return true;
+    }
+    // checks if strings are equal; if not, then cache
+    let postsString = JSON.stringify(posts);
+    let postsFromAWSString = JSON.stringify(postsFromAWS);
+    if (postsString !== postsFromAWSString) {
+      console.log("Cached posts and AWS posts differ; need to cache");
+      return true;
+    }
+    return false;
+  }
+
+  // Fetches
+  async function fetchPostCache() {
     console.log("Rendering cached posts upon initial render");
     let usernameFromCache = await getCachedCurrUser();
     if (usernameFromCache === null) {
@@ -134,14 +159,16 @@ export default function PostList(props) {
     let postsFromCache = await fetchPostsFromCache();
     await setPostsInitialCompleted(true);
     console.log(postsFromCache.length, "JAA");
+    setRefresh(!refresh);
   }
 
   useEffect(() => {
+    // First thing done upon startup of the app
     if (postsInitialCompleted === false) {
-      getPostCache();
+      fetchPostCache(); // will set postsInitialCompleted to true after completion
     }
     if (networkConnection.isConnected === true && postsInitialCompleted === true) {
-      doStuff();
+      doStuffWithAWS();
     }
 
     console.log("PostList refreshed");

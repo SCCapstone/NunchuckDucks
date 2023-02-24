@@ -3,6 +3,8 @@ import ProfileMini from "../ProfileMini";
 import { grayThemeColor } from "../../library/constants";
 import { findUserByUsername } from "../../crud/UserOperations";
 import { useState, useEffect, useCallback } from "react";
+import { getImageFromCache } from "../../crud/CacheOperations";
+import { Storage } from "aws-amplify";
 
 const deleteIconPath = require("../../../assets/icons/Gymbit_Icons_Black/X_Icon_Black.png");
 
@@ -14,11 +16,18 @@ const FollowerMini = ({ username, onProfileClick, onDelete, style }) => {
     getUserImageSrc(username);
   }, [username]);
 
-  const getUserImageSrc = useCallback(async (username) => {
+  async function getUserImageSrc(username) {
+    let pfp = await getImageFromCache(username, "pfp.png");
+    if (pfp === "") {
+      pfp = await Storage.get(username + "/pfp.png");
+    }
+    setUserImageSrc(pfp);
+  }
+  /*const getUserImageSrc = useCallback(async (username) => {
     const user = await findUserByUsername(username);
     if (!user || !user.profilePicture) return;
     setUserImageSrc(user.profilePicture);
-  }, []);
+  }, []);*/
 
   return (
     <View style={containerStyles}>
@@ -29,11 +38,7 @@ const FollowerMini = ({ username, onProfileClick, onDelete, style }) => {
         </Pressable>
       </View>
       <Pressable onPressOut={onDelete}>
-        <Image
-          source={deleteIconPath}
-          resizeMode={"center"}
-          style={styles.xIcon}
-        ></Image>
+        <Image source={deleteIconPath} resizeMode={"center"} style={styles.xIcon}></Image>
       </Pressable>
     </View>
   );

@@ -14,8 +14,6 @@ import {
   getImageFromCache,
   cacheImageFromAWS,
   saveImageToAWS,
-  getCacheImageFileUri,
-  getCacheLastModifiedUri,
   getCachedCurrUser,
 } from "../crud/CacheOperations";
 import ProfileMini from "../components/ProfileMini";
@@ -25,9 +23,6 @@ import { useNavigation } from "@react-navigation/native";
 import { useState, useEffect, useCallback } from "react";
 import SignOutButton from "../components/signoutbutton/SignOutButton";
 import * as ImagePicker from "expo-image-picker";
-import { getProfilePicture } from "../crud/UserOperations";
-import Storage from "@aws-amplify/storage";
-import { DataStore, API, Amplify } from "aws-amplify";
 import { getCurrentAuthenticatedUser } from "../library/GetAuthenticatedUser";
 import ChangeBioModal from "../components/modals/ChangeBioModal";
 import * as FileSystem from "expo-file-system";
@@ -47,12 +42,6 @@ export function ProfileScreen(props) {
   const [profilePic, setProfilePic] = useState("");
   const [reload, setReload] = useState(false);
 
-  // const cacheImageFileUri = cacheDirectory + "pfp.png";
-  //const cacheLastModifiedUri = cacheDirectory + "pfpLastModified.txt";
-  /*useEffect(() => {
-    getUserImageSrc(username)
-  }, [username]);*/
-
   useEffect(() => {
     renderProfileInfo();
   }, [modalVisible]);
@@ -67,9 +56,9 @@ export function ProfileScreen(props) {
     //const cacheImageFileUri = cacheDirectory + username + "pfp.png";
     //const cacheLastModifiedUri = cacheDirectory + username + "pfp.png";
     const cachedImage = await getImageFromCache(username, "pfp.png");
-
+    setProfilePic(cachedImage);
     // we are assuming that if the image exists in client then it should exist in the backend as well
-    if (cachedImage !== "") {
+    /*if (cachedImage !== "") {
       console.log("Profile pic found in cache; displaying and checking if it is the most recent version");
       setProfilePic(cachedImage);
       const lastModifiedAWS = await getLastModifiedAWS(username, "pfp.png");
@@ -106,7 +95,7 @@ export function ProfileScreen(props) {
         await cacheLastModified(username, lastModifiedAWS);
         setProfilePic(imageFromAWS);
       }
-    }
+    }*/
   }
 
   // async function getFollowerCount() {
@@ -162,7 +151,7 @@ export function ProfileScreen(props) {
       >
         <ChangeBioModal modalVisible={modalVisible} setModalVisible={setModalVisible}></ChangeBioModal>
         <View style={{ paddingTop: 0, paddingBottom: 10, flexDirection: "row", alignContent: "center" }}>
-          <ProfileMini onClick={() => addProfileImage()} src={imageFromAWS} />
+          <ProfileMini onClick={() => addProfileImage()} src={profilePic} />
           <Text style={styles.username}>@{username}</Text>
         </View>
         <TouchableOpacity onPress={() => setModalVisible(true)}>

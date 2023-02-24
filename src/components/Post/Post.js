@@ -115,12 +115,12 @@ export default function Post(props) {
       //let picha = await Storage.get(photoStr);
       setPicture(picCached);
     } else {
-      console.log("Else Happened to ", username, "caption", entry.caption);
+      console.log("Pic", picName, "for", username, "must be acquired using Storage.get");
       try {
         let picFromAWS = await Storage.get(photoStr);
         setPicture(picFromAWS);
       } catch (e) {
-        console.log("Connection unavailable to render post", photoStr);
+        console.log("Storage.get failed; connection unavailable to render", picName);
       }
     }
   }
