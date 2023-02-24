@@ -3,9 +3,20 @@ import Header from "../components/Header/Header";
 import ToggleSwitch from "toggle-switch-react-native";
 import { toggleUserPrivacy } from "../crud/UserOperations";
 import { getCurrentAuthenticatedUser } from "../library/GetAuthenticatedUser";
+import { useEffect, useState } from "react";
 
 export function SettingsScreen({navigation}) {
-  const username = await.getCurrentAuthenticatedUser();
+
+  const [username, setUsername] = useState("");
+  useEffect(() => {
+    getUser();
+  });
+
+  async function getUser() {
+    const Username = await getCurrentAuthenticatedUser();
+    console.log("Username: " + username);
+    setUsername(Username);
+  }
 
   return (
     <View
@@ -20,7 +31,7 @@ export function SettingsScreen({navigation}) {
         label = "Make Account Private"
         labelStyle = {{color: "black", fontWeight: "bold"}}
         size = "medium"
-        onToggle = {isOn => toggleUserPrivacy(username)}
+        onToggle = {isOn  => toggleUserPrivacy(username)}
       />
     </View>
   );

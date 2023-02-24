@@ -208,14 +208,13 @@ export async function isUserPrivate(username) {
 export async function toggleUserPrivacy(username) {
   try {
     const userId = await getUserId(username);
+    console.log(userId);
 
     const original = await DataStore.query(User, userId);
 
     await DataStore.save(
-      User.copyOf(original, (updated) => {
-        updated.isPrivate = !original.isPrivate;
-      })
-    );
+      User.update(!User.isPrivate)
+      );
 
     console.log(`Successfully toggled privacy of ${username}.`);
   } catch(error) {
