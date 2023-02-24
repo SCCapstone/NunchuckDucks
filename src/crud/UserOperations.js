@@ -2,6 +2,7 @@ import { DataStore } from "aws-amplify";
 import { User } from "../models";
 import { Storage } from "aws-amplify";
 import { getCurrentAuthenticatedUser } from "../library/GetAuthenticatedUser";
+import { getExpoPushTokenAsync } from "expo-notifications";
 
 /**
  * Creates a user and saves the new user in the backend
@@ -170,3 +171,4 @@ export async function doesUserExist(username) {
     console.error(`Error checking if user exists.`, error);
   }
 }
+
