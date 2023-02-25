@@ -37,7 +37,7 @@ export default function Post(props) {
     setBlowup(!blowup);
   };
 
-  const commentList = comments.map((val) => {
+  let commentList = comments.map((val) => {
     return (
       <Comment
         key={val.id}
@@ -49,7 +49,6 @@ export default function Post(props) {
   });
 
   async function getPic() {
-    // TODO retrieve post picture from the passed entry fileName
     const pic = await Storage.get(entry.photo);
     setPicture(pic);
     try {
@@ -98,9 +97,8 @@ export default function Post(props) {
   // get the pic again after a refresh
   useEffect(() => {
     getPic();
-    setBlowup(false);
     retrieveComments();
-  }, [refresh, modalVisible]);
+  }, [refresh]);
 
   return (
     <View style={styles.postBox}>
@@ -127,15 +125,11 @@ export default function Post(props) {
         onPress={handleBlowUp}
         style={{
           backgroundColor: "rgba(30,144,255,0.5)",
-          height: "78%",
-          bottom: -20,
-          marginTop: -20,
+          position: "relative",
         }}
       >
         <Image source={{ uri: picture }} style={{ height: 400 }} />
-      </Pressable>
-      <View>
-        {blowup ? (
+        {blowup && (
           <View style={styles.blowupmain}>
             <View style={styles.blowupheader}>
               <Text style={styles.blowupheader}>Today's Workout</Text>
@@ -144,10 +138,8 @@ export default function Post(props) {
               <Text style={styles.blowupbody}>- {entry.caption}</Text>
             </View>
           </View>
-        ) : (
-          <Text></Text>
         )}
-      </View>
+      </Pressable>
       {/*replace get time elapsed w/ actual on click utility*/}
       {/*<View style={styles.captionBox} /> Need to implement caption box as intended*/}
       <View name="Footer" style={styles.footer}>
@@ -203,15 +195,12 @@ const styles = StyleSheet.create({
   postHeader: {
     height: "10%",
     flex: 1,
-    //width: "100%",
     alignItems: "center",
-    //justifyContent: "flex-start",
     backgroundColor: grayThemeColor,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
   },
   postUsername: {
-    /* #3C8DD9 */
     color: "#2E8CFF",
     fontWeight: "bold",
     fontSize: 28,
@@ -232,7 +221,7 @@ const styles = StyleSheet.create({
   },
   blowupmain: {
     width: "100%",
-    height: 250,
+    height: 400,
     marginTop: 20,
     position: "absolute",
     right: 0,
@@ -284,15 +273,25 @@ function getTimeElapsed(createdAt) {
   if (minutesDifference < 1) {
     ans = "less than a minute ago";
   } else if (minutesDifference <= 60) {
-    ans = Math.round(minutesDifference.toString()) + " minutes ago";
+    ans =
+      Math.round(minutesDifference.toString()) +
+      ` minute${minutesDifference === 1 ? "" : "s"} ago`;
   } else if (hoursDifference <= 24) {
-    ans = Math.round(hoursDifference.toString()) + " hours ago";
+    ans =
+      Math.round(hoursDifference.toString()) +
+      ` hour${hoursDifference === 1 ? "" : "s"} ago`;
   } else if (daysDifference <= 30) {
-    ans = Math.round(daysDifference.toString()) + " days ago";
+    ans =
+      Math.round(daysDifference.toString()) +
+      ` day${daysDifference === 1 ? "" : "s"} ago`;
   } else if (monthsDifference <= 12) {
-    ans = Math.round(monthsDifference.toString()) + " months ago";
+    ans =
+      Math.round(monthsDifference.toString()) +
+      ` month${monthsDifference === 1 ? "" : "s"} ago`;
   } else {
-    ans = Math.round(yearsDifference.toString()) + " years ago";
+    ans =
+      Math.round(yearsDifference.toString()) +
+      ` year${yearsDifference === 1 ? "" : "s"} ago`;
   }
   return ans;
 }
