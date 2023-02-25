@@ -15,7 +15,7 @@ const CustomTextInput = ({
       onBlur={onBlurHandler}
       value={enteredValue}
       placeholder={placeholder}
-      placeholderTextColor="#D3D3D3"
+      placeholderTextColor="gray"
       style={{ ...styles.TextInput, ...customStyles }}
       {...rest}
     ></TextInput>

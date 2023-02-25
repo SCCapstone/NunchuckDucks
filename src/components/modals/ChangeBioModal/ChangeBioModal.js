@@ -10,7 +10,6 @@ const ChangeBioModal = ({modalVisible, setModalVisible}) => {
 
     async function changeBio() {
         const currUser = await getCurrentAuthenticatedUser();
-        console.log("this is happening when it shouldnt");
         await updateBio(currUser, bioValue);
         closeModal();
     };

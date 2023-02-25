@@ -15,6 +15,7 @@ import {
   cacheImageFromAWS,
   saveImageToAWS,
   getCachedCurrUser,
+  getCurrentUser,
 } from "../crud/CacheOperations";
 import ProfileMini from "../components/ProfileMini";
 import Bio from "../components/Bio";
@@ -23,7 +24,6 @@ import { useNavigation } from "@react-navigation/native";
 import { useState, useEffect, useCallback } from "react";
 import SignOutButton from "../components/signoutbutton/SignOutButton";
 import * as ImagePicker from "expo-image-picker";
-import { getCurrentAuthenticatedUser } from "../library/GetAuthenticatedUser";
 import ChangeBioModal from "../components/modals/ChangeBioModal";
 import * as FileSystem from "expo-file-system";
 import "react-native-url-polyfill/auto";
@@ -47,11 +47,7 @@ export function ProfileScreen(props) {
   }, [modalVisible]);
 
   async function renderProfileInfo() {
-    let username = await getCachedCurrUser();
-    if (username === null) {
-      const { attributes } = await Auth.currentAuthenticatedUser();
-      username = attributes.preferred_username;
-    }
+    let username = await getCurrentUser();
     setUsername(username);
     //const cacheImageFileUri = cacheDirectory + username + "pfp.png";
     //const cacheLastModifiedUri = cacheDirectory + username + "pfp.png";
@@ -117,7 +113,7 @@ export function ProfileScreen(props) {
     });
     // setImage(_image.uri);
     try {
-      let username = await getCurrentAuthenticatedUser();
+      let username = await getCurrentUser();
       const response = await fetch(_image.uri);
       const blob = await response.blob();
       const fileName = username + "/pfp.png";

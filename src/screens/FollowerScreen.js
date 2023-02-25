@@ -9,11 +9,8 @@ import CustomTextInput from "../components/CustomTextInput";
 import FollowerMini from "../components/FollowerMini";
 import AddFollowerModal from "../components/modals/AddFollowerModal";
 import { getFollowersList, deleteFollower } from "../crud/FollowersOperations";
-import {
-  getFollowsList,
-  deleteFollower as deleteFollowing,
-} from "../crud/FollowingOperations";
-import { getCurrentAuthenticatedUser } from "../library/GetAuthenticatedUser";
+import { getFollowsList, deleteFollower as deleteFollowing } from "../crud/FollowingOperations";
+import { getCurrentUser } from "../crud/CacheOperations";
 
 // TODO convert to FlatList of other lazy loading schema so rendering doesn't take 1+ second for large lists
 export function FollowerScreen({ route, navigation }) {
@@ -30,10 +27,8 @@ export function FollowerScreen({ route, navigation }) {
   }, [getLists, route.params, modalVisible, forceRefresh]);
 
   const getLists = useCallback(async (isFollowerPage) => {
-    const currUser = await getCurrentAuthenticatedUser();
-    const list = isFollowerPage
-      ? await getFollowersList(currUser)
-      : await getFollowsList(currUser);
+    const currUser = await getCurrentUser();
+    const list = isFollowerPage ? await getFollowersList(currUser) : await getFollowsList(currUser);
     // Maybe include guard clause to guarantee array
     if (!Array.isArray(list)) return;
     setList(list);
@@ -44,9 +39,7 @@ export function FollowerScreen({ route, navigation }) {
       <FollowerMini
         username={val.username}
         // TODO make this have actual functionality --> after PoC
-        onProfileClick={() =>
-          console.log(`Clicked on ${val.username}'s profile!`)
-        }
+        onProfileClick={() => console.log(`Clicked on ${val.username}'s profile!`)}
         // TODO Connect this to backend / add actual functionality
         onDelete={async () => {
           const { attributes } = await Auth.currentAuthenticatedUser();
@@ -61,9 +54,7 @@ export function FollowerScreen({ route, navigation }) {
           }
           console.log("WOW done");
           setForceRefresh(!forceRefresh);
-          console.log(
-            `Removed ${val.username}'s profile from your follower / following list!`
-          );
+          console.log(`Removed ${val.username}'s profile from your follower / following list!`);
         }}
         key={val.username}
         style={styles.followerMiniStyle}
@@ -76,10 +67,7 @@ export function FollowerScreen({ route, navigation }) {
 
   return (
     <View style={styles.container}>
-      <AddFollowerModal
-        modalVisible={modalVisible}
-        setModalVisible={setModalVisible}
-      ></AddFollowerModal>
+      <AddFollowerModal modalVisible={modalVisible} setModalVisible={setModalVisible}></AddFollowerModal>
       <View style={styles.stickyHeader}>
         <Header title={"Followers"}></Header>
         <View style={styles.pageChangeButtons}>
@@ -88,9 +76,7 @@ export function FollowerScreen({ route, navigation }) {
             isUnderlined={true}
             isSelected={!isFollowerPage}
             text={"Following"}
-            onClick={() =>
-              navigation.navigate("Followers", { isFollowerPage: false })
-            }
+            onClick={() => navigation.navigate("Followers", { isFollowerPage: false })}
             textStyle={styles.pageChangeButtonsText}
           ></CustomButton>
           <CustomButton
@@ -98,9 +84,7 @@ export function FollowerScreen({ route, navigation }) {
             isUnderlined={true}
             isSelected={isFollowerPage}
             text={"Followers"}
-            onClick={() =>
-              navigation.navigate("Followers", { isFollowerPage: true })
-            }
+            onClick={() => navigation.navigate("Followers", { isFollowerPage: true })}
             textStyle={styles.pageChangeButtonsText}
           ></CustomButton>
         </View>
@@ -110,11 +94,7 @@ export function FollowerScreen({ route, navigation }) {
           enteredValue={searchValue}
           onChangeHandler={(text) => setSearchValue(text)}
         ></CustomTextInput>
-        <CustomButton
-          buttonType={"default"}
-          text={"Add Friend"}
-          onClick={() => setModalVisible(true)}
-        ></CustomButton>
+        <CustomButton buttonType={"default"} text={"Add Friend"} onClick={() => setModalVisible(true)}></CustomButton>
       </View>
       {/* TODO add "add friend" button and modal for user to enter this data */}
       <ScrollView style={styles.followerList}>{listItems}</ScrollView>
@@ -160,58 +140,47 @@ const styles = StyleSheet.create({
 
 const sampleFollowersList = [
   {
-    userImageSrc:
-      "https://images.unsplash.com/photo-1526045612212-70caf35c14df",
+    userImageSrc: "https://images.unsplash.com/photo-1526045612212-70caf35c14df",
     username: "John1",
   },
   {
-    userImageSrc:
-      "https://images.unsplash.com/photo-1526045612212-70caf35c14df",
+    userImageSrc: "https://images.unsplash.com/photo-1526045612212-70caf35c14df",
     username: "John2",
   },
   {
-    userImageSrc:
-      "https://images.unsplash.com/photo-1526045612212-70caf35c14df",
+    userImageSrc: "https://images.unsplash.com/photo-1526045612212-70caf35c14df",
     username: "John3",
   },
   {
-    userImageSrc:
-      "https://images.unsplash.com/photo-1526045612212-70caf35c14df",
+    userImageSrc: "https://images.unsplash.com/photo-1526045612212-70caf35c14df",
     username: "John4",
   },
   {
-    userImageSrc:
-      "https://images.unsplash.com/photo-1526045612212-70caf35c14df",
+    userImageSrc: "https://images.unsplash.com/photo-1526045612212-70caf35c14df",
     username: "John5",
   },
   {
-    userImageSrc:
-      "https://images.unsplash.com/photo-1526045612212-70caf35c14df",
+    userImageSrc: "https://images.unsplash.com/photo-1526045612212-70caf35c14df",
     username: "John6",
   },
   {
-    userImageSrc:
-      "https://images.unsplash.com/photo-1526045612212-70caf35c14df",
+    userImageSrc: "https://images.unsplash.com/photo-1526045612212-70caf35c14df",
     username: "John7",
   },
   {
-    userImageSrc:
-      "https://images.unsplash.com/photo-1526045612212-70caf35c14df",
+    userImageSrc: "https://images.unsplash.com/photo-1526045612212-70caf35c14df",
     username: "John8",
   },
   {
-    userImageSrc:
-      "https://images.unsplash.com/photo-1526045612212-70caf35c14df",
+    userImageSrc: "https://images.unsplash.com/photo-1526045612212-70caf35c14df",
     username: "John9",
   },
   {
-    userImageSrc:
-      "https://images.unsplash.com/photo-1526045612212-70caf35c14df",
+    userImageSrc: "https://images.unsplash.com/photo-1526045612212-70caf35c14df",
     username: "John10",
   },
   {
-    userImageSrc:
-      "https://images.unsplash.com/photo-1526045612212-70caf35c14df",
+    userImageSrc: "https://images.unsplash.com/photo-1526045612212-70caf35c14df",
     username: "John11",
   },
   {
@@ -221,58 +190,47 @@ const sampleFollowersList = [
 ];
 const sampleFollowingList = [
   {
-    userImageSrc:
-      "https://images.unsplash.com/photo-1526045612212-70caf35c14df",
+    userImageSrc: "https://images.unsplash.com/photo-1526045612212-70caf35c14df",
     username: "David1",
   },
   {
-    userImageSrc:
-      "https://images.unsplash.com/photo-1526045612212-70caf35c14df",
+    userImageSrc: "https://images.unsplash.com/photo-1526045612212-70caf35c14df",
     username: "David2",
   },
   {
-    userImageSrc:
-      "https://images.unsplash.com/photo-1526045612212-70caf35c14df",
+    userImageSrc: "https://images.unsplash.com/photo-1526045612212-70caf35c14df",
     username: "David3",
   },
   {
-    userImageSrc:
-      "https://images.unsplash.com/photo-1526045612212-70caf35c14df",
+    userImageSrc: "https://images.unsplash.com/photo-1526045612212-70caf35c14df",
     username: "David4",
   },
   {
-    userImageSrc:
-      "https://images.unsplash.com/photo-1526045612212-70caf35c14df",
+    userImageSrc: "https://images.unsplash.com/photo-1526045612212-70caf35c14df",
     username: "David5",
   },
   {
-    userImageSrc:
-      "https://images.unsplash.com/photo-1526045612212-70caf35c14df",
+    userImageSrc: "https://images.unsplash.com/photo-1526045612212-70caf35c14df",
     username: "David6",
   },
   {
-    userImageSrc:
-      "https://images.unsplash.com/photo-1526045612212-70caf35c14df",
+    userImageSrc: "https://images.unsplash.com/photo-1526045612212-70caf35c14df",
     username: "David7",
   },
   {
-    userImageSrc:
-      "https://images.unsplash.com/photo-1526045612212-70caf35c14df",
+    userImageSrc: "https://images.unsplash.com/photo-1526045612212-70caf35c14df",
     username: "David8",
   },
   {
-    userImageSrc:
-      "https://images.unsplash.com/photo-1526045612212-70caf35c14df",
+    userImageSrc: "https://images.unsplash.com/photo-1526045612212-70caf35c14df",
     username: "David9",
   },
   {
-    userImageSrc:
-      "https://images.unsplash.com/photo-1526045612212-70caf35c14df",
+    userImageSrc: "https://images.unsplash.com/photo-1526045612212-70caf35c14df",
     username: "David10",
   },
   {
-    userImageSrc:
-      "https://images.unsplash.com/photo-1526045612212-70caf35c14df",
+    userImageSrc: "https://images.unsplash.com/photo-1526045612212-70caf35c14df",
     username: "David11",
   },
   {

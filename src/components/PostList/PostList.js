@@ -3,7 +3,6 @@ import { useState, useEffect } from "react";
 import { DataStore, Predicates, SortDirection } from "@aws-amplify/datastore";
 import { Post as PostSchema } from "../../models";
 import { getPostsForMutualFeedFromAWS, getUsersFollowed, getUsersFollowedIds } from "../../crud/PostOperations";
-import { getCurrentAuthenticatedUser } from "../../library/GetAuthenticatedUser";
 import { useNetInfo } from "@react-native-community/netinfo";
 // PostSchema, the schema above, and Post, the component below
 import Post from "../Post";
@@ -152,6 +151,7 @@ export default function PostList(props) {
     console.log("Rendering cached posts upon initial render");
     let usernameFromCache = await getCachedCurrUser();
     if (usernameFromCache === null) {
+      console.log("Username will need to be cached after connection is acquired");
       await setUsernameNeeded(true);
     } else {
       await setUsername(usernameFromCache);

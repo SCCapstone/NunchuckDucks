@@ -20,6 +20,19 @@ export async function getAllCachedFiles() {
   return files;
 }
 
+export async function getCurrentUser() {
+  let username = "";
+  try {
+    username = await getCachedCurrUser();
+    if (username === undefined || username === null) {
+      username = await getCurrentAuthenticatedUser();
+    }
+    return username;
+  } catch (e) {
+    console.log("Error: Could not retrieve username from cache nor from S3");
+  }
+}
+
 export async function getCacheLastModifiedUri(username, ending) {
   return cacheDirectory + username + ending + "lastModified.txt";
 }
@@ -67,9 +80,8 @@ export async function getPostsFromCache() {
 
 export async function getCachedCurrUser() {
   try {
-    console.log(cacheDirectory);
     const cachedUserUri = cacheDirectory + "currUser.txt";
-    let cachedUserString = await FileSystem.readAsStringAsync(cachedUserUri, { encoding: "utf8" });
+    const cachedUserString = await FileSystem.readAsStringAsync(cachedUserUri, { encoding: "utf8" });
     return cachedUserString;
   } catch (e) {
     console.log("Error: Could not read who the current user is from cache", e);

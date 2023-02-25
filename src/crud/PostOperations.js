@@ -1,7 +1,6 @@
 import { processCompositeKeys } from "@aws-amplify/datastore/lib-esm/util";
 import { Int64 } from "@aws-sdk/eventstream-codec";
 import { DataStore, SortDirection } from "aws-amplify";
-import { getCurrentAuthenticatedUser } from "../library/GetAuthenticatedUser";
 import { Post, Follows, User } from "../models";
 import { getUserId } from "./UserOperations";
 /**
@@ -13,7 +12,7 @@ import { getUserId } from "./UserOperations";
  */
 export async function createPost(caption, photo, username) {
   try {
-    const user = await getCurrentAuthenticatedUser();
+    const user = await getCurrentUser();
 
     const userId = await getUserId(user);
 
