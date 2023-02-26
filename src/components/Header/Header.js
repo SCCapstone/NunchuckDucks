@@ -9,7 +9,6 @@ const Header = ({ title, style }) => {
 
   return (
     <View style={containerStyles}>
-      <BackButton></BackButton>
       <Text style={styles.text}>{title}</Text>
     </View>
   );
