@@ -1,31 +1,50 @@
 import { View, Text, StyleSheet, Switch } from "react-native";
 import Header from "../components/Header/Header";
-import { setPrivate, setPublic, isUserPrivate } from "../crud/UserOperations";
+import { setPrivate, setPublic, isUserPrivate, togglePrivacy } from "../crud/UserOperations";
 import { getCurrentAuthenticatedUser } from "../library/GetAuthenticatedUser";
 import { useEffect, useState } from "react";
+import { useNavigation } from "@react-navigation/core";
 
 export function SettingsScreen({navigation}) {
 
   const [username, setUsername] = useState("");
   const [isEnabled, setIsEnabled] = useState(false);
+  const [userPrivacy, setUserPrivacy] = useState(null);
+  const nav = useNavigation();
 
   const toggleSwitch = () => {
-    if (isEnabled === true) {
-      setPublic(username);
+    if (userPrivacy === true) {
+      togglePrivacy(username, false);
+      setIsEnabled(previousState => false);
+      setUserPrivacy(false);
     }
     else {
-      setPrivate(username);
+      togglePrivacy(username, true);
+      setIsEnabled(previousState => true);
+      setUserPrivacy(true);
     }
-    setIsEnabled(previousState => !previousState);
   }
 
   useEffect(() => {
     getUser();
-  },[]);
+    getPrivacy();
+    if (userPrivacy === true) {
+      setIsEnabled(true);
+    }
+    else {
+      setIsEnabled(false);
+    }
+  },[nav]);
 
   async function getUser() {
     const Username = await getCurrentAuthenticatedUser();
     setUsername(Username);
+  }
+
+  async function getPrivacy() {
+    const Privacy = await isUserPrivate(username);
+    setUserPrivacy(Privacy);
+    console.log("got");
   }
 
   return (
@@ -45,7 +64,6 @@ export function SettingsScreen({navigation}) {
         value={isEnabled}
         style={style.switch}
       />
-      
     </View>
   );
 }

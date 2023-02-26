@@ -197,7 +197,7 @@ export async function isUserPrivate(username) {
     });
 
     if (!user || !user.length) return true;
-    console.log(`Found privacy statis for: ${user[0].isPrivate} for ${username} successfully.`);
+    console.log(`Found privacy statis of: ${user[0].isPrivate} for ${username} successfully.`);
 
     return user[0].isPrivate;
   } catch (error) {
@@ -205,7 +205,7 @@ export async function isUserPrivate(username) {
   }
 }
 
-export async function setPrivate(username) {
+export async function togglePrivacy(username, privacy) {
   try {
     const userId = await getUserId(username);
 
@@ -213,30 +213,12 @@ export async function setPrivate(username) {
 
     await DataStore.save(
       User.copyOf(original, (updated) => {
-        updated.isPrivate = true;
+        updated.isPrivate = privacy;
       })
     );
 
-    console.log(`${username} is now a private user`);
+    console.log(`Successfully changed ${username}'s privacy status to ${privacy}`);
   } catch(error) {
-    console.error(`Error making ${username} a private user`);
-  }
-}
-
-export async function setPublic(username) {
-  try {
-    const userId = await getUserId(username);
-
-    const original = await DataStore.query(User, userId);
-    
-    await DataStore.save(
-      User.copyOf(original, (updated) => {
-        updated.isPrivate = false;
-      })
-    );
-
-    console.log(`${username} is now a public user`);
-  } catch(error) {
-    console.error(`Error making ${username} a public user`);
+    console.error(`Error changing ${username}'s privacy status to ${privacy}`)
   }
 }
