@@ -1,16 +1,16 @@
-type FollowedBy @model @auth(rules: [{ allow: public }]) {
+type FollowedBy @model @auth(rules: [{allow: public}]) {
   id: ID!
   username: String!
   userID: ID! @index(name: "byUser")
 }
 
-type Follows @model @auth(rules: [{ allow: public }]) {
+type Follows @model @auth(rules: [{allow: public}]) {
   id: ID!
   username: String!
   userID: ID! @index(name: "byUser")
 }
 
-type Reaction @model @auth(rules: [{ allow: public }]) {
+type Reaction @model @auth(rules: [{allow: public}]) {
   id: ID!
   username: String!
   reactionType: ReactionType!
@@ -24,7 +24,7 @@ enum ReactionType {
   CLAP
 }
 
-type Comment @model @auth(rules: [{ allow: public }]) {
+type Comment @model @auth(rules: [{allow: public}]) {
   id: ID!
   content: String!
   username: String!
@@ -32,7 +32,7 @@ type Comment @model @auth(rules: [{ allow: public }]) {
   reply: ID
 }
 
-type Goal @model @auth(rules: [{ allow: public }]) {
+type Goal @model @auth(rules: [{allow: public}]) {
   id: ID!
   username: String!
   date: AWSDate
@@ -40,7 +40,7 @@ type Goal @model @auth(rules: [{ allow: public }]) {
   userID: ID! @index(name: "byUser")
 }
 
-type User @model @auth(rules: [{ allow: public }]) {
+type User @model @auth(rules: [{allow: public}]) {
   id: ID!
   username: String!
   profilePicture: String
@@ -49,9 +49,11 @@ type User @model @auth(rules: [{ allow: public }]) {
   Posts: [Post] @hasMany(indexName: "byUser", fields: ["id"])
   Follows: [Follows] @hasMany(indexName: "byUser", fields: ["id"])
   FollowedBies: [FollowedBy] @hasMany(indexName: "byUser", fields: ["id"])
+  expoToken: String
+  isPrivate: Boolean
 }
 
-type Post @model @auth(rules: [{ allow: public }]) {
+type Post @model @auth(rules: [{allow: public}]) {
   id: ID!
   caption: String!
   photo: String!
@@ -60,3 +62,4 @@ type Post @model @auth(rules: [{ allow: public }]) {
   Reactions: [Reaction] @hasMany(indexName: "byPost", fields: ["id"])
   userID: ID! @index(name: "byUser")
 }
+ 
