@@ -1,5 +1,5 @@
 import { ScrollView, StyleSheet, Text, FlatList } from "react-native";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { DataStore, Predicates, SortDirection } from "@aws-amplify/datastore";
 import { Post as PostSchema } from "../../models";
 import { getPostsForMutualFeedFromAWS, getUsersFollowed, getUsersFollowedIds } from "../../crud/PostOperations";
@@ -22,6 +22,7 @@ import {
 import { getFollowsList } from "../../crud/FollowingOperations";
 
 export default function PostList(props) {
+  const list = useRef(null);
   const [posts, setPosts] = useState([]); // posts: all graphql post entries
   const refresh = props.refresh;
   const setRefresh = props.setRefresh;
@@ -113,15 +114,16 @@ export default function PostList(props) {
       await setUsernameNeeded(false);
     }
     // Update pfp cache for all follows; causes few seconds delay in rendering posts :((
-    console.log("username 1", usernameFromAWS);
 
     if (usernameFromAWS === "") {
       usernameFromAWS = username;
     }
     await updatePfpCacheForFollowing(usernameFromAWS);
-
+    let temp = posts;
+    setPosts([]);
+    console.log("hahahahah");
+    setPosts(temp);
     // Fetching posts from AWS
-    console.log("username 2", usernameFromAWS);
     let postsFromAWS = await fetchPostsFromAWS(usernameFromAWS);
     let isCacheRefreshNeeded = await checkIfRefreshCacheNeeded(postsFromAWS);
     if (isCacheRefreshNeeded === true) {
@@ -137,12 +139,13 @@ export default function PostList(props) {
       return true;
     }
     // checks if strings are equal; if not, then cache
+    /* this does not work as expected
     let postsString = JSON.stringify(posts);
     let postsFromAWSString = JSON.stringify(postsFromAWS);
     if (postsString !== postsFromAWSString) {
       console.log("Cached posts and AWS posts differ; need to cache");
       return true;
-    }
+    }*/
     return false;
   }
 
@@ -168,11 +171,12 @@ export default function PostList(props) {
       fetchPostCache(); // will set postsInitialCompleted to true after completion
     }
     if (networkConnection.isConnected === true && postsInitialCompleted === true) {
+      //list.current.scrollToIndex({ index: 0 });
       doStuffWithAWS();
     }
 
     console.log("PostList refreshed");
   }, [refresh, networkConnection]);
 
-  return <FlatList data={posts} renderItem={({ item }) => <Post entry={item} />} keyExtractor={(item) => item.id} />;
+  return <FlatList ref={list} data={posts} renderItem={({ item }) => <Post entry={item} />} keyExtractor={(item) => item.id} />;
 }

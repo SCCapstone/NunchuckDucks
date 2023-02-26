@@ -39,7 +39,11 @@ const Comment = ({ commentModel, postID, replies, style }) => {
 
   async function getPic() {
     try {
-      const pfps3 = await Storage.get(commentModel.username + "/pfp.png");
+      let pfps3 = await getImageFromCache(commentModel.username + "pfp.png");
+      if (pfps3 === "") {
+        pfps3 = await Storage.get(username + "/pfp.png");
+      }
+      //const pfps3 = await Storage.get(commentModel.username + "/pfp.png");
       setPfp(pfps3);
     } catch (error) {
       console.log("Error retrieving pfp in comment: " + error);

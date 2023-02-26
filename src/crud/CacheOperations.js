@@ -190,7 +190,14 @@ export async function cacheImage(uri, cacheUri) {
     };
   }
 }
-
+export async function getImage(username, ending) {
+  let image = "";
+  image = await getImageFromCache(username, ending);
+  if (image === "") {
+    image = Storage.get(username + "/" + ending);
+  }
+  return image;
+}
 export async function getImageFromCache(username, ending) {
   const cacheImageFileUri = cacheDirectory + username + ending;
   let imageExistsInCache = "";

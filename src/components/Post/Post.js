@@ -84,6 +84,9 @@ export default function Post(props) {
 
   async function retrieveComments() {
     try {
+      if (entry.caption === "Cool") {
+        console.log("Arrived at the post retrievecomments");
+      }
       const modelComments = await getComments(entry.id);
       const topLevelComments = modelComments.filter((val) => !val.reply);
       const replies = modelComments.filter((val) => val.reply);
@@ -104,6 +107,9 @@ export default function Post(props) {
   }
 
   useEffect(() => {
+    if (entry.caption === "Cool") {
+      console.log("Arrived at the post useeffect");
+    }
     getPictures();
     retrieveComments();
   }, [refresh]);
