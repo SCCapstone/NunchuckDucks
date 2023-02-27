@@ -60,7 +60,6 @@ export function GoalsScreen() {
       }
       else{
         tempincgoals.push(goals[i]);
-        //tempincgoals.push.apply(goals[i]);
       }
     }
     setCompleteGoals(tempcompgoals);
