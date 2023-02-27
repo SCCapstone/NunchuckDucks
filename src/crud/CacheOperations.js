@@ -238,38 +238,30 @@ export async function saveImageToAWS(fileName, blob) {
 }
 
 export async function updatePfpCache(username) {
-  console.log("Updating pfp cache for", username);
   const cachedImage = await getImageFromCache(username, "pfp.png");
   // we are assuming that if the image exists in client then it should exist in the backend as well
   if (cachedImage !== "") {
-    console.log("Profile pic for", username, "found in cache; checking if it is the most recent version");
     const lastModifiedAWS = await getLastModifiedAWS(username, "pfp.png");
     const lastModifiedCache = await getLastModifiedCache(username, "pfp");
     if (lastModifiedCache !== null) {
       if (lastModifiedAWS > lastModifiedCache) {
         //lastModifiedAWS has a higher alphabetical order (newer) than lastModifiedCache
-        console.log("lastModifiedAWS found to be newer than lastModifiedCache; updating pfp and lastModified");
         await cacheImageFromAWS(username, "pfp.png");
         await cacheLastModified(username, lastModifiedAWS);
       } else if (lastModifiedCache < lastModifiedAWS) {
-        console.log("lastModifiedCache found to be newer than lastModifiedAWS; updating pfp in the backend");
         let fileName = username + "/pfp.png";
         saveImageToAWS(fileName, getCacheImageFileUri(username, "pfp.png"));
       } else {
-        console.log("lastModifiedCache matches lastModifiedAWS; nothing to be done");
       }
     } else {
-      console.log("lastModified file not found; caching lastModified val found in AWS and updating pic just in case");
       await cacheImageFromAWS(username, "pfp.png");
       await cacheLastModified(username, lastModifiedAWS);
     }
   } else {
-    console.log("Profile pic not found in cache; checking if it is in the backend");
+    console.log("Profile pic for", username, "not found in cache; checking if it is in the backend");
     const lastModifiedAWS = await getLastModifiedAWS(username, "pfp.png");
     if (lastModifiedAWS === "None" || lastModifiedAWS === null) {
-      console.log("no pfp found in backend for", username);
     } else {
-      console.log("pfp was found in backend; caching pfp and lastModified val");
       let imageFromAWS = await cacheImageFromAWS(username, "pfp.png");
       await cacheLastModified(username, lastModifiedAWS);
     }

@@ -6,7 +6,7 @@ import { Storage } from "@aws-amplify/storage";
 import CustomButton from "../CustomButton/CustomButton";
 import CustomTextInput from "../CustomTextInput/CustomTextInput";
 import { createComment } from "../../crud/CommentOperations";
-import { getCurrentUser } from "../../crud/CacheOperations";
+import { getCurrentUser, getImageFromCache } from "../../crud/CacheOperations";
 
 const Comment = ({ commentModel, postID, replies, style }) => {
   const [pfp, setPfp] = useState("");
@@ -39,9 +39,9 @@ const Comment = ({ commentModel, postID, replies, style }) => {
 
   async function getPic() {
     try {
-      let pfps3 = await getImageFromCache(commentModel.username + "pfp.png");
+      let pfps3 = await getImageFromCache(commentModel.username, "pfp.png");
       if (pfps3 === "") {
-        pfps3 = await Storage.get(username + "/pfp.png");
+        pfps3 = await Storage.get(commentModel.username + "/pfp.png");
       }
       //const pfps3 = await Storage.get(commentModel.username + "/pfp.png");
       setPfp(pfps3);

@@ -85,11 +85,10 @@ export async function getUserId(username) {
     });
 
     if (!user || !user.length) return "";
-    console.log(`Found userID ${user[0].id} for ${username} successfully.`);
 
     return user[0].id;
   } catch (error) {
-    console.error("Error finding user ID", error);
+    console.error("Error finding user ID for", username, error);
   }
 }
 

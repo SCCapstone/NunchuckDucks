@@ -40,7 +40,6 @@ export default function Post(props) {
   });
 
   async function getPictures() {
-    console.log("Retrieving pic");
     // TODO retrieve post picture from the passed entry fileName
     //const postPfp = await getImageFromCache(username, "pfp.png"); // console logs pic "pfp.png found for user x..."
     const postPfp = entry.cachedPfp;
@@ -84,9 +83,6 @@ export default function Post(props) {
 
   async function retrieveComments() {
     try {
-      if (entry.caption === "Cool") {
-        console.log("Arrived at the post retrievecomments");
-      }
       const modelComments = await getComments(entry.id);
       const topLevelComments = modelComments.filter((val) => !val.reply);
       const replies = modelComments.filter((val) => val.reply);
@@ -107,9 +103,6 @@ export default function Post(props) {
   }
 
   useEffect(() => {
-    if (entry.caption === "Cool") {
-      console.log("Arrived at the post useeffect");
-    }
     getPictures();
     retrieveComments();
   }, [refresh]);
@@ -150,7 +143,7 @@ export default function Post(props) {
       </Pressable>
       {/*replace get time elapsed w/ actual on click utility*/}
       {/*<View style={styles.captionBox} /> Need to implement caption box as intended*/}
-      <View name="Footer" flexDirection="row" style={styles.footer}>
+      <View name="Footer" style={styles.footer}>
         <Text>{entry.caption}</Text>
         <Reactions postID={entry.id} commentsClicked={showCommentOption} setCommentsClicked={setCommentOption} />
 

@@ -30,8 +30,6 @@ export default function PostList(props) {
   const [postsInitialCompleted, setPostsInitialCompleted] = useState(false);
   // used to compare cached posts length to backend to see if the cached needs to be updated
   const [postLength, setPostLength] = useState(0);
-  // used to request that the current username be cached for use in postList, profile screen, etc
-  const [usernameNeeded, setUsernameNeeded] = useState(false);
   const [username, setUsername] = useState("");
   // used to avoid doing backend queries if no connection is available yet
   const networkConnection = useNetInfo();
@@ -49,15 +47,13 @@ export default function PostList(props) {
   async function fetchPostsFromCache() {
     // gets JSON Object of all posts saved in cache
     let postsFromCache = await getPostsFromCache();
-    await setPosts(...posts, postsFromCache);
-    await setPostLength(postsFromCache.length);
+    setPosts(...posts, postsFromCache);
+    setPostLength(postsFromCache.length);
     //await setPostsInitial(true);
-    console.log("posts have been set to cache for the initial render");
     // TODO: if first from cache is from over a week ago, clear cache and set needToCache to true
     if (postsFromCache !== null) {
       return postsFromCache;
     } else {
-      console.log("No posts in cache, waiting for internet connection to get new posts");
       return [];
     }
   }
@@ -84,8 +80,8 @@ export default function PostList(props) {
       }
     }
     await cachePosts(postsFromAWS);
-    await setPosts(postsFromAWS);
-    await setPostLength(postsFromAWS.length);
+    setPosts(postsFromAWS);
+    setPostLength(postsFromAWS.length);
     // we may want to move this to the settings page? Probably unnecessary to do every cacheAWS call
 
     //this is used to set what should be cached so deleteOldCache in settings can delete unnecessary cache
@@ -99,7 +95,6 @@ export default function PostList(props) {
     for (let i = 0; i < followers.length; i++) {
       await updatePfpCache(followers[i]); // updating pfp cache for all people you are following
     } // TODO: delete pfp cache of a user when you unfollow them
-    console.log("performed updatepfpcache for everybody");
   }
 
   async function doStuffWithAWS() {
@@ -107,11 +102,9 @@ export default function PostList(props) {
 
     // Username not cached; cache username
     let usernameFromAWS = "";
-    if (usernameNeeded === true) {
-      console.log("Fetching username of current user from AWS");
+    if (username === null) {
       usernameFromAWS = await cacheCurrUser();
-      await setUsername(usernameFromAWS);
-      await setUsernameNeeded(false);
+      setUsername(usernameFromAWS);
     }
     // Update pfp cache for all follows; causes few seconds delay in rendering posts :((
 
@@ -121,13 +114,11 @@ export default function PostList(props) {
     await updatePfpCacheForFollowing(usernameFromAWS);
     let temp = posts;
     setPosts([]);
-    console.log("hahahahah");
     setPosts(temp);
     // Fetching posts from AWS
     let postsFromAWS = await fetchPostsFromAWS(usernameFromAWS);
     let isCacheRefreshNeeded = await checkIfRefreshCacheNeeded(postsFromAWS);
     if (isCacheRefreshNeeded === true) {
-      console.log("looks like we need to cache");
       cacheAllPostsFromAWS(postsFromAWS);
     }
   }
@@ -135,7 +126,6 @@ export default function PostList(props) {
   async function checkIfRefreshCacheNeeded(postsFromAWS) {
     // comparison saves computational time
     if (postsFromAWS.length !== postLength) {
-      console.log("Cached posts are of a different length than posts from AWS; need to cache");
       return true;
     }
     // checks if strings are equal; if not, then cache
@@ -151,17 +141,10 @@ export default function PostList(props) {
 
   // Fetches
   async function fetchPostCache() {
-    console.log("Rendering cached posts upon initial render");
     let usernameFromCache = await getCachedCurrUser();
-    if (usernameFromCache === null) {
-      console.log("Username will need to be cached after connection is acquired");
-      await setUsernameNeeded(true);
-    } else {
-      await setUsername(usernameFromCache);
-    }
+    setUsername(usernameFromCache);
     let postsFromCache = await fetchPostsFromCache();
-    await setPostsInitialCompleted(true);
-    console.log(postsFromCache.length, "JAA");
+    setPostsInitialCompleted(true);
     setRefresh(!refresh);
   }
 
