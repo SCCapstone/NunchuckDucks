@@ -41,25 +41,32 @@ export function GoalsScreen() {
   async function goalList() {
     const { attributes } = await Auth.currentAuthenticatedUser();
     let username = attributes.preferred_username;
-    //if checkcompleted is true -> add to this list of goals
+    //if checkcompleted is true -> add to this comp list of goals, else uncomp list
     const goals = await getGoals(username);
     tempincgoals=[];
     tempcompgoals=[];
     for(let i = 0; i<goals.length;i++)
     {
+      console.log('Goal',i,' is:', goals[2].isComplete);
       if(goals[i].isComplete === false || goals[i].isComplete === null)
       {
         tempincgoals.push(goals[i]);
+        console.log('This ran blank times:',i ,'GoalT/F val:',goals[i].isComplete);
+        console.log('This is 1st if',tempincgoals[i].isComplete)
         //tempincgoals.push.apply(tempincgoals,goals[i]);
         //tempincgoals =  tempincgoals.concat(goals[i]);
       }
       else if(goals[i].isComplete === true)
       {
         tempcompgoals.push(goals[i]);
+        console.log('This ran blank times:',i ,'GoalT/F val:',goals[i].isComplete);
         //tempcompgoals.push.apply(goals[i]);
+        console.log('This is 2rd else',tempcompgoals[i].isComplete);
       }
       else{
         tempincgoals.push(goals[i]);
+        console.log('This ran blank times:',i ,'GoalT/F val:',goals[i].isComplete);
+        console.log('This is 3rd else',tempincgoals[i].isComplete);
       }
     }
     setCompleteGoals(tempcompgoals);
@@ -79,8 +86,11 @@ export function GoalsScreen() {
       key = {goal.id}
       onCompleteHandler={
         async() => {
+          let goaltf = goal.isComplete
+          console.log('we are hereeeeee baby!!! goal is getting set?:', goaltf)
           goal.isComplete = true;
-
+          let goalaf = goal.isComplete
+          console.log('we are hereeeeee baby!!! goal is getting set?:', goalaf)
           setForceRefresh(!forceRefresh);
       }}
       onDeleteHandler={async() => {
