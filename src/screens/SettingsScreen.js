@@ -1,16 +1,14 @@
 import { View, Text, TouchableOpacity, StyleSheet, Switch } from "react-native";
 import Header from "../components/Header/Header";
-import { BackButton } from "../components/BackButton";
-import { getPostsThatShouldBeCached, getAllCachedFiles, deleteCachedFile, getCachedCurrUser } from "../crud/CacheOperations";
-
-import { setPrivate, setPublic, isUserPrivate, togglePrivacy } from "../crud/UserOperations";
+import { getPostsThatShouldBeCached, getAllCachedFiles, deleteCachedFile } from "../crud/CacheOperations";
+import { isUserPrivate, togglePrivacy } from "../crud/UserOperations";
 import { getCurrentAuthenticatedUser } from "../library/GetAuthenticatedUser";
 import { useEffect, useState } from "react";
 import { useNavigation } from "@react-navigation/core";
 
 export function SettingsScreen({ navigation }) {
   async function deleteOldCache() {
-    let postNames = await getPostsThatShouldBeCached();
+    /*let postNames = await getPostsThatShouldBeCached();
     if (postNames === null) {
       console.log("No posts in cache, so there is no need to delete old cache");
     }
@@ -26,7 +24,7 @@ export function SettingsScreen({ navigation }) {
         await deleteCachedFile(curr);
         console.log("Deleted file", curr);
       }
-    }
+    }*/
   }
 
   const styles = StyleSheet.create({
@@ -47,39 +45,36 @@ export function SettingsScreen({ navigation }) {
       left: 20,
     },
     switch: {
-      right: 175
+      right: 175,
     },
   });
-
 
   const [username, setUsername] = useState("");
   const [isEnabled, setIsEnabled] = useState(false);
   const [userPrivacy, setUserPrivacy] = useState(null);
   const nav = useNavigation();
-
+  /*
   const toggleSwitch = () => {
     if (userPrivacy === true) {
       togglePrivacy(username, false);
-      setIsEnabled(previousState => false);
+      setIsEnabled((previousState) => false);
       setUserPrivacy(false);
-    }
-    else {
+    } else {
       togglePrivacy(username, true);
-      setIsEnabled(previousState => true);
+      setIsEnabled((previousState) => true);
       setUserPrivacy(true);
     }
-  }
+  };
 
   useEffect(() => {
-    getUser();
+    /*getUser();
     getPrivacy();
     if (userPrivacy === true) {
       setIsEnabled(true);
-    }
-    else {
+    } else {
       setIsEnabled(false);
     }
-  },[nav]);
+  }, [nav]);
 
   async function getUser() {
     const Username = await getCurrentAuthenticatedUser();
@@ -91,24 +86,24 @@ export function SettingsScreen({ navigation }) {
     setUserPrivacy(Privacy);
     console.log("got");
   }
-
+*/
   return (
     <View style={styles.container}>
       <Header title={"Settings"} />
-      <TouchableOpacity style={styles.deleteCacheButton} onPress={(event) => deleteOldCache()}>
+      {/*
+      <TouchableOpacity style={styles.deleteCacheButton} onPress={(event) => ""}>
         <Text style={{ color: "#FFFFFF" }}>Delete old cache</Text>
       </TouchableOpacity>
-      <Text style={styles.text}>
-        Toggle privacy
-      </Text>
+      <Text style={styles.text}>Toggle privacy</Text>
       <Switch
-        trackColor={{false: '#767577', true: '#81b0ff'}}
-        thumbColor={isEnabled ? '#f5dd4b' : '#f4f3f4'}
+        trackColor={{ false: "#767577", true: "#81b0ff" }}
+        thumbColor={isEnabled ? "#f5dd4b" : "#f4f3f4"}
         ios_backgroundColor="#3e3e3e"
         onValueChange={toggleSwitch}
         value={isEnabled}
         style={styles.switch}
       />
+  */}
     </View>
   );
 }

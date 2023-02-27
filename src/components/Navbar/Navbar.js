@@ -32,13 +32,8 @@ const Navbar = () => {
   const [clickedElement, setClickedElement] = useState("Mutuals");
 
   return (
-    <ScrollView
-      style={styles.navbarView}
-      contentContainerStyle={styles.navbarScrollView}
-      horizontal={true}
-      bounces={false}
-    >
-      <Text
+    <ScrollView style={styles.navbarView} contentContainerStyle={styles.navbarScrollView} horizontal={true} bounces={false}>
+      {/*<Text
         title="Settings"
         onPress={() => {
           navigation.navigate("Settings");
@@ -50,7 +45,7 @@ const Navbar = () => {
         ]}
       >
         Settings
-      </Text>
+      </Text>*/}
       {/* <Text
         title="Explore"
         onPress={() => {
@@ -70,10 +65,7 @@ const Navbar = () => {
           navigation.navigate("Mutuals");
           setClickedElement("Mutuals");
         }}
-        style={[
-          clickedElement == "Mutuals" ? styles.currentNavbarElement : {},
-          styles.navbarElement,
-        ]}
+        style={[clickedElement == "Mutuals" ? styles.currentNavbarElement : {}, styles.navbarElement]}
       >
         Mutuals
       </Text>
@@ -82,10 +74,7 @@ const Navbar = () => {
           navigation.navigate("Profile");
           setClickedElement("Profile");
         }}
-        style={[
-          clickedElement == "Profile" ? styles.currentNavbarElement : {},
-          styles.navbarElement,
-        ]}
+        style={[clickedElement == "Profile" ? styles.currentNavbarElement : {}, styles.navbarElement]}
       >
         Profile
       </Text>
@@ -106,10 +95,7 @@ const Navbar = () => {
           navigation.navigate("Goals");
           setClickedElement("Goals");
         }}
-        style={[
-          clickedElement == "Goals" ? styles.currentNavbarElement : {},
-          styles.navbarElement,
-        ]}
+        style={[clickedElement == "Goals" ? styles.currentNavbarElement : {}, styles.navbarElement]}
       >
         Goals
       </Text>
@@ -118,10 +104,7 @@ const Navbar = () => {
           navigation.navigate("Followers");
           setClickedElement("Followers");
         }}
-        style={[
-          clickedElement == "Followers" ? styles.currentNavbarElement : {},
-          styles.navbarElement,
-        ]}
+        style={[clickedElement == "Followers" ? styles.currentNavbarElement : {}, styles.navbarElement]}
       >
         Followers
       </Text>
