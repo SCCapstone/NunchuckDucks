@@ -1,7 +1,7 @@
 import { DataStore } from "aws-amplify";
 import { User } from "../models";
 import { Storage } from "aws-amplify";
-import { getCurrentAuthenticatedUser } from "../library/GetAuthenticatedUser";
+import { getCurrentUser } from "./CacheOperations";
 
 /**
  * Creates a user and saves the new user in the backend
@@ -85,11 +85,10 @@ export async function getUserId(username) {
     });
 
     if (!user || !user.length) return "";
-    console.log(`Found userID ${user[0].id} for ${username} successfully.`);
 
     return user[0].id;
   } catch (error) {
-    console.error("Error finding user ID", error);
+    console.error("Error finding user ID for", username, error);
   }
 }
 
@@ -156,12 +155,12 @@ export async function getBio(username) {
 
 /**
  * Checks to see if the given username is the same as the current user
- * @param {String} username 
+ * @param {String} username
  * @returns boolean
  */
 export async function isCurrUser(username) {
   try {
-    return username === await getCurrentAuthenticatedUser();
+    return username === (await getCurrentUser());
   } catch (error) {
     console.error(`Error checking is username is the current user.`, error);
   }
@@ -169,15 +168,14 @@ export async function isCurrUser(username) {
 
 /**
  * Checks to see if the user with the given username exists in the database
- * @param {String} username 
+ * @param {String} username
  * @returns Boolean
  */
 export async function doesUserExist(username) {
   try {
     const user = await DataStore.query(User, (u) => u.username.eq(username));
 
-    if (user[0] === undefined)
-      console.log(`This user does not exist.`);
+    if (user[0] === undefined) console.log(`This user does not exist.`);
 
     return user[0] === undefined;
   } catch (error) {

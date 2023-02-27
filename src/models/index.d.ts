@@ -137,6 +137,7 @@ type EagerGoal = {
   readonly date?: string | null;
   readonly content?: string | null;
   readonly userID: string;
+  readonly isCompleted?: boolean | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -147,6 +148,7 @@ type LazyGoal = {
   readonly date?: string | null;
   readonly content?: string | null;
   readonly userID: string;
+  readonly isCompleted?: boolean | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }

@@ -6,12 +6,7 @@ import ProfileMini from "../../ProfileMini";
 import { getFollowsList } from "../../../crud/FollowingOperations";
 import { getFollowersList } from "../../../crud/FollowersOperations";
 
-const NonCurrUserProfileModal = ({
-  modalVisible,
-  setModalVisible,
-  entry,
-  image,
-}) => {
+const NonCurrUserProfileModal = ({ modalVisible, setModalVisible, entry, image }) => {
   const [user, setUser] = useState("");
   const [followingCount, setFollowingCount] = useState("");
   const [followersCount, setFollowersCount] = useState("");
@@ -27,8 +22,18 @@ const NonCurrUserProfileModal = ({
   };
 
   async function getUserObject(user) {
-    const userObj = await findUserByUsername(user.username);
-    setUser(userObj);
+    if (user !== null || user.username !== null) {
+      try {
+        const userObj = await findUserByUsername(user.username);
+        if (userObj !== null) {
+          setUser(userObj);
+        }
+      } catch (e) {
+        console.log("Error: Could not get user object", e);
+      }
+    } else {
+      console.log("User is equal to null");
+    }
   }
 
   async function getFollowingCount(user) {
@@ -42,12 +47,7 @@ const NonCurrUserProfileModal = ({
   }
 
   return (
-    <Modal
-      visible={modalVisible}
-      animationType="fade"
-      transparent={true}
-      onRequestClose={closeModal}
-    >
+    <Modal visible={modalVisible} animationType="fade" transparent={true} onRequestClose={closeModal}>
       <View
         style={
           {
@@ -75,7 +75,7 @@ const NonCurrUserProfileModal = ({
           }}
         >
           <ProfileMini onClick={closeModal} src={image} />
-          <Text style={styles.username}>@{user.username}</Text>
+          <Text style={styles.username}>@{user.username !== null ? user.username : ""}</Text>
         </View>
         <View style={styles.followingContainer}>
           <Text style={styles.followingText}>Following</Text>
@@ -86,7 +86,7 @@ const NonCurrUserProfileModal = ({
           <Text style={styles.followingText}>{followersCount}</Text>
         </View>
         <View style={styles.bioContainer}>
-          <Text style={styles.bio}>{user.bio}</Text>
+          <Text style={styles.bio}>{user.bio !== null ? user.bio : ""}</Text>
         </View>
       </View>
     </Modal>

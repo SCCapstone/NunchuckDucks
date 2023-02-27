@@ -6,14 +6,14 @@ import { Auth } from "aws-amplify";
 
 import CustomTextInput from "../../CustomTextInput";
 import CustomButton from "../../CustomButton";
-import { getCurrentAuthenticatedUser } from "../../../library/GetAuthenticatedUser";
+import { getCurrentUser } from "../../../crud/CacheOperations";
 
 const AddFollowerModal = ({ modalVisible, setModalVisible }) => {
   const [addFriendValue, setAddFriendValue] = useState("");
 
   async function addNewFollower() {
     try {
-      const currUser = await getCurrentAuthenticatedUser();
+      const currUser = await getCurrentUser();
       await createFollower(addFriendValue, currUser);
       //need to add some sort of modal for when you can't follow a user
       //await createFollowing(currUser, addFriendValue);
@@ -29,16 +29,8 @@ const AddFollowerModal = ({ modalVisible, setModalVisible }) => {
   };
 
   return (
-    <Modal
-      visible={modalVisible}
-      animationType="fade"
-      transparent={true}
-      onRequestClose={closeModal}
-    >
-      <Pressable
-        onPress={closeModal}
-        style={styles.transparentView}
-      ></Pressable>
+    <Modal visible={modalVisible} animationType="fade" transparent={true} onRequestClose={closeModal}>
+      <Pressable onPress={closeModal} style={styles.transparentView}></Pressable>
       <View style={styles.centeredView}>
         <View style={styles.modalView}>
           <Text>Enter a user to follow!</Text>
@@ -47,11 +39,7 @@ const AddFollowerModal = ({ modalVisible, setModalVisible }) => {
             enteredValue={addFriendValue}
             onChangeHandler={(text) => setAddFriendValue(text)}
           ></CustomTextInput>
-          <CustomButton
-            buttonType={"default"}
-            text={"Add Friend"}
-            onClick={addNewFollower}
-          ></CustomButton>
+          <CustomButton buttonType={"default"} text={"Add Friend"} onClick={addNewFollower}></CustomButton>
         </View>
       </View>
     </Modal>

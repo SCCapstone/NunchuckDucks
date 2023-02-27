@@ -6,7 +6,7 @@ import { Storage } from "@aws-amplify/storage";
 import CustomButton from "../CustomButton/CustomButton";
 import CustomTextInput from "../CustomTextInput/CustomTextInput";
 import { createComment } from "../../crud/CommentOperations";
-import { getCurrentAuthenticatedUser } from "../../library/GetAuthenticatedUser";
+import { getCurrentUser, getImageFromCache } from "../../crud/CacheOperations";
 
 const Comment = ({ commentModel, postID, replies, style }) => {
   const [pfp, setPfp] = useState("");
@@ -23,14 +23,7 @@ const Comment = ({ commentModel, postID, replies, style }) => {
       }
     })
     .map((val) => {
-      return (
-        <Comment
-          commentModel={val}
-          postID={postID}
-          key={val.id}
-          style={{ width: "90%", alignSelf: "flex-start" }}
-        />
-      );
+      return <Comment commentModel={val} postID={postID} key={val.id} style={{ width: "90%", alignSelf: "flex-start" }} />;
     });
 
   const showRepliesButton = (
@@ -46,7 +39,11 @@ const Comment = ({ commentModel, postID, replies, style }) => {
 
   async function getPic() {
     try {
-      const pfps3 = await Storage.get(commentModel.username + "/pfp.png");
+      let pfps3 = await getImageFromCache(commentModel.username, "pfp.png");
+      if (pfps3 === "") {
+        pfps3 = await Storage.get(commentModel.username + "/pfp.png");
+      }
+      //const pfps3 = await Storage.get(commentModel.username + "/pfp.png");
       setPfp(pfps3);
     } catch (error) {
       console.log("Error retrieving pfp in comment: " + error);
@@ -62,7 +59,7 @@ const Comment = ({ commentModel, postID, replies, style }) => {
     // Call CRUD to make new datastore object
     try {
       const replyID = commentModel.reply ? commentModel.reply : commentModel.id;
-      const username = await getCurrentAuthenticatedUser();
+      const username = await getCurrentUser();
       createComment(replyText, username, postID, replyID);
     } catch (error) {
       console.error("Comment: ", error);

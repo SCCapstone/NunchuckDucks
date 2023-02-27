@@ -1,61 +1,69 @@
-import {
-  View,
-  Image,
-  Text,
-  StyleSheet,
-  Pressable,
-  TouchableOpacity,
-} from "react-native";
+import { View, Image, Text, StyleSheet, Pressable, TouchableOpacity } from "react-native";
 import { useState, useEffect } from "react";
 import { Storage } from "@aws-amplify/storage";
 import Reactions from "../Reactions";
 import { blueThemeColor, grayThemeColor } from "../../library/constants";
 import ProfileMini from "../ProfileMini";
 import { useNavigation } from "@react-navigation/native";
+import { cacheImageFromAWS, getCurrentUser, getImageFromCache } from "../../crud/CacheOperations";
+import { useNetInfo } from "@react-native-community/netinfo";
 import NonCurrUserProfileModal from "../modals/NonCurrUserProfileModal.js/NonCurrUserProfileModal";
 import Comment from "../Comment";
 import { createComment, getComments } from "../../crud/CommentOperations";
 import CustomButton from "../CustomButton/CustomButton";
 import CustomTextInput from "../CustomTextInput/CustomTextInput";
-import { getCurrentAuthenticatedUser } from "../../library/GetAuthenticatedUser";
 
 export default function Post(props) {
   const entry = props.entry;
+  const username = entry.username;
   const refresh = props.refresh;
+  const photoStr = entry.photo;
+  const picName = photoStr.substring(photoStr.indexOf("/") + 1);
   const [picture, setPicture] = useState(null);
   const [pfp, setPfp] = useState("");
   const [blowup, setBlowup] = useState(false);
+  const navigation = useNavigation();
+  const networkConnection = useNetInfo();
   const [modalVisible, setModalVisible] = useState("");
   const [comments, setComments] = useState([]);
   const [replies, setReplies] = useState(new Map());
   const [shortCommentDisplay, setShortCommentDisplay] = useState(true);
   const [showCommentOption, setCommentOption] = useState(false);
   const [commentText, setCommentText] = useState("");
-  const navigation = useNavigation();
 
   const handleBlowUp = () => {
     setBlowup(!blowup);
   };
 
   let commentList = comments.map((val) => {
-    return (
-      <Comment
-        key={val.id}
-        postID={entry.id}
-        commentModel={val}
-        replies={replies.get(val.id)}
-      />
-    );
+    return <Comment key={val.id} postID={entry.id} commentModel={val} replies={replies.get(val.id)} />;
   });
 
-  async function getPic() {
-    const pic = await Storage.get(entry.photo);
-    setPicture(pic);
-    try {
-      const pfps3 = await Storage.get(entry.username + "/pfp.png");
-      setPfp(pfps3);
-    } catch (error) {
-      console.log("Error retrieving pfp: " + error);
+  async function getPictures() {
+    // TODO retrieve post picture from the passed entry fileName
+    //const postPfp = await getImageFromCache(username, "pfp.png"); // console logs pic "pfp.png found for user x..."
+    const postPfp = entry.cachedPfp;
+
+    if (postPfp !== "") {
+      setPfp(postPfp);
+    }
+    //const pic = entry.cachedPostPicture;
+    const pic = await getImageFromCache(username, picName);
+    if (pic !== "") {
+      setPicture(pic);
+    } else if (entry.shouldBeCached === true) {
+      console.log("Pic not in cache but it should be", entry.caption);
+      let picCached = await cacheImageFromAWS(username, picName);
+      //let picha = await Storage.get(photoStr);
+      setPicture(picCached);
+    } else {
+      console.log("Pic", picName, "for", username, "must be acquired using Storage.get");
+      try {
+        let picFromAWS = await Storage.get(photoStr);
+        setPicture(picFromAWS);
+      } catch (e) {
+        console.log("Storage.get failed; connection unavailable to render", picName);
+      }
     }
   }
 
@@ -63,10 +71,10 @@ export default function Post(props) {
     setCommentOption(false);
     // Call CRUD to make new datastore object
     try {
-      const username = await getCurrentAuthenticatedUser();
+      //const username = await getCurrentUser();
       createComment(commentText, username, entry.id, null);
     } catch (error) {
-      console.error("Comment: ", error);
+      console.error("Error: Could not create comment", error);
     }
     // Add "fake" offline comment to comments to maintain UX
     // Will need to be replaced with watching datastore at some point
@@ -94,9 +102,8 @@ export default function Post(props) {
     }
   }
 
-  // get the pic again after a refresh
   useEffect(() => {
-    getPic();
+    getPictures();
     retrieveComments();
   }, [refresh]);
 
@@ -117,17 +124,11 @@ export default function Post(props) {
         />
         {/*Need to make it navigate to users specific profile*/}
         <Text style={styles.postUsername} onPress={() => setModalVisible(true)}>
-          {entry.username}
+          {username}
         </Text>
         <Text style={styles.createdAt}>{getTimeElapsed(entry.createdAt)}</Text>
       </View>
-      <Pressable
-        onPress={handleBlowUp}
-        style={{
-          backgroundColor: "rgba(30,144,255,0.5)",
-          position: "relative",
-        }}
-      >
+      <Pressable onPress={handleBlowUp} style={{ backgroundColor: "rgba(30,144,255,0.5)", position: "relative" }}>
         <Image source={{ uri: picture }} style={{ height: 400 }} />
         {blowup && (
           <View style={styles.blowupmain}>
@@ -144,11 +145,8 @@ export default function Post(props) {
       {/*<View style={styles.captionBox} /> Need to implement caption box as intended*/}
       <View name="Footer" style={styles.footer}>
         <Text>{entry.caption}</Text>
-        <Reactions
-          postID={entry.id}
-          commentsClicked={showCommentOption}
-          setCommentsClicked={setCommentOption}
-        />
+        <Reactions postID={entry.id} commentsClicked={showCommentOption} setCommentsClicked={setCommentOption} />
+
         {showCommentOption && (
           <CustomTextInput
             onChangeHandler={setCommentText}
@@ -163,9 +161,7 @@ export default function Post(props) {
             multiline={true}
           />
         )}
-        {showCommentOption && (
-          <CustomButton onClick={onCommentSubmit} text={"Submit"} />
-        )}
+        {showCommentOption && <CustomButton onClick={onCommentSubmit} text={"Submit"} />}
         {shortCommentDisplay ? commentList.slice(0, 2) : commentList}
         {comments.length > 2 && shortCommentDisplay && (
           <CustomButton
@@ -180,7 +176,6 @@ export default function Post(props) {
     </View>
   );
 }
-
 const styles = StyleSheet.create({
   postBox: {
     display: "flex",
@@ -273,25 +268,15 @@ function getTimeElapsed(createdAt) {
   if (minutesDifference < 1) {
     ans = "less than a minute ago";
   } else if (minutesDifference <= 60) {
-    ans =
-      Math.round(minutesDifference.toString()) +
-      ` minute${minutesDifference === 1 ? "" : "s"} ago`;
+    ans = Math.round(minutesDifference.toString()) + ` minute${minutesDifference === 1 ? "" : "s"} ago`;
   } else if (hoursDifference <= 24) {
-    ans =
-      Math.round(hoursDifference.toString()) +
-      ` hour${hoursDifference === 1 ? "" : "s"} ago`;
+    ans = Math.round(hoursDifference.toString()) + ` hour${hoursDifference === 1 ? "" : "s"} ago`;
   } else if (daysDifference <= 30) {
-    ans =
-      Math.round(daysDifference.toString()) +
-      ` day${daysDifference === 1 ? "" : "s"} ago`;
+    ans = Math.round(daysDifference.toString()) + ` day${daysDifference === 1 ? "" : "s"} ago`;
   } else if (monthsDifference <= 12) {
-    ans =
-      Math.round(monthsDifference.toString()) +
-      ` month${monthsDifference === 1 ? "" : "s"} ago`;
+    ans = Math.round(monthsDifference.toString()) + ` month${monthsDifference === 1 ? "" : "s"} ago`;
   } else {
-    ans =
-      Math.round(yearsDifference.toString()) +
-      ` year${yearsDifference === 1 ? "" : "s"} ago`;
+    ans = Math.round(yearsDifference.toString()) + ` year${yearsDifference === 1 ? "" : "s"} ago`;
   }
   return ans;
 }

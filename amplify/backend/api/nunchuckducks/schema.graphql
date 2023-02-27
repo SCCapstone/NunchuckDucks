@@ -38,6 +38,7 @@ type Goal @model @auth(rules: [{allow: public}]) {
   date: AWSDate
   content: String
   userID: ID! @index(name: "byUser")
+  isCompleted: Boolean
 }
 
 type User @model @auth(rules: [{allow: public}]) {
