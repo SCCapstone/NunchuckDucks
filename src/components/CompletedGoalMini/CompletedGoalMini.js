@@ -3,17 +3,9 @@ import { grayThemeColor } from "../../library/constants";
 import React from "react";
 
 // Component that provides a short goal description and handles a custom click event
-const GoalMini = ({ description, onDeleteHandler, onCompleteHandler }) => {
+const CompletedGoalMini = ({ description, onDeleteHandler}) => {
   return (
     <View style={styles.container}>
-
-      <Pressable onPress={onCompleteHandler} style={styles.imgContainer}>
-        <Image
-          source={require("../../../assets/icons/Gymbit_Icons_Black/Checkmark_Icon_Black.png")} // Placeholder Icon
-          style={styles.icon}
-          resizeMethod={"auto"}
-        />
-      </Pressable>
       <Text style={styles.text}>{description}</Text>
       <Pressable onPress={onDeleteHandler} style={styles.imgContainer}>
         <Image
@@ -58,4 +50,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default GoalMini;
+export default CompletedGoalMini;

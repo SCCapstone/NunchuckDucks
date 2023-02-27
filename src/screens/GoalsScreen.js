@@ -3,6 +3,7 @@ import { useNavigation } from "@react-navigation/native";
 import Header from "../components/Header/Header";
 import CustomButton from "../components/CustomButton/CustomButton";
 import GoalMini from "../components/GoalMini/GoalMini";
+import CompletedGoalMini from "../components/CompletedGoalMini";
 import { getGoals, deleteGoal } from "../crud/GoalOperations";
 import { Auth } from "aws-amplify";
 import { useEffect, useState } from "react";
@@ -17,7 +18,8 @@ Storage.configure();
 //Display users goals and allow them to navigate to the create goals screen
 export function GoalsScreen() {
   const nav = useNavigation();
-  const [goals, setGoals] = useState([]); //set array of all user goals
+  const [incompletegoals, setIncompleteGoals] = useState([]);
+  const [completegoals, setCompleteGoals] = useState([]);//set array of all user goals
   const [forceRefresh, setForceRefresh] = useState(true); //refresh the goal list
   const [blowup, setBlowUp] = useState(false);
   const [text, onChangeText] = React.useState(null); //Add text for the goal description
@@ -39,8 +41,30 @@ export function GoalsScreen() {
   async function goalList() {
     const { attributes } = await Auth.currentAuthenticatedUser();
     let username = attributes.preferred_username;
+    //if checkcompleted is true -> add to this list of goals
     const goals = await getGoals(username);
-    setGoals(goals);
+    tempincgoals=[];
+    tempcompgoals=[];
+    for(let i = 0; i<goals.length;i++)
+    {
+      if(goals[i].isComplete === false || goals[i].isComplete === null)
+      {
+        tempincgoals.push(goals[i]);
+        //tempincgoals.push.apply(tempincgoals,goals[i]);
+        //tempincgoals =  tempincgoals.concat(goals[i]);
+      }
+      else if(goals[i].isComplete === true)
+      {
+        tempcompgoals.push(goals[i]);
+        //tempcompgoals.push.apply(goals[i]);
+      }
+      else{
+        tempincgoals.push(goals[i]);
+        //tempincgoals.push.apply(goals[i]);
+      }
+    }
+    setCompleteGoals(tempcompgoals);
+    setIncompleteGoals(tempincgoals);
   }
 
   useEffect(() => {
@@ -49,11 +73,29 @@ export function GoalsScreen() {
   },[forceRefresh, nav]);
   
   //Generate the list of user goals on the screen
-  const listGoals = goals.map((goal) => (
+  const incompleteListGoals = incompletegoals.map((goal) => 
+  (
     <GoalMini 
       description = {goal.content}
       key = {goal.id}
+      onCompleteHandler={
+        async() => {
+          goal.isComplete = true;
 
+          setForceRefresh(!forceRefresh);
+      }}
+      onDeleteHandler={async() => {
+        let goalId = goal.id;
+        await deleteGoal(goalId);
+        setForceRefresh(!forceRefresh);
+      }}
+    />
+  ));
+
+  const completedListGoals = completegoals.map((goal) => (
+    <CompletedGoalMini 
+      description = {goal.content}
+      key = {goal.id}
       onDeleteHandler={async() => {
         let goalId = goal.id;
         await deleteGoal(goalId);
@@ -116,12 +158,27 @@ export function GoalsScreen() {
         </View>
       </View>:<Text></Text>}
     </View>
-    
     <ScrollView
       contentContainerStyle={styles.list}
     >
-        {listGoals}
-    </ScrollView></>
+        {incompleteListGoals}
+    </ScrollView>
+    
+    <View style={styles.container}>
+        <CustomButton
+          text="Completed Goals"
+          //Onclick could be added if needed.
+          style={styles.button2} />
+      </View>
+
+    <ScrollView
+      contentContainerStyle={styles.list}
+    >
+        {completedListGoals}
+    </ScrollView>
+    </>
+    
+    
   );
 }
 
@@ -130,9 +187,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   button: {
-    margin: 20
+    margin: 20,
+    width:"auto"
   },
-  lst: {
+  button2:{
+    margin:20,
+    width:"auto"
+  },
+  list: {
     alignItems: "center",
     display: "flex",
     backgroundColor: "white",
@@ -177,10 +239,10 @@ const styles = StyleSheet.create({
     width: "100%",
     textAlign: "center",
     textAlignVertical: "center",
-    fontSize: 20,
+    fontSize: 22,
     position: "absolute",
     left: 0,
-    top: 0,
+    top: 50,//to move it down and center with back button
     zIndex: -1,
   },
 })
