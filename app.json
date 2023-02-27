@@ -14,9 +14,7 @@
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.jewzydee.gymbit"
@@ -31,12 +29,10 @@
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "plugins": [
-      "@config-plugins/detox"
-    ],
+    "plugins": ["@config-plugins/detox"],
     "extra": {
       "eas": {
-        "projectId": "e6de7d41-c1c1-4bb4-9b50-d1af6afb2587"
+        "projectId": "0777130d-6706-4342-aa9d-630e787674cd"
       }
     },
     "owner": "jewzydee"

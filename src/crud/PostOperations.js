@@ -1,5 +1,6 @@
 import { processCompositeKeys } from "@aws-amplify/datastore/lib-esm/util";
 import { Int64 } from "@aws-sdk/eventstream-codec";
+import { getCurrentUser } from "./CacheOperations";
 import { DataStore, SortDirection } from "aws-amplify";
 import { Post, Follows, User } from "../models";
 import { getUserId } from "./UserOperations";
