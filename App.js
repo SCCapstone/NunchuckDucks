@@ -60,7 +60,7 @@ const app = () => {
         initialRouteName="Mutuals"
         tabBarPosition="bottom"
       >
-        {/*<Stack.Screen name="Settings" component={SettingsScreen} />*/}
+        <Stack.Screen name="Settings" component={SettingsScreen} />
         {/* <Stack.Screen name="Explore" component={ExploreScreen} /> */}
         <Stack.Screen name="Mutuals" component={MutualScreen} />
         <Stack.Screen name="Profile" component={ProfileScreen} />

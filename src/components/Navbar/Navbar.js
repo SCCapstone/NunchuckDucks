@@ -33,19 +33,18 @@ const Navbar = () => {
 
   return (
     <ScrollView style={styles.navbarView} contentContainerStyle={styles.navbarScrollView} horizontal={true} bounces={false}>
-      {/*<Text
-        title="Settings"
-        onPress={() => {
-          navigation.navigate("Settings");
-          setClickedElement("Settings");
-        }}
-        style={[
-          clickedElement == "Settings" ? styles.currentNavbarElement : {},
-          styles.navbarElement,
-        ]}
-      >
-        Settings
-      </Text>*/}
+      {
+        <Text
+          title="Settings"
+          onPress={() => {
+            navigation.navigate("Settings");
+            setClickedElement("Settings");
+          }}
+          style={[clickedElement == "Settings" ? styles.currentNavbarElement : {}, styles.navbarElement]}
+        >
+          Settings
+        </Text>
+      }
       {/* <Text
         title="Explore"
         onPress={() => {

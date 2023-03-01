@@ -5,6 +5,10 @@ import { getCurrentAuthenticatedUser } from "../library/GetAuthenticatedUser";
 
 const cacheDirectory = FileSystem.cacheDirectory;
 
+export async function logCache() {
+  let files = await getAllCachedFiles();
+  console.log(files);
+}
 export async function deleteCachedFile(file) {
   try {
     const cachedFile = cacheDirectory + file;
@@ -12,6 +16,47 @@ export async function deleteCachedFile(file) {
     console.log("Success: deleted cached file");
   } catch (error) {
     console.log("Error: Could not delete cached file", error);
+  }
+}
+
+export async function deleteAllCache() {
+  try {
+    console.log("Attempting to delete all cached files");
+    let filesInCache = await getAllCachedFiles();
+    //await FileSystem.deleteAsync(cacheDirectory);
+    for (let i = 0; i < filesInCache.length; i++) {
+      let curr = filesInCache[i];
+      if (
+        curr.substring(curr.length - 3) === "png" ||
+        curr.substring(curr.length - 3) === "txt" ||
+        !isNaN(curr.substring(curr.length - 1))
+      ) {
+        await deleteCachedFile(curr);
+        console.log("Deleted file", curr);
+      }
+    }
+    console.log("Deleted!?");
+  } catch (e) {
+    console.log("Error: Could not delete all cached files", e);
+  }
+}
+export async function deleteOldCache() {
+  let postNames = await getPostsThatShouldBeCached();
+  if (postNames === null) {
+    console.log("No posts in cache, so there is no need to delete old cache");
+  }
+  // iterate through all files in cache and delete the pngs that are no longer in the post list
+  let filesInCache = await getAllCachedFiles();
+  for (let i = 0; i < filesInCache.length; i++) {
+    let curr = filesInCache[i];
+    if (curr.substring(curr.length - 3) === "png" && postNames.indexOf(curr) === -1) {
+      await deleteCachedFile(curr);
+      console.log("Deleted file", curr);
+    } else if (!isNaN(curr.substring(curr.length - 1)) && postNames.indexOf(curr) === -1) {
+      // this is for the old posts that don't have "png" at the end; they with in a number
+      await deleteCachedFile(curr);
+      console.log("Deleted file", curr);
+    }
   }
 }
 

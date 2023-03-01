@@ -18,6 +18,7 @@ import {
   cacheCurrUser,
   getAllCachedFiles,
   cachePostsThatShouldBeCached,
+  logCache,
 } from "../../crud/CacheOperations";
 import { getFollowsList } from "../../crud/FollowingOperations";
 
