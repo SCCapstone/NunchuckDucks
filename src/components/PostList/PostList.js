@@ -31,6 +31,7 @@ export default function PostList(props) {
   const [postsInitialCompleted, setPostsInitialCompleted] = useState(false);
   // used to compare cached posts length to backend to see if the cached needs to be updated
   const [postLength, setPostLength] = useState(0);
+  const [swipeRefresh, setSwipeRefresh] = useState(true);
   const [username, setUsername] = useState("");
   // used to avoid doing backend queries if no connection is available yet
   const networkConnection = useNetInfo();
@@ -122,6 +123,7 @@ export default function PostList(props) {
     if (isCacheRefreshNeeded === true) {
       cacheAllPostsFromAWS(postsFromAWS);
     }
+    setSwipeRefresh(false);
   }
 
   async function checkIfRefreshCacheNeeded(postsFromAWS) {
@@ -157,8 +159,11 @@ export default function PostList(props) {
     if (networkConnection.isConnected === true && postsInitialCompleted === true) {
       //list.current.scrollToIndex({ index: 0 });
       doStuffWithAWS();
+    } else {
+      // in case there is no conneciton, a swipe refresh should end with nothing happening
+      // need to test when using app with no connection
+      setSwipeRefresh(false);
     }
-
     console.log("PostList refreshed");
   }, [refresh, networkConnection]);
 
@@ -166,14 +171,12 @@ export default function PostList(props) {
     <FlatList
       ref={list}
       data={posts}
-      renderItem={({ item }) => (
-        <Post
-          entry={item}
-          onRefresh={() => {
-            setRefresh(!refresh);
-          }}
-        />
-      )}
+      renderItem={({ item }) => <Post entry={item} />}
+      refreshing={swipeRefresh}
+      onRefresh={() => {
+        setSwipeRefresh(true);
+        setRefresh(!refresh);
+      }}
       keyExtractor={(item) => item.id}
     />
   );
