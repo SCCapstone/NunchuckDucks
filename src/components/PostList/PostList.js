@@ -162,5 +162,19 @@ export default function PostList(props) {
     console.log("PostList refreshed");
   }, [refresh, networkConnection]);
 
-  return <FlatList ref={list} data={posts} renderItem={({ item }) => <Post entry={item} />} keyExtractor={(item) => item.id} />;
+  return (
+    <FlatList
+      ref={list}
+      data={posts}
+      renderItem={({ item }) => (
+        <Post
+          entry={item}
+          onRefresh={() => {
+            setRefresh(!refresh);
+          }}
+        />
+      )}
+      keyExtractor={(item) => item.id}
+    />
+  );
 }

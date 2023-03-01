@@ -13,7 +13,6 @@ export async function deleteCachedFile(file) {
   try {
     const cachedFile = cacheDirectory + file;
     FileSystem.deleteAsync(cachedFile);
-    console.log("Success: deleted cached file");
   } catch (error) {
     console.log("Error: Could not delete cached file", error);
   }
@@ -92,7 +91,6 @@ export async function cacheLastModified(username, lastModifiedMessage) {
     await FileSystem.writeAsStringAsync(cacheLastModifiedUri, lastModifiedMessage, {
       encoding: "utf8",
     });
-    console.log("Success: cached lastModified attribute");
   } catch (error) {
     console.log("Error: Could not cache last modified attribute", error);
   }
@@ -139,7 +137,6 @@ export async function cacheCurrUser() {
   try {
     const username = await getCurrentAuthenticatedUser();
     let cachedUsername = await FileSystem.writeAsStringAsync(cachedUserUri, username, { encoding: "utf8" });
-    console.log("Success: cached username of logged in user");
     return username;
   } catch (e) {
     console.log("Error: Could not cache username from backend", e);
@@ -153,7 +150,6 @@ export async function cachePosts(posts) {
     let po = await FileSystem.writeAsStringAsync(cachedPostsUri, postsString, {
       encoding: "utf8",
     });
-    console.log("Success: cached posts");
   } catch (error) {
     console.log("Error: Could not cache posts");
   }
@@ -170,7 +166,6 @@ export async function getLastModifiedAWS(username, file) {
   await API.get("getLastModified", "/getLastModified", myInit)
     .then((response) => {
       lastModified = response;
-      console.log("Success: got lastModified from AWS for", file);
     })
     .catch((error) => {
       console.log("Error: could not get last modified using API call" + error.response);
@@ -185,7 +180,6 @@ export async function cachePostsThatShouldBeCached(posts) {
     let po = await FileSystem.writeAsStringAsync(cachedPostsUri, postsString, {
       encoding: "utf8",
     });
-    console.log("Success: cached posts that should be cached (for old cache deletion)");
   } catch (error) {
     console.log("Error: Could not cache posts that should be cached (for old cache deletion)");
   }
@@ -252,7 +246,6 @@ export async function getImageFromCache(username, ending) {
     console.log(error);
   }
   if (imageExistsInCache.exists) {
-    console.log("Pic", ending, "for", username, "exists in cache and will be displayed");
     return cacheImageFileUri;
   } else {
     console.log("Pic", ending, "for", username, " does not exist in cache");
@@ -270,7 +263,6 @@ export async function cacheImageFromAWS(username, ending, addPng = false) {
   //if uriAWS does not exist
   let cached = await cacheImage(uriAWS, cacheImageFileUri);
   if (cached.cached) {
-    console.log("Success: cached new", ending, "for", username);
     return cached.path;
   } else {
     console.log("Error: Could not cache new pic", ending, ":", cached.msg);
@@ -306,6 +298,7 @@ export async function updatePfpCache(username) {
     console.log("Profile pic for", username, "not found in cache; checking if it is in the backend");
     const lastModifiedAWS = await getLastModifiedAWS(username, "pfp.png");
     if (lastModifiedAWS === "None" || lastModifiedAWS === null) {
+      return false;
     } else {
       let imageFromAWS = await cacheImageFromAWS(username, "pfp.png");
       await cacheLastModified(username, lastModifiedAWS);
