@@ -99,7 +99,7 @@ export default function PostList(props) {
     } // TODO: delete pfp cache of a user when you unfollow them
   }
 
-  async function doStuffWithAWS() {
+  async function cacheStuffFromAWS() {
     console.log("Network connection acquired");
 
     // Username not cached; cache username
@@ -158,7 +158,7 @@ export default function PostList(props) {
     }
     if (networkConnection.isConnected === true && postsInitialCompleted === true) {
       //list.current.scrollToIndex({ index: 0 });
-      doStuffWithAWS();
+      cacheStuffFromAWS();
     } else {
       // in case there is no conneciton, a swipe refresh should end with nothing happening
       // need to test when using app with no connection
