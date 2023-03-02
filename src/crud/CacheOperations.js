@@ -31,10 +31,8 @@ export async function deleteAllCache() {
         !isNaN(curr.substring(curr.length - 1))
       ) {
         await deleteCachedFile(curr);
-        console.log("Deleted file", curr);
       }
     }
-    console.log("Deleted!?");
   } catch (e) {
     console.log("Error: Could not delete all cached files", e);
   }
