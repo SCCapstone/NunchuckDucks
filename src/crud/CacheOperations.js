@@ -5,13 +5,55 @@ import { getCurrentAuthenticatedUser } from "../library/GetAuthenticatedUser";
 
 const cacheDirectory = FileSystem.cacheDirectory;
 
+export async function logCache() {
+  let files = await getAllCachedFiles();
+  console.log(files);
+}
 export async function deleteCachedFile(file) {
   try {
     const cachedFile = cacheDirectory + file;
     FileSystem.deleteAsync(cachedFile);
-    console.log("Success: deleted cached file");
   } catch (error) {
     console.log("Error: Could not delete cached file", error);
+  }
+}
+
+export async function deleteAllCache() {
+  try {
+    console.log("Attempting to delete all cached files");
+    let filesInCache = await getAllCachedFiles();
+    //await FileSystem.deleteAsync(cacheDirectory);
+    for (let i = 0; i < filesInCache.length; i++) {
+      let curr = filesInCache[i];
+      if (
+        curr.substring(curr.length - 3) === "png" ||
+        curr.substring(curr.length - 3) === "txt" ||
+        !isNaN(curr.substring(curr.length - 1))
+      ) {
+        await deleteCachedFile(curr);
+      }
+    }
+  } catch (e) {
+    console.log("Error: Could not delete all cached files", e);
+  }
+}
+export async function deleteOldCache() {
+  let postNames = await getPostsThatShouldBeCached();
+  if (postNames === null) {
+    console.log("No posts in cache, so there is no need to delete old cache");
+  }
+  // iterate through all files in cache and delete the pngs that are no longer in the post list
+  let filesInCache = await getAllCachedFiles();
+  for (let i = 0; i < filesInCache.length; i++) {
+    let curr = filesInCache[i];
+    if (curr.substring(curr.length - 3) === "png" && postNames.indexOf(curr) === -1) {
+      await deleteCachedFile(curr);
+      console.log("Deleted file", curr);
+    } else if (!isNaN(curr.substring(curr.length - 1)) && postNames.indexOf(curr) === -1) {
+      // this is for the old posts that don't have "png" at the end; they with in a number
+      await deleteCachedFile(curr);
+      console.log("Deleted file", curr);
+    }
   }
 }
 
@@ -47,7 +89,6 @@ export async function cacheLastModified(username, lastModifiedMessage) {
     await FileSystem.writeAsStringAsync(cacheLastModifiedUri, lastModifiedMessage, {
       encoding: "utf8",
     });
-    console.log("Success: cached lastModified attribute");
   } catch (error) {
     console.log("Error: Could not cache last modified attribute", error);
   }
@@ -94,7 +135,6 @@ export async function cacheCurrUser() {
   try {
     const username = await getCurrentAuthenticatedUser();
     let cachedUsername = await FileSystem.writeAsStringAsync(cachedUserUri, username, { encoding: "utf8" });
-    console.log("Success: cached username of logged in user");
     return username;
   } catch (e) {
     console.log("Error: Could not cache username from backend", e);
@@ -108,7 +148,6 @@ export async function cachePosts(posts) {
     let po = await FileSystem.writeAsStringAsync(cachedPostsUri, postsString, {
       encoding: "utf8",
     });
-    console.log("Success: cached posts");
   } catch (error) {
     console.log("Error: Could not cache posts");
   }
@@ -125,7 +164,6 @@ export async function getLastModifiedAWS(username, file) {
   await API.get("getLastModified", "/getLastModified", myInit)
     .then((response) => {
       lastModified = response;
-      console.log("Success: got lastModified from AWS for", file);
     })
     .catch((error) => {
       console.log("Error: could not get last modified using API call" + error.response);
@@ -140,7 +178,6 @@ export async function cachePostsThatShouldBeCached(posts) {
     let po = await FileSystem.writeAsStringAsync(cachedPostsUri, postsString, {
       encoding: "utf8",
     });
-    console.log("Success: cached posts that should be cached (for old cache deletion)");
   } catch (error) {
     console.log("Error: Could not cache posts that should be cached (for old cache deletion)");
   }
@@ -207,7 +244,6 @@ export async function getImageFromCache(username, ending) {
     console.log(error);
   }
   if (imageExistsInCache.exists) {
-    console.log("Pic", ending, "for", username, "exists in cache and will be displayed");
     return cacheImageFileUri;
   } else {
     console.log("Pic", ending, "for", username, " does not exist in cache");
@@ -225,7 +261,6 @@ export async function cacheImageFromAWS(username, ending, addPng = false) {
   //if uriAWS does not exist
   let cached = await cacheImage(uriAWS, cacheImageFileUri);
   if (cached.cached) {
-    console.log("Success: cached new", ending, "for", username);
     return cached.path;
   } else {
     console.log("Error: Could not cache new pic", ending, ":", cached.msg);
@@ -261,6 +296,7 @@ export async function updatePfpCache(username) {
     console.log("Profile pic for", username, "not found in cache; checking if it is in the backend");
     const lastModifiedAWS = await getLastModifiedAWS(username, "pfp.png");
     if (lastModifiedAWS === "None" || lastModifiedAWS === null) {
+      return false;
     } else {
       let imageFromAWS = await cacheImageFromAWS(username, "pfp.png");
       await cacheLastModified(username, lastModifiedAWS);

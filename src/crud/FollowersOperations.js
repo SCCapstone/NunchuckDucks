@@ -67,11 +67,9 @@ export async function getFollowersList(username) {
     const userId = await getUserId(username);
     const followersList = await DataStore.query(Follows, (f) => f.userID.eq(userId));
 
-    console.log(`Retrieved followers of ${username} successfully.`);
-
     return followersList;
   } catch (error) {
-    console.error("Error retrieving followers list.");
+    console.error("Error retrieving followers list for", username);
   }
 }
 

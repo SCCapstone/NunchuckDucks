@@ -18,6 +18,7 @@ import {
   cacheCurrUser,
   getAllCachedFiles,
   cachePostsThatShouldBeCached,
+  logCache,
 } from "../../crud/CacheOperations";
 import { getFollowsList } from "../../crud/FollowingOperations";
 
@@ -30,6 +31,7 @@ export default function PostList(props) {
   const [postsInitialCompleted, setPostsInitialCompleted] = useState(false);
   // used to compare cached posts length to backend to see if the cached needs to be updated
   const [postLength, setPostLength] = useState(0);
+  const [swipeRefresh, setSwipeRefresh] = useState(true);
   const [username, setUsername] = useState("");
   // used to avoid doing backend queries if no connection is available yet
   const networkConnection = useNetInfo();
@@ -97,7 +99,7 @@ export default function PostList(props) {
     } // TODO: delete pfp cache of a user when you unfollow them
   }
 
-  async function doStuffWithAWS() {
+  async function cacheStuffFromAWS() {
     console.log("Network connection acquired");
 
     // Username not cached; cache username
@@ -121,6 +123,7 @@ export default function PostList(props) {
     if (isCacheRefreshNeeded === true) {
       cacheAllPostsFromAWS(postsFromAWS);
     }
+    setSwipeRefresh(false);
   }
 
   async function checkIfRefreshCacheNeeded(postsFromAWS) {
@@ -155,11 +158,26 @@ export default function PostList(props) {
     }
     if (networkConnection.isConnected === true && postsInitialCompleted === true) {
       //list.current.scrollToIndex({ index: 0 });
-      doStuffWithAWS();
+      cacheStuffFromAWS();
+    } else {
+      // in case there is no conneciton, a swipe refresh should end with nothing happening
+      // need to test when using app with no connection
+      setSwipeRefresh(false);
     }
-
     console.log("PostList refreshed");
   }, [refresh, networkConnection]);
 
-  return <FlatList ref={list} data={posts} renderItem={({ item }) => <Post entry={item} />} keyExtractor={(item) => item.id} />;
+  return (
+    <FlatList
+      ref={list}
+      data={posts}
+      renderItem={({ item }) => <Post entry={item} />}
+      refreshing={swipeRefresh}
+      onRefresh={() => {
+        setSwipeRefresh(true);
+        setRefresh(!refresh);
+      }}
+      keyExtractor={(item) => item.id}
+    />
+  );
 }
