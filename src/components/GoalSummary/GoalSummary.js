@@ -39,6 +39,7 @@ const GoalSummary = () => {
         <Text style={styles.title}>Your Goals</Text>
       </View>
       {listGoals.length === 0 ? defaultForNoGoals : listGoals}
+      <Text style={styles.text}>...</Text>
     </View>
   );
 };
@@ -79,6 +80,11 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     backgroundColor: grayThemeColor,
   },
+  text: {
+    fontSize: 40,
+    textAlign: "center",
+    fontWeight: "bold"
+  }
 });
 
 export default GoalSummary;
