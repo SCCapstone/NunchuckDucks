@@ -32,7 +32,7 @@ export function GoalsScreen() {
     var date = getDate();
     createGoal(username, date, text);
     handleBlowUp();
-    setForceRefresh(refresh);
+    setForceRefresh(!forceRefresh);
   }
 
   //retrieve all goals for signed in user
