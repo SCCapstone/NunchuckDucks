@@ -6,25 +6,25 @@ import ProfileMini from "../../ProfileMini";
 import { getFollowsList } from "../../../crud/FollowingOperations";
 import { getFollowersList } from "../../../crud/FollowersOperations";
 
-const NonCurrUserProfileModal = ({ modalVisible, setModalVisible, entry, image }) => {
+const NonCurrUserProfileModal = ({ modalVisible, setModalVisible, username, picName }) => {
   const [user, setUser] = useState("");
   const [followingCount, setFollowingCount] = useState("");
   const [followersCount, setFollowersCount] = useState("");
 
   useEffect(() => {
-    getUserObject(entry);
-    getFollowingCount(entry);
-    getFollowersCount(entry);
+    getUserObject();
+    getFollowingCount();
+    getFollowersCount();
   }, []);
 
   const closeModal = () => {
     setModalVisible(false);
   };
 
-  async function getUserObject(user) {
-    if (user !== null || user.username !== null) {
+  async function getUserObject() {
+    if (username !== null) {
       try {
-        const userObj = await findUserByUsername(user.username);
+        const userObj = await findUseryUsername(username);
         if (userObj !== null) {
           setUser(userObj);
         }
@@ -36,13 +36,13 @@ const NonCurrUserProfileModal = ({ modalVisible, setModalVisible, entry, image }
     }
   }
 
-  async function getFollowingCount(user) {
-    const followingList = await getFollowsList(user.username);
+  async function getFollowingCount() {
+    const followingList = await getFollowsList(username);
     setFollowingCount(followingList.length);
   }
 
-  async function getFollowersCount(user) {
-    const followersList = await getFollowersList(user.username);
+  async function getFollowersCount() {
+    const followersList = await getFollowersList(username);
     setFollowersCount(followersList.length);
   }
 
@@ -74,8 +74,8 @@ const NonCurrUserProfileModal = ({ modalVisible, setModalVisible, entry, image }
             alignContent: "center",
           }}
         >
-          <ProfileMini onClick={closeModal} src={image} />
-          <Text style={styles.username}>@{user.username !== null ? user.username : ""}</Text>
+          <ProfileMini onClick={closeModal} username={username} picName={picName} />
+          <Text style={styles.username}>@{username !== null ? username : ""}</Text>
         </View>
         <View style={styles.followingContainer}>
           <Text style={styles.followingText}>Following</Text>

@@ -12,6 +12,7 @@ import Comment from "../Comment";
 import { createComment, getComments } from "../../crud/CommentOperations";
 import CustomButton from "../CustomButton/CustomButton";
 import CustomTextInput from "../CustomTextInput/CustomTextInput";
+import CachedImage from "../CachedImage/CachedImage";
 
 export default function Post(props) {
   const entry = props.entry;
@@ -39,7 +40,7 @@ export default function Post(props) {
     return <Comment key={val.id} postID={entry.id} commentModel={val} replies={replies.get(val.id)} />;
   });
 
-  async function getPictures() {
+  /*async function getPictures() {
     // TODO retrieve post picture from the passed entry fileName
     //const postPfp = await getImageFromCache(username, "pfp.png"); // console logs pic "pfp.png found for user x..."
     const postPfp = entry.cachedPfp;
@@ -65,7 +66,7 @@ export default function Post(props) {
         console.log("Storage.get failed; connection unavailable to render", picName);
       }
     }
-  }
+  }*/
 
   async function onCommentSubmit() {
     setCommentOption(false);
@@ -103,7 +104,7 @@ export default function Post(props) {
   }
 
   useEffect(() => {
-    getPictures();
+    //getPictures();
     retrieveComments();
   }, [refresh]);
 
@@ -112,12 +113,13 @@ export default function Post(props) {
       <NonCurrUserProfileModal
         modalVisible={modalVisible}
         setModalVisible={setModalVisible}
-        entry={entry}
-        image={pfp}
+        username={username}
+        picName={picName}
       ></NonCurrUserProfileModal>
       <View name="Header" flexDirection="row" style={styles.postHeader}>
         <ProfileMini
-          src={pfp}
+          username={username}
+          picName={picName}
           style={{ height: 42, width: 42, marginLeft: 6, marginRight: 6 }}
           imageStyle={{ height: 42, width: 42 }}
           onClick={() => setModalVisible(true)}
@@ -129,7 +131,7 @@ export default function Post(props) {
         <Text style={styles.createdAt}>{getTimeElapsed(entry.createdAt)}</Text>
       </View>
       <Pressable onPress={handleBlowUp} style={{ backgroundColor: "rgba(30,144,255,0.5)", position: "relative" }}>
-        <Image source={{ uri: picture }} style={{ height: 400 }} />
+        <CachedImage username={username} picName={picName} imageStyle={{ height: 400 }} />
         {blowup && (
           <View style={styles.blowupmain}>
             <View style={styles.blowupheader}>
