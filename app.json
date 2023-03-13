@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "NunchuckDucks",
+    "name": "GymBit",
     "slug": "gymbit",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -22,7 +22,7 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#FFFFFF"
+        "backgroundColor": "#478bf6"
       },
       "package": "com.jewzydee.gymbit"
     },
