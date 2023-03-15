@@ -8,6 +8,6 @@ export default function getPictureFileName() {
   var yyyy = String(today.getFullYear());
   var time = String(today.getTime());
 
-  var name = mm + "-" + dd + "-" + yyyy + "-" + time;
+  var name = mm + "-" + dd + "-" + yyyy + "-" + time + ".png";
   return name;
 }

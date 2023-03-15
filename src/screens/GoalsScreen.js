@@ -34,7 +34,7 @@ export function GoalsScreen() {
     var date = getDate();
     createGoal(username, date, text);
     handleBlowUp();
-    setForceRefresh(refresh);
+    setForceRefresh(!forceRefresh);
   }
 
   //retrieve all goals for signed in user
@@ -74,6 +74,7 @@ export function GoalsScreen() {
   }
 
   useEffect(() => {
+    console.log("refreshing goals screen");
     goalList();
     const focusHandler = nav.addListener("focus", () => {setForceRefresh(!forceRefresh)}) //Refresh page when navigated to
   },[forceRefresh, nav]);

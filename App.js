@@ -1,6 +1,6 @@
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
+import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import { SettingsScreen } from "./src/screens/SettingsScreen.js";
 import { ExploreScreen } from "./src/screens/ExploreScreen.js";
 import { MutualScreen } from "./src/screens/MutualScreen.js";
@@ -11,15 +11,37 @@ import { ProfileScreen } from "./src/screens/ProfileScreen.js";
 import { FollowerScreen } from "./src/screens/FollowerScreen.js";
 import { CreateGoalScreen } from "./src/screens/CreateGoalScreen.js";
 import Navbar from "./src/components/Navbar";
-import { Amplify } from "@aws-amplify/core";
+import { Amplify, API } from "@aws-amplify/core";
 import awsmobile from "./src/aws-exports";
 import { withAuthenticator } from "aws-amplify-react-native";
 import { StyleSheet, View, TitleText } from "react-native";
+import { Storage } from "@aws-amplify/storage";
+import * as clients3 from "@aws-sdk/client-s3";
 
 Amplify.configure({
   ...awsmobile,
   Analytics: {
     disabled: true,
+  },
+  API: {
+    endpoints: [
+      {
+        name: "getLastModified",
+        endpoint: "https://5rr13okysb.execute-api.us-east-1.amazonaws.com",
+      },
+    ],
+  },
+  Auth: {
+    identityPoolId: "us-east-1:a7036c0d-28de-48ac-9cbe-82440d6dc8c1", //REQUIRED - Amazon Cognito Identity Pool ID
+    region: "us-east-1", // REQUIRED - Amazon Cognito Region
+    userPoolId: "us-east-1_5M4En6xo2", //OPTIONAL - Amazon Cognito User Pool ID
+    userPoolWebClientId: "335mhs43pnhh4qa4bah1gfldms", //OPTIONAL - Amazon Cognito Web Client ID
+  },
+  Storage: {
+    AWSS3: {
+      bucket: "nunchuckducks-picture-storage102612-dev", //REQUIRED -  Amazon S3 bucket name
+      region: "us-east-1", //OPTIONAL -  Amazon service region
+    },
   },
 });
 const Stack = createMaterialTopTabNavigator();
@@ -33,11 +55,7 @@ const app = () => {
           tabBarShowLabel: true,
           tabBarScrollEnabled: true,
           lazy: true,
-          tabBarLabelStyle: {width: 120,
-            height: 30,
-            textAlign: "center",
-            color: "black",
-            fontSize: 20,}
+          tabBarLabelStyle: { width: 120, height: 30, textAlign: "center", color: "black", fontSize: 20 },
         }}
         initialRouteName="Mutuals"
         tabBarPosition="bottom"
@@ -52,7 +70,7 @@ const app = () => {
         <Stack.Screen name="Followers" component={FollowerScreen} initialParams={{ isFollowerPage: false }} />
         {/* <Stack.Screen name="CreateGoal" component={CreateGoalScreen} /> */}
       </Stack.Navigator>
-    </NavigationContainer>    
+    </NavigationContainer>
   );
 };
 

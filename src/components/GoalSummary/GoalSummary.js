@@ -5,12 +5,13 @@ import { Auth } from "aws-amplify";
 import { getGoals } from "../../crud/GoalOperations";
 import { blueThemeColor, grayThemeColor } from "../../library/constants";
 import { getCurrentAuthenticatedUser } from "../../library/GetAuthenticatedUser";
+import { getCurrentUser } from "../../crud/CacheOperations";
 
 const GoalSummary = () => {
   const [goals, setGoals] = useState([]);
 
   async function goalList() {
-    let username = await getCurrentAuthenticatedUser();
+    let username = await getCurrentUser();
     const goals = await getGoals(username);
     setGoals(goals);
   }
@@ -38,6 +39,7 @@ const GoalSummary = () => {
         <Text style={styles.title}>Your Goals</Text>
       </View>
       {listGoals.length === 0 ? defaultForNoGoals : listGoals}
+      <Text style={styles.text}>...</Text>
     </View>
   );
 };
@@ -78,6 +80,11 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     backgroundColor: grayThemeColor,
   },
+  text: {
+    fontSize: 40,
+    textAlign: "center",
+    fontWeight: "bold"
+  }
 });
 
 export default GoalSummary;

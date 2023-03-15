@@ -1,7 +1,8 @@
 import { processCompositeKeys } from "@aws-amplify/datastore/lib-esm/util";
+import { Int64 } from "@aws-sdk/eventstream-codec";
+import { getCurrentUser } from "./CacheOperations";
 import { DataStore, SortDirection } from "aws-amplify";
-import { getCurrentAuthenticatedUser } from "../library/GetAuthenticatedUser";
-import { Post, Follows } from "../models";
+import { Post, Follows, User } from "../models";
 import { getUserId } from "./UserOperations";
 /**
  * Creates a post and saves the new post in the backend
@@ -12,7 +13,7 @@ import { getUserId } from "./UserOperations";
  */
 export async function createPost(caption, photo, username) {
   try {
-    const user = await getCurrentAuthenticatedUser();
+    const user = await getCurrentUser();
 
     const userId = await getUserId(user);
 
@@ -43,14 +44,29 @@ export async function deletePost(postID) {
     console.log("Error deleting post", error);
   }
 }
+export async function getUsersFollowed(username) {
+  try {
+    const followsList = await DataStore.query(Follows, (f) => f.username.eq(username));
 
-export async function getPostsForMutualFeed(username) {
+    const newFollowsList = [];
+
+    for (let i = 0; i < followsList.length; i++) {
+      let follow = await DataStore.query(User, followsList[i].userID);
+      newFollowsList.push(follow.username);
+    }
+    console.log(`Successfully retrieved follows list for ${username}.`);
+
+    return newFollowsList;
+  } catch (error) {
+    console.error(`Error retrieving follows list for ${username}`);
+  }
+}
+
+export async function getPostsForMutualFeedFromAWS(username) {
   try {
     const userId = await getUserId(username);
 
-    const usersFollowed = await DataStore.query(Follows, (uf) =>
-      uf.username.eq(username)
-    );
+    const usersFollowed = await DataStore.query(Follows, (uf) => uf.username.eq(username));
     const usersFollowedIDs = [userId];
 
     console.log(`Retrieved users followed for ${username}`);
@@ -62,13 +78,9 @@ export async function getPostsForMutualFeed(username) {
     const posts = [];
 
     for (let i = 0; i < usersFollowedIDs.length; i++) {
-      let postsToBeAdded = await DataStore.query(
-        Post,
-        (p) => p.userID.eq(usersFollowedIDs[i]),
-        {
-          sort: (s) => s.createdAt(SortDirection.DESCENDING),
-        }
-      );
+      let postsToBeAdded = await DataStore.query(Post, (p) => p.userID.eq(usersFollowedIDs[i]), {
+        sort: (s) => s.createdAt(SortDirection.DESCENDING),
+      });
       for (let j = 0; j < postsToBeAdded.length; j++) {
         posts.push(postsToBeAdded[j]);
       }
@@ -82,14 +94,14 @@ export async function getPostsForMutualFeed(username) {
       }
     });
 
-    console.log(
-      `Retrieved posts for user ${username}'s mutual page successfully.`
-    );
+    /*for (let i = 0; i < posts.length; i++) {
+      posts[i].count = parseInt
+    }*/
+
+    console.log(`Retrieved posts for user ${username}'s mutual page successfully.`);
 
     return posts;
   } catch (error) {
-    console.error(
-      `Error retrieving posts for ${username}'s mutual feed, ${error}`
-    );
+    console.error(`Error retrieving posts for ${username}'s mutual feed, ${error}`);
   }
 }

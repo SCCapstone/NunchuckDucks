@@ -20,9 +20,7 @@ export async function createFollower(username, followerUsername) {
       userID: userId,
     });
     await DataStore.save(follower);
-    console.log(
-      `Follower ${followerUsername} of ${username} was saved successfully.`
-    );
+    console.log(`Follower ${followerUsername} of ${username} was saved successfully.`);
     return true;
   } catch (error) {
     console.error("Error saving follower.", error);
@@ -33,12 +31,12 @@ export async function createFollower(username, followerUsername) {
 /**
  * This method checks the user that the current user to trying to follow for anything that
  * would not permit them to follow them.
- * @param {String} username 
- * @param {String} followerUsername 
+ * @param {String} username
+ * @param {String} followerUsername
  * @returns Boolean
  */
 async function checkFollowRequirements(username, followerUsername) {
-  return await isCurrUser(username) || await doesUserExist(username) || await doesFollowExist(username, followerUsername);
+  return (await isCurrUser(username)) || (await doesUserExist(username)) || (await doesFollowExist(username, followerUsername));
 }
 
 /**
@@ -51,9 +49,7 @@ async function doesFollowExist(username, followerUsername) {
   try {
     const userId = await getUserId(username);
 
-    const followerList = await DataStore.query(Follows, (f) =>
-      f.and((f) => [f.username.eq(followerUsername), f.userID.eq(userId)])
-    );
+    const followerList = await DataStore.query(Follows, (f) => f.and((f) => [f.username.eq(followerUsername), f.userID.eq(userId)]));
 
     return followerList[0] !== undefined ? true : false;
   } catch (error) {
@@ -69,15 +65,11 @@ async function doesFollowExist(username, followerUsername) {
 export async function getFollowersList(username) {
   try {
     const userId = await getUserId(username);
-    const followersList = await DataStore.query(Follows, (f) =>
-      f.userID.eq(userId)
-    );
-
-    console.log(`Retrieve followers of ${username} succesfully.`);
+    const followersList = await DataStore.query(Follows, (f) => f.userID.eq(userId));
 
     return followersList;
   } catch (error) {
-    console.error("Error retrieving followers list.");
+    console.error("Error retrieving followers list for", username);
   }
 }
 
@@ -90,9 +82,7 @@ export async function deleteFollower(username, followerUsername) {
   try {
     const userId = await getUserId(username);
 
-    const followerToDelete = await DataStore.query(Follows, (f) =>
-      f.and((f) => [f.username.eq(followerUsername), f.userID.eq(userId)])
-    );
+    const followerToDelete = await DataStore.query(Follows, (f) => f.and((f) => [f.username.eq(followerUsername), f.userID.eq(userId)]));
 
     await DataStore.delete(followerToDelete[0]);
 

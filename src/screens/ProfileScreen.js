@@ -7,6 +7,16 @@ import { getFollowsList } from "../crud/FollowingOperations";
 import { getFollowersList } from "../crud/FollowersOperations";
 import { getBio, updateProfilePicture } from "../crud/UserOperations";
 import { findUserByUsername } from "../crud/UserOperations";
+import {
+  getLastModifiedCache,
+  getLastModifiedAWS,
+  cacheLastModified,
+  getImageFromCache,
+  cacheImageFromAWS,
+  saveImageToAWS,
+  getCachedCurrUser,
+  getCurrentUser,
+} from "../crud/CacheOperations";
 import ProfileMini from "../components/ProfileMini";
 import Bio from "../components/Bio";
 import CustomButton from "../components/CustomButton";
@@ -14,11 +24,10 @@ import { useNavigation } from "@react-navigation/native";
 import { useState, useEffect, useCallback } from "react";
 import SignOutButton from "../components/signoutbutton/SignOutButton";
 import * as ImagePicker from "expo-image-picker";
-import { getProfilePicture } from "../crud/UserOperations";
-import { Storage } from "@aws-amplify/storage";
-import { DataStore } from "aws-amplify";
-import { getCurrentAuthenticatedUser } from "../library/GetAuthenticatedUser";
 import ChangeBioModal from "../components/modals/ChangeBioModal";
+import * as FileSystem from "expo-file-system";
+import "react-native-url-polyfill/auto";
+import "react-native-get-random-values";
 import Header from "../components/Header";
 
 //Need to also create the buttons to be clickable and call different functions
@@ -28,53 +37,22 @@ export function ProfileScreen(props) {
   const [followercount, setFollowerCount] = useState("");
   const [followingcount, setFollowingCount] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
+  const [showMakePfp, setShowMakePfp] = useState(false);
   // const [image, setImage] = useState(""); // the image src to be displayed
-  const [imageFromAWS, setImageFromAWS] = useState("");
+  const [profilePic, setProfilePic] = useState("");
   const [reload, setReload] = useState(false);
-  /*useEffect(() => {
-    getUserImageSrc(username);
-  }, [username]);*/
 
   useEffect(() => {
-    getUsernameAndImageSRC();
-    //setImage(username + "/pfp.png");
-
-    /*delay(2000);
-    console.log("hi");
-    setReload(true);*/
-    // getFollowerCount();
-    // console.log("Follower Count Grabbed");
-    // getFollowingCount();
-    // console.log("Following Count Grabbed");*/
+    renderProfileInfo();
   }, [modalVisible]);
 
-  async function getUsernameAndImageSRC() {
-    await getUsername(); // sets username state
-    await getImageSRC();
-  }
-
-  const getImageSRC = async () => {
-    let username = await getCurrentAuthenticatedUser();
-    const pic = await Storage.get(username + "/pfp.png");
-    setImageFromAWS(pic);
-  };
-
-  // const getUserImageSrc = useCallback(async (username) => {
-  //   /*const user = await findUserByUsername(username);
-  //   if (!user || !user.profilePicture) return;*/
-  //   const pic = await Storage.get(username + "/pfp.png");
-  //   setImageFromAWS(pic);
-  // }, []);
-
-  // const delay = (ms) => new Promise((res) => setTimeout(res, ms));
-
-  async function getUsername() {
-    try {
-      let username = await getCurrentAuthenticatedUser();
-      setUsername(username);
-    } catch {
-      console.error("Error getting username of current authenticated user", error);
-    }
+  async function renderProfileInfo() {
+    let username = await getCurrentUser();
+    setUsername(username);
+    //const cacheImageFileUri = cacheDirectory + username + "pfp.png";
+    //const cacheLastModifiedUri = cacheDirectory + username + "pfp.png";
+    const cachedImage = await getImageFromCache(username, "pfp.png");
+    setProfilePic(cachedImage);
   }
 
   // async function getFollowerCount() {
@@ -89,20 +67,26 @@ export function ProfileScreen(props) {
 
   const addProfileImage = async () => {
     let _image = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes:
-        ImagePicker.MediaTypeOptions.Images /*Only allow image upload */,
+      mediaTypes: ImagePicker.MediaTypeOptions.Images /*Only allow image upload */,
       allowsEditing: true /*true= pull up an editing interface after image upload */,
       aspect: [1, 1] /*1:1 image ratio, so it will be a square */,
       quality: 1 /*highest quality image possible, on a scale of 0-1 we want 1 lol */,
     });
     // setImage(_image.uri);
     try {
-      let username = await getCurrentAuthenticatedUser();
+      let username = await getCurrentUser();
       const response = await fetch(_image.uri);
       const blob = await response.blob();
       const fileName = username + "/pfp.png";
       //updateProfilePicture(username, fileName);
-      Storage.put(fileName, blob);
+      await saveImageToAWS(fileName, blob);
+      let lastModified = await getLastModifiedAWS(username, "pfp.png");
+      cacheLastModified(username, lastModified);
+      let path = await cacheImageFromAWS(username, "pfp.png");
+      if (path !== "") {
+        setProfilePic(path);
+      }
+      setShowMakePfp(false);
     } catch (error) {
       console.log("Error uploading image to S3", error);
     }
@@ -110,27 +94,25 @@ export function ProfileScreen(props) {
   };
 
   return (
-    <><View>
-      <Header title={"Profile"} />
-    </View><View
-      style={{
-        flex: 1,
-        alignItems: "center",
-        backgroundColor: "white",
-        justifyContent: "center",
-      }}
-    >
-        <ChangeBioModal
-          modalVisible={modalVisible}
-          setModalVisible={setModalVisible}>
-        </ChangeBioModal>
+    <>
+      <View>
+        <Header title={"Profile"} />
+      </View>
+      <View
+        style={{
+          flex: 1,
+          alignItems: "center",
+          backgroundColor: "white",
+          justifyContent: "center",
+        }}
+      >
+        <ChangeBioModal modalVisible={modalVisible} setModalVisible={setModalVisible}></ChangeBioModal>
         <View style={{ paddingTop: 0, paddingBottom: 10, flexDirection: "row", alignContent: "center" }}>
-          <ProfileMini onClick={() => addProfileImage()} src={imageFromAWS} />
+          <ProfileMini onClick={() => addProfileImage()} src={profilePic} />
           <Text style={styles.username}>@{username}</Text>
         </View>
         <TouchableOpacity onPress={() => setModalVisible(true)}>
-          <Bio>
-          </Bio>
+          <Bio></Bio>
         </TouchableOpacity>
         {/*<Text style={styles.username}>@{username}</Text>*/}
         <View style={{ flexDirection: "row", paddingTop: 15, paddingBottom: 15, maxWidth: 250 }}>
@@ -188,9 +170,10 @@ export function ProfileScreen(props) {
         <TouchableOpacity onPress={() => navigation.navigate("Goals")}>
           <GoalSummary></GoalSummary>
         </TouchableOpacity>
-      </View></>
+      </View>
+    </>
   );
-};
+}
 const styles = StyleSheet.create({
   username: {
     paddingTop: 30,
@@ -214,5 +197,5 @@ const styles = StyleSheet.create({
     borderRadius: 9,
     borderColor: blueThemeColor,
     backgroundColor: grayThemeColor,
-  }
+  },
 });

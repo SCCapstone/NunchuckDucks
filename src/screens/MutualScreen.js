@@ -10,16 +10,16 @@ export function MutualScreen() {
   const [refresh, setRefresh] = useState(false);
   const nav = useNavigation();
   useEffect(() => {
-    const focusHandler = nav.addListener("focus", () => {
+    /*const focusHandler = nav.addListener("focus", () => {
       setRefresh(!refresh);
-    });
+    });*/
   }, [refresh, nav]);
 
   return (
     <View testID="mutualScreen" style={{ marginBottom: "22%" }}>
       <HomeHeader handlePress={() => setRefresh(!refresh)} />
       <PostList refresh={refresh} setRefresh={setRefresh} />
-      <Text>hi</Text>
+      <Text>Loading...</Text>
     </View>
   );
 }
