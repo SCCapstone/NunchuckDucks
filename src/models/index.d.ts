@@ -9,6 +9,10 @@ export enum ReactionType {
   CLAP = "CLAP"
 }
 
+type NotificationMetaData = {
+  readOnlyFields: 'createdAt' | 'updatedAt';
+}
+
 type FollowedByMetaData = {
   readOnlyFields: 'createdAt' | 'updatedAt';
 }
@@ -35,6 +39,32 @@ type UserMetaData = {
 
 type PostMetaData = {
   readOnlyFields: 'createdAt' | 'updatedAt';
+}
+
+type EagerNotification = {
+  readonly id: string;
+  readonly username: string;
+  readonly date?: string | null;
+  readonly content?: string | null;
+  readonly userID: string;
+  readonly createdAt?: string | null;
+  readonly updatedAt?: string | null;
+}
+
+type LazyNotification = {
+  readonly id: string;
+  readonly username: string;
+  readonly date?: string | null;
+  readonly content?: string | null;
+  readonly userID: string;
+  readonly createdAt?: string | null;
+  readonly updatedAt?: string | null;
+}
+
+export declare type Notification = LazyLoading extends LazyLoadingDisabled ? EagerNotification : LazyNotification
+
+export declare const Notification: (new (init: ModelInit<Notification, NotificationMetaData>) => Notification) & {
+  copyOf(source: Notification, mutator: (draft: MutableModel<Notification, NotificationMetaData>) => MutableModel<Notification, NotificationMetaData> | void): Notification;
 }
 
 type EagerFollowedBy = {
@@ -170,6 +200,7 @@ type EagerUser = {
   readonly FollowedBies?: (FollowedBy | null)[] | null;
   readonly expoToken?: string | null;
   readonly isPrivate?: boolean | null;
+  readonly Notifications?: (Notification | null)[] | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -185,6 +216,7 @@ type LazyUser = {
   readonly FollowedBies: AsyncCollection<FollowedBy>;
   readonly expoToken?: string | null;
   readonly isPrivate?: boolean | null;
+  readonly Notifications: AsyncCollection<Notification>;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
