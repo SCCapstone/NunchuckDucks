@@ -1,19 +1,11 @@
 import { View, Image, Text, StyleSheet, Pressable } from "react-native";
-import { grayThemeColor, blueThemeColor } from "../../library/constants";
+import { blueThemeColor, grayThemeColor } from "../../library/constants";
 import React from "react";
 
 // Component that provides a short goal description and handles a custom click event
-const GoalMini = ({ description, onDeleteHandler, onCompleteHandler }) => {
+const CompletedGoalMini = ({ description, onDeleteHandler}) => {
   return (
     <View style={styles.container}>
-
-      <Pressable onPress={onCompleteHandler} style={styles.imgContainer}>
-        <Image
-          source={require("../../../assets/icons/Gymbit_Icons_Black/Checkmark_Icon_Black.png")} // Placeholder Icon
-          style={styles.icon}
-          resizeMethod={"auto"}
-        />
-      </Pressable>
       <Text style={styles.text}>{description}</Text>
       <Pressable onPress={onDeleteHandler} style={styles.imgContainer}>
         <Image
@@ -30,22 +22,22 @@ const styles = StyleSheet.create({
   container: {
     width: "83%", // following original figma designs
     backgroundColor: grayThemeColor,
-    padding: 10,
-    borderColor:blueThemeColor,
+    borderColor: blueThemeColor,
     borderWidth:3,
+    padding: 10,
     minHeight: 60,
     borderRadius: 10,
-
     display: "flex",
     flexDirection: "row",
     justifyContent: "space-between",
     alignContent: "center",
     margin: 10,
+    
   },
   text: {
     textAlign: "center",
     textAlignVertical: "center",
-    width: "60%",
+    width: "82%",
     fontSize: 17,
   },
   icon: {
@@ -58,4 +50,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default GoalMini;
+export default CompletedGoalMini;
