@@ -38,6 +38,13 @@ export const schema = {
                     "isRequired": true,
                     "attributes": []
                 },
+                "interactingUserUsername": {
+                    "name": "interactingUserUsername",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
                 "createdAt": {
                     "name": "createdAt",
                     "isArray": false,
@@ -796,5 +803,5 @@ export const schema = {
     },
     "nonModels": {},
     "codegenVersion": "3.3.5",
-    "version": "fae55bb205d2dd883c13d50c10610a12"
+    "version": "cc43ef60e234963c39a32a775eb23ac4"
 };

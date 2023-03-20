@@ -4,6 +4,7 @@ type Notification @model @auth(rules: [{allow: public}]) {
   date: AWSDate
   content: String
   userID: ID! @index(name: "byUser")
+  interactingUserUsername: String
 }
 
 type FollowedBy @model @auth(rules: [{allow: public}]) {

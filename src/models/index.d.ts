@@ -47,6 +47,7 @@ type EagerNotification = {
   readonly date?: string | null;
   readonly content?: string | null;
   readonly userID: string;
+  readonly interactingUserUsername?: string | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -57,6 +58,7 @@ type LazyNotification = {
   readonly date?: string | null;
   readonly content?: string | null;
   readonly userID: string;
+  readonly interactingUserUsername?: string | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
