@@ -1,5 +1,8 @@
 import { DataStore } from "aws-amplify";
 import { Reaction } from "../models";
+import { createNotification } from "./NotificationOperations";
+import { getUserByPostId } from "./PostOperations";
+import { getDate } from "../library/getDate";
 
 export async function createReaction(username, reactionType, postID) {
   try {
@@ -12,6 +15,10 @@ export async function createReaction(username, reactionType, postID) {
     await DataStore.save(reaction);
 
     console.log(`Reaction ${reaction.id} successfully created.`);
+    let postsUsername = await getUserByPostId(postID);
+    let date = getDate();
+    let content = postsUsername + " reacted to your post!";
+    await createNotification(postsUsername, date, content);
   } catch (error) {
     console.error(`There was an error creating a reaction.`, error);
   }

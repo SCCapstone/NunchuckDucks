@@ -1,17 +1,17 @@
-import { Text, TouchableOpacity, View, StyleSheet, Pressable } from "react-native";
+import { Text, TouchableOpacity, View, StyleSheet, Image } from "react-native";
 import { grayThemeColor } from "../../library/constants";
 
 const NotificationMini = ({ content, onDeleteHandler }) => {
     return (
       <View style={styles.container}>
         <Text style={styles.text}>{content}</Text>
-        <Pressable onPress={() => {onDeleteHandler}} style={styles.imgContainer}>
+        <TouchableOpacity onPress={onDeleteHandler} style={styles.imgContainer}>
           <Image
             source={require("../../../assets/icons/Gymbit_Icons_Black/X_Icon_Black.png")} // Placeholder Icon
             style={styles.icon}
             resizeMethod={"auto"}
           />
-        </Pressable>
+        </TouchableOpacity>
       </View>
     );
   };
@@ -48,4 +48,4 @@ const NotificationMini = ({ content, onDeleteHandler }) => {
     },
   });
 
-export default Notification;
+export default NotificationMini;

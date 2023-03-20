@@ -12,7 +12,7 @@ import { useNavigation } from "@react-navigation/native";
 import { getDate } from "../library/getDate";
 import { getNotifications, deleteNotification, createNotification } from "../crud/NotificationOperations";
 import { getCurrentUser } from "../crud/CacheOperations";
-import NotificationMini from "../components/Notification/Notification";
+import NotificationMini from "../components/Notification/NotificationMini";
 
 Storage.configure();
 
@@ -24,15 +24,7 @@ export function NotificationsScreen() {
     async function notificationList() {
         const username = await getCurrentUser();
         const Notifications = await getNotifications(username);
-        console.log("Notifications, ", notifications);
         setNotifications(Notifications);
-    }
-    
-    async function saveNotification() {
-        const username = await getCurrentUser();
-        var date = getDate();
-        createNotification(username, date, "This is a noti");
-        setForceRefresh(!forceRefresh);
     }
 
     useEffect(() => {
@@ -46,6 +38,7 @@ export function NotificationsScreen() {
             content = {notification.content}
             onDeleteHandler = {async() => {
                 let notificationId = notification.id;
+                console.log(notificationId);
                 await deleteNotification(notificationId);
                 setForceRefresh(!forceRefresh);
             }}
@@ -55,12 +48,6 @@ export function NotificationsScreen() {
     return (
         <><View>
             <Header title={"Notifications"} />
-            <View style={styles.container}>
-                <CustomButton
-                    text="Test Create Notification"
-                    onClick={saveNotification}
-                    style={styles.button} />
-            </View>
         </View>
         <ScrollView
             contentContainerStyle={styles.scroll}

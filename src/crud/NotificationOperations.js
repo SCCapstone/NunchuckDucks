@@ -28,10 +28,7 @@ export async function createNotification(username, date, content) {
 export async function getNotifications(username) {
     try {
         const userId = await getUserId(username);
-        console.log("username: ", username);
-        console.log("User ID: ", userId);
         const notifications = await DataStore.query(Notification, (n) => n.userID.eq(userId));
-        console.log("Notifications: ", notifications);
 
         console.log(`Successfully retrieved notifications for ${username}`);
         return notifications;

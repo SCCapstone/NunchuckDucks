@@ -1,6 +1,9 @@
 import { DataStore } from "aws-amplify";
 import { User, Follows } from "../models";
 import { doesUserExist, getUserId, isCurrUser } from "./UserOperations";
+import { createNotification } from "./NotificationOperations";
+import { getDate } from "../library/getDate";
+
 
 /**
  * This method adds an external user to the primary user's followers list
@@ -20,6 +23,9 @@ export async function createFollower(username, followerUsername) {
       userID: userId,
     });
     await DataStore.save(follower);
+    let date = getDate();
+    let content = followerUsername + " followed you!";
+    await createNotification(followerUsername, date, content);
     console.log(`Follower ${followerUsername} of ${username} was saved successfully.`);
     return true;
   } catch (error) {

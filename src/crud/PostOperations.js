@@ -105,3 +105,8 @@ export async function getPostsForMutualFeedFromAWS(username) {
     console.error(`Error retrieving posts for ${username}'s mutual feed, ${error}`);
   }
 }
+
+export async function getUserByPostId(postId) {
+    const post = await DataStore.query(Post, postId);
+    return post.username;
+}
