@@ -59,7 +59,7 @@ const HomeHeader = ({ handlePress }) => {
       <TouchableOpacity
         style={styles.notiButton}
         onPress={() => {
-          navigation.navigate("NotificationScreen");
+          navigation.navigate("Notifications");
         }}
       >
         <Image
