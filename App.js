@@ -56,7 +56,7 @@ const app = () => {
           tabBarShowLabel: true,
           tabBarScrollEnabled: true,
           lazy: true,
-          tabBarLabelStyle: { width: 120, height: 30, textAlign: "center", color: "black", fontSize: 20 },
+          tabBarLabelStyle: { width: 120, height: 30, textAlign: "center", color: "black", fontSize: 15, fontWeight: "bold" },
         }}
         initialRouteName="Mutuals"
         tabBarPosition="bottom"
@@ -69,7 +69,7 @@ const app = () => {
         {/* <Stack.Screen name="Calendar" component={CalendarScreen} /> */}
         <Stack.Screen name="Goals" component={GoalsScreen} />
         <Stack.Screen name="Followers" component={FollowerScreen} initialParams={{ isFollowerPage: false }} />
-        <Stack.screen name="Notifications" component={NotificationsScreen} />
+        <Stack.Screen name="Notifications" component={NotificationsScreen} />
         {/* <Stack.Screen name="CreateGoal" component={CreateGoalScreen} /> */}
       </Stack.Navigator>
     </NavigationContainer>
