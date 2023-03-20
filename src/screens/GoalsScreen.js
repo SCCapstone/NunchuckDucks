@@ -51,14 +51,10 @@ export function GoalsScreen() {
       if(goals[i].isCompleted === false || goals[i].isCompleted === null)
       {
         tempincgoals.push(goals[i]);
-        console.log('This loop is num:',i ,'GoalT/F val:',goals[i].isCompleted);
-
       }
       else if(goals[i].isCompleted === true)
       {
         tempcompgoals.push(goals[i]);
-        console.log('This loop is num:',i ,'GoalT/F val:',goals[i].isCompleted);
-      
       }
       else{
         console.log('Error YOU SHOULDNT SEE THIS EVER');
@@ -84,13 +80,6 @@ export function GoalsScreen() {
         async() => {
           let goalId = goal.id;
           await updateGoal(goalId);
-          
-          console.log('we are hereeeeee baby!!! goal is getting set?:', goal.isCompleted)
-          /*
-          goal.isCompleted = true;
-          let goalaf = goal.isCompleted
-          console.log('we are hereeeeee baby!!! goal is getting set?:', goalaf)
-          */
           setForceRefresh(!forceRefresh);
       }}
       onDeleteHandler={async() => {
