@@ -1,4 +1,4 @@
-import { View, ScrollView, StyleSheet } from "react-native";
+import { View, ScrollView, StyleSheet, Pressable } from "react-native";
 import { useState, useEffect, useCallback } from "react";
 import { Auth } from "aws-amplify";
 
@@ -70,6 +70,7 @@ export function FollowerScreen({ route, navigation }) {
       <AddFollowerModal modalVisible={modalVisible} setModalVisible={setModalVisible}></AddFollowerModal>
       <View style={styles.stickyHeader}>
         <Header title={"Followers"}></Header>
+        <CustomButton buttonType={"default"} text={"Follow New User"} onClick={() => setModalVisible(true)}></CustomButton>
         <View style={styles.pageChangeButtons}>
           <CustomButton
             buttonType={"hyperlink"}
@@ -90,11 +91,10 @@ export function FollowerScreen({ route, navigation }) {
         </View>
         <CustomTextInput
           customStyles={styles.searchBar}
-          placeholder={"Search..."}
+          placeholder={"Search current friends..."}
           enteredValue={searchValue}
           onChangeHandler={(text) => setSearchValue(text)}
         ></CustomTextInput>
-        <CustomButton buttonType={"default"} text={"Add Friend"} onClick={() => setModalVisible(true)}></CustomButton>
       </View>
       {/* TODO add "add friend" button and modal for user to enter this data */}
       <ScrollView style={styles.followerList}>{listItems}</ScrollView>
@@ -121,6 +121,7 @@ const styles = StyleSheet.create({
     display: "flex",
     flexDirection: "row",
     justifyContent: "space-around",
+    paddingTop: 10
   },
   pageChangeButtonsText: {
     fontSize: 20,
