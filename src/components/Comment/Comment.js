@@ -37,7 +37,7 @@ const Comment = ({ commentModel, postID, replies, style }) => {
     ></CustomButton>
   );
 
-  async function getPic() {
+  /*async function getPic() {
     try {
       let pfps3 = await getImageFromCache(commentModel.username, "pfp.png");
       if (pfps3 === "") {
@@ -48,10 +48,10 @@ const Comment = ({ commentModel, postID, replies, style }) => {
     } catch (error) {
       console.log("Error retrieving pfp in comment: " + error);
     }
-  }
+  }*/
 
   useEffect(() => {
-    getPic();
+    //getPic();
   }, []);
 
   async function onReplySubmit() {
@@ -71,7 +71,7 @@ const Comment = ({ commentModel, postID, replies, style }) => {
 
   return (
     <View style={{ ...styles.container, ...style }}>
-      <ProfileMini src={pfp}></ProfileMini>
+      <ProfileMini username={commentModel.username} />
       <View style={styles.rightSide}>
         <Text style={styles.username}>{commentModel?.username}</Text>
         <Text style={styles.content}>{commentModel?.content}</Text>

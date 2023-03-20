@@ -65,10 +65,8 @@ export async function getUsersFollowed(username) {
 export async function getPostsForMutualFeedFromAWS(username) {
   try {
     const userId = await getUserId(username);
-
     const usersFollowed = await DataStore.query(Follows, (uf) => uf.username.eq(username));
     const usersFollowedIDs = [userId];
-
     console.log(`Retrieved users followed for ${username}`);
 
     for (let i = 0; i < usersFollowed.length; i++) {

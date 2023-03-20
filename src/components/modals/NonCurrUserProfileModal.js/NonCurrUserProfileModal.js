@@ -6,7 +6,7 @@ import ProfileMini from "../../ProfileMini";
 import { getFollowsList } from "../../../crud/FollowingOperations";
 import { getFollowersList } from "../../../crud/FollowersOperations";
 
-const NonCurrUserProfileModal = ({ modalVisible, setModalVisible, username, picName }) => {
+const NonCurrUserProfileModal = ({ modalVisible, setModalVisible, username }) => {
   const [user, setUser] = useState("");
   const [followingCount, setFollowingCount] = useState("");
   const [followersCount, setFollowersCount] = useState("");
@@ -24,7 +24,7 @@ const NonCurrUserProfileModal = ({ modalVisible, setModalVisible, username, picN
   async function getUserObject() {
     if (username !== null) {
       try {
-        const userObj = await findUseryUsername(username);
+        const userObj = await findUserByUsername(username);
         if (userObj !== null) {
           setUser(userObj);
         }
@@ -74,7 +74,7 @@ const NonCurrUserProfileModal = ({ modalVisible, setModalVisible, username, picN
             alignContent: "center",
           }}
         >
-          <ProfileMini onClick={closeModal} username={username} picName={picName} />
+          <ProfileMini onClick={closeModal} username={username} />
           <Text style={styles.username}>@{username !== null ? username : ""}</Text>
         </View>
         <View style={styles.followingContainer}>

@@ -3,14 +3,13 @@ import CachedImage from "../CachedImage/CachedImage";
 
 const defaultProfile = require("../../../assets/icons/Gymbit_Icons_Black/Profile_Icon.png");
 
-const ProfileMini = ({ style, onClick, imageStyle, username, picName }) => {
+const ProfileMini = ({ style, onClick, imageStyle, username }) => {
   let containerStyles = { ...styles.container, ...style };
   let imageStyles = { ...styles.image, ...imageStyle };
-
   return (
     <Pressable onPressOut={onClick} style={containerStyles}>
       <Image style={imageStyles} resizeMode={"contain"} source={defaultProfile}></Image>
-      {<CachedImage username={username} picName={picName} style={imageStyles} resizeMode={"contain"} />}
+      <CachedImage username={username} picName={"pfp.png"} imageStyle={imageStyles} resizeMode={"contain"} isPfp={true} />
     </Pressable>
   );
 };

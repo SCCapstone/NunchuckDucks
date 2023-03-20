@@ -81,6 +81,7 @@ export default function PostList(props) {
         postsFromAWS[i].shouldBeCached = false;
       }
     }
+    console.log("Hello there");
     await cachePosts(postsFromAWS);
     setPosts(postsFromAWS);
     setPostLength(postsFromAWS.length);
@@ -104,25 +105,26 @@ export default function PostList(props) {
 
     // Username not cached; cache username
     let usernameFromAWS = "";
-    if (username === null) {
+    if (username === "") {
+      // if username is not cached
       usernameFromAWS = await cacheCurrUser();
       setUsername(usernameFromAWS);
-    }
-    // Update pfp cache for all follows; causes few seconds delay in rendering posts :((
-
-    if (usernameFromAWS === "") {
+    } else {
       usernameFromAWS = username;
     }
-    await updatePfpCacheForFollowing(usernameFromAWS);
-    let temp = posts;
-    setPosts([]);
-    setPosts(temp);
+    // Update pfp cache for all follows; causes few seconds delay in rendering posts :((
+    //await updatePfpCacheForFollowing(usernameFromAWS);
+    //let temp = posts;
+    //setPosts([]);
+    //setPosts(temp);
     // Fetching posts from AWS
     let postsFromAWS = await fetchPostsFromAWS(usernameFromAWS);
-    let isCacheRefreshNeeded = await checkIfRefreshCacheNeeded(postsFromAWS);
+    console.log(postsFromAWS);
+    setPosts(postsFromAWS);
+    /*let isCacheRefreshNeeded = await checkIfRefreshCacheNeeded(postsFromAWS);
     if (isCacheRefreshNeeded === true) {
       cacheAllPostsFromAWS(postsFromAWS);
-    }
+    }*/
     setSwipeRefresh(false);
   }
 
@@ -146,7 +148,7 @@ export default function PostList(props) {
   async function fetchPostCache() {
     let usernameFromCache = await getCachedCurrUser();
     setUsername(usernameFromCache);
-    let postsFromCache = await fetchPostsFromCache();
+    await fetchPostsFromCache();
     setPostsInitialCompleted(true);
     setRefresh(!refresh);
   }
@@ -160,10 +162,11 @@ export default function PostList(props) {
       //list.current.scrollToIndex({ index: 0 });
       cacheStuffFromAWS();
     } else {
-      // in case there is no conneciton, a swipe refresh should end with nothing happening
+      // in case there is no connection, a swipe refresh should end with nothing happening
       // need to test when using app with no connection
       setSwipeRefresh(false);
     }
+    cacheStuffFromAWS();
     console.log("PostList refreshed");
   }, [refresh, networkConnection]);
 

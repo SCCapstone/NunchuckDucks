@@ -83,9 +83,7 @@ export async function getUserId(username) {
     const user = await DataStore.query(User, (u) => {
       return u.username.eq(username);
     });
-
     if (!user || !user.length) return "";
-
     return user[0].id;
   } catch (error) {
     console.error("Error finding user ID for", username, error);
@@ -195,7 +193,7 @@ export async function isUserPrivate(username) {
     });
 
     if (!user || !user.length) return true;
-    console.log(`Found privacy statis of: ${user[0].isPrivate} for ${username} successfully.`);
+    console.log(`Found privacy status of: ${user[0].isPrivate} for ${username} successfully.`);
 
     return user[0].isPrivate;
   } catch (error) {
@@ -216,7 +214,7 @@ export async function togglePrivacy(username, privacy) {
     );
 
     console.log(`Successfully changed ${username}'s privacy status to ${privacy}`);
-  } catch(error) {
-    console.error(`Error changing ${username}'s privacy status to ${privacy}`)
+  } catch (error) {
+    console.error(`Error changing ${username}'s privacy status to ${privacy}`);
   }
 }

@@ -29,10 +29,12 @@ import * as FileSystem from "expo-file-system";
 import "react-native-url-polyfill/auto";
 import "react-native-get-random-values";
 import Header from "../components/Header";
+import { getCurrentAuthenticatedUser } from "../library/GetAuthenticatedUser";
 
 //Need to also create the buttons to be clickable and call different functions
 export function ProfileScreen(props) {
   const navigation = useNavigation();
+  const [usernameSet, setUsernameSet] = useState(false);
   const [username, setUsername] = useState("");
   const [followercount, setFollowerCount] = useState("");
   const [followingcount, setFollowingCount] = useState("");
@@ -49,10 +51,11 @@ export function ProfileScreen(props) {
   async function renderProfileInfo() {
     let username = await getCurrentUser();
     setUsername(username);
+    setUsernameSet(true);
     //const cacheImageFileUri = cacheDirectory + username + "pfp.png";
     //const cacheLastModifiedUri = cacheDirectory + username + "pfp.png";
-    const cachedImage = await getImageFromCache(username, "pfp.png");
-    setProfilePic(cachedImage);
+    //const cachedImage = await getImageFromCache(username, "pfp.png");
+    //setProfilePic(cachedImage);
   }
 
   // async function getFollowerCount() {
@@ -108,11 +111,11 @@ export function ProfileScreen(props) {
       >
         <ChangeBioModal modalVisible={modalVisible} setModalVisible={setModalVisible}></ChangeBioModal>
         <View style={{ paddingTop: 0, paddingBottom: 10, flexDirection: "row", alignContent: "center" }}>
-          <ProfileMini onClick={() => addProfileImage()} src={profilePic} />
+          {usernameSet && <ProfileMini onClick={() => addProfileImage()} username={username} />}
           <Text style={styles.username}>@{username}</Text>
         </View>
         <TouchableOpacity onPress={() => setModalVisible(true)}>
-          <Bio></Bio>
+          <Bio />
         </TouchableOpacity>
         {/*<Text style={styles.username}>@{username}</Text>*/}
         <View style={{ flexDirection: "row", paddingTop: 15, paddingBottom: 15, maxWidth: 250 }}>

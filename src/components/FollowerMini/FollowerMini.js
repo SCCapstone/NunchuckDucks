@@ -32,7 +32,7 @@ const FollowerMini = ({ username, onProfileClick, onDelete, style }) => {
   return (
     <View style={containerStyles}>
       <View style={styles.leftSideContainer}>
-        <ProfileMini src={userImageSrc} onClick={onProfileClick}></ProfileMini>
+        <ProfileMini username={username} onClick={onProfileClick} />
         <Pressable onPressOut={onProfileClick} style={styles.usernameContainer}>
           <Text style={styles.username}>@{username}</Text>
         </Pressable>

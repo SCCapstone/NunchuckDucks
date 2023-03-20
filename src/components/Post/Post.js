@@ -119,7 +119,6 @@ export default function Post(props) {
       <View name="Header" flexDirection="row" style={styles.postHeader}>
         <ProfileMini
           username={username}
-          picName={picName}
           style={{ height: 42, width: 42, marginLeft: 6, marginRight: 6 }}
           imageStyle={{ height: 42, width: 42 }}
           onClick={() => setModalVisible(true)}
@@ -131,7 +130,7 @@ export default function Post(props) {
         <Text style={styles.createdAt}>{getTimeElapsed(entry.createdAt)}</Text>
       </View>
       <Pressable onPress={handleBlowUp} style={{ backgroundColor: "rgba(30,144,255,0.5)", position: "relative" }}>
-        <CachedImage username={username} picName={picName} imageStyle={{ height: 400 }} />
+        <CachedImage username={username} picName={picName} imageStyle={{ height: 400 }} shouldBeCached={entry.shouldBeCached} />
         {blowup && (
           <View style={styles.blowupmain}>
             <View style={styles.blowupheader}>

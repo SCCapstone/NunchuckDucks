@@ -33,6 +33,7 @@ export function SettingsScreen({ navigation }) {
   const [isEnabled, setIsEnabled] = useState(false);
   const [userPrivacy, setUserPrivacy] = useState(null);
   const nav = useNavigation();
+
   const toggleSwitch = () => {
     if (userPrivacy === true) {
       togglePrivacy(username, false);
@@ -63,12 +64,11 @@ export function SettingsScreen({ navigation }) {
   async function getPrivacy() {
     const Privacy = await isUserPrivate(username);
     setUserPrivacy(Privacy);
-    console.log("got");
   }
+
   return (
     <View style={styles.container}>
       <Header title={"Settings"} />
-
       <TouchableOpacity style={styles.deleteCacheButton} onPress={(event) => ""}>
         <Text style={{ color: "#FFFFFF" }}>Delete old cache</Text>
       </TouchableOpacity>

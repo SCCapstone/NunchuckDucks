@@ -1,6 +1,7 @@
 import { Text, Image, TouchableOpacity, View, Pressable, ImageBackground, ImageBackgroundComponent } from "react-native";
 import { Auth, Amplify, DataStore } from "aws-amplify";
 import { deleteAllCache } from "../../crud/CacheOperations";
+import FastImage from "react-native-fast-image";
 
 const SignOutButton = () => {
   const signOut = async () => {
@@ -13,6 +14,7 @@ const SignOutButton = () => {
   };
   async function signOutOps() {
     await deleteAllCache();
+    await FastImage.clearDiskCache();
     signOut();
   }
 
