@@ -1,1 +1,1 @@
-export { default } from "NotificationMini.js";
+export { default } from "./NotificationMini";
