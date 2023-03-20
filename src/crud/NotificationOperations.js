@@ -2,7 +2,7 @@ import { DataStore } from "aws-amplify";
 import { Notification } from "../models";
 import { getUserId } from "./UserOperations";
 
-export async function createNotification(username, date, content) {
+export async function createNotification(username, date, content, interactingUserUsername) {
     try {
         const userId = await getUserId(username);
 
@@ -11,6 +11,7 @@ export async function createNotification(username, date, content) {
             date: date,
             content: content,
             userID: userId,
+            interactingUserUsername: interactingUserUsername,
         })
         await DataStore.save(notification);
         console.log(`Notification ${notification.id} saved successfully`);

@@ -43,7 +43,7 @@ export function NotificationsScreen() {
                 await deleteNotification(notificationId);
                 setForceRefresh(!forceRefresh);
             }}
-            username={notification.username}
+            username={notification.interactingUserUsername}
         />
     ));
 

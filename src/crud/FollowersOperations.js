@@ -25,7 +25,7 @@ export async function createFollower(username, followerUsername) {
     await DataStore.save(follower);
     let date = getDate();
     let content = followerUsername + " followed you!";
-    await createNotification(username, date, content);
+    await createNotification(username, date, content, followerUsername);
     console.log(`Follower ${followerUsername} of ${username} was saved successfully.`);
     return true;
   } catch (error) {
