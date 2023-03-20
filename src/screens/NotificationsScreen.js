@@ -13,6 +13,7 @@ import { getDate } from "../library/getDate";
 import { getNotifications, deleteNotification, createNotification } from "../crud/NotificationOperations";
 import { getCurrentUser } from "../crud/CacheOperations";
 import NotificationMini from "../components/Notification/NotificationMini";
+import DefaultTheme from "@react-navigation/native";
 
 Storage.configure();
 
@@ -42,6 +43,7 @@ export function NotificationsScreen() {
                 await deleteNotification(notificationId);
                 setForceRefresh(!forceRefresh);
             }}
+            username={notification.username}
         />
     ));
 
@@ -64,7 +66,7 @@ const styles = StyleSheet.create({
     scroll: {
         alignItems: "center",
         display: "flex",
-        backgroundColor: "white",
+        backgroundColor: DefaultTheme,
     },
     button: {
         width: 100,

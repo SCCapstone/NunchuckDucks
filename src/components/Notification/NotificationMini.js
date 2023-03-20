@@ -1,9 +1,28 @@
 import { Text, TouchableOpacity, View, StyleSheet, Image } from "react-native";
 import { grayThemeColor } from "../../library/constants";
+import ProfileMini  from "../ProfileMini/ProfileMini";
+import { useState, useEffect } from "react";
+import { getImageFromCache } from "../../crud/CacheOperations";
+import { Storage } from "aws-amplify";
 
-const NotificationMini = ({ content, onDeleteHandler }) => {
+const NotificationMini = ({ content, onDeleteHandler, username }) => {
+  const [userImageSrc, setUserImageSrc] = useState("");
+
+  async function getUserImageSrc(username) {
+    let pfp = await getImageFromCache(username, "pfp.png");
+    if (pfp === "") {
+      pfp = await Storage.get(username + "/pfp.png");
+    }
+    setUserImageSrc(pfp);
+  }
+
+  useEffect(() => {
+    getUserImageSrc(username);
+  }, [username]);
+
     return (
       <View style={styles.container}>
+        <ProfileMini src={userImageSrc}  />
         <Text style={styles.text}>{content}</Text>
         <TouchableOpacity onPress={onDeleteHandler} style={styles.imgContainer}>
           <Image
@@ -18,7 +37,7 @@ const NotificationMini = ({ content, onDeleteHandler }) => {
   
   const styles = StyleSheet.create({
     container: {
-      width: "83%", // following original figma designs
+      width: "95%", // following original figma designs
       backgroundColor: grayThemeColor,
       padding: 10,
       minHeight: 60,
@@ -30,17 +49,18 @@ const NotificationMini = ({ content, onDeleteHandler }) => {
       alignContent: "center",
   
       margin: 10,
-      left: 20,
+      left: 0,
     },
     text: {
       textAlign: "center",
       textAlignVertical: "center",
-      width: "78%",
+      width: "60%",
       fontSize: 17,
     },
     icon: {
       width: 64,
       height: 64,
+      right: 8,
     },
     imgContainer: {
       display: "flex",

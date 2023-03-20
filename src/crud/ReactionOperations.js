@@ -3,6 +3,8 @@ import { Reaction } from "../models";
 import { createNotification } from "./NotificationOperations";
 import { getUserByPostId } from "./PostOperations";
 import { getDate } from "../library/getDate";
+import { getCreatedAt } from "./PostOperations";
+import { getTimeElapsed } from "../library/getTimeElapsed";
 
 export async function createReaction(username, reactionType, postID) {
   try {
@@ -17,7 +19,9 @@ export async function createReaction(username, reactionType, postID) {
     console.log(`Reaction ${reaction.id} successfully created.`);
     let postsUsername = await getUserByPostId(postID);
     let date = getDate();
-    let content = postsUsername + " reacted to your post!";
+    let createdAt = await getCreatedAt(postID);
+    let time = getTimeElapsed(createdAt);
+    let content = postsUsername + " reacted to your post from " + time;
     await createNotification(postsUsername, date, content);
   } catch (error) {
     console.error(`There was an error creating a reaction.`, error);

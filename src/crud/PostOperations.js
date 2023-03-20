@@ -110,3 +110,8 @@ export async function getUserByPostId(postId) {
     const post = await DataStore.query(Post, postId);
     return post.username;
 }
+
+export async function getCreatedAt(postId) {
+  const post = await DataStore.query(Post, postId);
+  return String(post.createdAt);
+}
