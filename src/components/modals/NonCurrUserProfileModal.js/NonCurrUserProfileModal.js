@@ -1,10 +1,12 @@
-import { Modal, StyleSheet, View, Text } from "react-native";
+import { Modal, StyleSheet, View, Text, Image, Pressable } from "react-native";
 import React from "react";
 import { useEffect, useState } from "react";
 import { findUserByUsername } from "../../../crud/UserOperations";
 import ProfileMini from "../../ProfileMini";
 import { getFollowsList } from "../../../crud/FollowingOperations";
 import { getFollowersList } from "../../../crud/FollowersOperations";
+
+const imageSRC = require("../../../../assets/icons/Gymbit_Icons_Black/Back_Icon_Black.png");
 
 const NonCurrUserProfileModal = ({ modalVisible, setModalVisible, entry, image }) => {
   const [user, setUser] = useState("");
@@ -49,23 +51,17 @@ const NonCurrUserProfileModal = ({ modalVisible, setModalVisible, entry, image }
   return (
     <Modal visible={modalVisible} animationType="fade" transparent={true} onRequestClose={closeModal}>
       <View
-        style={
-          {
-            //   alignItems: "left",
-            //   justifyContent: "top",
-          }
-        }
-      ></View>
-      <View
         style={{
           flex: 1,
           alignItems: "center",
           backgroundColor: "white",
           //   justifyContent: "top",
-          paddingTop: 200,
+          paddingTop: 100,
         }}
       >
-        <Text>click the profile pic to return for now</Text>
+        <Pressable onPressOut={closeModal} style={styles.backArrow}>
+          <Image source={imageSRC} style={styles.backArrow}></Image>
+        </Pressable>
         <View
           style={{
             paddingTop: 0,
@@ -85,6 +81,7 @@ const NonCurrUserProfileModal = ({ modalVisible, setModalVisible, entry, image }
           <Text style={styles.followingText}>Followers</Text>
           <Text style={styles.followingText}>{followersCount}</Text>
         </View>
+        <Text style={styles.bioText}>Bio</Text>
         <View style={styles.bioContainer}>
           <Text style={styles.bio}>{user.bio !== null ? user.bio : ""}</Text>
         </View>
@@ -116,7 +113,9 @@ const styles = StyleSheet.create({
     width: 80,
     height: 80,
     backgroundColor: "white",
-    paddingTop: 10,
+    paddingBottom: 50,
+    alignSelf: "left",
+    paddingLeft: 10
   },
   username: {
     paddingTop: 30,
@@ -159,6 +158,12 @@ const styles = StyleSheet.create({
     fontSize: 11,
     fontWeight: "bold",
   },
+  bioText: {
+    fontSize: 16,
+    fontWeight: "bold",
+    paddingTop: 10,
+    paddingBottom: 10
+  }
 });
 
 export default NonCurrUserProfileModal;
