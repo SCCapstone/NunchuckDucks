@@ -66,7 +66,7 @@ const NonCurrUserProfileModal = ({ modalVisible, setModalVisible, username, imag
             alignContent: "center",
           }}
         >
-          <ProfileMini onClick={closeModal} src={image} />
+          <ProfileMini src={image} />
           <Text style={styles.username}>@{user.username !== null ? user.username : ""}</Text>
         </View>
         <View style={styles.followingContainer}>
