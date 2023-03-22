@@ -6,20 +6,7 @@ import { getPostsForMutualFeedFromAWS, getUsersFollowed, getUsersFollowedIds } f
 import { useNetInfo } from "@react-native-community/netinfo";
 // PostSchema, the schema above, and Post, the component below
 import Post from "../Post";
-import {
-  cacheImageFromAWS,
-  deleteCachedFile,
-  getImageFromCache,
-  updatePfpCache,
-  getPostsFromCache,
-  cachePosts,
-  findFileInCache,
-  getCachedCurrUser,
-  cacheCurrUser,
-  getAllCachedFiles,
-  cachePostsThatShouldBeCached,
-  logCache,
-} from "../../crud/CacheOperations";
+import { getPostsFromCache, cachePosts, getCachedCurrUser, cacheCurrUser } from "../../crud/CacheOperations";
 import { getFollowsList } from "../../crud/FollowingOperations";
 
 export default function PostList(props) {
@@ -61,42 +48,9 @@ export default function PostList(props) {
   }
 
   async function cacheAllPostsFromAWS(postsFromAWS) {
-    // caches posts from AWS and also deletes old cache
-    let postNames = [];
-    for (let i = 0; i < postsFromAWS.length; i++) {
-      let username = postsFromAWS[i].username;
-      let postImage = postsFromAWS[i].photo;
-      // postImage equals username/filename.png
-      let postImageName = postImage.substring(postImage.indexOf("/") + 1);
-      let postPfp = await getImageFromCache(username, "pfp.png");
-      //let postImgCache = await getImageFromCache(username, postImageName);
-      postsFromAWS[i].cachedPfp = postPfp;
-
-      if (i < 30) {
-        // only first 30 posts should be cached
-        postNames.push(username + "pfp.png"); // add the pfps that should be cached (redundant pfps will exist)
-        postNames.push(username + postImageName); // add the posts that should be cached
-        postsFromAWS[i].shouldBeCached = true;
-      } else {
-        postsFromAWS[i].shouldBeCached = false;
-      }
-    }
-    console.log("Hello there");
     await cachePosts(postsFromAWS);
     setPosts(postsFromAWS);
     setPostLength(postsFromAWS.length);
-    // we may want to move this to the settings page? Probably unnecessary to do every cacheAWS call
-
-    //this is used to set what should be cached so deleteOldCache in settings can delete unnecessary cache
-    await cachePostsThatShouldBeCached(postNames);
-  }
-
-  async function updatePfpCacheForFollowing(usernameFromAWS) {
-    const followers = await getUsersFollowed(usernameFromAWS);
-    await updatePfpCache(usernameFromAWS); // updating pfp cache for the current user
-    for (let i = 0; i < followers.length; i++) {
-      await updatePfpCache(followers[i]); // updating pfp cache for all people you are following
-    } // TODO: delete pfp cache of a user when you unfollow them
   }
 
   async function cacheStuffFromAWS() {
@@ -104,7 +58,6 @@ export default function PostList(props) {
 
     // Username not cached; cache username
     let usernameFromAWS = "";
-    console.log(username, "ha");
     if (username === "" || username === null) {
       // if username is not cached
       usernameFromAWS = await cacheCurrUser();
@@ -112,9 +65,7 @@ export default function PostList(props) {
     } else {
       usernameFromAWS = username;
     }
-    // Update pfp cache for all follows; causes few seconds delay in rendering posts :((
-    console.log("hoy");
-    await updatePfpCacheForFollowing(usernameFromAWS);
+
     let temp = posts;
     setPosts([]);
     setPosts(temp);
@@ -173,7 +124,8 @@ export default function PostList(props) {
     <FlatList
       ref={list}
       data={posts}
-      renderItem={({ item }) => <Post entry={item} />}
+      renderItem={({ item }) => <Post entry={item} refresh={refresh} />}
+      extraData={refresh}
       refreshing={swipeRefresh}
       onRefresh={() => {
         setSwipeRefresh(true);

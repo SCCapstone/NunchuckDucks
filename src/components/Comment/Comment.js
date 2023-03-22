@@ -6,10 +6,9 @@ import { Storage } from "@aws-amplify/storage";
 import CustomButton from "../CustomButton/CustomButton";
 import CustomTextInput from "../CustomTextInput/CustomTextInput";
 import { createComment } from "../../crud/CommentOperations";
-import { getCurrentUser, getImageFromCache } from "../../crud/CacheOperations";
+import { getCurrentUser } from "../../crud/CacheOperations";
 
-const Comment = ({ commentModel, postID, replies, style }) => {
-  const [pfp, setPfp] = useState("");
+const Comment = ({ commentModel, postID, replies, style, refresh }) => {
   const [replyOpen, setReplyOpen] = useState(false);
   const [replyText, setReplyText] = useState("");
   const [repliesOpen, setRepliesOpen] = useState(false);
@@ -37,19 +36,6 @@ const Comment = ({ commentModel, postID, replies, style }) => {
     ></CustomButton>
   );
 
-  /*async function getPic() {
-    try {
-      let pfps3 = await getImageFromCache(commentModel.username, "pfp.png");
-      if (pfps3 === "") {
-        pfps3 = await Storage.get(commentModel.username + "/pfp.png");
-      }
-      //const pfps3 = await Storage.get(commentModel.username + "/pfp.png");
-      setPfp(pfps3);
-    } catch (error) {
-      console.log("Error retrieving pfp in comment: " + error);
-    }
-  }*/
-
   useEffect(() => {
     //getPic();
   }, []);
@@ -71,7 +57,7 @@ const Comment = ({ commentModel, postID, replies, style }) => {
 
   return (
     <View style={{ ...styles.container, ...style }}>
-      <ProfileMini username={commentModel.username} />
+      <ProfileMini username={commentModel.username} refresh={refresh} />
       <View style={styles.rightSide}>
         <Text style={styles.username}>{commentModel?.username}</Text>
         <Text style={styles.content}>{commentModel?.content}</Text>

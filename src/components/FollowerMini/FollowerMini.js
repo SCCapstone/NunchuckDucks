@@ -12,23 +12,7 @@ const FollowerMini = ({ username, onProfileClick, onDelete, style }) => {
   const containerStyles = { ...styles.container, ...style };
   const [userImageSrc, setUserImageSrc] = useState("");
 
-  useEffect(() => {
-    getUserImageSrc(username);
-  }, [username]);
-
-  async function getUserImageSrc(username) {
-    let pfp = await getImageFromCache(username, "pfp.png");
-    if (pfp === "") {
-      pfp = await Storage.get(username + "/pfp.png");
-    }
-    setUserImageSrc(pfp);
-  }
-  /*const getUserImageSrc = useCallback(async (username) => {
-    const user = await findUserByUsername(username);
-    if (!user || !user.profilePicture) return;
-    setUserImageSrc(user.profilePicture);
-  }, []);*/
-
+  useEffect(() => {}, [username]);
   return (
     <View style={containerStyles}>
       <View style={styles.leftSideContainer}>

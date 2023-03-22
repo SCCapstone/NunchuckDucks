@@ -1,4 +1,5 @@
 import { Image, StyleSheet, Pressable } from "react-native";
+import { useEffect } from "react";
 import CachedImage from "../CachedImage/CachedImage";
 
 const defaultProfile = require("../../../assets/icons/Gymbit_Icons_Black/Profile_Icon.png");
@@ -6,6 +7,7 @@ const defaultProfile = require("../../../assets/icons/Gymbit_Icons_Black/Profile
 const ProfileMini = ({ style, onClick, imageStyle, username, refresh, setRefresh }) => {
   let containerStyles = { ...styles.container, ...style };
   let imageStyles = { ...styles.image, ...imageStyle };
+  useEffect(() => {}, [refresh]);
   return (
     <Pressable onPressOut={onClick} style={containerStyles}>
       <Image style={imageStyles} resizeMode={"contain"} source={defaultProfile}></Image>

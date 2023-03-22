@@ -6,19 +6,7 @@ import React from "react";
 import { getFollowsList } from "../crud/FollowingOperations";
 import { getFollowersList } from "../crud/FollowersOperations";
 import { getBio, updateProfilePicture } from "../crud/UserOperations";
-import { findUserByUsername } from "../crud/UserOperations";
-import {
-  getLastModifiedCache,
-  getLastModifiedAWS,
-  cacheLastModified,
-  getImageFromCache,
-  cacheImageFromAWS,
-  saveImageToAWS,
-  getCachedCurrUser,
-  getCurrentUser,
-  updatePfpCache,
-  cachePfpNeedsCaching,
-} from "../crud/CacheOperations";
+import { saveImageToAWS, getCurrentUser, cacheRemoteUri } from "../crud/CacheOperations";
 import ProfileMini from "../components/ProfileMini";
 import Bio from "../components/Bio";
 import CustomButton from "../components/CustomButton";
@@ -56,10 +44,6 @@ export function ProfileScreen(props) {
     let username = await getCurrentUser();
     setUsername(username);
     setUsernameSet(true);
-    //const cacheImageFileUri = cacheDirectory + username + "pfp.png";
-    //const cacheLastModifiedUri = cacheDirectory + username + "pfp.png";
-    //const cachedImage = await getImageFromCache(username, "pfp.png");
-    //setProfilePic(cachedImage);
   }
 
   // async function getFollowerCount() {
@@ -87,13 +71,9 @@ export function ProfileScreen(props) {
       const fileName = username + "/pfp.png";
       //updateProfilePicture(username, fileName);
       let pfpUploaded = await saveImageToAWS(fileName, blob);
-      //let lastModified = await getLastModifiedAWS(username, "pfp.png");
-      //await cacheLastModified(username, lastModified);
-      await cachePfpNeedsCaching(username, "true");
-      //let path = await cacheImageFromAWS(username, "pfp.png");
+      await cacheRemoteUri(username, "pfp.png");
       setRefresh(!refresh);
       if (pfpUploaded === true) {
-        console.log("here1");
         showPfpUploadedForThreeSeconds();
       }
       setShowMakePfp(false);
@@ -126,11 +106,7 @@ export function ProfileScreen(props) {
         <View style={{ paddingTop: 0, paddingBottom: 10, flexDirection: "row", alignContent: "center" }}>
           {usernameSet && <ProfileMini onClick={() => addProfileImage()} username={username} refresh={refresh} setRefresh={setRefresh} />}
           <Text style={styles.username}>@{username}</Text>
-          {showPfpUploaded && (
-            <View style={styles.pfpUploaded}>
-              <Text>New profile picture successfully uploaded!</Text>
-            </View>
-          )}
+          {showPfpUploaded && <CustomButton style={{ position: "absolute" }} text={"New profile picture successfully uploaded!"} />}
         </View>
         <TouchableOpacity onPress={() => setModalVisible(true)}>
           <Bio />

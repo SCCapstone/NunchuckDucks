@@ -5,7 +5,6 @@ import Reactions from "../Reactions";
 import { blueThemeColor, grayThemeColor } from "../../library/constants";
 import ProfileMini from "../ProfileMini";
 import { useNavigation } from "@react-navigation/native";
-import { cacheImageFromAWS, getCurrentUser, getImageFromCache } from "../../crud/CacheOperations";
 import { useNetInfo } from "@react-native-community/netinfo";
 import NonCurrUserProfileModal from "../modals/NonCurrUserProfileModal.js/NonCurrUserProfileModal";
 import Comment from "../Comment";
@@ -37,36 +36,8 @@ export default function Post(props) {
   };
 
   let commentList = comments.map((val) => {
-    return <Comment key={val.id} postID={entry.id} commentModel={val} replies={replies.get(val.id)} />;
+    return <Comment key={val.id} postID={entry.id} commentModel={val} replies={replies.get(val.id)} refresh={refresh} />;
   });
-
-  /*async function getPictures() {
-    // TODO retrieve post picture from the passed entry fileName
-    //const postPfp = await getImageFromCache(username, "pfp.png"); // console logs pic "pfp.png found for user x..."
-    const postPfp = entry.cachedPfp;
-
-    if (postPfp !== "") {
-      setPfp(postPfp);
-    }
-    //const pic = entry.cachedPostPicture;
-    const pic = await getImageFromCache(username, picName);
-    if (pic !== "") {
-      setPicture(pic);
-    } else if (entry.shouldBeCached === true) {
-      console.log("Pic not in cache but it should be", entry.caption);
-      let picCached = await cacheImageFromAWS(username, picName);
-      //let picha = await Storage.get(photoStr);
-      setPicture(picCached);
-    } else {
-      console.log("Pic", picName, "for", username, "must be acquired using Storage.get");
-      try {
-        let picFromAWS = await Storage.get(photoStr);
-        setPicture(picFromAWS);
-      } catch (e) {
-        console.log("Storage.get failed; connection unavailable to render", picName);
-      }
-    }
-  }*/
 
   async function onCommentSubmit() {
     setCommentOption(false);
@@ -104,7 +75,6 @@ export default function Post(props) {
   }
 
   useEffect(() => {
-    //getPictures();
     retrieveComments();
   }, [refresh]);
 
@@ -119,6 +89,7 @@ export default function Post(props) {
       <View name="Header" flexDirection="row" style={styles.postHeader}>
         <ProfileMini
           username={username}
+          refresh={refresh}
           style={{ height: 42, width: 42, marginLeft: 6, marginRight: 6 }}
           imageStyle={{ height: 42, width: 42 }}
           onClick={() => setModalVisible(true)}
@@ -130,7 +101,7 @@ export default function Post(props) {
         <Text style={styles.createdAt}>{getTimeElapsed(entry.createdAt)}</Text>
       </View>
       <Pressable onPress={handleBlowUp} style={{ backgroundColor: "rgba(30,144,255,0.5)", position: "relative" }}>
-        <CachedImage username={username} picName={picName} imageStyle={{ height: 400 }} shouldBeCached={entry.shouldBeCached} />
+        <CachedImage username={username} picName={picName} imageStyle={{ height: 400 }} />
         {blowup && (
           <View style={styles.blowupmain}>
             <View style={styles.blowupheader}>
