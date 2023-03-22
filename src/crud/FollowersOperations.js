@@ -10,7 +10,7 @@ import { doesUserExist, getUserId, isCurrUser } from "./UserOperations";
 export async function createFollower(username, followerUsername) {
   try {
     if (await checkFollowRequirements(username, followerUsername)) {
-      return;
+      return false;
     }
 
     const userId = await getUserId(username);
@@ -36,7 +36,7 @@ export async function createFollower(username, followerUsername) {
  * @returns Boolean
  */
 async function checkFollowRequirements(username, followerUsername) {
-  return (await isCurrUser(username)) || (await doesUserExist(username)) || (await doesFollowExist(username, followerUsername));
+  return  (await isCurrUser(username)) || (await doesUserExist(username)) || (await doesFollowExist(username, followerUsername));
 }
 
 /**
