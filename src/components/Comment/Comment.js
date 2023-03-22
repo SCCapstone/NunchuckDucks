@@ -7,6 +7,7 @@ import CustomButton from "../CustomButton/CustomButton";
 import CustomTextInput from "../CustomTextInput/CustomTextInput";
 import { createComment } from "../../crud/CommentOperations";
 import { getCurrentUser, getImageFromCache } from "../../crud/CacheOperations";
+import { getCurrentAuthenticatedUser } from "../../library/GetAuthenticatedUser";
 
 const Comment = ({ commentModel, postID, replies, style }) => {
   const [pfp, setPfp] = useState("");

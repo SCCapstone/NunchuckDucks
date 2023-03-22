@@ -1,3 +1,12 @@
+type Notification @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  username: String!
+  date: AWSDate
+  content: String
+  userID: ID! @index(name: "byUser")
+  interactingUserUsername: String
+}
+
 type FollowedBy @model @auth(rules: [{allow: public}]) {
   id: ID!
   username: String!
@@ -52,6 +61,7 @@ type User @model @auth(rules: [{allow: public}]) {
   FollowedBies: [FollowedBy] @hasMany(indexName: "byUser", fields: ["id"])
   expoToken: String
   isPrivate: Boolean
+  Notifications: [Notification] @hasMany(indexName: "byUser", fields: ["id"])
 }
 
 type Post @model @auth(rules: [{allow: public}]) {

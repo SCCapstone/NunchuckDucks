@@ -12,6 +12,7 @@ import Comment from "../Comment";
 import { createComment, getComments } from "../../crud/CommentOperations";
 import CustomButton from "../CustomButton/CustomButton";
 import CustomTextInput from "../CustomTextInput/CustomTextInput";
+import { getCurrentAuthenticatedUser } from "../../library/GetAuthenticatedUser";
 
 export default function Post(props) {
   const entry = props.entry;
@@ -71,8 +72,8 @@ export default function Post(props) {
     setCommentOption(false);
     // Call CRUD to make new datastore object
     try {
-      //const username = await getCurrentUser();
-      createComment(commentText, username, entry.id, null);
+      const comenterName = await getCurrentUser();
+      createComment(commentText, comenterName, entry.id, null);
     } catch (error) {
       console.error("Error: Could not create comment", error);
     }

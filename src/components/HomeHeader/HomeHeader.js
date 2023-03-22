@@ -58,9 +58,9 @@ const HomeHeader = ({ handlePress }) => {
     <><View style={styles.container}>
       <TouchableOpacity
         style={styles.notiButton}
-        // onPress={() => {
-        //   navigation.navigate("NotificationScreen");
-        // }}
+        onPress={() => {
+          navigation.navigate("Notifications");
+        }}
       >
         <Image
           style={styles.notification}
