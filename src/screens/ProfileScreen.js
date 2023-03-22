@@ -16,6 +16,8 @@ import {
   saveImageToAWS,
   getCachedCurrUser,
   getCurrentUser,
+  updatePfpCache,
+  cachePfpNeedsCaching,
 } from "../crud/CacheOperations";
 import ProfileMini from "../components/ProfileMini";
 import Bio from "../components/Bio";
@@ -34,6 +36,7 @@ import { getCurrentAuthenticatedUser } from "../library/GetAuthenticatedUser";
 //Need to also create the buttons to be clickable and call different functions
 export function ProfileScreen(props) {
   const navigation = useNavigation();
+  const [refresh, setRefresh] = useState(false);
   const [usernameSet, setUsernameSet] = useState(false);
   const [username, setUsername] = useState("");
   const [followercount, setFollowerCount] = useState("");
@@ -41,9 +44,10 @@ export function ProfileScreen(props) {
   const [modalVisible, setModalVisible] = useState(false);
   const [showMakePfp, setShowMakePfp] = useState(false);
   // const [image, setImage] = useState(""); // the image src to be displayed
+
   const [profilePic, setProfilePic] = useState("");
   const [reload, setReload] = useState(false);
-
+  const [showPfpUploaded, setShowPfpUploaded] = useState(false);
   useEffect(() => {
     renderProfileInfo();
   }, [modalVisible]);
@@ -82,12 +86,15 @@ export function ProfileScreen(props) {
       const blob = await response.blob();
       const fileName = username + "/pfp.png";
       //updateProfilePicture(username, fileName);
-      await saveImageToAWS(fileName, blob);
-      let lastModified = await getLastModifiedAWS(username, "pfp.png");
-      cacheLastModified(username, lastModified);
-      let path = await cacheImageFromAWS(username, "pfp.png");
-      if (path !== "") {
-        setProfilePic(path);
+      let pfpUploaded = await saveImageToAWS(fileName, blob);
+      //let lastModified = await getLastModifiedAWS(username, "pfp.png");
+      //await cacheLastModified(username, lastModified);
+      await cachePfpNeedsCaching(username, "true");
+      //let path = await cacheImageFromAWS(username, "pfp.png");
+      setRefresh(!refresh);
+      if (pfpUploaded === true) {
+        console.log("here1");
+        showPfpUploadedForThreeSeconds();
       }
       setShowMakePfp(false);
     } catch (error) {
@@ -95,6 +102,12 @@ export function ProfileScreen(props) {
     }
     //updateProfilePicture(username,image);
   };
+  async function showPfpUploadedForThreeSeconds() {
+    setShowPfpUploaded(true);
+    await delay(3000);
+    setShowPfpUploaded(false);
+  }
+  const delay = (ms) => new Promise((res) => setTimeout(res, ms));
 
   return (
     <>
@@ -111,8 +124,13 @@ export function ProfileScreen(props) {
       >
         <ChangeBioModal modalVisible={modalVisible} setModalVisible={setModalVisible}></ChangeBioModal>
         <View style={{ paddingTop: 0, paddingBottom: 10, flexDirection: "row", alignContent: "center" }}>
-          {usernameSet && <ProfileMini onClick={() => addProfileImage()} username={username} />}
+          {usernameSet && <ProfileMini onClick={() => addProfileImage()} username={username} refresh={refresh} setRefresh={setRefresh} />}
           <Text style={styles.username}>@{username}</Text>
+          {showPfpUploaded && (
+            <View style={styles.pfpUploaded}>
+              <Text>New profile picture successfully uploaded!</Text>
+            </View>
+          )}
         </View>
         <TouchableOpacity onPress={() => setModalVisible(true)}>
           <Bio />
@@ -178,6 +196,12 @@ export function ProfileScreen(props) {
   );
 }
 const styles = StyleSheet.create({
+  pfpUploaded: {
+    width: 200,
+    height: 100,
+    borderColor: blueThemeColor,
+    backgroundColor: grayThemeColor,
+  },
   username: {
     paddingTop: 30,
     paddingBottom: 0,

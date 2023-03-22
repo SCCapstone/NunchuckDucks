@@ -92,7 +92,6 @@ export default function PostList(props) {
   }
 
   async function updatePfpCacheForFollowing(usernameFromAWS) {
-    //const username = await getCurrentAuthenticatedUser();
     const followers = await getUsersFollowed(usernameFromAWS);
     await updatePfpCache(usernameFromAWS); // updating pfp cache for the current user
     for (let i = 0; i < followers.length; i++) {
@@ -105,7 +104,8 @@ export default function PostList(props) {
 
     // Username not cached; cache username
     let usernameFromAWS = "";
-    if (username === "") {
+    console.log(username, "ha");
+    if (username === "" || username === null) {
       // if username is not cached
       usernameFromAWS = await cacheCurrUser();
       setUsername(usernameFromAWS);
@@ -113,18 +113,18 @@ export default function PostList(props) {
       usernameFromAWS = username;
     }
     // Update pfp cache for all follows; causes few seconds delay in rendering posts :((
-    //await updatePfpCacheForFollowing(usernameFromAWS);
-    //let temp = posts;
-    //setPosts([]);
-    //setPosts(temp);
+    console.log("hoy");
+    await updatePfpCacheForFollowing(usernameFromAWS);
+    let temp = posts;
+    setPosts([]);
+    setPosts(temp);
     // Fetching posts from AWS
     let postsFromAWS = await fetchPostsFromAWS(usernameFromAWS);
-    console.log(postsFromAWS);
     setPosts(postsFromAWS);
-    /*let isCacheRefreshNeeded = await checkIfRefreshCacheNeeded(postsFromAWS);
+    let isCacheRefreshNeeded = await checkIfRefreshCacheNeeded(postsFromAWS);
     if (isCacheRefreshNeeded === true) {
       cacheAllPostsFromAWS(postsFromAWS);
-    }*/
+    }
     setSwipeRefresh(false);
   }
 
@@ -166,7 +166,6 @@ export default function PostList(props) {
       // need to test when using app with no connection
       setSwipeRefresh(false);
     }
-    cacheStuffFromAWS();
     console.log("PostList refreshed");
   }, [refresh, networkConnection]);
 

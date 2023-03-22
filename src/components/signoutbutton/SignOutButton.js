@@ -15,6 +15,7 @@ const SignOutButton = () => {
   async function signOutOps() {
     await deleteAllCache();
     await FastImage.clearDiskCache();
+    await FastImage.clearMemoryCache();
     signOut();
   }
 

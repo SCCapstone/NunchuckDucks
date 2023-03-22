@@ -102,6 +102,29 @@ export async function cacheLastModified(username, lastModifiedMessage) {
     console.log("Error: Could not cache last modified attribute", error);
   }
 }
+export async function cachePfpNeedsCaching(username, message) {
+  const cacheLastModifiedUri = cacheDirectory + username + "pfpNeedsCaching.txt";
+  try {
+    await FileSystem.writeAsStringAsync(cacheLastModifiedUri, message, {
+      encoding: "utf8",
+    });
+  } catch (error) {
+    console.log("Error: Could not cache pfp needs caching attribute", error);
+  }
+}
+
+export async function getPfpNeedsCaching(username) {
+  const cacheLastModifiedUri = cacheDirectory + username + "pfpNeedsCaching.txt";
+  try {
+    let pfpNeedsCaching = await FileSystem.readAsStringAsync(cacheLastModifiedUri, {
+      encoding: "utf8",
+    });
+    return pfpNeedsCaching;
+  } catch (e) {
+    console.log("Could not find lastModified for", username);
+    return "false";
+  }
+}
 
 export async function getLastModifiedCache(username, ending) {
   const cacheLastModifiedUri = cacheDirectory + username + ending + "lastModified.txt";
@@ -112,6 +135,7 @@ export async function getLastModifiedCache(username, ending) {
     return lastModified;
   } catch (e) {
     console.log("Could not find lastModified for", username);
+    return "";
   }
 }
 
@@ -269,6 +293,19 @@ export async function getImageFromAWS(username, ending) {
     return null;
   }
 }
+
+export async function cacheUriForImageFromAWS(username, ending) {
+  try {
+    const uriAWS = await Storage.get(username + "/" + ending);
+    const cacheFile = cacheDirectory + username + ending + "uri.txt";
+    await cacheImage(uriAWS, cacheFile);
+    return uriAWS;
+  } catch (e) {
+    console.log("Error: could not get image", ending, "for", username, "from aws", e);
+    return null;
+  }
+}
+
 export async function cacheImageFromAWS(username, ending) {
   const uriAWS = await Storage.get(username + "/" + ending);
   //console.log(uriAWS);
@@ -287,32 +324,63 @@ export async function cacheImageFromAWS(username, ending) {
 }
 
 export async function saveImageToAWS(fileName, blob) {
-  await Storage.put(fileName, blob);
+  try {
+    await Storage.put(fileName, blob);
+    return true;
+  } catch (e) {
+    console.log("Error: Failed to upload image", fileName, "to AWS");
+    return false;
+  }
 }
 
 export async function updatePfpCache(username) {
+  /*let cacheUriPfp = await getImageFromCache(username, "pfp.pnguri.txt");
+  if (cacheUriPfp !== "") {
+    let AwsUriPfp = await getImageFromAWS(username, "pfp.png");
+    console.log("cache:", cacheUriPfp, "aws:", AwsUriPfp);
+    if (cacheUriPfp !== AwsUriPfp) {
+      console.log("deleting old pfp cache uri and adding new one");
+      await deleteCachedFile(cacheUriPfp);
+      let uriDir = cacheDirectory + username + "pfp.pnguri.txt";
+      await cacheImage(AwsUriPfp, uriDir);
+    }
+  }*/
+
   const cachedImage = await getImageFromCache(username, "pfp.png");
   // we are assuming that if the image exists in client then it should exist in the backend as well
   if (cachedImage !== "") {
     const lastModifiedAWS = await getLastModifiedAWS(username, "pfp.png");
     const lastModifiedCache = await getLastModifiedCache(username, "pfp");
-    if (lastModifiedCache !== null) {
+    if (lastModifiedCache !== "") {
       if (lastModifiedAWS > lastModifiedCache) {
         //lastModifiedAWS has a higher alphabetical order (newer) than lastModifiedCache
-        let imageFromAWS = await cacheImageFromAWS(username, "pfp.png");
-        await cacheLastModified(username, lastModifiedAWS);
-        return imageFromAWS;
+        //let imageFromAWS = await cacheImageFromAWS(username, "pfp.png");
+        //await cacheLastModified(username, lastModifiedAWS);
+        //return imageFromAWS;
+        await cachePfpNeedsCaching(username, "true");
+        return "";
       } else if (lastModifiedCache < lastModifiedAWS) {
+        await cachePfpNeedsCaching(username, "false");
         let fileName = username + "/pfp.png";
         saveImageToAWS(fileName, getCacheImageFileUri(username, "pfp.png"));
-        return cachedImage;
+        //return cachedImage;
+        return "";
       } else {
-        return cachedImage;
+        await cachePfpNeedsCaching(username, "false");
+        //return cachedImage;
+        return "";
       }
     } else {
-      let imageFromAWS = await cacheImageFromAWS(username, "pfp.png");
-      await cacheLastModified(username, lastModifiedAWS);
-      return imageFromAWS;
+      if (lastModifiedAWS !== "") {
+        await cachePfpNeedsCaching(username, "true");
+        //let imageFromAWS = await cacheImageFromAWS(username, "pfp.png");
+        //await cacheLastModified(username, lastModifiedAWS);
+        //return imageFromAWS;
+        return "";
+      } else {
+        await cachePfpNeedsCaching(username, "false");
+        return "";
+      }
     }
   } else {
     console.log("Profile pic for", username, "not found in cache; checking if it is in the backend");
