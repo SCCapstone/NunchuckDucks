@@ -71,8 +71,8 @@ export default function Post(props) {
     setCommentOption(false);
     // Call CRUD to make new datastore object
     try {
-      //const username = await getCurrentUser();
-      createComment(commentText, username, entry.id, null);
+      const commentUsername = await getCurrentUser();
+      createComment(commentText, commentUsername, entry.id, null);
     } catch (error) {
       console.error("Error: Could not create comment", error);
     }
@@ -112,7 +112,7 @@ export default function Post(props) {
       <NonCurrUserProfileModal
         modalVisible={modalVisible}
         setModalVisible={setModalVisible}
-        entry={entry}
+        username={entry.username}
         image={pfp}
       ></NonCurrUserProfileModal>
       <View name="Header" flexDirection="row" style={styles.postHeader}>

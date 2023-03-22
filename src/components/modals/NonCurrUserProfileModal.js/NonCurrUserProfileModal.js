@@ -8,43 +8,39 @@ import { getFollowersList } from "../../../crud/FollowersOperations";
 
 const imageSRC = require("../../../../assets/icons/Gymbit_Icons_Black/Back_Icon_Black.png");
 
-const NonCurrUserProfileModal = ({ modalVisible, setModalVisible, entry, image }) => {
+const NonCurrUserProfileModal = ({ modalVisible, setModalVisible, username, image }) => {
   const [user, setUser] = useState("");
   const [followingCount, setFollowingCount] = useState("");
   const [followersCount, setFollowersCount] = useState("");
 
   useEffect(() => {
-    getUserObject(entry);
-    getFollowingCount(entry);
-    getFollowersCount(entry);
+    getUserObject(username);
+    getFollowingCount(username);
+    getFollowersCount(username);
   }, []);
 
   const closeModal = () => {
     setModalVisible(false);
   };
 
-  async function getUserObject(user) {
-    if (user !== null || user.username !== null) {
+  async function getUserObject(username) {
       try {
-        const userObj = await findUserByUsername(user.username);
+        const userObj = await findUserByUsername(username);
         if (userObj !== null) {
           setUser(userObj);
         }
       } catch (e) {
         console.log("Error: Could not get user object", e);
-      }
-    } else {
-      console.log("User is equal to null");
-    }
+    } 
   }
 
-  async function getFollowingCount(user) {
-    const followingList = await getFollowsList(user.username);
+  async function getFollowingCount(username) {
+    const followingList = await getFollowsList(username);
     setFollowingCount(followingList.length);
   }
 
-  async function getFollowersCount(user) {
-    const followersList = await getFollowersList(user.username);
+  async function getFollowersCount(username) {
+    const followersList = await getFollowersList(username);
     setFollowersCount(followersList.length);
   }
 
