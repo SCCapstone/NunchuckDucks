@@ -21,7 +21,7 @@ export async function createReaction(username, reactionType, postID) {
     let date = getDate();
     let createdAt = await getCreatedAt(postID);
     let time = getTimeElapsed(createdAt);
-    let content = postsUsername + " reacted to your post from " + time;
+    let content = username + " reacted to your post from " + time;
     await createNotification(postsUsername, date, content, username);
   } catch (error) {
     console.error(`There was an error creating a reaction.`, error);
