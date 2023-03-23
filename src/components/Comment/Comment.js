@@ -7,6 +7,7 @@ import CustomButton from "../CustomButton/CustomButton";
 import CustomTextInput from "../CustomTextInput/CustomTextInput";
 import { createComment } from "../../crud/CommentOperations";
 import { getCurrentUser, getImageFromCache } from "../../crud/CacheOperations";
+import NonCurrUserProfileModal from "../modals/NonCurrUserProfileModal.js/NonCurrUserProfileModal";
 import { getCurrentAuthenticatedUser } from "../../library/GetAuthenticatedUser";
 
 const Comment = ({ commentModel, postID, replies, style }) => {
@@ -14,6 +15,7 @@ const Comment = ({ commentModel, postID, replies, style }) => {
   const [replyOpen, setReplyOpen] = useState(false);
   const [replyText, setReplyText] = useState("");
   const [repliesOpen, setRepliesOpen] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
 
   const replyUI = replies
     ?.sort((a, b) => {
@@ -72,9 +74,14 @@ const Comment = ({ commentModel, postID, replies, style }) => {
 
   return (
     <View style={{ ...styles.container, ...style }}>
-      <ProfileMini src={pfp}></ProfileMini>
+      <NonCurrUserProfileModal
+      modalVisible={modalVisible}
+      setModalVisible={setModalVisible}
+      username={commentModel?.username}
+      image={pfp}></NonCurrUserProfileModal>
+      <ProfileMini src={pfp} onClick={() => setModalVisible(true)}></ProfileMini>
       <View style={styles.rightSide}>
-        <Text style={styles.username}>{commentModel?.username}</Text>
+        <Text style={styles.username} onPress={() => setModalVisible(true)}>{commentModel?.username}</Text>
         <Text style={styles.content}>{commentModel?.content}</Text>
         <CustomButton
           buttonType={"hyperlink"}

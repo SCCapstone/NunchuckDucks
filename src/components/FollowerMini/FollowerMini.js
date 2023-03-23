@@ -5,12 +5,14 @@ import { findUserByUsername } from "../../crud/UserOperations";
 import { useState, useEffect, useCallback } from "react";
 import { getImageFromCache } from "../../crud/CacheOperations";
 import { Storage } from "aws-amplify";
+import NonCurrUserProfileModal from "../modals/NonCurrUserProfileModal.js/NonCurrUserProfileModal";
 
 const deleteIconPath = require("../../../assets/icons/Gymbit_Icons_Black/X_Icon_Black.png");
 
 const FollowerMini = ({ username, onProfileClick, onDelete, style }) => {
   const containerStyles = { ...styles.container, ...style };
   const [userImageSrc, setUserImageSrc] = useState("");
+  const [modalVisible, setModalVisible] = useState("");
 
   useEffect(() => {
     getUserImageSrc(username);
@@ -23,6 +25,10 @@ const FollowerMini = ({ username, onProfileClick, onDelete, style }) => {
     }
     setUserImageSrc(pfp);
   }
+
+  async function closeModal() {
+    setModalVisible(false);
+  }
   /*const getUserImageSrc = useCallback(async (username) => {
     const user = await findUserByUsername(username);
     if (!user || !user.profilePicture) return;
@@ -31,9 +37,14 @@ const FollowerMini = ({ username, onProfileClick, onDelete, style }) => {
 
   return (
     <View style={containerStyles}>
+      <NonCurrUserProfileModal
+          modalVisible={modalVisible}
+          setModalVisible={setModalVisible}
+          username={username}
+          image={userImageSrc}></NonCurrUserProfileModal>
       <View style={styles.leftSideContainer}>
-        <ProfileMini src={userImageSrc} onClick={onProfileClick}></ProfileMini>
-        <Pressable onPressOut={onProfileClick} style={styles.usernameContainer}>
+        <ProfileMini src={userImageSrc} onClick={() => setModalVisible(true)}></ProfileMini>
+        <Pressable onPressOut={() => setModalVisible(true)} style={styles.usernameContainer}>
           <Text style={styles.username}>@{username}</Text>
         </Pressable>
       </View>

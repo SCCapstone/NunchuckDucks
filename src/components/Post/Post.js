@@ -113,7 +113,7 @@ export default function Post(props) {
       <NonCurrUserProfileModal
         modalVisible={modalVisible}
         setModalVisible={setModalVisible}
-        entry={entry}
+        username={entry.username}
         image={pfp}
       ></NonCurrUserProfileModal>
       <View name="Header" flexDirection="row" style={styles.postHeader}>

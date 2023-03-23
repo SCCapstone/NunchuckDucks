@@ -12,6 +12,7 @@ import { getFollowersList, deleteFollower } from "../crud/FollowersOperations";
 import { getFollowsList, deleteFollower as deleteFollowing } from "../crud/FollowingOperations";
 import { getCurrentUser } from "../crud/CacheOperations";
 
+
 // TODO convert to FlatList of other lazy loading schema so rendering doesn't take 1+ second for large lists
 export function FollowerScreen({ route, navigation }) {
   const { isFollowerPage } = route.params;
@@ -19,6 +20,7 @@ export function FollowerScreen({ route, navigation }) {
   const [modalVisible, setModalVisible] = useState(false);
   const [list, setList] = useState([]);
   const [forceRefresh, setForceRefresh] = useState(false);
+  const [nonCurrModalVisible, setNonCurrModalVisible] = useState(false);
 
   // TODO connect this to the backend
   useEffect(() => {
@@ -38,19 +40,14 @@ export function FollowerScreen({ route, navigation }) {
     .map((val) => (
       <FollowerMini
         username={val.username}
-        // TODO make this have actual functionality --> after PoC
-        onProfileClick={() => console.log(`Clicked on ${val.username}'s profile!`)}
-        // TODO Connect this to backend / add actual functionality
         onDelete={async () => {
           const { attributes } = await Auth.currentAuthenticatedUser();
           let currUser = attributes.preferred_username;
           if (isFollowerPage) {
             await deleteFollower(currUser, val.username);
-            //await deleteFollowing(val.username, currUser);
           } else {
             console.log(currUser);
             await deleteFollower(val.username, currUser);
-            //await deleteFollowing(currUser, val.username);
           }
           console.log("WOW done");
           setForceRefresh(!forceRefresh);
@@ -58,7 +55,8 @@ export function FollowerScreen({ route, navigation }) {
         }}
         key={val.username}
         style={styles.followerMiniStyle}
-      ></FollowerMini>
+      >
+      </FollowerMini>
     ))
     .filter((val) => {
       const { username } = val.props;
