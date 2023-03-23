@@ -8,6 +8,7 @@ import CustomTextInput from "../CustomTextInput/CustomTextInput";
 import { createComment } from "../../crud/CommentOperations";
 import { getCurrentUser, getImageFromCache } from "../../crud/CacheOperations";
 import NonCurrUserProfileModal from "../modals/NonCurrUserProfileModal.js/NonCurrUserProfileModal";
+import { getCurrentAuthenticatedUser } from "../../library/GetAuthenticatedUser";
 
 const Comment = ({ commentModel, postID, replies, style }) => {
   const [pfp, setPfp] = useState("");
