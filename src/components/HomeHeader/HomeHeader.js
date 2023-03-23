@@ -6,6 +6,7 @@ import {
   Touchable,
   Text,
   TextInput,
+  Pressable
 } from "react-native";
 import React from "react";
 import { useNavigation } from "@react-navigation/native";
@@ -31,6 +32,8 @@ const HomeHeader = ({ handlePress }) => {
   const [image, setImage] = useState(null);
 
   Storage.configure();
+  const imageSRC = require("../../../assets/icons/Gymbit_Icons_Black/Back_Icon_Black.png");
+
 
   const handleBlowUp = () => {
     setBlowup(!blowup);
@@ -47,6 +50,9 @@ const HomeHeader = ({ handlePress }) => {
       const blob = await response.blob();
       await createPost(text, fileName, username);
       Storage.put(fileName, blob);
+      setImage(null);
+      setText("");
+      setWorkoutSelection([]);
     } catch {
       console.error("Error uploading file");
       // TODO make a UI popup thing that lets the user know that their post wasn't uploaded (please try again later)
@@ -89,6 +95,9 @@ const HomeHeader = ({ handlePress }) => {
     {blowup ?
     <View style={styles.blowup}>
       <View style={{ flex: 1 }}>
+      <Pressable onPressOut={handleBlowUp} style={styles.backArrow}>
+          <Image source={imageSRC} style={styles.backArrow}></Image>
+        </Pressable>
       <View style={styles.header} />
       <View style={{ flexDirection: "row", flex: 1 }}>
         <ImageSelector image={image} setImage={setImage} />
@@ -266,6 +275,14 @@ const styles = StyleSheet.create({
   workoutSelection: {
     flex: 1,
     width: "100%",
+  },
+  backArrow: {
+  width: 60,
+    height: 60,
+    paddingBottom: 50,
+    alignSelf: "left",
+    paddingLeft: 10,
+    backgroundColor: "rgba(200,212,225,0.75)",
   },
 });
 
