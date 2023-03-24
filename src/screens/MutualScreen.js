@@ -6,8 +6,11 @@ import HomeHeader from "../components/HomeHeader/HomeHeader";
 import SignOutButton from "../components/signoutbutton/SignOutButton";
 import { DataStore } from "@aws-amplify/datastore";
 
-export function MutualScreen() {
-  const [refresh, setRefresh] = useState(false);
+export function MutualScreen(props) {
+  //const [refresh, setRefresh] = useState(false);
+  const refresh = props.refresh;
+  const setRefresh = props.setRefresh;
+
   const nav = useNavigation();
   useEffect(() => {
     /*const focusHandler = nav.addListener("focus", () => {

@@ -20,25 +20,59 @@ import "react-native-url-polyfill/auto";
 import "react-native-get-random-values";
 import Header from "../components/Header";
 import { getCurrentAuthenticatedUser } from "../library/GetAuthenticatedUser";
+import { Toast } from "react-native-toast-message/lib/src/Toast";
+import { useNetInfo } from "@react-native-community/netinfo";
 
 //Need to also create the buttons to be clickable and call different functions
 export function ProfileScreen(props) {
   const navigation = useNavigation();
-  const [refresh, setRefresh] = useState(false);
+  //const [refresh, setRefresh] = useState(false);
+  //const { refresh, setRefresh } = route.params;
+  const networkConnection = useNetInfo();
+  const refresh = props.refresh;
+  const setRefresh = props.setRefresh;
   const [usernameSet, setUsernameSet] = useState(false);
   const [username, setUsername] = useState("");
   const [followercount, setFollowerCount] = useState("");
   const [followingcount, setFollowingCount] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
   const [showMakePfp, setShowMakePfp] = useState(false);
-  // const [image, setImage] = useState(""); // the image src to be displayed
-
-  const [profilePic, setProfilePic] = useState("");
-  const [reload, setReload] = useState(false);
   const [showPfpUploaded, setShowPfpUploaded] = useState(false);
   useEffect(() => {
     renderProfileInfo();
   }, [modalVisible]);
+
+  const showPfpUploadedToast = (usr) => {
+    Toast.show({
+      type: "success",
+      text1: "Successfully stored your new pfp!",
+      text2: "Lookin' good, " + usr + " 😎",
+      position: "bottom",
+      visibilityTime: 6000,
+    });
+  };
+  const showPfpNotUploadedToast = (usr) => {
+    if (usr === "") {
+      usr = "friend";
+    }
+    Toast.show({
+      type: "error",
+      text1: "Oops, there was an issue uploading your new pfp...",
+      text2: "Try again later. Sorry, " + usr + " 😔",
+      position: "bottom",
+      visibilityTime: 6000,
+    });
+  };
+
+  const showPfpCantChangeToast = () => {
+    Toast.show({
+      type: "error",
+      text1: "No Network connection detected.",
+      text2: "Can't change profile picture.",
+      position: "bottom",
+      visibilityTime: 4000,
+    });
+  };
 
   async function renderProfileInfo() {
     let username = await getCurrentUser();
@@ -56,6 +90,13 @@ export function ProfileScreen(props) {
   //   setFollowingCount(followingcoun.length);
   // }
 
+  function handleProfileImageClick() {
+    if (networkConnection.isConnected) {
+      addProfileImage();
+    } else {
+      showPfpCantChangeToast();
+    }
+  }
   const addProfileImage = async () => {
     let _image = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images /*Only allow image upload */,
@@ -74,7 +115,9 @@ export function ProfileScreen(props) {
       await cacheRemoteUri(username, "pfp.png");
       setRefresh(!refresh);
       if (pfpUploaded === true) {
-        showPfpUploadedForThreeSeconds();
+        showPfpUploadedToast(username);
+      } else {
+        showPfpNotUploadedToast(username);
       }
       setShowMakePfp(false);
     } catch (error) {
@@ -82,11 +125,6 @@ export function ProfileScreen(props) {
     }
     //updateProfilePicture(username,image);
   };
-  async function showPfpUploadedForThreeSeconds() {
-    setShowPfpUploaded(true);
-    await delay(3000);
-    setShowPfpUploaded(false);
-  }
   const delay = (ms) => new Promise((res) => setTimeout(res, ms));
 
   return (
@@ -104,9 +142,16 @@ export function ProfileScreen(props) {
       >
         <ChangeBioModal modalVisible={modalVisible} setModalVisible={setModalVisible}></ChangeBioModal>
         <View style={{ paddingTop: 0, paddingBottom: 10, flexDirection: "row", alignContent: "center" }}>
-          {usernameSet && <ProfileMini onClick={() => addProfileImage()} username={username} refresh={refresh} setRefresh={setRefresh} />}
+          {usernameSet && (
+            <ProfileMini
+              onClick={() => handleProfileImageClick()}
+              username={username}
+              refresh={refresh}
+              setRefresh={setRefresh}
+              userPfp={true}
+            />
+          )}
           <Text style={styles.username}>@{username}</Text>
-          {showPfpUploaded && <CustomButton style={{ position: "absolute" }} text={"New profile picture successfully uploaded!"} />}
         </View>
         <TouchableOpacity onPress={() => setModalVisible(true)}>
           <Bio />

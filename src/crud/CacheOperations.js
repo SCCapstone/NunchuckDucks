@@ -68,6 +68,7 @@ export async function getCurrentUser() {
     return username;
   } catch (e) {
     console.log("Error: Could not retrieve username from cache nor from S3");
+    return "";
   }
 }
 

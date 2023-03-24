@@ -8,6 +8,8 @@ import { Auth } from "aws-amplify";
 import { useNavigation } from "@react-navigation/native";
 import getPictureFileName from "../library/getPictureFileName";
 import { createPost } from "../crud/PostOperations";
+import { Toast } from "react-native-toast-message/lib/src/Toast";
+import { getCurrentUser } from "../crud/CacheOperations";
 
 const styles = StyleSheet.create({
   header: {
@@ -59,38 +61,65 @@ export function CreatePost() {
   const navigation = useNavigation();
   //const [username, setUsername] = useState("usernameNotFound");
   Storage.configure(); // protected = you can write and read your posts, others can only read
+
+  const showPostUploadedToast = () => {
+    Toast.show({
+      type: "success",
+      text1: "Successfully uploaded your new post!",
+      text2: "Go check it out on your mutuals page 🔥",
+      position: "bottom",
+      visibilityTime: 6000,
+    });
+  };
+  const showPostNotUploadedToast = (usr) => {
+    // username; pass username as prop to all shits?
+    if (usr === "") {
+      usr = "friend";
+    }
+    Toast.show({
+      type: "error",
+      text1: "Uh oh, there was trouble uploading your post...",
+      text2: "Try again later. Sorry, " + usr + " 😔",
+      position: "bottom",
+      visibilityTime: 6000,
+    });
+  };
   async function savePost() {
-    await DataStore.start();
+    //await DataStore.start();
+    let username = await getCurrentUser();
     try {
       // try catch just in case sending the image doesn't work
-      const { attributes } = await Auth.currentAuthenticatedUser();
-      let username = attributes.preferred_username;
+      //const { attributes } = await getCurrentUser();
       var fileName = username + "/" + getPictureFileName();
       const response = await fetch(image);
       const blob = await response.blob();
       await createPost(text, fileName, username);
-      Storage.put(fileName, blob);
+      await Storage.put(fileName, blob);
+      showPostUploadedToast();
     } catch (error) {
+      showPostNotUploadedToast(username);
       console.error("Error uploading file", error);
       // TODO make a UI popup thing that lets the user know that their post wasn't uploaded (please try again later)
     }
     navigation.navigate("Mutuals");
   }
   return (
-    <View style={{ flex: 1 }}>
-      <View style={styles.header} />
-      <View style={{ flexDirection: "row", flex: 1 }}>
-        <ImageSelector image={image} setImage={setImage} />
-        <WorkoutSelection workoutSelection={workoutSelection} setWorkoutSelection={setWorkoutSelection} />
+    <>
+      <View style={{ flex: 1 }}>
+        <View style={styles.header} />
+        <View style={{ flexDirection: "row", flex: 1 }}>
+          <ImageSelector image={image} setImage={setImage} />
+          <WorkoutSelection workoutSelection={workoutSelection} setWorkoutSelection={setWorkoutSelection} />
+        </View>
+        <View style={{ alignItems: "center", flex: 2 }}>
+          <TextInput style={styles.input} placeholder="Write your caption here" value={text} onChangeText={setText} />
+          <Text>{workoutSelection.join(", ")}</Text>
+          <TouchableOpacity style={styles.submit} onPress={savePost}>
+            <Text style={styles.submitText}>Post Gymbit</Text>
+          </TouchableOpacity>
+        </View>
       </View>
-      <View style={{ alignItems: "center", flex: 2 }}>
-        <TextInput style={styles.input} placeholder="Write your caption here" value={text} onChangeText={setText} />
-        <Text>{workoutSelection.join(", ")}</Text>
-        <TouchableOpacity style={styles.submit} onPress={savePost}>
-          <Text style={styles.submitText}>Post Gymbit</Text>
-        </TouchableOpacity>
-      </View>
-    </View>
+    </>
   );
 }
 

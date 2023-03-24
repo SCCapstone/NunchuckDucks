@@ -4,7 +4,7 @@ import CachedImage from "../CachedImage/CachedImage";
 
 const defaultProfile = require("../../../assets/icons/Gymbit_Icons_Black/Profile_Icon.png");
 
-const ProfileMini = ({ style, onClick, imageStyle, username, refresh, setRefresh }) => {
+const ProfileMini = ({ style, onClick, imageStyle, username, refresh, setRefresh, userPfp }) => {
   let containerStyles = { ...styles.container, ...style };
   let imageStyles = { ...styles.image, ...imageStyle };
   useEffect(() => {}, [refresh]);
@@ -19,6 +19,7 @@ const ProfileMini = ({ style, onClick, imageStyle, username, refresh, setRefresh
         isPfp={true}
         refresh={refresh}
         setRefresh={setRefresh}
+        userPfp={userPfp}
       />
     </Pressable>
   );
