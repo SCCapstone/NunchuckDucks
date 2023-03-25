@@ -8,7 +8,12 @@ import { getFollowersList } from "../../../crud/FollowersOperations";
 
 const imageSRC = require("../../../../assets/icons/Gymbit_Icons_Black/Back_Icon_Black.png");
 
-const NonCurrUserProfileModal = ({ modalVisible, setModalVisible, username, image }) => {
+const NonCurrUserProfileModal = ({
+  modalVisible,
+  setModalVisible,
+  username,
+  image,
+}) => {
   const [user, setUser] = useState("");
   const [followingCount, setFollowingCount] = useState("");
   const [followersCount, setFollowersCount] = useState("");
@@ -24,14 +29,14 @@ const NonCurrUserProfileModal = ({ modalVisible, setModalVisible, username, imag
   };
 
   async function getUserObject(username) {
-      try {
-        const userObj = await findUserByUsername(username);
-        if (userObj !== null) {
-          setUser(userObj);
-        }
-      } catch (e) {
-        console.log("Error: Could not get user object", e);
-    } 
+    try {
+      const userObj = await findUserByUsername(username);
+      if (userObj !== null) {
+        setUser(userObj);
+      }
+    } catch (e) {
+      console.log("Error: Could not get user object", e);
+    }
   }
 
   async function getFollowingCount(username) {
@@ -45,13 +50,17 @@ const NonCurrUserProfileModal = ({ modalVisible, setModalVisible, username, imag
   }
 
   return (
-    <Modal visible={modalVisible} animationType="fade" transparent={true} onRequestClose={closeModal}>
+    <Modal
+      visible={modalVisible}
+      animationType="fade"
+      transparent={true}
+      onRequestClose={closeModal}
+    >
       <View
         style={{
           flex: 1,
           alignItems: "center",
           backgroundColor: "white",
-          //   justifyContent: "top",
           paddingTop: 100,
         }}
       >
@@ -67,7 +76,9 @@ const NonCurrUserProfileModal = ({ modalVisible, setModalVisible, username, imag
           }}
         >
           <ProfileMini src={image} />
-          <Text style={styles.username}>@{user.username !== null ? user.username : ""}</Text>
+          <Text style={styles.username}>
+            @{user.username !== null ? user.username : ""}
+          </Text>
         </View>
         <View style={styles.followingContainer}>
           <Text style={styles.followingText}>Following</Text>
@@ -99,7 +110,6 @@ const styles = StyleSheet.create({
     left: 0,
     height: "100%",
     width: "100%",
-
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
@@ -110,8 +120,7 @@ const styles = StyleSheet.create({
     height: 80,
     backgroundColor: "white",
     paddingBottom: 50,
-    alignSelf: "left",
-    paddingLeft: 10
+    paddingLeft: 10,
   },
   username: {
     paddingTop: 30,
@@ -158,8 +167,8 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "bold",
     paddingTop: 10,
-    paddingBottom: 10
-  }
+    paddingBottom: 10,
+  },
 });
 
 export default NonCurrUserProfileModal;
