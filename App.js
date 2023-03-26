@@ -14,10 +14,12 @@ import { NotificationsScreen } from "./src/screens/NotificationsScreen.js";
 import Navbar from "./src/components/Navbar";
 import { Amplify, API } from "@aws-amplify/core";
 import awsmobile from "./src/aws-exports";
-import { withAuthenticator } from "aws-amplify-react-native";
+import { withAuthenticator, AmplifyTheme } from "aws-amplify-react-native";
 import { StyleSheet, View, TitleText } from "react-native";
 import { Storage } from "@aws-amplify/storage";
 import * as clients3 from "@aws-sdk/client-s3";
+import { blueThemeColor } from "./src/library/constants.js";
+
 
 Amplify.configure({
   ...awsmobile,
@@ -111,4 +113,62 @@ const signUpConfig = {
   ],
 };
 
-export default withAuthenticator(app, { signUpConfig });
+const customTheme = {
+  ...AmplifyTheme,  
+  sectionHeaderText:{ //this is currently "Sign in to your acct text on Sign In pg"
+    ...AmplifyTheme.sectionHeaderText,
+    color: blueThemeColor,
+    fontSize:'27.5',
+    textAlign:'center',
+  },
+  inputLabel: {
+    ...AmplifyTheme.inputLabel,
+    color: blueThemeColor,
+    fontWeight:'500',
+    fontSize:'17'
+  },
+  input:{
+    ...AmplifyTheme.input,
+    borderColor:blueThemeColor,
+    borderRadius:'20',
+    borderWidth: 2,
+    color:'#808080',//text color of user input
+    fontWeight:'480',
+    fontSize:'16',
+  },
+  button: {  
+    ...AmplifyTheme.button,
+    backgroundColor: blueThemeColor,
+    borderRadius:'18',
+    height: 48,
+  },
+  buttonDisabled: {
+    ...AmplifyTheme.buttonDisabled,
+    backgroundColor:blueThemeColor,
+    borderRadius:'18',
+    height: 48,
+  },
+  buttonText: {
+    ...AmplifyTheme.buttonText,
+    color: '#fff',
+  },
+  sectionFooterLink:{
+    ...AmplifyTheme.sectionFooterLink,
+    color: blueThemeColor,
+    fontSize: 15,
+  },
+  sectionFooterLinkDisabled: {
+    ...AmplifyTheme.sectionFooterLinkDisabled,
+		fontSize: 15,
+		color: blueThemeColor,
+		alignItems: 'baseline',
+		textAlign: 'center',
+	},
+  signedOutMessage:{ //this is the bottom text 
+    ...AmplifyTheme.signedOutMessage,
+    color:blueThemeColor,
+    fontSize:16
+  }
+};
+
+export default withAuthenticator(app, { signUpConfig, theme: customTheme });
