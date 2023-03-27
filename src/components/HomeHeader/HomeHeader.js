@@ -6,7 +6,7 @@ import {
   Touchable,
   Text,
   TextInput,
-  Pressable
+  Pressable,
 } from "react-native";
 import React from "react";
 import { useNavigation } from "@react-navigation/native";
@@ -34,10 +34,9 @@ const HomeHeader = ({ handlePress }) => {
   Storage.configure();
   const imageSRC = require("../../../assets/icons/Gymbit_Icons_Black/Back_Icon_Black.png");
 
-
   const handleBlowUp = () => {
     setBlowup(!blowup);
-  }
+  };
 
   async function savePost() {
     await DataStore.start();
@@ -61,66 +60,68 @@ const HomeHeader = ({ handlePress }) => {
   }
 
   return (
-    <><View style={styles.container}>
-      <TouchableOpacity
-        style={styles.notiButton}
-        onPress={() => {
-          navigation.navigate("Notifications");
-        }}
-      >
-        <Image
-          style={styles.notification}
-          source={require("../../../assets/icons/Gymbit_Icons_Black/Alert_Icon_Black.png")}
-        />
-      </TouchableOpacity>
+    <>
+      <View style={styles.container}>
+        <TouchableOpacity
+          style={styles.notiButton}
+          onPress={() => {
+            navigation.navigate("Notifications");
+          }}
+        >
+          <Image
+            style={styles.notification}
+            source={require("../../../assets/icons/Gymbit_Icons_Black/Alert_Icon_Black.png")}
+          />
+        </TouchableOpacity>
 
-      <TouchableOpacity style={styles.logoContainer} onPress={handlePress}>
-        <Image
-          style={styles.logo}
-          source={require("../../../assets/icons/Gymbit_Icons_Trans/Logo_Trans.png")}
-        />
-      </TouchableOpacity>
+        <TouchableOpacity style={styles.logoContainer} onPress={handlePress}>
+          <Image
+            style={styles.logo}
+            source={require("../../../assets/icons/Gymbit_Icons_Trans/Logo_Trans.png")}
+          />
+        </TouchableOpacity>
 
-      <TouchableOpacity
-        style={styles.settingsButton}
-        onPress={handleBlowUp}
-      >
-        <Image
-          style={styles.settings}
-          source={require("../../../assets/icons/Gymbit_Icons_Black/Create_Post_Icon_Black.png")}
-        />
-      </TouchableOpacity>
-    </View>
-    <View> 
-    {blowup ?
-    <View style={styles.blowup}>
-      <View style={{ flex: 1 }}>
-      <Pressable onPressOut={handleBlowUp} style={styles.backArrow}>
-          <Image source={imageSRC} style={styles.backArrow}></Image>
-        </Pressable>
-      <View style={styles.header} />
-      <View style={{ flexDirection: "row", flex: 1 }}>
-        <ImageSelector image={image} setImage={setImage} />
-        <WorkoutSelection
-          workoutSelection={workoutSelection}
-          setWorkoutSelection={setWorkoutSelection}
-        />
-      </View>
-      <View style={{ alignItems: "center", flex: 2 }}>
-        <TextInput
-          style={styles.input}
-          placeholder="Write your caption here"
-          value={text}
-          onChangeText={setText}
-        />
-        <Text>{workoutSelection.join(", ")}</Text>
-        <TouchableOpacity style={styles.submit} onPress={savePost}>
-          <Text style={styles.submitText}>Post Gymbit</Text>
+        <TouchableOpacity style={styles.settingsButton} onPress={handleBlowUp}>
+          <Image
+            style={styles.settings}
+            source={require("../../../assets/icons/Gymbit_Icons_Black/Create_Post_Icon_Black.png")}
+          />
         </TouchableOpacity>
       </View>
-    </View>
-    </View>:<Text></Text>}
-  </View></>
+      <View>
+        {blowup ? (
+          <View style={styles.blowup}>
+            <View style={{ flex: 1 }}>
+              <Pressable onPressOut={handleBlowUp} style={styles.backArrow}>
+                <Image source={imageSRC} style={styles.backArrow}></Image>
+              </Pressable>
+              <View style={styles.header} />
+              <View style={{ flexDirection: "row", flex: 1 }}>
+                <ImageSelector image={image} setImage={setImage} />
+                <WorkoutSelection
+                  workoutSelection={workoutSelection}
+                  setWorkoutSelection={setWorkoutSelection}
+                />
+              </View>
+              <View style={{ alignItems: "center", flex: 2 }}>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Write your caption here"
+                  value={text}
+                  onChangeText={setText}
+                />
+                <Text>{workoutSelection.join(", ")}</Text>
+                <TouchableOpacity style={styles.submit} onPress={savePost}>
+                  <Text style={styles.submitText}>Post Gymbit</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        ) : (
+          <Text></Text>
+        )}
+      </View>
+    </>
   );
 };
 
@@ -222,16 +223,16 @@ const styles = StyleSheet.create({
   },
 
   blowup: {
-    width:"100%",
+    width: "100%",
     height: "75%",
-    right:0,
-    bottom:0,
-    backgroundColor: 'rgba(200,212,225,0.75)',
-    borderRightWidth:0,
-    borderLeftWidth:0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: "rgba(200,212,225,0.75)",
+    borderRightWidth: 0,
+    borderLeftWidth: 0,
     borderWidth: 2,
-    borderTopWidth:3,
-    borderRightColor:"black",
+    borderTopWidth: 3,
+    borderRightColor: "black",
   },
 
   input: {
@@ -271,16 +272,16 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     width: "100%",
   },
-  
+
   workoutSelection: {
     flex: 1,
     width: "100%",
   },
   backArrow: {
-  width: 60,
+    width: 60,
     height: 60,
     paddingBottom: 50,
-    alignSelf: "left",
+    alignSelf: "flex-start",
     paddingLeft: 10,
     backgroundColor: "rgba(200,212,225,0.75)",
   },
