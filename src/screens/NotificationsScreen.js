@@ -50,7 +50,6 @@ export function NotificationsScreen() {
     return (
         <><View>
             <Header title={"Notifications"} />
-            <Text>Notification count: {notifications.length} </Text>
         </View>
         <ScrollView
             contentContainerStyle={styles.scroll}
