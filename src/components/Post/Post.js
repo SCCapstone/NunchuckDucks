@@ -14,6 +14,7 @@ import CustomButton from "../CustomButton/CustomButton";
 import CustomTextInput from "../CustomTextInput/CustomTextInput";
 import { getCurrentAuthenticatedUser } from "../../library/GetAuthenticatedUser";
 
+
 export default function Post(props) {
   const entry = props.entry;
   const username = entry.username;
@@ -103,6 +104,18 @@ export default function Post(props) {
     }
   }
 
+  async function handleUserClick(username) {
+    try {
+      if (username === await getCurrentAuthenticatedUser()) {
+        navigation.navigate("Profile");
+      } else {
+        setModalVisible(true);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
   useEffect(() => {
     getPictures();
     retrieveComments();
@@ -124,7 +137,7 @@ export default function Post(props) {
           onClick={() => setModalVisible(true)}
         />
         {/*Need to make it navigate to users specific profile*/}
-        <Text style={styles.postUsername} onPress={() => setModalVisible(true)}>
+        <Text style={styles.postUsername} onPress={() => handleUserClick(username)}>
           {username}
         </Text>
         <Text style={styles.createdAt}>{getTimeElapsed(entry.createdAt)}</Text>
