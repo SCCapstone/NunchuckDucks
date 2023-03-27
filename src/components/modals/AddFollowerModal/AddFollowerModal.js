@@ -5,22 +5,29 @@ import { createFollowing } from "../../../crud/FollowingOperations";
 import { Auth } from "aws-amplify";
 
 import CustomTextInput from "../../CustomTextInput";
+import ErrorModal from "../ErrorModal/ErrorModal";
 import CustomButton from "../../CustomButton";
 import { getCurrentUser } from "../../../crud/CacheOperations";
+import { followerErrorMessage } from "../../../library/constants";
 
 const AddFollowerModal = ({ modalVisible, setModalVisible }) => {
   const [addFriendValue, setAddFriendValue] = useState("");
+  const [errorModal, setErrorModal] = useState(false);
 
   async function addNewFollower() {
     try {
       const currUser = await getCurrentUser();
-      await createFollower(addFriendValue, currUser);
-      //need to add some sort of modal for when you can't follow a user
-      //await createFollowing(currUser, addFriendValue);
+      const isFollower = await createFollower(addFriendValue, currUser);
+      if (!isFollower) {
+        setErrorModal(true);
+        setAddFriendValue("");
+      } else {
+        closeModal();
+        setAddFriendValue("");
+      }
     } catch (err) {
       console.error(err);
     }
-    closeModal();
   }
 
   const closeModal = () => {
@@ -30,8 +37,14 @@ const AddFollowerModal = ({ modalVisible, setModalVisible }) => {
 
   return (
     <Modal visible={modalVisible} animationType="fade" transparent={true} onRequestClose={closeModal}>
-      <Pressable onPress={closeModal} style={styles.transparentView}></Pressable>
+      <Pressable onPress={closeModal} style={styles.transparentView} />
       <View style={styles.centeredView}>
+        <ErrorModal
+          popUpModalVisible={errorModal}
+          setPopUpModalVisible={setErrorModal}
+          errorMessage={followerErrorMessage}
+          setExternalModal={setModalVisible}
+        ></ErrorModal>
         <View style={styles.modalView}>
           <Text>Enter a user to follow!</Text>
           <CustomTextInput

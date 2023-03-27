@@ -9,9 +9,10 @@ const ReactionType = {
   "CLAP": "CLAP"
 };
 
-const { FollowedBy, Follows, Reaction, Comment, Goal, User, Post } = initSchema(schema);
+const { Notification, FollowedBy, Follows, Reaction, Comment, Goal, User, Post } = initSchema(schema);
 
 export {
+  Notification,
   FollowedBy,
   Follows,
   Reaction,

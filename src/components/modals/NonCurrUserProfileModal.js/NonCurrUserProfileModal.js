@@ -1,4 +1,4 @@
-import { Modal, StyleSheet, View, Text } from "react-native";
+import { Modal, StyleSheet, View, Text, Image, Pressable } from "react-native";
 import React from "react";
 import { useEffect, useState } from "react";
 import { findUserByUsername } from "../../../crud/UserOperations";
@@ -6,42 +6,40 @@ import ProfileMini from "../../ProfileMini";
 import { getFollowsList } from "../../../crud/FollowingOperations";
 import { getFollowersList } from "../../../crud/FollowersOperations";
 
-const NonCurrUserProfileModal = ({ modalVisible, setModalVisible, username }) => {
+const imageSRC = require("../../../../assets/icons/Gymbit_Icons_Black/Back_Icon_Black.png");
+
+const NonCurrUserProfileModal = ({ modalVisible, setModalVisible, username, image }) => {
   const [user, setUser] = useState("");
   const [followingCount, setFollowingCount] = useState("");
   const [followersCount, setFollowersCount] = useState("");
 
   useEffect(() => {
-    getUserObject();
-    getFollowingCount();
-    getFollowersCount();
+    getUserObject(username);
+    getFollowingCount(username);
+    getFollowersCount(username);
   }, []);
 
   const closeModal = () => {
     setModalVisible(false);
   };
 
-  async function getUserObject() {
-    if (username !== null) {
-      try {
-        const userObj = await findUserByUsername(username);
-        if (userObj !== null) {
-          setUser(userObj);
-        }
-      } catch (e) {
-        console.log("Error: Could not get user object", e);
+  async function getUserObject(username) {
+    try {
+      const userObj = await findUserByUsername(username);
+      if (userObj !== null) {
+        setUser(userObj);
       }
-    } else {
-      console.log("User is equal to null");
+    } catch (e) {
+      console.log("Error: Could not get user object", e);
     }
   }
 
-  async function getFollowingCount() {
+  async function getFollowingCount(username) {
     const followingList = await getFollowsList(username);
     setFollowingCount(followingList.length);
   }
 
-  async function getFollowersCount() {
+  async function getFollowersCount(username) {
     const followersList = await getFollowersList(username);
     setFollowersCount(followersList.length);
   }
@@ -49,23 +47,17 @@ const NonCurrUserProfileModal = ({ modalVisible, setModalVisible, username }) =>
   return (
     <Modal visible={modalVisible} animationType="fade" transparent={true} onRequestClose={closeModal}>
       <View
-        style={
-          {
-            //   alignItems: "left",
-            //   justifyContent: "top",
-          }
-        }
-      ></View>
-      <View
         style={{
           flex: 1,
           alignItems: "center",
           backgroundColor: "white",
           //   justifyContent: "top",
-          paddingTop: 200,
+          paddingTop: 100,
         }}
       >
-        <Text>click the profile pic to return for now</Text>
+        <Pressable onPressOut={closeModal} style={styles.backArrow}>
+          <Image source={imageSRC} style={styles.backArrow}></Image>
+        </Pressable>
         <View
           style={{
             paddingTop: 0,
@@ -74,7 +66,7 @@ const NonCurrUserProfileModal = ({ modalVisible, setModalVisible, username }) =>
             alignContent: "center",
           }}
         >
-          <ProfileMini onClick={closeModal} username={username} />
+          <ProfileMini username={username} />
           <Text style={styles.username}>@{username !== null ? username : ""}</Text>
         </View>
         <View style={styles.followingContainer}>
@@ -85,6 +77,7 @@ const NonCurrUserProfileModal = ({ modalVisible, setModalVisible, username }) =>
           <Text style={styles.followingText}>Followers</Text>
           <Text style={styles.followingText}>{followersCount}</Text>
         </View>
+        <Text style={styles.bioText}>Bio</Text>
         <View style={styles.bioContainer}>
           <Text style={styles.bio}>{user.bio !== null ? user.bio : ""}</Text>
         </View>
@@ -116,7 +109,9 @@ const styles = StyleSheet.create({
     width: 80,
     height: 80,
     backgroundColor: "white",
-    paddingTop: 10,
+    paddingBottom: 50,
+    alignSelf: "flex-start",
+    paddingLeft: 10,
   },
   username: {
     paddingTop: 30,
@@ -158,6 +153,12 @@ const styles = StyleSheet.create({
   followingText: {
     fontSize: 11,
     fontWeight: "bold",
+  },
+  bioText: {
+    fontSize: 16,
+    fontWeight: "bold",
+    paddingTop: 10,
+    paddingBottom: 10,
   },
 });
 

@@ -5,6 +5,7 @@ import Reactions from "../Reactions";
 import { blueThemeColor, grayThemeColor } from "../../library/constants";
 import ProfileMini from "../ProfileMini";
 import { useNavigation } from "@react-navigation/native";
+import { getCurrentUser } from "../../crud/CacheOperations";
 import { useNetInfo } from "@react-native-community/netinfo";
 import NonCurrUserProfileModal from "../modals/NonCurrUserProfileModal.js/NonCurrUserProfileModal";
 import Comment from "../Comment";
@@ -43,8 +44,8 @@ export default function Post(props) {
     setCommentOption(false);
     // Call CRUD to make new datastore object
     try {
-      //const username = await getCurrentUser();
-      createComment(commentText, username, entry.id, null);
+      const comenterName = await getCurrentUser();
+      createComment(commentText, comenterName, entry.id, null);
     } catch (error) {
       console.error("Error: Could not create comment", error);
     }

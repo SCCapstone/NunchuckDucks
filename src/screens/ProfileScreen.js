@@ -49,6 +49,7 @@ export function ProfileScreen(props) {
       text2: "Lookin' good, " + usr + " 😎",
       position: "bottom",
       visibilityTime: 6000,
+      bottomOffset: 80,
     });
   };
   const showPfpNotUploadedToast = (usr) => {
@@ -61,6 +62,7 @@ export function ProfileScreen(props) {
       text2: "Try again later. Sorry, " + usr + " 😔",
       position: "bottom",
       visibilityTime: 6000,
+      bottomOffset: 80,
     });
   };
 
@@ -71,6 +73,7 @@ export function ProfileScreen(props) {
       text2: "Can't change profile picture.",
       position: "bottom",
       visibilityTime: 4000,
+      bottomOffset: 80,
     });
   };
 

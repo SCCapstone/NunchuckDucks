@@ -6,10 +6,12 @@ import { ExploreScreen } from "./src/screens/ExploreScreen.js";
 import { MutualScreen } from "./src/screens/MutualScreen.js";
 import { CreatePost } from "./src/screens/CreatePost.js";
 import { CalendarScreen } from "./src/screens/CalendarScreen.js";
+import { WorkoutsScreen } from "./src/screens/WorkoutsScreen.js";
 import { GoalsScreen } from "./src/screens/GoalsScreen.js";
 import { ProfileScreen } from "./src/screens/ProfileScreen.js";
 import { FollowerScreen } from "./src/screens/FollowerScreen.js";
 import { CreateGoalScreen } from "./src/screens/CreateGoalScreen.js";
+import { NotificationsScreen } from "./src/screens/NotificationsScreen.js";
 import Navbar from "./src/components/Navbar";
 import { Amplify, API } from "@aws-amplify/core";
 import awsmobile from "./src/aws-exports";
@@ -59,7 +61,7 @@ const app = () => {
             tabBarShowLabel: true,
             tabBarScrollEnabled: true,
             lazy: true,
-            tabBarLabelStyle: { width: 120, height: 30, textAlign: "center", color: "black", fontSize: 20 },
+            tabBarLabelStyle: { width: 120, height: 30, textAlign: "center", color: "black", fontSize: 15, fontWeight: "bold" },
           }}
           initialRouteName="Mutuals"
           tabBarPosition="bottom"
@@ -71,7 +73,9 @@ const app = () => {
           {/* <Stack.Screen name="CreatePost" component={CreatePost} /> */}
           {/* <Stack.Screen name="Calendar" component={CalendarScreen} /> */}
           <Stack.Screen name="Goals" component={GoalsScreen} />
+          <Stack.Screen name="Workouts" component={WorkoutsScreen} />
           <Stack.Screen name="Followers" component={FollowerScreen} initialParams={{ isFollowerPage: false }} />
+          <Stack.Screen name="Notifications" component={NotificationsScreen} />
           {/* <Stack.Screen name="CreateGoal" component={CreateGoalScreen} /> */}
         </Stack.Navigator>
       </NavigationContainer>

@@ -144,6 +144,7 @@ export default function PostList(props) {
       text2: "We're glad you're here 😁💪",
       position: "bottom",
       visibilityTime: 4000,
+      bottomOffset: 80,
     });
   };
 
@@ -154,6 +155,7 @@ export default function PostList(props) {
       text2: "Welcome back, " + usr + " 😁💪",
       position: "bottom",
       visibilityTime: 4000,
+      bottomOffset: 80,
     });
   };
 
@@ -164,6 +166,7 @@ export default function PostList(props) {
       //text2: "We're glad you're here 😁💪",
       position: "bottom",
       visibilityTime: 4000,
+      bottomOffset: 80,
     });
   };
 
@@ -176,6 +179,7 @@ export default function PostList(props) {
       text1: "You're not connected to the internet 😬",
       position: "bottom",
       visibilityTime: 3000,
+      bottomOffset: 80,
     });
     await delay(4000);
     Toast.show({
@@ -184,6 +188,7 @@ export default function PostList(props) {
       text2: "And also create goals 💪",
       position: "bottom",
       visibilityTime: 3000,
+      bottomOffset: 80,
     });
   };
 

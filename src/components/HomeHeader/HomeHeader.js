@@ -48,6 +48,7 @@ const HomeHeader = ({ handlePress }) => {
       text2: "Go check it out on your mutuals page 🔥",
       position: "bottom",
       visibilityTime: 6000,
+      bottomOffset: 80,
     });
   };
   const showPostNotUploadedToast = (usr) => {
@@ -60,6 +61,7 @@ const HomeHeader = ({ handlePress }) => {
       text2: "Try again later. Sorry, " + usr + " 😔",
       position: "bottom",
       visibilityTime: 6000,
+      bottomOffset: 80,
     });
   };
   const showNetworkNotConnectedToast = () => {
@@ -69,6 +71,7 @@ const HomeHeader = ({ handlePress }) => {
       text2: "Can't create a post.",
       position: "bottom",
       visibilityTime: 4000,
+      bottomOffset: 80,
     });
   };
   async function savePost() {
@@ -102,9 +105,9 @@ const HomeHeader = ({ handlePress }) => {
       <View style={styles.container}>
         <TouchableOpacity
           style={styles.notiButton}
-          // onPress={() => {
-          //   navigation.navigate("NotificationScreen");
-          // }}
+          onPress={() => {
+            navigation.navigate("Notifications");
+          }}
         >
           <Image style={styles.notification} source={require("../../../assets/icons/Gymbit_Icons_Black/Alert_Icon_Black.png")} />
         </TouchableOpacity>
