@@ -10,7 +10,7 @@ import React from "react";
 import { refresh } from "@react-native-community/netinfo";
 import { useNavigation } from "@react-navigation/native";
 import { getDate } from "../library/getDate";
-import { getNotifications, deleteNotification, createNotification } from "../crud/NotificationOperations";
+import { getNotifications, deleteNotification, getNotificationCount } from "../crud/NotificationOperations";
 import { getCurrentUser } from "../crud/CacheOperations";
 import NotificationMini from "../components/Notification/NotificationMini";
 import DefaultTheme from "@react-navigation/native";
@@ -50,6 +50,7 @@ export function NotificationsScreen() {
     return (
         <><View>
             <Header title={"Notifications"} />
+            <Text>Notification count: {notifications.length} </Text>
         </View>
         <ScrollView
             contentContainerStyle={styles.scroll}
