@@ -1,4 +1,12 @@
-import { View, StyleSheet, ScrollView, Text, TextInput, Image, TouchableOpacity } from "react-native";
+import {
+  View,
+  StyleSheet,
+  ScrollView,
+  Text,
+  TextInput,
+  Image,
+  TouchableOpacity,
+} from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import Header from "../components/Header/Header";
 import CustomButton from "../components/CustomButton/CustomButton";
@@ -19,14 +27,14 @@ Storage.configure();
 export function GoalsScreen() {
   const nav = useNavigation();
   const [incompletegoals, setIncompleteGoals] = useState([]);
-  const [completegoals, setCompleteGoals] = useState([]);//set array of all user goals
+  const [completegoals, setCompleteGoals] = useState([]); //set array of all user goals
   const [forceRefresh, setForceRefresh] = useState(true); //refresh the goal list
   const [blowup, setBlowUp] = useState(false);
   const [text, onChangeText] = React.useState(null); //Add text for the goal description
 
   const handleBlowUp = () => {
     setBlowUp(!blowup);
-  }
+  };
 
   async function saveGoal() {
     const { attributes } = await Auth.currentAuthenticatedUser();
@@ -43,21 +51,15 @@ export function GoalsScreen() {
     let username = attributes.preferred_username;
     //if checkcompleted is true -> add to this comp list of goals, else uncomp list
     const goals = await getGoals(username);
-    tempincgoals=[];
-    tempcompgoals=[];
-    for(let i = 0; i<goals.length;i++)
-    {
-      console.log('Goal',i,' is:', goals[i].isCompleted);
-      if(goals[i].isCompleted === false || goals[i].isCompleted === null)
-      {
+    tempincgoals = [];
+    tempcompgoals = [];
+    for (let i = 0; i < goals.length; i++) {
+      if (goals[i].isCompleted === false || goals[i].isCompleted === null) {
         tempincgoals.push(goals[i]);
-      }
-      else if(goals[i].isCompleted === true)
-      {
+      } else if (goals[i].isCompleted === true) {
         tempcompgoals.push(goals[i]);
-      }
-      else{
-        console.log('Error YOU SHOULDNT SEE THIS EVER');
+      } else {
+        console.log("Error YOU SHOULDNT SEE THIS EVER");
       }
     }
     setCompleteGoals(tempcompgoals);
@@ -67,22 +69,22 @@ export function GoalsScreen() {
   useEffect(() => {
     console.log("refreshing goals screen");
     goalList();
-    const focusHandler = nav.addListener("focus", () => {setForceRefresh(!forceRefresh)}) //Refresh page when navigated to
-  },[forceRefresh, nav]);
-  
+    const focusHandler = nav.addListener("focus", () => {
+      setForceRefresh(!forceRefresh);
+    }); //Refresh page when navigated to
+  }, [forceRefresh, nav]);
+
   //Generate the list of user goals on the screen
-  const incompleteListGoals = incompletegoals.map((goal) => 
-  (
-    <GoalMini 
-      description = {goal.content}
-      key = {goal.id}
-      onCompleteHandler={
-        async() => {
-          let goalId = goal.id;
-          await updateGoal(goalId);
-          setForceRefresh(!forceRefresh);
+  const incompleteListGoals = incompletegoals.map((goal) => (
+    <GoalMini
+      description={goal.content}
+      key={goal.id}
+      onCompleteHandler={async () => {
+        let goalId = goal.id;
+        await updateGoal(goalId);
+        setForceRefresh(!forceRefresh);
       }}
-      onDeleteHandler={async() => {
+      onDeleteHandler={async () => {
         let goalId = goal.id;
         await deleteGoal(goalId);
         setForceRefresh(!forceRefresh);
@@ -91,10 +93,10 @@ export function GoalsScreen() {
   ));
 
   const completedListGoals = completegoals.map((goal) => (
-    <CompletedGoalMini 
-      description = {goal.content}
-      key = {goal.id}
-      onDeleteHandler={async() => {
+    <CompletedGoalMini
+      description={goal.content}
+      key={goal.id}
+      onDeleteHandler={async () => {
         let goalId = goal.id;
         await deleteGoal(goalId);
         setForceRefresh(!forceRefresh);
@@ -103,80 +105,80 @@ export function GoalsScreen() {
   ));
 
   return (
-    <><View>
-      <Header title={"Goals"} />
+    <>
+      <View>
+        <Header title={"Goals"} />
+
+        <View style={styles.container}>
+          <CustomButton
+            text="Create Goal"
+            onClick={handleBlowUp}
+            style={styles.button}
+          />
+        </View>
+      </View>
+
+      <View>
+        {blowup ? (
+          <View style={styles.blowup}>
+            <View>
+              <View style={styles.headerContainer}>
+                <TouchableOpacity
+                  style={{
+                    width: 100,
+                    height: 100,
+                  }}
+                  onPress={handleBlowUp}
+                >
+                  <Image
+                    source={require("../../assets/icons/Gymbit_Icons_Black/Back_Icon_Black.png")}
+                    resizeMode="cover"
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                    }}
+                  />
+                </TouchableOpacity>
+                <Text style={styles.headerText}>Create Goal</Text>
+              </View>
+
+              <View>
+                <TextInput
+                  style={styles.textInput}
+                  onChangeText={onChangeText}
+                  placeholder={"Enter details about your goal"}
+                  value={text}
+                />
+                <View style={styles.miniContainer}>
+                  <CustomButton
+                    text="Create Goal"
+                    style={styles.button}
+                    onClick={saveGoal}
+                  />
+                </View>
+              </View>
+            </View>
+          </View>
+        ) : (
+          <Text></Text>
+        )}
+      </View>
+      <ScrollView contentContainerStyle={styles.list}>
+        {incompleteListGoals}
+      </ScrollView>
 
       <View style={styles.container}>
         <CustomButton
-          text="Create Goal"
-          onClick={handleBlowUp}
-          style={styles.button} />
-      </View>
-    </View>
-
-    <View>
-      {blowup ?
-      <View style={styles.blowup}>
-        <View>
-          <View style={styles.headerContainer}>
-            <TouchableOpacity
-              style={{
-                width: 100,
-                height: 100,
-              }}
-              onPress={handleBlowUp}
-            >
-              <Image
-                source={require("../../assets/icons/Gymbit_Icons_Black/Back_Icon_Black.png")}
-                resizeMode="cover"
-                style={{
-                  width: "100%",
-                  height: "100%",
-                }}
-              />
-            </TouchableOpacity>
-            <Text style={styles.headerText}>Create Goal</Text>
-          </View>
-
-          <View>
-            <TextInput
-              style={styles.textInput}
-              onChangeText={onChangeText}
-              placeholder={"Enter details about your goal"}
-              value={text}
-            />
-            <View style={styles.miniContainer}>
-              <CustomButton
-                text="Create Goal"
-                style={styles.button}
-                onClick={saveGoal}
-              />
-            </View>
-          </View>
-        </View>
-      </View>:<Text></Text>}
-    </View>
-    <ScrollView
-      contentContainerStyle={styles.list}
-    >
-        {incompleteListGoals}
-    </ScrollView>
-    
-    <View style={styles.container}>
-        <CustomButton
           text="Completed Goals"
           //Onclick could be added if needed.
-          style={styles.button2} />
+          style={styles.button2}
+        />
       </View>
 
-    <ScrollView
-      contentContainerStyle={styles.list}
-    >
+      <ScrollView contentContainerStyle={styles.list}>
         {completedListGoals}
-    </ScrollView>
+      </ScrollView>
     </>
-    
-    
   );
 }
 
@@ -186,11 +188,11 @@ const styles = StyleSheet.create({
   },
   button: {
     margin: 20,
-    width:"auto"
+    width: "auto",
   },
-  button2:{
-    margin:20,
-    width:"auto"
+  button2: {
+    margin: 20,
+    width: "auto",
   },
   list: {
     alignItems: "center",
@@ -213,17 +215,17 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   blowup: {
-    width:"100%",
+    width: "100%",
     height: "100%",
-    right:0,
-    bottom:0,
+    right: 0,
+    bottom: 0,
     top: -50,
-    backgroundColor: 'rgba(200,212,225,1)',
-    borderRightWidth:0,
-    borderLeftWidth:0,
+    backgroundColor: "rgba(200,212,225,1)",
+    borderRightWidth: 0,
+    borderLeftWidth: 0,
     borderWidth: 2,
-    borderTopWidth:3,
-    borderRightColor:"black",
+    borderTopWidth: 3,
+    borderRightColor: "black",
   },
   headerContainer: {
     width: "100%",
@@ -240,7 +242,7 @@ const styles = StyleSheet.create({
     fontSize: 22,
     position: "absolute",
     left: 0,
-    top: 50,//to move it down and center with back button
+    top: 50, //to move it down and center with back button
     zIndex: -1,
   },
-})
+});

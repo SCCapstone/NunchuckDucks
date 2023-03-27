@@ -6,18 +6,22 @@ import { getGoals } from "../../crud/GoalOperations";
 import { blueThemeColor, grayThemeColor } from "../../library/constants";
 import { getCurrentAuthenticatedUser } from "../../library/GetAuthenticatedUser";
 import { getCurrentUser } from "../../crud/CacheOperations";
+import { getAndObserveGoals } from "../../crud/observeQueries/GoalObserveQueries";
 
 const GoalSummary = () => {
   const [goals, setGoals] = useState([]);
 
   async function goalList() {
     let username = await getCurrentUser();
-    const goals = await getGoals(username);
-    setGoals(goals);
+    const subscription = getAndObserveGoals(username, setGoals);
+    return subscription;
   }
 
   useEffect(() => {
-    goalList();
+    const subscription = goalList();
+    return () => {
+      if (subscription && subscription.unsubscribe) subscription.unsubscribe();
+    };
   }, []);
 
   const listGoals = goals.slice(0, 3).map((goal, index) => (
@@ -83,8 +87,8 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 40,
     textAlign: "center",
-    fontWeight: "bold"
-  }
+    fontWeight: "bold",
+  },
 });
 
 export default GoalSummary;
