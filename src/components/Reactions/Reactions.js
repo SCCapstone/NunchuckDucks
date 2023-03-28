@@ -1,13 +1,25 @@
 import { View, Image, Text, StyleSheet, Pressable } from "react-native";
 import { useEffect, useState } from "react";
 import { getCurrentAuthenticatedUser } from "../../library/GetAuthenticatedUser";
-import { createReaction, getReactions, getUserReactions, removeReaction } from "../../crud/ReactionOperations";
+import {
+  createReaction,
+  getReactions,
+  getUserReactions,
+  removeReaction,
+} from "../../crud/ReactionOperations";
 import { ReactionType } from "../../models/index";
 import { getCurrentUser } from "../../crud/CacheOperations";
+import { getAndObserveReactions } from "../../crud/observeQueries/ReactionsObserveQueries";
+import { DataStore } from "aws-amplify";
 
-export default function Reactions({ postID, commentsClicked, setCommentsClicked }) {
+export default function Reactions({
+  postID,
+  commentsClicked,
+  setCommentsClicked,
+}) {
   const [applauseClicked, setApplauseClicked] = useState(false);
   const [strongClicked, setStrongClicked] = useState(false);
+  const [reactions, setReactions] = useState([]);
   const [numApplause, setNumApplause] = useState(0);
   const [numStrong, setNumStrong] = useState(0);
 
@@ -17,9 +29,7 @@ export default function Reactions({ postID, commentsClicked, setCommentsClicked 
     const userReactionFlex = await getUserReactions(postID, username, "FLEX");
     if (userReactionClap.length > 0) setApplauseClicked(true);
     if (userReactionFlex.length > 0) setStrongClicked(true);
-    const reactions = await getReactions(postID);
-    setNumApplause(reactions.filter((val) => val.reactionType === "CLAP").length);
-    setNumStrong(reactions.filter((val) => val.reactionType === "FLEX").length);
+    const subscription = getAndObserveReactions(postID, setReactions);
   }
 
   async function newReaction(reactionType) {
@@ -33,8 +43,21 @@ export default function Reactions({ postID, commentsClicked, setCommentsClicked 
   }
 
   useEffect(() => {
-    setup();
+    const subscription = setup();
+    // if (!subscription) return () => {};
+    return () => {
+      if (subscription && subscription.unsubscribe) {
+        subscription.unsubscribe();
+      }
+    };
   }, []);
+
+  useEffect(() => {
+    setNumApplause(
+      reactions.filter((val) => val.reactionType === "CLAP").length
+    );
+    setNumStrong(reactions.filter((val) => val.reactionType === "FLEX").length);
+  }, [reactions]);
 
   return (
     <View flexDirection="row">

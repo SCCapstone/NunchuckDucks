@@ -5,12 +5,12 @@ import PostList from "../components/PostList";
 import HomeHeader from "../components/HomeHeader/HomeHeader";
 
 export function MutualScreen() {
-  const [refresh, setRefresh] = useState(false);
+  const [refresh, setRefresh] = useState(true);
   const nav = useNavigation();
   useEffect(() => {
-    /*const focusHandler = nav.addListener("focus", () => {
+    const focusHandler = nav.addListener("focus", () => {
       setRefresh(!refresh);
-    });*/
+    });
   }, [refresh, nav]);
   return (
     

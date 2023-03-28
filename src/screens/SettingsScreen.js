@@ -1,6 +1,10 @@
 import { View, Text, TouchableOpacity, StyleSheet, Switch } from "react-native";
 import Header from "../components/Header/Header";
-import { getPostsThatShouldBeCached, getAllCachedFiles, deleteCachedFile } from "../crud/CacheOperations";
+import {
+  getPostsThatShouldBeCached,
+  getAllCachedFiles,
+  deleteCachedFile,
+} from "../crud/CacheOperations";
 import { isUserPrivate, togglePrivacy } from "../crud/UserOperations";
 import { getCurrentAuthenticatedUser } from "../library/GetAuthenticatedUser";
 import { useEffect, useState } from "react";
@@ -65,13 +69,15 @@ export function SettingsScreen({ navigation }) {
   async function getPrivacy() {
     const Privacy = await isUserPrivate(username);
     setUserPrivacy(Privacy);
-    console.log("got");
   }
   return (
     <View style={styles.container}>
       <Header title={"Settings"} />
 
-      <TouchableOpacity style={styles.deleteCacheButton} onPress={(event) => ""}>
+      <TouchableOpacity
+        style={styles.deleteCacheButton}
+        onPress={(event) => ""}
+      >
         <Text style={{ color: "#FFFFFF" }}>Delete old cache</Text>
       </TouchableOpacity>
       <Text style={styles.text}>Toggle privacy</Text>

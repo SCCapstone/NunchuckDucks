@@ -21,8 +21,10 @@ export async function createComment(content, username, postID, replyID) {
     let time = getTimeElapsed(createdAt);
     let userForNoti = await getUserByPostId(postID);
     let notiContent = username + " commented on your post from " + time;
-    await createNotification(userForNoti, date, notiContent, username);
 
+    if (userForNoti !== username)
+      await createNotification(userForNoti, date, notiContent, username);
+      
     console.log(
       `Created comment on post ${postID} by ${username} successfully.`
     );
