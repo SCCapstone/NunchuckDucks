@@ -12,7 +12,7 @@ import React from "react";
 import { Storage } from "@aws-amplify/storage";
 import { createGoal } from "../crud/GoalOperations";
 import { getDate } from "../library/getDate";
-import { refresh } from "@react-native-community/netinfo";
+
 
 Storage.configure();
 
