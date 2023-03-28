@@ -1,10 +1,8 @@
-import { View, Button, Text } from "react-native";
+import { View, Text} from "react-native";
 import { useState, useEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
 import PostList from "../components/PostList";
 import HomeHeader from "../components/HomeHeader/HomeHeader";
-import SignOutButton from "../components/signoutbutton/SignOutButton";
-import { DataStore } from "@aws-amplify/datastore";
 
 export function MutualScreen() {
   const [refresh, setRefresh] = useState(true);
@@ -14,12 +12,13 @@ export function MutualScreen() {
       setRefresh(!refresh);
     });
   }, [refresh, nav]);
-
   return (
-    <View testID="mutualScreen" style={{ marginBottom: "22%" }}>
-      <HomeHeader handlePress={() => setRefresh(!refresh)} />
-      <PostList refresh={refresh} setRefresh={setRefresh} />
-      <Text>Loading...</Text>
-    </View>
+    
+      <View testID="mutualScreen" style={{ height:"100%", backgroundColor:"white"/*,marginBottom:"22%" (i commented this out idk if it matters.*/ }}>
+        <HomeHeader handlePress={() => setRefresh(!refresh)} />
+        <PostList refresh={refresh} setRefresh={setRefresh} />
+        <Text>Loading...</Text>
+      </View>
+    
   );
 }

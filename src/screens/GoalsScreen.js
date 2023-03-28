@@ -10,6 +10,7 @@ import {
 import { useNavigation } from "@react-navigation/native";
 import Header from "../components/Header/Header";
 import CustomButton from "../components/CustomButton/CustomButton";
+import { grayThemeColor, blueThemeColor } from "../library/constants";
 import GoalMini from "../components/GoalMini/GoalMini";
 import CompletedGoalMini from "../components/CompletedGoalMini";
 import { getGoals, deleteGoal, updateGoal } from "../crud/GoalOperations";
@@ -19,7 +20,7 @@ import React from "react";
 import { Storage } from "@aws-amplify/storage";
 import { createGoal } from "../crud/GoalOperations";
 import { getDate } from "../library/getDate";
-import { refresh } from "@react-native-community/netinfo";
+
 
 Storage.configure();
 
@@ -106,8 +107,9 @@ export function GoalsScreen() {
 
   return (
     <>
-      <View>
-        <Header title={"Goals"} />
+    <View style={{backgroundColor:"white", height:"100%"}}>
+    <View>
+      <Header title={"Goals"} />
 
         <View style={styles.container}>
           <CustomButton
@@ -175,9 +177,10 @@ export function GoalsScreen() {
         />
       </View>
 
-      <ScrollView contentContainerStyle={styles.list}>
+    <ScrollView contentContainerStyle={styles.list}>
         {completedListGoals}
-      </ScrollView>
+    </ScrollView>
+    </View>
     </>
   );
 }
@@ -202,8 +205,8 @@ const styles = StyleSheet.create({
   textInput: {
     textAlign: "center",
     padding: 10,
-    borderBottomColor: "black",
-    borderWidth: 1,
+    borderColor: "black",
+    borderWidth: 2,
     margin: 12,
     borderRadius: 100,
   },
@@ -220,9 +223,9 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
     top: -50,
-    backgroundColor: "rgba(200,212,225,1)",
-    borderRightWidth: 0,
-    borderLeftWidth: 0,
+    backgroundColor: "white",
+    borderRightWidth:0,
+    borderLeftWidth:0,
     borderWidth: 2,
     borderTopWidth: 3,
     borderRightColor: "black",

@@ -48,14 +48,18 @@ export function NotificationsScreen() {
     ));
 
     return (
-        <><View>
-            <Header title={"Notifications"} />
+        <>
+        <View style={{backgroundColor:"white", height:"100%"}}>
+            <View>  
+                <Header title={"Notifications"}style={{backgroundColor:"white",}} />
+            </View>
+            <View>
+                <ScrollView contentContainerStyle={styles.scroll}>
+                    {listNotifications}
+                </ScrollView>
+            </View>
         </View>
-        <ScrollView
-            contentContainerStyle={styles.scroll}
-        >
-            {listNotifications}
-        </ScrollView></>
+        </>
     );
 }
 
