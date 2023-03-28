@@ -153,9 +153,7 @@ export function GoalsScreen() {
         </View>
       </View>:<Text></Text>}
     </View>
-    <ScrollView
-      contentContainerStyle={styles.list}
-    >
+    <ScrollView contentContainerStyle={styles.list}>
         {incompleteListGoals}
     </ScrollView>
     
@@ -166,9 +164,7 @@ export function GoalsScreen() {
           style={styles.button2} />
       </View>
 
-    <ScrollView
-      contentContainerStyle={styles.list}
-    >
+    <ScrollView contentContainerStyle={styles.list}>
         {completedListGoals}
     </ScrollView>
     </View>
