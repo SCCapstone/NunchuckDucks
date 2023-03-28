@@ -2,6 +2,7 @@ import { View, StyleSheet, ScrollView, Text, TextInput, Image, TouchableOpacity 
 import { useNavigation } from "@react-navigation/native";
 import Header from "../components/Header/Header";
 import CustomButton from "../components/CustomButton/CustomButton";
+import { grayThemeColor, blueThemeColor } from "../library/constants";
 import GoalMini from "../components/GoalMini/GoalMini";
 import CompletedGoalMini from "../components/CompletedGoalMini";
 import { getGoals, deleteGoal, updateGoal } from "../crud/GoalOperations";
@@ -103,7 +104,9 @@ export function GoalsScreen() {
   ));
 
   return (
-    <><View>
+    <>
+    <View style={{backgroundColor:"white", height:"100%"}}>
+    <View>
       <Header title={"Goals"} />
 
       <View style={styles.container}>
@@ -120,19 +123,13 @@ export function GoalsScreen() {
         <View>
           <View style={styles.headerContainer}>
             <TouchableOpacity
-              style={{
-                width: 100,
-                height: 100,
-              }}
+              style={{width: 100,height: 100,}}
               onPress={handleBlowUp}
             >
               <Image
                 source={require("../../assets/icons/Gymbit_Icons_Black/Back_Icon_Black.png")}
                 resizeMode="cover"
-                style={{
-                  width: "100%",
-                  height: "100%",
-                }}
+                style={{width: "100%",height: "100%",}}
               />
             </TouchableOpacity>
             <Text style={styles.headerText}>Create Goal</Text>
@@ -174,6 +171,7 @@ export function GoalsScreen() {
     >
         {completedListGoals}
     </ScrollView>
+    </View>
     </>
     
     
@@ -200,8 +198,8 @@ const styles = StyleSheet.create({
   textInput: {
     textAlign: "center",
     padding: 10,
-    borderBottomColor: "black",
-    borderWidth: 1,
+    borderColor: "black",
+    borderWidth: 2,
     margin: 12,
     borderRadius: 100,
   },
@@ -218,7 +216,7 @@ const styles = StyleSheet.create({
     right:0,
     bottom:0,
     top: -50,
-    backgroundColor: 'rgba(200,212,225,1)',
+    backgroundColor: "white",
     borderRightWidth:0,
     borderLeftWidth:0,
     borderWidth: 2,
