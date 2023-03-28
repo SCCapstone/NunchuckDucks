@@ -203,6 +203,7 @@ type EagerUser = {
   readonly expoToken?: string | null;
   readonly isPrivate?: boolean | null;
   readonly Notifications?: (Notification | null)[] | null;
+  readonly currentStreak?: number | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -219,6 +220,7 @@ type LazyUser = {
   readonly expoToken?: string | null;
   readonly isPrivate?: boolean | null;
   readonly Notifications: AsyncCollection<Notification>;
+  readonly currentStreak?: number | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }

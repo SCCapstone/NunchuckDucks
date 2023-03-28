@@ -630,6 +630,13 @@ export const schema = {
                         "associatedWith": "userID"
                     }
                 },
+                "currentStreak": {
+                    "name": "currentStreak",
+                    "isArray": false,
+                    "type": "Int",
+                    "isRequired": false,
+                    "attributes": []
+                },
                 "createdAt": {
                     "name": "createdAt",
                     "isArray": false,
@@ -803,5 +810,5 @@ export const schema = {
     },
     "nonModels": {},
     "codegenVersion": "3.3.5",
-    "version": "cc43ef60e234963c39a32a775eb23ac4"
+    "version": "df6f5ad2ec6df561b903b95117dca8a0"
 };

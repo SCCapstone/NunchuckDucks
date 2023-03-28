@@ -62,6 +62,7 @@ type User @model @auth(rules: [{allow: public}]) {
   expoToken: String
   isPrivate: Boolean
   Notifications: [Notification] @hasMany(indexName: "byUser", fields: ["id"])
+  currentStreak: Int
 }
 
 type Post @model @auth(rules: [{allow: public}]) {
