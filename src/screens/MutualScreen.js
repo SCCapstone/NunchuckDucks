@@ -7,12 +7,12 @@ import SignOutButton from "../components/signoutbutton/SignOutButton";
 import { DataStore } from "@aws-amplify/datastore";
 
 export function MutualScreen() {
-  const [refresh, setRefresh] = useState(false);
+  const [refresh, setRefresh] = useState(true);
   const nav = useNavigation();
   useEffect(() => {
-    /*const focusHandler = nav.addListener("focus", () => {
+    const focusHandler = nav.addListener("focus", () => {
       setRefresh(!refresh);
-    });*/
+    });
   }, [refresh, nav]);
 
   return (

@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import React from "react";
 import { useNavigation } from "@react-navigation/native";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Storage } from "@aws-amplify/storage";
 import { Auth } from "aws-amplify";
 import { createGoal } from "../../crud/GoalOperations";
@@ -19,24 +19,39 @@ import getPictureFileName from "../../library/getPictureFileName";
 import { createPost } from "../../crud/PostOperations";
 import ImageSelector from "../../components/ImageSelector";
 import { DataStore } from "@aws-amplify/datastore";
+import { getNotifications } from "../../crud/NotificationOperations";
+import { getCurrentUser } from "../../crud/CacheOperations";
+import { blueThemeColor } from "../../library/constants";
 
 /**
  * Creates the header that will go above the two home screens (Mutual and Explore)
  */
 const HomeHeader = ({ handlePress }) => {
   const navigation = useNavigation();
-  const [refresh, setRefresh] = useState(false);
+  const [refresh, setRefresh] = useState(true);
   const [blowup, setBlowup] = useState(false);
   const [text, setText] = useState(""); // the caption you write
   const [workoutSelection, setWorkoutSelection] = useState([]); // array of workouts you selected
   const [image, setImage] = useState(null);
+  const [notificationCount, setNotificationCount] = useState(0);
 
   Storage.configure();
   const imageSRC = require("../../../assets/icons/Gymbit_Icons_Black/Back_Icon_Black.png");
 
   const handleBlowUp = () => {
     setBlowup(!blowup);
+    const focusHandler = nav.addListener("focus", () => {setRefresh(!refresh)})
   };
+
+  async function findNotificationCount() {
+    const username = await getCurrentUser();
+    let notifications = await getNotifications(username);
+    setNotificationCount(notifications.length);
+  }
+
+  useEffect(() => {
+    findNotificationCount();
+  }),[navigation]
 
   async function savePost() {
     await DataStore.start();
@@ -68,6 +83,9 @@ const HomeHeader = ({ handlePress }) => {
             navigation.navigate("Notifications");
           }}
         >
+          <Text
+          style={styles.counter}>
+            {notificationCount}</Text>
           <Image
             style={styles.notification}
             source={require("../../../assets/icons/Gymbit_Icons_Black/Alert_Icon_Black.png")}
@@ -284,6 +302,18 @@ const styles = StyleSheet.create({
     alignSelf: "flex-start",
     paddingLeft: 10,
     backgroundColor: "rgba(200,212,225,0.75)",
+  },
+  counter: {
+    borderRadius: 100,
+    backgroundColor: blueThemeColor,
+    width: 20,
+    textAlign: "center",
+    height: 20,
+    textAlignVertical: "center",
+    position: "absolute",
+    zIndex: 5,
+    left: 42,
+    top: 10,
   },
 });
 
