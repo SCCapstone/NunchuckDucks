@@ -98,7 +98,7 @@ export function ProfileScreen(props) {
       <View>
         <Header title={"Profile"} style={{backgroundColor:"white"}}/>
       </View>
-      <View style={{flex: 1, alignItems: "center", backgroundColor: "white", justifyContent: "center",}}>
+      <View style={{flex: 1, alignItems: "center", backgroundColor: "white", /*justifyContent: "center",*/}}>
         <ChangeBioModal modalVisible={modalVisible} setModalVisible={setModalVisible}></ChangeBioModal>
         <View style={{ paddingTop: 0, paddingBottom: 10, flexDirection: "row", alignContent: "center" }}>
           <ProfileMini onClick={() => addProfileImage()} src={profilePic} />

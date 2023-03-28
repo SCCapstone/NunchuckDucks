@@ -196,8 +196,8 @@ function WorkoutSelection(props) {
 const styles = StyleSheet.create({
   container: {
     width: "100%",
-    height: 100,
-    paddingTop: 30,
+    height: 90,
+    paddingTop: 38,
     backgroundColor: "white",
     flexDirection: "row",
   },
@@ -223,7 +223,7 @@ const styles = StyleSheet.create({
 
   logo: {
     width: 100,
-    height: 100,
+    height: 110,
     aspectRatio: 1,
   },
 
