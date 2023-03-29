@@ -5,7 +5,7 @@ import { blueThemeColor, grayThemeColor } from "../library/constants";
 import React from "react";
 import { getFollowsList } from "../crud/FollowingOperations";
 import { getFollowersList } from "../crud/FollowersOperations";
-import { getBio, updateProfilePicture } from "../crud/UserOperations";
+import { getBio, updateCurrentStreak, updateProfilePicture } from "../crud/UserOperations";
 import { findUserByUsername } from "../crud/UserOperations";
 import {
   getLastModifiedCache,
@@ -41,10 +41,11 @@ export function ProfileScreen(props) {
   // const [image, setImage] = useState(""); // the image src to be displayed
   const [profilePic, setProfilePic] = useState("");
   const [reload, setReload] = useState(false);
+  const [streak, setStreak] = useState(0);
 
   useEffect(() => {
     renderProfileInfo();
-  }, [modalVisible]);
+  }, [modalVisible, navigation]);
 
   async function renderProfileInfo() {
     let username = await getCurrentUser();
@@ -53,6 +54,9 @@ export function ProfileScreen(props) {
     //const cacheLastModifiedUri = cacheDirectory + username + "pfp.png";
     const cachedImage = await getImageFromCache(username, "pfp.png");
     setProfilePic(cachedImage);
+    let currStreak = await updateCurrentStreak(username);
+    console.log("Current streak ", currStreak);
+    setStreak(currStreak);
   }
 
   // async function getFollowerCount() {
@@ -108,6 +112,7 @@ export function ProfileScreen(props) {
       >
         <ChangeBioModal modalVisible={modalVisible} setModalVisible={setModalVisible}></ChangeBioModal>
         <View style={{ paddingTop: 0, paddingBottom: 10, flexDirection: "row", alignContent: "center" }}>
+          <Text>{streak}</Text>
           <ProfileMini onClick={() => addProfileImage()} src={profilePic} />
           <Text style={styles.username}>@{username}</Text>
         </View>

@@ -1,5 +1,5 @@
-import { DataStore } from "aws-amplify";
-import { User } from "../models";
+import { DataStore, SortDirection } from "aws-amplify";
+import { Post, User } from "../models";
 import { Storage } from "aws-amplify";
 import { getCurrentUser } from "./CacheOperations";
 
@@ -219,4 +219,101 @@ export async function togglePrivacy(username, privacy) {
   } catch(error) {
     console.error(`Error changing ${username}'s privacy status to ${privacy}`)
   }
+}
+
+export async function getCurrentStreak(username) {
+  try {
+    const userId = await getUserId(username);
+
+    const user = await DataStore.query(User, userId);
+    console.log(`Successfully retrieved current streak for ${username}`);
+
+    return user.currentStreak;
+  }catch(error) {
+    console.log("Error finding current streak ", error);
+  }
+}
+
+export async function updateCurrentStreak(username) {
+  try {
+    var currDate = new Date();
+    const userId = await getUserId(username);
+    const streak = await getCurrentStreak(username);
+    console.log("streak",streak);
+    if (streak === null) {
+      console.log("Current streak is null");
+      const original = await DataStore.query(User, userId);
+
+      await DataStore.save(
+        User.copyOf(original, (updated) => {
+          updated.currentStreak = 0;
+        })
+      );
+    }
+    else if (streak === true && currDate.getDay() === 0) {
+      const original = await DataStore.query(User, userId);
+      
+      await DataStore.save(
+        User.copyOf(original, (updated) => {
+          updated.currentStreak += 1;
+        })
+      );
+      console.log(`Successfully updated current streak of ${username}`);
+    }
+    else if (streak === false) {
+      const original = await DataStore.query(User, userId);
+
+      await DataStore.save(
+        User.copyOf(original, (updated) => {
+          updated.currentStreak = 0;
+        })
+      );
+      console.log(`Successfully updated current streak of ${username}`);
+    }
+    else {
+      console.log("No update needed");
+    }
+    const user = await DataStore.query(User, userId);
+    return user.currentStreak;
+  }catch(error) {
+    console.error("Error updating streak ", error);
+  }
+}
+
+export async function getUsersPostTimes(username) {
+  try {
+    const userId = await getUserId(username);
+
+    const posts = [];
+
+    const postList = await DataStore.query(Post, (p) => p.username.eq(username), {
+      sort: (s) => s.createdAt(SortDirection.DESCENDING),
+    });
+
+    for (let i = 0; i < postList.length; i++) {
+      posts.push(postList[i].createdAt)
+      console.log(`Created at: ${posts[i]}`);
+    }
+    return posts;
+  }catch(error) {
+    console.error("Error retrieving users own posts ", error);
+  }
+}
+
+export async function checkStreak(username) {
+  const posts = await getUsersPostTimes(username);
+  console.log(posts);
+  
+  for (let i = 0; i < 3; i++) {
+      var createdAtFormatted = posts[i].substring(0,19);
+      var currDate = new Date();
+      var dateUploaded = new Date(createdAtFormatted);
+      var diff = currDate.getTime() - dateUploaded.getTime();
+      var minutesDifference = diff / (1000 * 60);
+      var hoursDifference = Math.floor(minutesDifference / 60);
+      var daysDifference = Math.floor(hoursDifference / 24);
+      if (daysDifference >= 7) 
+        return false;
+  }
+  return true;
 }
