@@ -44,6 +44,8 @@ export function ProfileScreen(props) {
 
   useEffect(() => {
     renderProfileInfo();
+    getFollowersCount(username);
+    getFollowingCount(username);
   }, [modalVisible]);
 
   async function renderProfileInfo() {
@@ -53,6 +55,16 @@ export function ProfileScreen(props) {
     //const cacheLastModifiedUri = cacheDirectory + username + "pfp.png";
     const cachedImage = await getImageFromCache(username, "pfp.png");
     setProfilePic(cachedImage);
+  }
+
+  async function getFollowingCount(username) {
+    const followingList = await getFollowsList(username);
+    setFollowingCount(followingList.length);
+  }
+
+  async function getFollowersCount(username) {
+    const followersList = await getFollowersList(username);
+    setFollowerCount(followersList.length);
   }
 
   // async function getFollowerCount() {
@@ -104,7 +116,20 @@ export function ProfileScreen(props) {
           <ProfileMini onClick={() => addProfileImage()} src={profilePic} />
           <Text style={styles.username}>@{username}</Text>
         </View>
+        <View style={{
+          flexDirection: "row"
+        }}>
+        <View style={styles.followingContainer}>
+          <Text style={styles.followingText}>Following</Text>
+          <Text style={styles.followingNumber} onPress={() => navigation.navigate("Followers", { isFollowerPage: true })}>{followingcount}</Text>
+        </View>
+        <View style={styles.followingContainer}>
+          <Text style={styles.followingText}>Followers</Text>
+          <Text style={styles.followingNumber} onPress={() => navigation.navigate("Followers", { isFollowerPage: false })}>{followercount}</Text>
+        </View>
+        </View>
         <TouchableOpacity onPress={() => setModalVisible(true)}>
+          <Text style={styles.bioText}>Bio</Text>
           <Bio></Bio>
         </TouchableOpacity>
         {/*<Text style={styles.username}>@{username}</Text>*/}
@@ -121,13 +146,6 @@ export function ProfileScreen(props) {
     */}
           <SignOutButton />
         </View>
-
-        <View style={{ flexDirection: "row", alignContent: "center" }}>
-          <Text style={styles.followercount}>{followercount}</Text>
-          <View style={{ width: 157 }}></View>
-          <Text style={styles.followercount}>{followingcount}</Text>
-        </View>
-
         <View
           style={{
             flexDirection: "row",
@@ -135,21 +153,6 @@ export function ProfileScreen(props) {
             paddingHorizontal: 80,
           }}
         >
-          <CustomButton
-            text="Followers"
-            style={{ width: 100, borderRadius: 20 }}
-            textStyle={{ fontSize: 15, fontWeight: "700" }}
-            onClick={() => navigation.navigate("Followers", { isFollowerPage: true })}
-          ></CustomButton>
-
-          <View style={{ width: 83 }}></View>
-
-          <CustomButton
-            text="Following"
-            style={{ width: 100, borderRadius: 20 }}
-            textStyle={{ fontSize: 15, fontWeight: "700" }}
-            onClick={() => navigation.navigate("Followers", { isFollowerPage: false })}
-          ></CustomButton>
         </View>
         {/* Need for calendar style.
     <View style={{ flexdirection:"row", paddingBottom:30}}>
@@ -191,4 +194,33 @@ const styles = StyleSheet.create({
     borderColor: blueThemeColor,
     backgroundColor: grayThemeColor,
   },
+  followingContainer: {
+    width: 80,
+    height: 60,
+    backgroundColor: "white",
+    borderColor: "black",
+    borderWidth: 1,
+    minHeight: "auto",
+    flexDirection: "column",
+    alignItems: "center",
+    alignSelf: "flex-start"
+  },
+  followingText: {
+    fontSize: 11,
+    fontWeight: "bold",
+  },
+  followingNumber: {
+    fontSize: 20,
+    fontWeight: "bold",
+    paddingTop: 10,
+    color: blueThemeColor
+  },
+  bioText: {
+    fontSize: 16,
+    fontWeight: "bold",
+    alignSelf: "",
+    paddingTop: 10,
+    paddingBottom: 5,
+    paddingLeft: 10
+  }
 });
