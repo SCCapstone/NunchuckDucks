@@ -41,7 +41,7 @@ export function GoalsScreen() {
     const { attributes } = await Auth.currentAuthenticatedUser();
     let username = attributes.preferred_username;
     var date = getDate();
-    createGoal(username, date, text);
+    await createGoal(username, date, text);
     handleBlowUp();
     setForceRefresh(!forceRefresh);
   }
