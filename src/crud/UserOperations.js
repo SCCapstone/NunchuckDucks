@@ -239,7 +239,7 @@ export async function updateCurrentStreak(username) {
     var currDate = new Date();
     const userId = await getUserId(username);
     const streak = await getCurrentStreak(username);
-    console.log("streak",streak);
+    const needUpdate = await checkStreak(username);
     if (streak === null) {
       console.log("Current streak is null");
       const original = await DataStore.query(User, userId);
@@ -250,7 +250,7 @@ export async function updateCurrentStreak(username) {
         })
       );
     }
-    else if (streak === true && currDate.getDay() === 0) {
+    else if (needUpdate === true && currDate.getDay() === 0) {
       const original = await DataStore.query(User, userId);
       
       await DataStore.save(
@@ -260,7 +260,7 @@ export async function updateCurrentStreak(username) {
       );
       console.log(`Successfully updated current streak of ${username}`);
     }
-    else if (streak === false) {
+    else if (needUpdate === false) {
       const original = await DataStore.query(User, userId);
 
       await DataStore.save(
@@ -292,7 +292,6 @@ export async function getUsersPostTimes(username) {
 
     for (let i = 0; i < postList.length; i++) {
       posts.push(postList[i].createdAt)
-      console.log(`Created at: ${posts[i]}`);
     }
     return posts;
   }catch(error) {
@@ -302,7 +301,6 @@ export async function getUsersPostTimes(username) {
 
 export async function checkStreak(username) {
   const posts = await getUsersPostTimes(username);
-  console.log(posts);
   
   for (let i = 0; i < 3; i++) {
       var createdAtFormatted = posts[i].substring(0,19);
@@ -312,7 +310,7 @@ export async function checkStreak(username) {
       var minutesDifference = diff / (1000 * 60);
       var hoursDifference = Math.floor(minutesDifference / 60);
       var daysDifference = Math.floor(hoursDifference / 24);
-      if (daysDifference >= 7) 
+      if (daysDifference > 7) 
         return false;
   }
   return true;

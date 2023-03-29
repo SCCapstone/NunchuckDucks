@@ -55,7 +55,6 @@ export function ProfileScreen(props) {
     const cachedImage = await getImageFromCache(username, "pfp.png");
     setProfilePic(cachedImage);
     let currStreak = await updateCurrentStreak(username);
-    console.log("Current streak ", currStreak);
     setStreak(currStreak);
   }
 
