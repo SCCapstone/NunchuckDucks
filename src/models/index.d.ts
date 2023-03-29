@@ -1,12 +1,16 @@
 import { ModelInit, MutableModel } from "@aws-amplify/datastore";
 // @ts-ignore
-import { LazyLoading, LazyLoadingDisabled, AsyncCollection } from "@aws-amplify/datastore";
+import { LazyLoading, LazyLoadingDisabled, AsyncCollection, AsyncItem } from "@aws-amplify/datastore";
 
 export enum ReactionType {
   LIKE = "LIKE",
   LOVE = "LOVE",
   FLEX = "FLEX",
   CLAP = "CLAP"
+}
+
+type WorkoutMetaData = {
+  readOnlyFields: 'createdAt' | 'updatedAt';
 }
 
 type NotificationMetaData = {
@@ -39,6 +43,32 @@ type UserMetaData = {
 
 type PostMetaData = {
   readOnlyFields: 'createdAt' | 'updatedAt';
+}
+
+type EagerWorkout = {
+  readonly id: string;
+  readonly workoutName?: string | null;
+  readonly exercises?: (string | null)[] | null;
+  readonly userID: string;
+  readonly username: string;
+  readonly createdAt?: string | null;
+  readonly updatedAt?: string | null;
+}
+
+type LazyWorkout = {
+  readonly id: string;
+  readonly workoutName?: string | null;
+  readonly exercises?: (string | null)[] | null;
+  readonly userID: string;
+  readonly username: string;
+  readonly createdAt?: string | null;
+  readonly updatedAt?: string | null;
+}
+
+export declare type Workout = LazyLoading extends LazyLoadingDisabled ? EagerWorkout : LazyWorkout
+
+export declare const Workout: (new (init: ModelInit<Workout, WorkoutMetaData>) => Workout) & {
+  copyOf(source: Workout, mutator: (draft: MutableModel<Workout, WorkoutMetaData>) => MutableModel<Workout, WorkoutMetaData> | void): Workout;
 }
 
 type EagerNotification = {
@@ -204,6 +234,8 @@ type EagerUser = {
   readonly isPrivate?: boolean | null;
   readonly Notifications?: (Notification | null)[] | null;
   readonly currentStreak?: number | null;
+  readonly Workouts?: (Workout | null)[] | null;
+  readonly WeeklyGoal?: number | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -221,6 +253,8 @@ type LazyUser = {
   readonly isPrivate?: boolean | null;
   readonly Notifications: AsyncCollection<Notification>;
   readonly currentStreak?: number | null;
+  readonly Workouts: AsyncCollection<Workout>;
+  readonly WeeklyGoal?: number | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -239,8 +273,10 @@ type EagerPost = {
   readonly Comments?: (Comment | null)[] | null;
   readonly Reactions?: (Reaction | null)[] | null;
   readonly userID: string;
+  readonly Workout?: Workout | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
+  readonly postWorkoutId?: string | null;
 }
 
 type LazyPost = {
@@ -251,8 +287,10 @@ type LazyPost = {
   readonly Comments: AsyncCollection<Comment>;
   readonly Reactions: AsyncCollection<Reaction>;
   readonly userID: string;
+  readonly Workout: AsyncItem<Workout | undefined>;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
+  readonly postWorkoutId?: string | null;
 }
 
 export declare type Post = LazyLoading extends LazyLoadingDisabled ? EagerPost : LazyPost

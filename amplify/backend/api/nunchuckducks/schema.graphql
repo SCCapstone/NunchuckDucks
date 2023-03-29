@@ -1,3 +1,11 @@
+type Workout @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  workoutName: String
+  exercises: [AWSJSON]
+  userID: ID! @index(name: "byUser")
+  username: String!
+}
+
 type Notification @model @auth(rules: [{allow: public}]) {
   id: ID!
   username: String!
@@ -63,6 +71,8 @@ type User @model @auth(rules: [{allow: public}]) {
   isPrivate: Boolean
   Notifications: [Notification] @hasMany(indexName: "byUser", fields: ["id"])
   currentStreak: Int
+  Workouts: [Workout] @hasMany(indexName: "byUser", fields: ["id"])
+  WeeklyGoal: Int
 }
 
 type Post @model @auth(rules: [{allow: public}]) {
@@ -73,5 +83,6 @@ type Post @model @auth(rules: [{allow: public}]) {
   Comments: [Comment] @hasMany(indexName: "byPost", fields: ["id"])
   Reactions: [Reaction] @hasMany(indexName: "byPost", fields: ["id"])
   userID: ID! @index(name: "byUser")
+  Workout: Workout @hasOne
 }
  
