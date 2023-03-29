@@ -306,7 +306,7 @@ const styles = StyleSheet.create({
   },
 });
 
-function getTimeElapsed(createdAt) {
+export function getTimeElapsed(createdAt) {
   var ans = ""; // the output
   if (createdAt == undefined) {
     // Checks that createdAt exists
