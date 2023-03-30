@@ -13,12 +13,15 @@ import { createComment, getComments } from "../../crud/CommentOperations";
 import CustomButton from "../CustomButton/CustomButton";
 import CustomTextInput from "../CustomTextInput/CustomTextInput";
 import CachedImage from "../CachedImage/CachedImage";
+import Workout from "../Workout/Workout";
+import { getWorkoutById } from "../../crud/WorkoutOperations";
 
 export default function Post(props) {
   const entry = props.entry;
   const username = entry.username;
   const refresh = props.refresh;
   const photoStr = entry.photo;
+  const workoutId = entry.postWorkoutId;
   const picName = photoStr.substring(photoStr.indexOf("/") + 1);
   const [picture, setPicture] = useState(null);
   const [pfp, setPfp] = useState("");
@@ -31,6 +34,8 @@ export default function Post(props) {
   const [shortCommentDisplay, setShortCommentDisplay] = useState(true);
   const [showCommentOption, setCommentOption] = useState(false);
   const [commentText, setCommentText] = useState("");
+  const [hasWorkout, setHasWorkout] = useState(false);
+  const [workout, setWorkout] = useState(null);
 
   const handleBlowUp = () => {
     setBlowup(!blowup);
@@ -74,7 +79,17 @@ export default function Post(props) {
       console.error("Retrieving Comments in Post: ", error);
     }
   }
+  async function getWorkoutForPost() {
+    if (workoutId !== undefined && workoutId !== null) {
+      let workout = await getWorkoutById(workoutId);
+      setWorkout(workout);
+      setHasWorkout(true);
+    }
+  }
 
+  useEffect(() => {
+    getWorkoutForPost();
+  }, []);
   useEffect(() => {
     retrieveComments();
   }, [refresh]);
@@ -103,16 +118,7 @@ export default function Post(props) {
       </View>
       <Pressable onPress={handleBlowUp} style={{ backgroundColor: "rgba(30,144,255,0.5)", position: "relative" }}>
         <CachedImage username={username} picName={picName} imageStyle={{ height: 400 }} />
-        {blowup && (
-          <View style={styles.blowupmain}>
-            <View style={styles.blowupheader}>
-              <Text style={styles.blowupheader}>Today's Workout</Text>
-            </View>
-            <View>
-              <Text style={styles.blowupbody}>- {entry.caption}</Text>
-            </View>
-          </View>
-        )}
+        {blowup && hasWorkout && <Workout workout={workout} isAbsolute={true} />}
       </Pressable>
       {/*replace get time elapsed w/ actual on click utility*/}
       {/*<View style={styles.captionBox} /> Need to implement caption box as intended*/}

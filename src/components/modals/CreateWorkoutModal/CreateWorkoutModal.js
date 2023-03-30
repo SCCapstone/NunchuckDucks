@@ -1,28 +1,35 @@
 import { useEffect, useState } from "react";
-import { View, Image, Text, StyleSheet, Pressable, TouchableOpacity, Modal, TextInput, Button } from "react-native";
+import { View, Image, Text, StyleSheet, Pressable, TouchableOpacity, Modal, TextInput, Button, ScrollView } from "react-native";
 import CustomButton from "../../CustomButton";
 import { Formik, Field, Form, ErrorMessage, FieldArray } from "formik";
 import { blueThemeColor, grayThemeColor } from "../../../library/constants";
-export default function CreateWorkoutModal({ modalVisible, setModalVisible }) {
+import { Toast } from "react-native-toast-message/lib/src/Toast";
+import { getCurrentUser } from "../../../crud/CacheOperations";
+import { createWorkout } from "../../../crud/WorkoutOperations";
+import Exercise from "../../Exercise/Exercise";
+export default function CreateWorkoutModal({
+  modalVisible,
+  setModalVisible,
+  refreshWorkouts,
+  setRefreshWorkouts,
+  scrollToBottom = null,
+  setScrollToBottom = null,
+  setWorkoutSelection = null,
+}) {
   //const modalVisible = props.modalVisible;
   //const setModalVisible = props.setModalVisible;
   const [workoutTitle, setWorkoutTitle] = useState("");
-  const [setsList, addToSetsList] = useState([]);
-  const listItems = setsList.map((val) => {
-    <Exercise />;
-  });
+  //const [setsList, addToSetsList] = useState([]);
+  const [exerciseList, setExerciseList] = useState([]);
+  const [exerciseName, setExerciseName] = useState("");
+  const [exerciseNotes, setExerciseNotes] = useState("");
+  const [buttonShown, setButtonShown] = useState(true);
+  const [addNewExercise, setAddNewExercise] = useState(false);
+  const [exerciseNameNotSet, setExerciseNameNotSet] = useState(false);
   const closeModal = () => {
     setModalVisible(false);
   };
 
-  const initialValues = {
-    friends: [
-      {
-        name: "",
-        email: "",
-      },
-    ],
-  };
   /*const initialValues = {
     workout: {
       workoutname: "",
@@ -39,101 +46,109 @@ export default function CreateWorkoutModal({ modalVisible, setModalVisible }) {
       ],
     },
   };*/
+
+  function handleButtonPress() {
+    setAddNewExercise(true);
+    setButtonShown(false);
+  }
+  function handleConfirmPress() {
+    if (exerciseName.length === 0) {
+      Toast.show({
+        type: "error",
+        text1: "Please name the exercise!",
+        position: "bottom",
+        visibilityTime: 3000,
+        bottomOffset: 80,
+      });
+    } else {
+      let exercise = {
+        exerciseName: exerciseName,
+        exerciseNotes: exerciseNotes,
+      };
+
+      setExerciseList([...new Set([...exerciseList, exercise])]);
+      setExerciseName("");
+      setExerciseNotes("");
+      setButtonShown(true);
+      setAddNewExercise(false);
+    }
+  }
+  async function createNewWorkout() {
+    let currUser = await getCurrentUser();
+    let newWorkout = await createWorkout(currUser, workoutTitle, exerciseList);
+    if (scrollToBottom !== null) {
+      setScrollToBottom(true);
+    }
+    setRefreshWorkouts(!refreshWorkouts);
+    setModalVisible(false);
+  }
+
   return (
     <Modal visible={modalVisible} animationType="fade" transparent={true} onRequestClose={() => setModalVisible(false)}>
       <View style={styles.centeredView}>
         <Pressable onPress={closeModal} style={styles.transparentView} />
         <View style={styles.blowupmain}>
-          <View style={styles.blowupheader}></View>
-          <View>
-            <Formik
-              initialValues={initialValues}
-              onSubmit={async (values) => {
-                console.log(values);
-              }}
-            >
-              {({ values }) => (
-                <Form>
-                  <FieldArray name="friends">
-                    {({ insert, remove, push }) => (
-                      <View>
-                        {values.friends.length > 0 &&
-                          values.friends.map((friend, index) => (
-                            <View style={{ flexDirection: "row" }} key={index}>
-                              <View style={{ flexDirection: "column" }}>
-                                <Text>Name</Text>
-                                <Field name={`friends.${index}.name`} placeholder="Jane Doe" type="text" />
-                                <ErrorMessage name={`friends.${index}.name`} component="View" className="field-error" />
-                              </View>
-                              <View style={{ flexDirection: "column" }}>
-                                <Text>Email</Text>
-                                <Field name={`friends.${index}.email`} placeholder="jane@acme.com" type="email" />
-                                <ErrorMessage name={`friends.${index}.name`} component="View" className="field-error" />
-                              </View>
-                              <View style={{ flexDirection: "row" }}>
-                                <Button title="X" onPress={() => remove(index)}></Button>
-                              </View>
-                            </View>
-                          ))}
-                        <Button title="Add friend" onPress={() => push({ name: "", email: "" })}></Button>
-                      </View>
-                    )}
-                  </FieldArray>
-                  <Button title="Invite" type="submit"></Button>
-                </Form>
-              )}
-            </Formik>
-            {/*<Formik
-              initialValues={initialValues}
-              onSubmit={(values) => {
-                console.log(values);
-              }}
-            >
-              {({ values }) => (
-                <Form>
-                  <Field name="workout">
-                    <Field onChangeText={setWorkoutTitle} placeholder={"Name your workout"} style={styles.blowupheader} />
-                    <FieldArray name="exercises">
-                      {({ insert, remove, push }) => (
-                        <View>
-                          {values.workout.exercises.map((exercise, index) => (
-                            <Field name={"exercises." + index + ".exerciseName"} placeholder="enter exercise name" type="text" />
-                          ))}
-                        </View>
-                      )}
-                    </FieldArray>
-                  </Field>
-                </Form>
-              )}
-                          </Formik>*/}
-            {/* setsList.map( ...) */}
-            <Text style={styles.blowupbody}>- Hello</Text>
+          <View style={styles.blowupheader}>
+            <TextInput style={styles.workoutName} placeholder="Name the workout" onChangeText={setWorkoutTitle} />
           </View>
+          <ScrollView>
+            {exerciseList.map((exercise) => (
+              <Exercise exercise={exercise} />
+            ))}
+            {/*<Text style={styles.blowupbody}>- Hello</Text>*/}
+            {addNewExercise && (
+              <View>
+                <View style={styles.addExerciseContainer}>
+                  <View style={styles.addExerciseNameContainer}>
+                    <TextInput onChangeText={setExerciseName} placeholder={"Name the exercise"} style={styles.exerciseName} />
+                  </View>
+                  <View>
+                    <TextInput
+                      style={styles.exerciseNotes}
+                      onChangeText={setExerciseNotes}
+                      placeholder={"Add exercise notes (sets, reps, etc)"}
+                    />
+                  </View>
+                </View>
+                {exerciseName !== "" && exerciseNotes !== "" && <CustomButton onClick={handleConfirmPress} text="Confirm Exercise" />}
+              </View>
+            )}
+            {buttonShown && <CustomButton onClick={handleButtonPress} style={{ alignSelf: "center" }} text="Add Exercise" />}
+          </ScrollView>
         </View>
+        {exerciseList.length > 0 && workoutTitle !== "" && (
+          <CustomButton onClick={createNewWorkout} style={{ width: "100%" }} text="Create workout" />
+        )}
       </View>
     </Modal>
   );
 }
-function Exercise() {
-  const [exercise, setExercise] = useState("");
-  return (
-    <View style={styles.exerciseContainer}>
-      <View style={styles.addExerciseNameContainer}>
-        <TextInput onChangeText={setExercise} placeholder={"Name the exercise"} style={styles.exerciseName} />
-      </View>
-    </View>
-  );
-}
 
 const styles = StyleSheet.create({
-  exerciseContainer: {
+  exerciseNotes: {
+    marginLeft: 20,
+  },
+  addExerciseContainer: {
     //flex: 1,
     minHeight: 100,
     flexDirection: "column",
     //backgroundColor: "#202124",
     borderTopWidth: 5,
+    borderLeftWidth: 5,
+    borderRightWidth: 5,
     borderBottomWidth: 5,
-    width: "100%",
+    //alignItems: "center",
+    //alignSelf: "center",
+    width: "80%",
+  },
+  exerciseContainer: {
+    //flex: 1,
+    //minHeight: 100,
+    flexDirection: "column",
+    //backgroundColor: "#202124",
+    //alignItems: "center",
+    //alignSelf: "center",
+    width: "80%",
   },
   addExerciseNameContainer: {
     // flexDirection: "row",
@@ -142,6 +157,18 @@ const styles = StyleSheet.create({
     //borderColor: "black",
     //textAlign: "center",
     borderBottomWidth: 3,
+  },
+  exerciseNameContainer: {
+    height: 30,
+  },
+  workoutName: {
+    color: blueThemeColor,
+    fontSize: 35,
+    fontWeight: "bold",
+    marginTop: 2,
+    marginLeft: 10,
+    //textAlign: "center",
+    //borderBottomWidth: 3,
   },
   exerciseName: {
     color: blueThemeColor,
@@ -170,7 +197,8 @@ const styles = StyleSheet.create({
   },
   blowupmain: {
     width: "100%",
-    minHeight: 400,
+    height: 400,
+    //position: "absolute",
     //height: 400,
     //marginTop: 20,
     //position: "absolute",
@@ -183,14 +211,15 @@ const styles = StyleSheet.create({
     borderRightColor: "black",
   },
   blowupheader: {
-    height: 53,
-    marginBottom: 20,
+    height: 43,
+    marginBottom: 10,
     borderColor: "black",
     color: blueThemeColor,
-    fontSize: 35,
+    fontSize: 50,
     fontWeight: "bold",
     marginTop: 2,
     textAlign: "center",
+    alignItems: "center",
     borderBottomWidth: 3,
   },
   blowupbody: {

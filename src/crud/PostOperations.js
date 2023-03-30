@@ -11,20 +11,31 @@ import { getUserId } from "./UserOperations";
  * @param {Image} profilePicture
  * @param {String} bio
  */
-export async function createPost(caption, photo, username) {
+export async function createPost(caption, photo, username, workout) {
   try {
     const user = await getCurrentUser();
 
     const userId = await getUserId(user);
-
-    await DataStore.save(
-      new Post({
-        caption: caption,
-        photo: photo,
-        username: username,
-        userID: userId,
-      })
-    );
+    if (workout === null) {
+      await DataStore.save(
+        new Post({
+          caption: caption,
+          photo: photo,
+          username: username,
+          userID: userId,
+        })
+      );
+    } else {
+      await DataStore.save(
+        new Post({
+          caption: caption,
+          photo: photo,
+          username: username,
+          userID: userId,
+          Workout: workout,
+        })
+      );
+    }
     console.log(`Post  successfully created.`);
   } catch (error) {
     console.error("Error saving post", error);
@@ -105,8 +116,8 @@ export async function getPostsForMutualFeedFromAWS(username) {
 }
 
 export async function getUserByPostId(postId) {
-    const post = await DataStore.query(Post, postId);
-    return post.username;
+  const post = await DataStore.query(Post, postId);
+  return post.username;
 }
 
 export async function getCreatedAt(postId) {
