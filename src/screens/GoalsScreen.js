@@ -31,7 +31,7 @@ export function GoalsScreen() {
   const [completegoals, setCompleteGoals] = useState([]); //set array of all user goals
   const [forceRefresh, setForceRefresh] = useState(true); //refresh the goal list
   const [blowup, setBlowUp] = useState(false);
-  const [text, onChangeText] = React.useState(null); //Add text for the goal description
+  const [text, onChangeText] = useState(null); //Add text for the goal description
 
   const handleBlowUp = () => {
     setBlowUp(!blowup);
@@ -44,6 +44,7 @@ export function GoalsScreen() {
     createGoal(username, date, text);
     handleBlowUp();
     setForceRefresh(!forceRefresh);
+    onChangeText(null);
   }
 
   //retrieve all goals for signed in user
