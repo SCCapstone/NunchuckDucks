@@ -160,7 +160,7 @@ export async function getBio(username) {
  */
 export async function isCurrUser(username) {
   try {
-    return username === (await getCurrentUser());
+    return username.toLowerCase() === (await getCurrentUser().toLowerCase());
   } catch (error) {
     console.error(`Error checking is username is the current user.`, error);
   }
@@ -173,7 +173,8 @@ export async function isCurrUser(username) {
  */
 export async function doesUserExist(username) {
   try {
-    const user = await DataStore.query(User, (u) => u.username.eq(username));
+    username = username.toLowerCase();
+    const user = await DataStore.query(User, (u) => u.lowerUsername.eq(username));
 
     if (user[0] === undefined) console.log(`This user does not exist.`);
 
