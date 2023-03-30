@@ -99,6 +99,7 @@ export function SettingsScreen() {
 
     const weeklyGoal = await getWeeklyGoal(username);
     setGoal(weeklyGoal);
+    setText(null);
   }
 
   async function saveNewGoal() {
@@ -124,7 +125,7 @@ export function SettingsScreen() {
       />
       <Text style={styles.goalText}>Your current weekly workout goal is {goal}.  Change goal bellow</Text>
       <View style={styles.goalContainer}>
-        <TextInput style={styles.textInput} placeholder={String(goal)} value={text} onChangeText={setText} />
+        <TextInput style={styles.textInput} placeholder={"Current Goal: " + goal} value={text} onChangeText={setText} />
       </View>
       <TouchableOpacity style={styles.goalButton} onPress={saveNewGoal}>
         <Text style={{textAlign: "center", color: "white"}}>Change weekly goal</Text>
