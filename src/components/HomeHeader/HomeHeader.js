@@ -40,7 +40,7 @@ const HomeHeader = ({ handlePress }) => {
 
   const handleBlowUp = () => {
     setBlowup(!blowup);
-    const focusHandler = nav.addListener("focus", () => {setRefresh(!refresh)})
+    const focusHandler = navigation.addListener("focus", () => {setRefresh(!refresh)})
   };
 
   async function findNotificationCount() {

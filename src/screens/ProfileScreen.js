@@ -1,11 +1,11 @@
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
 import { Auth } from "aws-amplify";
 import GoalSummary from "../components/GoalSummary";
 import { blueThemeColor, grayThemeColor } from "../library/constants";
 import React from "react";
 import { getFollowsList } from "../crud/FollowingOperations";
 import { getFollowersList } from "../crud/FollowersOperations";
-import { getBio, updateCurrentStreak, updateProfilePicture } from "../crud/UserOperations";
+import { getBio, updateCurrentStreak, updateProfilePicture, getWeeklyGoal } from "../crud/UserOperations";
 import { findUserByUsername } from "../crud/UserOperations";
 import {
   getLastModifiedCache,
@@ -42,6 +42,7 @@ export function ProfileScreen(props) {
   const [profilePic, setProfilePic] = useState("");
   const [reload, setReload] = useState(false);
   const [streak, setStreak] = useState(0);
+  const [showStreak, setShowStreak] = useState(false);
 
   useEffect(() => {
     renderProfileInfo();
@@ -56,6 +57,13 @@ export function ProfileScreen(props) {
     setProfilePic(cachedImage);
     let currStreak = await updateCurrentStreak(username);
     setStreak(currStreak);
+    console.log(streak);
+    if (streak > 0) {
+      setShowStreak(true);
+    }
+    else {
+      setShowStreak(false);
+    }
   }
 
   // async function getFollowerCount() {
@@ -111,7 +119,14 @@ export function ProfileScreen(props) {
       >
         <ChangeBioModal modalVisible={modalVisible} setModalVisible={setModalVisible}></ChangeBioModal>
         <View style={{ paddingTop: 0, paddingBottom: 10, flexDirection: "row", alignContent: "center" }}>
-          <Text>{streak}</Text>
+          {showStreak ? (
+            <View>
+              <Image source={require('../../assets/icons/Gymbit_Icons_Trans/flame.png')} style={styles.flame}/>
+              <Text style={styles.streak}>{streak}</Text>
+            </View>
+            ) : (
+              <Text></Text>
+            )}
           <ProfileMini onClick={() => addProfileImage()} src={profilePic} />
           <Text style={styles.username}>@{username}</Text>
         </View>
@@ -202,4 +217,21 @@ const styles = StyleSheet.create({
     borderColor: blueThemeColor,
     backgroundColor: grayThemeColor,
   },
+  flame: {
+    zIndex: 5,
+    width: 50,
+    height: 50,
+    position: "absolute",
+    left: 55,
+    top: -25
+  },
+  streak: {
+    zIndex: 5,
+    position: "absolute",
+    top: -4,
+    color: "white",
+    left: 74,
+    fontWeight: "bold",
+    fontSize: 16,
+  }
 });

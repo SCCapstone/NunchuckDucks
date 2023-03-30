@@ -190,16 +190,13 @@ export async function doesUserExist(username) {
  */
 export async function isUserPrivate(username) {
   try {
-    const user = await DataStore.query(User, (u) => {
-      return u.username.eq(username);
-    });
+    const userId = await getUserId(username);
+    const user = await DataStore.query(User, userId);
 
-    if (!user || !user.length) return true;
-    console.log(`Found privacy statis of: ${user[0].isPrivate} for ${username} successfully.`);
-
-    return user[0].isPrivate;
-  } catch (error) {
-    console.error("Error finding user privacy status", error);
+    console.log(`Found privacy status for ${username}`);
+    return user.isPrivate;
+  }catch(error) {
+    console.error("Error finding privacy status ", error);
   }
 }
 
@@ -250,7 +247,7 @@ export async function updateCurrentStreak(username) {
         })
       );
     }
-    else if (needUpdate === true && currDate.getDay() === 0) {
+    else if (needUpdate === true && currDate.getDay() === 4) {
       const original = await DataStore.query(User, userId);
       
       await DataStore.save(
@@ -301,8 +298,11 @@ export async function getUsersPostTimes(username) {
 
 export async function checkStreak(username) {
   const posts = await getUsersPostTimes(username);
+  let goalDays = await getWeeklyGoal(username);
+  if (goalDays > posts.length)
+    return false;
   
-  for (let i = 0; i < 3; i++) {
+  for (let i = 0; i < goalDays; i++) {
       var createdAtFormatted = posts[i].substring(0,19);
       var currDate = new Date();
       var dateUploaded = new Date(createdAtFormatted);
@@ -314,4 +314,46 @@ export async function checkStreak(username) {
         return false;
   }
   return true;
+}
+
+export async function getWeeklyGoal(username) {
+  try {
+    const userId = await getUserId(username);
+
+    const user = await DataStore.query(User, userId);
+    console.log("Weekly goal: ", user.WeeklyGoal);
+    const temp = user.WeeklyGoal;
+
+    if (temp === null) {
+      const original = await DataStore.query(User, userId);
+
+      await DataStore.save(
+        User.copyOf(original, (updated) => {
+          updated.WeeklyGoal = 3;
+        })
+      );
+      console.log("Weekly goal set to default");
+    }
+
+    console.log(`Successfully retrieved weekly goal for ${username}`);
+
+    return user.WeeklyGoal;
+  }catch(error) {
+    console.error("Error getting weekly goal ", error);
+  }
+}
+
+export async function setWeeklyGoal(username, weeklyGoal) {
+  try {
+    const userId = await getUserId(username);
+    const original = await DataStore.query(User, userId);
+
+    await DataStore.save(
+      User.copyOf(original, (updated) => {
+        updated.WeeklyGoal = weeklyGoal;
+      })
+    );
+  }catch(error) {
+    console.error("Error setting new weekly goal ", error);
+  }
 }
