@@ -218,7 +218,6 @@ const styles = StyleSheet.create({
   bioText: {
     fontSize: 16,
     fontWeight: "bold",
-    alignSelf: "",
     paddingTop: 10,
     paddingBottom: 5,
     paddingLeft: 10
