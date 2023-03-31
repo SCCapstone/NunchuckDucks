@@ -38,7 +38,6 @@ export function ProfileScreen(props) {
   const [followingcount, setFollowingCount] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
   const [showMakePfp, setShowMakePfp] = useState(false);
-  // const [image, setImage] = useState(""); // the image src to be displayed
   const [profilePic, setProfilePic] = useState("");
   const [reload, setReload] = useState(false);
 
@@ -46,13 +45,11 @@ export function ProfileScreen(props) {
     renderProfileInfo();
     getFollowersCount(username);
     getFollowingCount(username);
-  }, [modalVisible]);
+  }, [modalVisible, followercount, followingcount]);
 
   async function renderProfileInfo() {
     let username = await getCurrentUser();
     setUsername(username);
-    //const cacheImageFileUri = cacheDirectory + username + "pfp.png";
-    //const cacheLastModifiedUri = cacheDirectory + username + "pfp.png";
     const cachedImage = await getImageFromCache(username, "pfp.png");
     setProfilePic(cachedImage);
   }
@@ -66,16 +63,6 @@ export function ProfileScreen(props) {
     const followersList = await getFollowersList(username);
     setFollowerCount(followersList.length);
   }
-
-  // async function getFollowerCount() {
-  //   const followercoun = await getFollowersList(username);
-  //   setFollowerCount(followercoun.length);
-  // }
-
-  // async function getFollowingCount() {
-  //   const followingcoun = await getFollowsList(username);
-  //   setFollowingCount(followingcoun.length);
-  // }
 
   const addProfileImage = async () => {
     let _image = await ImagePicker.launchImageLibraryAsync({
