@@ -25,6 +25,7 @@ type Follows @model @auth(rules: [{allow: public}]) {
   id: ID!
   username: String!
   userID: ID! @index(name: "byUser")
+  lowerUsername: String
 }
 
 type Reaction @model @auth(rules: [{allow: public}]) {
