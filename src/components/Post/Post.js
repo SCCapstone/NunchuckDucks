@@ -210,12 +210,12 @@ export default function Post(props) {
           <CustomButton onClick={onCommentSubmit} text={"Submit"} />
         )}
         {shortCommentDisplay ? commentList.slice(0, 2) : commentList}
-        {comments.length > 2 && shortCommentDisplay && (
+        {comments.length > 2 && (
           <CustomButton
             buttonType={"hyperlink"}
             isUnderlined={true}
-            onClick={() => setShortCommentDisplay(false)}
-            text={"Show More"}
+            onClick={() => setShortCommentDisplay(!shortCommentDisplay)}
+            text={`Show ${shortCommentDisplay ? "More" : "Less"}`}
             style={{ paddingBottom: 10 }}
           ></CustomButton>
         )}

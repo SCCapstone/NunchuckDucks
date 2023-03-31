@@ -195,7 +195,9 @@ export async function isUserPrivate(username) {
     });
 
     if (!user || !user.length) return true;
-    console.log(`Found privacy statis of: ${user[0].isPrivate} for ${username} successfully.`);
+    console.log(
+      `Found privacy statis of: ${user[0].isPrivate} for ${username} successfully.`
+    );
 
     return user[0].isPrivate;
   } catch (error) {
@@ -215,8 +217,26 @@ export async function togglePrivacy(username, privacy) {
       })
     );
 
-    console.log(`Successfully changed ${username}'s privacy status to ${privacy}`);
-  } catch(error) {
-    console.error(`Error changing ${username}'s privacy status to ${privacy}`)
+    console.log(
+      `Successfully changed ${username}'s privacy status to ${privacy}`
+    );
+  } catch (error) {
+    console.error(`Error changing ${username}'s privacy status to ${privacy}`);
+  }
+}
+
+/**
+ * Returns all users with a username starting with passed parameter
+ * @param {String} username
+ * @returns [User] || null
+ */
+export async function getUsersbyStartofUsername(username) {
+  try {
+    const users = await DataStore.query(User, (u) =>
+      u.username.beginsWith(username)
+    );
+    return users;
+  } catch (error) {
+    console.error(`Error getting users by start of username.`, error);
   }
 }

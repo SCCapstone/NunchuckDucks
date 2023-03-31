@@ -24,12 +24,15 @@ const GoalSummary = () => {
     };
   }, []);
 
-  const listGoals = goals.slice(0, 3).map((goal, index) => (
-    <View key={goal.id} style={styles.goaltextcontainer}>
-      <Text style={styles.goaltitle}>Goal {index + 1}: </Text>
-      <Text style={styles.goaltext}>{goal.content}</Text>
-    </View>
-  ));
+  const listGoals = goals
+    .filter((val) => !val.isCompleted)
+    .slice(0, 3)
+    .map((goal, index) => (
+      <View key={goal.id} style={styles.goaltextcontainer}>
+        <Text style={styles.goaltitle}>Goal {index + 1}: </Text>
+        <Text style={styles.goaltext}>{goal.content}</Text>
+      </View>
+    ));
 
   const defaultForNoGoals = (
     <View style={styles.goaltextcontainer}>
