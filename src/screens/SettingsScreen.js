@@ -6,7 +6,6 @@ import {
   deleteCachedFile,
   getCurrentUser
 } from "../crud/CacheOperations";
-import { isUserPrivate, togglePrivacy } from "../crud/UserOperations";
 import { isUserPrivate, togglePrivacy, getWeeklyGoal, setWeeklyGoal } from "../crud/UserOperations";
 import { getCurrentAuthenticatedUser } from "../library/GetAuthenticatedUser";
 import { useState, useEffect, useCallback } from "react";
@@ -98,7 +97,6 @@ export function SettingsScreen() {
 
   async function renderSettings() {
     let username = await getCurrentUser();
-    setUsername(username);
 
     let Privacy = await isUserPrivate(username);
     console.log("priv", Privacy);
@@ -108,6 +106,7 @@ export function SettingsScreen() {
     const weeklyGoal = await getWeeklyGoal(username);
     setGoal(weeklyGoal);
     setText(null);
+    setUsername(username);
   }
 
   async function saveNewGoal() {
