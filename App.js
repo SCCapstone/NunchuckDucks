@@ -87,7 +87,7 @@ const app = () => {
           {/* <Stack.Screen name="CreateGoal" component={CreateGoalScreen} /> */}
         </Stack.Navigator>
       </NavigationContainer>
-      <Toast style={{ zIndex: -2 }} />
+      <Toast />
     </>
   );
 };

@@ -58,12 +58,11 @@ const HomeHeader = ({ handlePress }) => {
     } else {
       setCreatePostTouched(!createPostTouched);
     }
-
-    useEffect(() => {
-      findNotificationCount();
-    }),
-      [navigation];
   };
+
+  useEffect(() => {
+    findNotificationCount();
+  }, [navigation]);
 
   const showPostUploadedToast = () => {
     Toast.show({
@@ -307,16 +306,13 @@ const styles = StyleSheet.create({
 
   blowup: {
     width: "100%",
-    width: "100%",
+    height: "100%",
     right: 0,
     bottom: 0,
     backgroundColor: "rgba(200,212,225,0.75)",
     borderRightWidth: 0,
     borderLeftWidth: 0,
-    borderLeftWidth: 0,
     borderWidth: 2,
-    borderTopWidth: 3,
-    borderRightColor: "black",
     borderTopWidth: 3,
     borderRightColor: "black",
   },

@@ -3,9 +3,6 @@ import { blueThemeColor } from "../../library/constants";
 export default function Exercise(exercise, index) {
   const name = exercise.exercise.exerciseName;
   const notes = exercise.exercise.exerciseNotes;
-  console.log("EE", exercise);
-  console.log("name", name);
-  console.log(notes);
   return (
     <View style={styles.exerciseContainer} id={index}>
       <View style={styles.exerciseNameContainer}>

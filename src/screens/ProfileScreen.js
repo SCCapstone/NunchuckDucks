@@ -33,8 +33,8 @@ export function ProfileScreen(props) {
   const setRefresh = props.setRefresh;
   const [usernameSet, setUsernameSet] = useState(false);
   const [username, setUsername] = useState("");
-  const [followercount, setFollowerCount] = useState("");
-  const [followingcount, setFollowingCount] = useState("");
+  const [followercount, setFollowerCount] = useState(0);
+  const [followingcount, setFollowingCount] = useState(0);
   const [modalVisible, setModalVisible] = useState(false);
   const [showMakePfp, setShowMakePfp] = useState(false);
   const [showPfpUploaded, setShowPfpUploaded] = useState(false);
@@ -91,29 +91,11 @@ export function ProfileScreen(props) {
   }
 
   async function getFollowersCount(username) {
+    console.log("HAYYAYY");
     const followersList = await getFollowersList(username);
+    console.log("follsList", followersList.length);
     setFollowerCount(followersList.length);
   }
-
-  async function getFollowingCount(username) {
-    const followingList = await getFollowsList(username);
-    setFollowingCount(followingList.length);
-  }
-
-  async function getFollowersCount(username) {
-    const followersList = await getFollowersList(username);
-    setFollowerCount(followersList.length);
-  }
-
-  // async function getFollowerCount() {
-  //   const followercoun = await getFollowersList(username);
-  //   setFollowerCount(followercoun.length);
-  // }
-
-  // async function getFollowingCount() {
-  //   const followingcoun = await getFollowsList(username);
-  //   setFollowingCount(followingcoun.length);
-  // }
 
   function handleProfileImageClick() {
     if (networkConnection.isConnected) {
