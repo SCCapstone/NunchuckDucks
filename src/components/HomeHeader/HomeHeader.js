@@ -40,7 +40,9 @@ const HomeHeader = ({ handlePress }) => {
 
   const handleBlowUp = () => {
     setBlowup(!blowup);
-    const focusHandler = nav.addListener("focus", () => {setRefresh(!refresh)})
+    const focusHandler = navigation.addListener("focus", () => {
+      setRefresh(!refresh);
+    });
   };
 
   async function findNotificationCount() {
@@ -51,7 +53,8 @@ const HomeHeader = ({ handlePress }) => {
 
   useEffect(() => {
     findNotificationCount();
-  }),[navigation]
+  }),
+    [navigation];
 
   async function savePost() {
     await DataStore.start();
@@ -83,9 +86,7 @@ const HomeHeader = ({ handlePress }) => {
             navigation.navigate("Notifications");
           }}
         >
-          <Text
-          style={styles.counter}>
-            {notificationCount}</Text>
+          <Text style={styles.counter}>{notificationCount}</Text>
           <Image
             style={styles.notification}
             source={require("../../../assets/icons/Gymbit_Icons_Black/Alert_Icon_Black.png")}
