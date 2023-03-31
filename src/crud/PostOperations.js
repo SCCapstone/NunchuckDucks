@@ -113,7 +113,7 @@ function dateIsInPast3Days(post) {
 
   const difference = getTime(createdAt);
 
-  if (difference > 3)
+  if (difference >= 3)
     return false;
   else
     return true;
@@ -139,7 +139,7 @@ function dateIsInPast3Days(post) {
   
 
     
-  return Math.round(daysDifference)
+  return Math.floor(daysDifference);
   }
 
 
