@@ -1,23 +1,39 @@
-import { View, Modal, StyleSheet, Pressable, Text } from "react-native";
-import React, { useState } from "react";
+import {
+  View,
+  Modal,
+  StyleSheet,
+  Pressable,
+  Text,
+  ScrollView,
+} from "react-native";
+import React, { useState, useEffect } from "react";
 import { createFollower } from "../../../crud/FollowersOperations";
-import { createFollowing } from "../../../crud/FollowingOperations";
-import { Auth } from "aws-amplify";
 
 import CustomTextInput from "../../CustomTextInput";
 import ErrorModal from "../ErrorModal/ErrorModal";
 import CustomButton from "../../CustomButton";
 import { getCurrentUser } from "../../../crud/CacheOperations";
 import { followerErrorMessage } from "../../../library/constants";
+import { getUsersbyStartofUsername } from "../../../crud/UserOperations";
+import SuggestedFollower from "../../SuggestedFollower";
 
 const AddFollowerModal = ({ modalVisible, setModalVisible }) => {
   const [addFriendValue, setAddFriendValue] = useState("");
   const [errorModal, setErrorModal] = useState(false);
+  const [suggestedUsers, setSuggestedUsers] = useState([]);
 
-  async function addNewFollower() {
+  const renderedSuggestedUsers = suggestedUsers.map((suggestedUser) => (
+    <SuggestedFollower
+      username={suggestedUser.username}
+      addNewFollower={addNewFollower}
+      key={suggestedUser.id}
+    ></SuggestedFollower>
+  ));
+
+  async function addNewFollower(desiredFollowValue) {
     try {
       const currUser = await getCurrentUser();
-      const isFollower = await createFollower(addFriendValue, currUser);
+      const isFollower = await createFollower(desiredFollowValue, currUser);
       if (!isFollower) {
         setErrorModal(true);
         setAddFriendValue("");
@@ -32,22 +48,79 @@ const AddFollowerModal = ({ modalVisible, setModalVisible }) => {
 
   const closeModal = () => {
     setAddFriendValue("");
+    setSuggestedUsers([]);
     setModalVisible(false);
   };
 
+  // Using this to reset suggestedFollowers every time the modal is opened or closed
+  // Simpler codewise than doing it in closeModal and reworking ErorrModal but will leave some tech debt
+  useEffect(() => {
+    setSuggestedUsers([]);
+    setAddFriendValue("");
+  }, [modalVisible]);
+
+  useEffect(() => {
+    let isDeprecated = false;
+    if (!addFriendValue) {
+      setSuggestedUsers([]);
+      return () => (isDeprecated = true);
+    }
+    const fetchUsers = async () => {
+      const users = await getUsersbyStartofUsername(addFriendValue);
+      if (!isDeprecated) {
+        setSuggestedUsers(users);
+      }
+    };
+    fetchUsers();
+
+    return () => (isDeprecated = true);
+  }, [addFriendValue]);
+
   return (
-    <Modal visible={modalVisible} animationType="fade" transparent={true} onRequestClose={closeModal}>
-      <Pressable onPress={closeModal} style={styles.transparentView}></Pressable>
+    <Modal
+      visible={modalVisible}
+      animationType="fade"
+      transparent={true}
+      onRequestClose={closeModal}
+    >
+      <Pressable
+        onPress={closeModal}
+        style={styles.transparentView}
+      ></Pressable>
       <View style={styles.centeredView}>
-      <ErrorModal popUpModalVisible={errorModal} setPopUpModalVisible={setErrorModal} errorMessage={followerErrorMessage} setExternalModal={setModalVisible}></ErrorModal>
+        <ErrorModal
+          popUpModalVisible={errorModal}
+          setPopUpModalVisible={setErrorModal}
+          errorMessage={followerErrorMessage}
+          setExternalModal={setModalVisible}
+        ></ErrorModal>
         <View style={styles.modalView}>
           <Text>Enter a user to follow!</Text>
-          <CustomTextInput
-            placeholder={"username..."}
-            enteredValue={addFriendValue}
-            onChangeHandler={(text) => setAddFriendValue(text)}
-          ></CustomTextInput>
-          <CustomButton buttonType={"default"} text={"Add Friend"} onClick={addNewFollower}></CustomButton>
+          <View style={styles.lowerThird}>
+            <CustomTextInput
+              placeholder={"username..."}
+              enteredValue={addFriendValue}
+              onChangeHandler={(text) => setAddFriendValue(text)}
+              customStyles={{ width: "45%" }}
+            ></CustomTextInput>
+            <CustomButton
+              buttonType={"default"}
+              text={"Follow"}
+              onClick={addNewFollower.bind(this, addFriendValue)}
+              style={{ width: "35%" }}
+            ></CustomButton>
+          </View>
+          {suggestedUsers.length === 0 && (
+            <Text style={styles.noSuggestedUsers}>No Suggested Users</Text>
+          )}
+          {suggestedUsers.length !== 0 && (
+            <ScrollView
+              style={styles.suggestionsInner}
+              contentContainerStyle={{ flexGrow: 1 }}
+            >
+              {renderedSuggestedUsers}
+            </ScrollView>
+          )}
         </View>
       </View>
     </Modal>
@@ -61,10 +134,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   modalView: {
-    width: "50%",
+    width: "65%",
     backgroundColor: "white",
     minWidth: 220,
-    minHeight: 160,
+    minHeight: 260,
     borderRadius: 15,
 
     display: "flex",
@@ -80,6 +153,34 @@ const styles = StyleSheet.create({
     height: "100%",
     backgroundColor: "rgba(52, 52, 52, 0.8)",
     zIndex: -1,
+  },
+  lowerThird: {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    width: "90%",
+  },
+  suggestions: {
+    // position: "absolute",
+    // height: 250,
+    // bottom: -230,
+    // left: 0,
+    // flex: 1,
+  },
+  suggestionsInner: {
+    // position: "absolute",
+    // left: 0,
+    // bottom: -100,
+    // flex: 1,
+    width: "100%",
+
+    // zIndex: 2,
+    height: 170,
+    maxHeight: 170,
+  },
+  noSuggestedUsers: {
+    height: 170,
   },
 });
 

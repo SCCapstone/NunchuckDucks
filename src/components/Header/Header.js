@@ -1,15 +1,21 @@
-import { Text, View, StyleSheet } from "react-native";
+import { Text, View, StyleSheet, Image, TouchableOpacity } from "react-native";
 import React from "react";
 import BackButton from "../BackButton";
 import { useNavigation } from "@react-navigation/native";
 
-const Header = ({ title, style }) => {
+const Header = ({ title, style,}) => {
   const containerStyles = { ...styles.container, ...style };
   const navigation = useNavigation();
 
   return (
     <View style={containerStyles}>
-      <Text style={styles.text}>{title}</Text>
+    
+      <TouchableOpacity style={styles.logoContainer} onPress={() => {navigation.navigate("Mutuals");}}>
+          <Image
+            style={styles.logo}
+            source={require("../../../assets/icons/Gymbit_Icons_Trans/Logo_Trans.png")}
+          />
+      </TouchableOpacity>
     </View>
   );
 };
@@ -17,21 +23,21 @@ const Header = ({ title, style }) => {
 const styles = StyleSheet.create({
   container: {
     width: "100%",
-    height: 120,
+    height: 125,
     flexDirection: "row",
     display: "flex",
     alignItems: "center",
   },
-  text: {
-    height: "100%",
-    width: "100%",
-    textAlign: "center",
-    textAlignVertical: "center",
-    fontSize: 20,
-    position: "absolute",
-    left: 0,
-    top: 0,
-    zIndex: -1,
+  logoContainer: {
+    alignItems: "center",
+    width: 100,
+    height: 50,
+    flex: 1,
+  },
+  logo: {
+    width: 100,
+    height: 110,
+    aspectRatio: 1,
   },
 });
 

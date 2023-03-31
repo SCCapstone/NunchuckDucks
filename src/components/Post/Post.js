@@ -1,11 +1,22 @@
-import { View, Image, Text, StyleSheet, Pressable, TouchableOpacity } from "react-native";
+import {
+  View,
+  Image,
+  Text,
+  StyleSheet,
+  Pressable,
+  TouchableOpacity,
+} from "react-native";
 import { useState, useEffect } from "react";
 import { Storage } from "@aws-amplify/storage";
 import Reactions from "../Reactions";
 import { blueThemeColor, grayThemeColor } from "../../library/constants";
 import ProfileMini from "../ProfileMini";
 import { useNavigation } from "@react-navigation/native";
-import { cacheImageFromAWS, getCurrentUser, getImageFromCache } from "../../crud/CacheOperations";
+import {
+  cacheImageFromAWS,
+  getCurrentUser,
+  getImageFromCache,
+} from "../../crud/CacheOperations";
 import { useNetInfo } from "@react-native-community/netinfo";
 import NonCurrUserProfileModal from "../modals/NonCurrUserProfileModal.js/NonCurrUserProfileModal";
 import Comment from "../Comment";
@@ -13,6 +24,8 @@ import { createComment, getComments } from "../../crud/CommentOperations";
 import CustomButton from "../CustomButton/CustomButton";
 import CustomTextInput from "../CustomTextInput/CustomTextInput";
 import { getCurrentAuthenticatedUser } from "../../library/GetAuthenticatedUser";
+import { getAndObserveComments } from "../../crud/observeQueries/CommentObserveQueries";
+
 
 export default function Post(props) {
   const entry = props.entry;
@@ -26,6 +39,7 @@ export default function Post(props) {
   const navigation = useNavigation();
   const networkConnection = useNetInfo();
   const [modalVisible, setModalVisible] = useState("");
+  const [allComments, setAllComments] = useState([]);
   const [comments, setComments] = useState([]);
   const [replies, setReplies] = useState(new Map());
   const [shortCommentDisplay, setShortCommentDisplay] = useState(true);
@@ -37,7 +51,14 @@ export default function Post(props) {
   };
 
   let commentList = comments.map((val) => {
-    return <Comment key={val.id} postID={entry.id} commentModel={val} replies={replies.get(val.id)} />;
+    return (
+      <Comment
+        key={val.id}
+        postID={entry.id}
+        commentModel={val}
+        replies={replies.get(val.id)}
+      />
+    );
   });
 
   async function getPictures() {
@@ -58,12 +79,21 @@ export default function Post(props) {
       //let picha = await Storage.get(photoStr);
       setPicture(picCached);
     } else {
-      console.log("Pic", picName, "for", username, "must be acquired using Storage.get");
+      console.log(
+        "Pic",
+        picName,
+        "for",
+        username,
+        "must be acquired using Storage.get"
+      );
       try {
         let picFromAWS = await Storage.get(photoStr);
         setPicture(picFromAWS);
       } catch (e) {
-        console.log("Storage.get failed; connection unavailable to render", picName);
+        console.log(
+          "Storage.get failed; connection unavailable to render",
+          picName
+        );
       }
     }
   }
@@ -77,36 +107,53 @@ export default function Post(props) {
     } catch (error) {
       console.error("Error: Could not create comment", error);
     }
-    // Add "fake" offline comment to comments to maintain UX
-    // Will need to be replaced with watching datastore at some point
     setCommentText("");
   }
 
   async function retrieveComments() {
     try {
-      const modelComments = await getComments(entry.id);
-      const topLevelComments = modelComments.filter((val) => !val.reply);
-      const replies = modelComments.filter((val) => val.reply);
-      const replyMap = new Map();
-      replies.forEach((val) => {
-        if (replyMap.has(val.reply)) {
-          const replyArrayForOneComment = replyMap.get(val.reply);
-          replyArrayForOneComment.push(val);
-        } else {
-          replyMap.set(val.reply, [val]);
-        }
-      });
-      setComments(topLevelComments);
-      setReplies(replyMap);
+      const subscription = getAndObserveComments(entry.id, setAllComments);
+      return subscription;
     } catch (error) {
       console.error("Retrieving Comments in Post: ", error);
     }
   }
 
+  async function handleUserClick(username) {
+    try {
+      if (username === await getCurrentAuthenticatedUser()) {
+        navigation.navigate("Profile");
+      } else {
+        setModalVisible(true);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
   useEffect(() => {
     getPictures();
-    retrieveComments();
+    const subscription = retrieveComments();
+    return () => {
+      if (subscription && subscription.unsubscribe) subscription.unsubscribe();
+    };
   }, [refresh]);
+
+  useEffect(() => {
+    const topLevelComments = allComments.filter((val) => !val.reply);
+    const replies = allComments.filter((val) => val.reply);
+    const replyMap = new Map();
+    replies.forEach((val) => {
+      if (replyMap.has(val.reply)) {
+        const replyArrayForOneComment = replyMap.get(val.reply);
+        replyArrayForOneComment.push(val);
+      } else {
+        replyMap.set(val.reply, [val]);
+      }
+    });
+    setComments(topLevelComments);
+    setReplies(replyMap);
+  }, [allComments]);
 
   return (
     <View style={styles.postBox}>
@@ -124,12 +171,18 @@ export default function Post(props) {
           onClick={() => setModalVisible(true)}
         />
         {/*Need to make it navigate to users specific profile*/}
-        <Text style={styles.postUsername} onPress={() => setModalVisible(true)}>
+        <Text style={styles.postUsername} onPress={() => handleUserClick(username)}>
           {username}
         </Text>
         <Text style={styles.createdAt}>{getTimeElapsed(entry.createdAt)}</Text>
       </View>
-      <Pressable onPress={handleBlowUp} style={{ backgroundColor: "rgba(30,144,255,0.5)", position: "relative" }}>
+      <Pressable
+        onPress={handleBlowUp}
+        style={{
+          backgroundColor: "rgba(30,144,255,0.5)",
+          position: "relative",
+        }}
+      >
         <Image source={{ uri: picture }} style={{ height: 400 }} />
         {blowup && (
           <View style={styles.blowupmain}>
@@ -146,7 +199,11 @@ export default function Post(props) {
       {/*<View style={styles.captionBox} /> Need to implement caption box as intended*/}
       <View name="Footer" style={styles.footer}>
         <Text>{entry.caption}</Text>
-        <Reactions postID={entry.id} commentsClicked={showCommentOption} setCommentsClicked={setCommentOption} />
+        <Reactions
+          postID={entry.id}
+          commentsClicked={showCommentOption}
+          setCommentsClicked={setCommentOption}
+        />
 
         {showCommentOption && (
           <CustomTextInput
@@ -162,14 +219,16 @@ export default function Post(props) {
             multiline={true}
           />
         )}
-        {showCommentOption && <CustomButton onClick={onCommentSubmit} text={"Submit"} />}
+        {showCommentOption && (
+          <CustomButton onClick={onCommentSubmit} text={"Submit"} />
+        )}
         {shortCommentDisplay ? commentList.slice(0, 2) : commentList}
-        {comments.length > 2 && shortCommentDisplay && (
+        {comments.length > 2 && (
           <CustomButton
             buttonType={"hyperlink"}
             isUnderlined={true}
-            onClick={() => setShortCommentDisplay(false)}
-            text={"Show More"}
+            onClick={() => setShortCommentDisplay(!shortCommentDisplay)}
+            text={`Show ${shortCommentDisplay ? "More" : "Less"}`}
             style={{ paddingBottom: 10 }}
           ></CustomButton>
         )}
@@ -247,7 +306,7 @@ const styles = StyleSheet.create({
   },
 });
 
-function getTimeElapsed(createdAt) {
+export function getTimeElapsed(createdAt) {
   var ans = ""; // the output
   if (createdAt == undefined) {
     // Checks that createdAt exists
@@ -269,15 +328,25 @@ function getTimeElapsed(createdAt) {
   if (minutesDifference < 1) {
     ans = "less than a minute ago";
   } else if (minutesDifference <= 60) {
-    ans = Math.round(minutesDifference.toString()) + ` minute${minutesDifference === 1 ? "" : "s"} ago`;
+    ans =
+      Math.round(minutesDifference.toString()) +
+      ` minute${minutesDifference === 1 ? "" : "s"} ago`;
   } else if (hoursDifference <= 24) {
-    ans = Math.round(hoursDifference.toString()) + ` hour${hoursDifference === 1 ? "" : "s"} ago`;
+    ans =
+      Math.round(hoursDifference.toString()) +
+      ` hour${hoursDifference === 1 ? "" : "s"} ago`;
   } else if (daysDifference <= 30) {
-    ans = Math.round(daysDifference.toString()) + ` day${daysDifference === 1 ? "" : "s"} ago`;
+    ans =
+      Math.round(daysDifference.toString()) +
+      ` day${daysDifference === 1 ? "" : "s"} ago`;
   } else if (monthsDifference <= 12) {
-    ans = Math.round(monthsDifference.toString()) + ` month${monthsDifference === 1 ? "" : "s"} ago`;
+    ans =
+      Math.round(monthsDifference.toString()) +
+      ` month${monthsDifference === 1 ? "" : "s"} ago`;
   } else {
-    ans = Math.round(yearsDifference.toString()) + ` year${yearsDifference === 1 ? "" : "s"} ago`;
+    ans =
+      Math.round(yearsDifference.toString()) +
+      ` year${yearsDifference === 1 ? "" : "s"} ago`;
   }
   return ans;
 }

@@ -38,7 +38,6 @@ export function ProfileScreen(props) {
   const [followingcount, setFollowingCount] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
   const [showMakePfp, setShowMakePfp] = useState(false);
-  // const [image, setImage] = useState(""); // the image src to be displayed
   const [profilePic, setProfilePic] = useState("");
   const [reload, setReload] = useState(false);
   const [streak, setStreak] = useState(0);
@@ -46,13 +45,13 @@ export function ProfileScreen(props) {
 
   useEffect(() => {
     renderProfileInfo();
-  }, [modalVisible, navigation]);
+    getFollowersCount(username);
+    getFollowingCount(username);
+  }, [modalVisible, followercount, followingcount]);
 
   async function renderProfileInfo() {
     let username = await getCurrentUser();
     setUsername(username);
-    //const cacheImageFileUri = cacheDirectory + username + "pfp.png";
-    //const cacheLastModifiedUri = cacheDirectory + username + "pfp.png";
     const cachedImage = await getImageFromCache(username, "pfp.png");
     setProfilePic(cachedImage);
     let currStreak = await updateCurrentStreak(username);
@@ -66,15 +65,15 @@ export function ProfileScreen(props) {
     }
   }
 
-  // async function getFollowerCount() {
-  //   const followercoun = await getFollowersList(username);
-  //   setFollowerCount(followercoun.length);
-  // }
+  async function getFollowingCount(username) {
+    const followingList = await getFollowsList(username);
+    setFollowingCount(followingList.length);
+  }
 
-  // async function getFollowingCount() {
-  //   const followingcoun = await getFollowsList(username);
-  //   setFollowingCount(followingcoun.length);
-  // }
+  async function getFollowersCount(username) {
+    const followersList = await getFollowersList(username);
+    setFollowerCount(followersList.length);
+  }
 
   const addProfileImage = async () => {
     let _image = await ImagePicker.launchImageLibraryAsync({
@@ -107,16 +106,9 @@ export function ProfileScreen(props) {
   return (
     <>
       <View>
-        <Header title={"Profile"} />
+        <Header title={"Profile"} style={{backgroundColor:"white"}}/>
       </View>
-      <View
-        style={{
-          flex: 1,
-          alignItems: "center",
-          backgroundColor: "white",
-          justifyContent: "center",
-        }}
-      >
+      <View style={{flex: 1, alignItems: "center", backgroundColor: "white", /*justifyContent: "center",*/}}>
         <ChangeBioModal modalVisible={modalVisible} setModalVisible={setModalVisible}></ChangeBioModal>
         <View style={{ paddingTop: 0, paddingBottom: 10, flexDirection: "row", alignContent: "center" }}>
           {showStreak ? (
@@ -130,7 +122,20 @@ export function ProfileScreen(props) {
           <ProfileMini onClick={() => addProfileImage()} src={profilePic} />
           <Text style={styles.username}>@{username}</Text>
         </View>
+        <View style={{
+          flexDirection: "row"
+        }}>
+        <View style={styles.followingContainer}>
+          <Text style={styles.followingText}>Following</Text>
+          <Text style={styles.followingNumber} onPress={() => navigation.navigate("Followers", { isFollowerPage: true })}>{followingcount}</Text>
+        </View>
+        <View style={styles.followingContainer}>
+          <Text style={styles.followingText}>Followers</Text>
+          <Text style={styles.followingNumber} onPress={() => navigation.navigate("Followers", { isFollowerPage: false })}>{followercount}</Text>
+        </View>
+        </View>
         <TouchableOpacity onPress={() => setModalVisible(true)}>
+          <Text style={styles.bioText}>Bio</Text>
           <Bio></Bio>
         </TouchableOpacity>
         {/*<Text style={styles.username}>@{username}</Text>*/}
@@ -147,13 +152,6 @@ export function ProfileScreen(props) {
     */}
           <SignOutButton />
         </View>
-
-        <View style={{ flexDirection: "row", alignContent: "center" }}>
-          <Text style={styles.followercount}>{followercount}</Text>
-          <View style={{ width: 157 }}></View>
-          <Text style={styles.followercount}>{followingcount}</Text>
-        </View>
-
         <View
           style={{
             flexDirection: "row",
@@ -161,21 +159,6 @@ export function ProfileScreen(props) {
             paddingHorizontal: 80,
           }}
         >
-          <CustomButton
-            text="Followers"
-            style={{ width: 100, borderRadius: 20 }}
-            textStyle={{ fontSize: 15, fontWeight: "700" }}
-            onClick={() => navigation.navigate("Followers", { isFollowerPage: true })}
-          ></CustomButton>
-
-          <View style={{ width: 83 }}></View>
-
-          <CustomButton
-            text="Following"
-            style={{ width: 100, borderRadius: 20 }}
-            textStyle={{ fontSize: 15, fontWeight: "700" }}
-            onClick={() => navigation.navigate("Followers", { isFollowerPage: false })}
-          ></CustomButton>
         </View>
         {/* Need for calendar style.
     <View style={{ flexdirection:"row", paddingBottom:30}}>
@@ -217,21 +200,4 @@ const styles = StyleSheet.create({
     borderColor: blueThemeColor,
     backgroundColor: grayThemeColor,
   },
-  flame: {
-    zIndex: 5,
-    width: 50,
-    height: 50,
-    position: "absolute",
-    left: 55,
-    top: -25
-  },
-  streak: {
-    zIndex: 5,
-    position: "absolute",
-    top: -4,
-    color: "white",
-    left: 74,
-    fontWeight: "bold",
-    fontSize: 16,
-  }
 });

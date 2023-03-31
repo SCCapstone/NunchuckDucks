@@ -6,26 +6,33 @@ import { getGoals } from "../../crud/GoalOperations";
 import { blueThemeColor, grayThemeColor } from "../../library/constants";
 import { getCurrentAuthenticatedUser } from "../../library/GetAuthenticatedUser";
 import { getCurrentUser } from "../../crud/CacheOperations";
+import { getAndObserveGoals } from "../../crud/observeQueries/GoalObserveQueries";
 
 const GoalSummary = () => {
   const [goals, setGoals] = useState([]);
 
   async function goalList() {
     let username = await getCurrentUser();
-    const goals = await getGoals(username);
-    setGoals(goals);
+    const subscription = getAndObserveGoals(username, setGoals);
+    return subscription;
   }
 
   useEffect(() => {
-    goalList();
+    const subscription = goalList();
+    return () => {
+      if (subscription && subscription.unsubscribe) subscription.unsubscribe();
+    };
   }, []);
 
-  const listGoals = goals.slice(0, 3).map((goal, index) => (
-    <View key={goal.id} style={styles.goaltextcontainer}>
-      <Text style={styles.goaltitle}>Goal {index + 1}: </Text>
-      <Text style={styles.goaltext}>{goal.content}</Text>
-    </View>
-  ));
+  const listGoals = goals
+    .filter((val) => !val.isCompleted)
+    .slice(0, 3)
+    .map((goal, index) => (
+      <View key={goal.id} style={styles.goaltextcontainer}>
+        <Text style={styles.goaltitle}>Goal {index + 1}: </Text>
+        <Text style={styles.goaltext}>{goal.content}</Text>
+      </View>
+    ));
 
   const defaultForNoGoals = (
     <View style={styles.goaltextcontainer}>
@@ -83,8 +90,8 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 40,
     textAlign: "center",
-    fontWeight: "bold"
-  }
+    fontWeight: "bold",
+  },
 });
 
 export default GoalSummary;
