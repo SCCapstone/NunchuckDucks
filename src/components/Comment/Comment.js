@@ -1,14 +1,18 @@
 import React, { useState, useEffect } from "react";
-import { StyleSheet, View, Text } from "react-native";
+import { StyleSheet, View, Text, Image, TouchableOpacity } from "react-native";
 import { blueThemeColor, grayThemeColor } from "../../library/constants";
 import ProfileMini from "../ProfileMini";
 import { Storage } from "@aws-amplify/storage";
 import CustomButton from "../CustomButton/CustomButton";
 import CustomTextInput from "../CustomTextInput/CustomTextInput";
-import { createComment } from "../../crud/CommentOperations";
+import { checkForDeletability, createComment } from "../../crud/CommentOperations";
 import { getCurrentUser, getImageFromCache } from "../../crud/CacheOperations";
 import NonCurrUserProfileModal from "../modals/NonCurrUserProfileModal.js/NonCurrUserProfileModal";
 import { getCurrentAuthenticatedUser } from "../../library/GetAuthenticatedUser";
+import DeleteComment from "../modals/DeleteComment";
+import ErrorModal from "../modals/ErrorModal/ErrorModal";
+
+const OptionsButton = require("../../../assets/icons/Gymbit_Icons_Black/Three_Dots_Black.png");
 
 const Comment = ({ commentModel, postID, replies, style }) => {
   const [pfp, setPfp] = useState("");
@@ -16,6 +20,9 @@ const Comment = ({ commentModel, postID, replies, style }) => {
   const [replyText, setReplyText] = useState("");
   const [repliesOpen, setRepliesOpen] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
+  const [commentModalVisible, setCommentModalVisible] = useState(false);
+  const [errorModalVisible, setErrorModalVisible]  = useState(false);
+  const errorMessage = "You do not have permission to delete this comment.";
 
   const replyUI = replies
     ?.sort((a, b) => {
@@ -53,6 +60,16 @@ const Comment = ({ commentModel, postID, replies, style }) => {
     }
   }
 
+  async function checkIfDeletable(postID, username) {
+
+    if (await checkForDeletability(postID, username))
+      {
+        setCommentModalVisible(true);
+      }
+    else
+      setErrorModalVisible(true);
+  }
+
   useEffect(() => {
     getPic();
   }, []);
@@ -79,9 +96,25 @@ const Comment = ({ commentModel, postID, replies, style }) => {
       setModalVisible={setModalVisible}
       username={commentModel?.username}
       image={pfp}></NonCurrUserProfileModal>
+      <DeleteComment
+      modalVisible={commentModalVisible}
+      setModalVisible={setCommentModalVisible}
+      commentID={commentModel.id}>
+      </DeleteComment>
+      <ErrorModal
+      popUpModalVisible={errorModalVisible}
+      setPopUpModalVisible={setErrorModalVisible}
+      errorMessage={errorMessage}
+      setExternalModal={setCommentModalVisible}
+      ></ErrorModal>
       <ProfileMini src={pfp} onClick={() => setModalVisible(true)}></ProfileMini>
       <View style={styles.rightSide}>
         <Text style={styles.username} onPress={() => setModalVisible(true)}>{commentModel?.username}</Text>
+        <View style={styles.threeDotsContainer}>
+        <TouchableOpacity onPress={() => checkIfDeletable(postID, commentModel?.username)}>
+          <Image style={styles.deleteButton} source={OptionsButton}></Image>
+        </TouchableOpacity>
+        </View>
         <Text style={styles.content}>{commentModel?.content}</Text>
         <CustomButton
           buttonType={"hyperlink"}
@@ -150,6 +183,20 @@ const styles = StyleSheet.create({
   reply: {
     width: "90%",
   },
+  threeDotsContainer: {
+    justifyContent: "space-between",
+    display: "flex",
+    flexDirection: "row"
+  },
+  deleteButton: {
+    flex: 1,
+    width: 30,
+    height: 30,
+    backgroundColor: grayThemeColor,
+    opacity: 0.6,
+    resizeMode: "center",
+    marginLeft: 250,
+  }
 });
 
 export default Comment;
