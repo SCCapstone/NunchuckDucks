@@ -13,6 +13,7 @@ import { getDate } from "../library/getDate";
 export async function createFollower(username, followerUsername) {
   try {
     if (await checkFollowRequirements(username, followerUsername)) {
+      console.log("false");
       return false;
     }
 

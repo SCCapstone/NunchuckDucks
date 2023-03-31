@@ -193,7 +193,12 @@ export async function getBio(username) {
  */
 export async function isCurrUser(username) {
   try {
-    return username.toLowerCase() === (await getCurrentUser().toLowerCase());
+    let lowerUsername = username.toLowerCase();
+    console.log("lowerUser:", lowerUsername);
+    const currUser = await getCurrentUser();
+    let lowerCurrUser = currUser.toLowerCase();
+    console.log("lowerCurrUser:", lowerCurrUser);
+    return lowerUsername === lowerCurrUser;
   } catch (error) {
     console.error(`Error checking is username is the current user.`, error);
   }
