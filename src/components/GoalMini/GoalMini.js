@@ -39,8 +39,8 @@ const styles = StyleSheet.create({
     display: "flex",
     flexDirection: "row",
     justifyContent: "space-between",
-    alignContent: "center",
     margin: 10,
+    alignItems:"center",
   },
   text: {
     textAlign: "center",

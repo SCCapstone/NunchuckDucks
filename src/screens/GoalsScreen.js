@@ -41,7 +41,7 @@ export function GoalsScreen() {
     const { attributes } = await Auth.currentAuthenticatedUser();
     let username = attributes.preferred_username;
     var date = getDate();
-    createGoal(username, date, text);
+    await createGoal(username, date, text);
     handleBlowUp();
     setForceRefresh(!forceRefresh);
     onChangeText(null);
@@ -116,7 +116,8 @@ export function GoalsScreen() {
           <CustomButton
             text="Create Goal"
             onClick={handleBlowUp}
-            style={styles.button}
+            style={styles.button1}
+            textStyle={styles.button1text}
           />
         </View>
       </View>
@@ -155,7 +156,7 @@ export function GoalsScreen() {
                 <View style={styles.miniContainer}>
                   <CustomButton
                     text="Create Goal"
-                    style={styles.button}
+                    style={styles.button0}
                     onClick={saveGoal}
                   />
                 </View>
@@ -175,6 +176,7 @@ export function GoalsScreen() {
           text="Completed Goals"
           //Onclick could be added if needed.
           style={styles.button2}
+          textStyle={styles.button2text}
         />
       </View>
 
@@ -190,13 +192,20 @@ const styles = StyleSheet.create({
   container: {
     alignItems: "center",
   },
-  button: {
-    margin: 20,
-    width: "auto",
+  button1: {
+    margin: 10,
+    width: 150,
+    fontSize:28
+  },
+  button1text:{
+    fontSize:17,
   },
   button2: {
     margin: 20,
-    width: "auto",
+    width: 170,
+  },
+  button2text:{
+    fontSize:17,
   },
   list: {
     alignItems: "center",
@@ -211,7 +220,7 @@ const styles = StyleSheet.create({
     margin: 12,
     borderRadius: 100,
   },
-  button: {
+  button0: {
     width: 100,
     margin: 10,
   },
