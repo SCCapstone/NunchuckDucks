@@ -58,7 +58,7 @@ const app = () => {
           tabBarScrollEnabled: true,
           lazy: true,
           tabBarLabelStyle: {
-            width: 120,
+            width: 125,
             height: 30,
             textAlign: "center",
             color: "black",

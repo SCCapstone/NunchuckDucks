@@ -103,6 +103,7 @@ type EagerFollowedBy = {
   readonly id: string;
   readonly username: string;
   readonly userID: string;
+  readonly lowerUsername?: string | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -111,6 +112,7 @@ type LazyFollowedBy = {
   readonly id: string;
   readonly username: string;
   readonly userID: string;
+  readonly lowerUsername?: string | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -125,6 +127,7 @@ type EagerFollows = {
   readonly id: string;
   readonly username: string;
   readonly userID: string;
+  readonly lowerUsername?: string | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -133,6 +136,7 @@ type LazyFollows = {
   readonly id: string;
   readonly username: string;
   readonly userID: string;
+  readonly lowerUsername?: string | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -236,6 +240,7 @@ type EagerUser = {
   readonly currentStreak?: number | null;
   readonly Workouts?: (Workout | null)[] | null;
   readonly WeeklyGoal?: number | null;
+  readonly lowerUsername?: string | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -255,6 +260,7 @@ type LazyUser = {
   readonly currentStreak?: number | null;
   readonly Workouts: AsyncCollection<Workout>;
   readonly WeeklyGoal?: number | null;
+  readonly lowerUsername?: string | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }

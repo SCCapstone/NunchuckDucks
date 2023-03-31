@@ -243,7 +243,7 @@ const styles = StyleSheet.create({
 
   blowup: {
     width: "100%",
-    height: "75%",
+    height: "100%",
     right: 0,
     bottom: 0,
     backgroundColor: "rgba(200,212,225,0.75)",

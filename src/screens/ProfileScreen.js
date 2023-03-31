@@ -5,7 +5,12 @@ import { blueThemeColor, grayThemeColor } from "../library/constants";
 import React from "react";
 import { getFollowsList } from "../crud/FollowingOperations";
 import { getFollowersList } from "../crud/FollowersOperations";
-import { getBio, updateCurrentStreak, updateProfilePicture, getWeeklyGoal } from "../crud/UserOperations";
+import {
+  getBio,
+  updateCurrentStreak,
+  updateProfilePicture,
+  getWeeklyGoal,
+} from "../crud/UserOperations";
 import { findUserByUsername } from "../crud/UserOperations";
 import {
   getLastModifiedCache,
@@ -47,7 +52,7 @@ export function ProfileScreen(props) {
     renderProfileInfo();
     getFollowersCount(username);
     getFollowingCount(username);
-  }, [modalVisible, followercount, followingcount]);
+  }, [modalVisible, navigation]);
 
   async function renderProfileInfo() {
     let username = await getCurrentUser();
@@ -59,8 +64,7 @@ export function ProfileScreen(props) {
     console.log(streak);
     if (streak > 0) {
       setShowStreak(true);
-    }
-    else {
+    } else {
       setShowStreak(false);
     }
   }
@@ -77,7 +81,8 @@ export function ProfileScreen(props) {
 
   const addProfileImage = async () => {
     let _image = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images /*Only allow image upload */,
+      mediaTypes:
+        ImagePicker.MediaTypeOptions.Images /*Only allow image upload */,
       allowsEditing: true /*true= pull up an editing interface after image upload */,
       aspect: [1, 1] /*1:1 image ratio, so it will be a square */,
       quality: 1 /*highest quality image possible, on a scale of 0-1 we want 1 lol */,
@@ -106,40 +111,82 @@ export function ProfileScreen(props) {
   return (
     <>
       <View>
-        <Header title={"Profile"} style={{backgroundColor:"white"}}/>
+        <Header title={"Profile"} style={{ backgroundColor: "white" }} />
       </View>
-      <View style={{flex: 1, alignItems: "center", backgroundColor: "white", /*justifyContent: "center",*/}}>
-        <ChangeBioModal modalVisible={modalVisible} setModalVisible={setModalVisible}></ChangeBioModal>
-        <View style={{ paddingTop: 0, paddingBottom: 10, flexDirection: "row", alignContent: "center" }}>
+      <View
+        style={{
+          flex: 1,
+          alignItems: "center",
+          backgroundColor: "white" /*justifyContent: "center",*/,
+        }}
+      >
+        <ChangeBioModal
+          modalVisible={modalVisible}
+          setModalVisible={setModalVisible}
+        ></ChangeBioModal>
+        <View
+          style={{
+            paddingTop: 0,
+            paddingBottom: 10,
+            flexDirection: "row",
+            alignContent: "center",
+          }}
+        >
           {showStreak ? (
             <View>
-              <Image source={require('../../assets/icons/Gymbit_Icons_Trans/flame.png')} style={styles.flame}/>
+              <Image
+                source={require("../../assets/icons/Gymbit_Icons_Trans/flame.png")}
+                style={styles.flame}
+              />
               <Text style={styles.streak}>{streak}</Text>
             </View>
-            ) : (
-              <Text></Text>
-            )}
+          ) : (
+            <Text></Text>
+          )}
           <ProfileMini onClick={() => addProfileImage()} src={profilePic} />
           <Text style={styles.username}>@{username}</Text>
         </View>
-        <View style={{
-          flexDirection: "row"
-        }}>
-        <View style={styles.followingContainer}>
-          <Text style={styles.followingText}>Following</Text>
-          <Text style={styles.followingNumber} onPress={() => navigation.navigate("Followers", { isFollowerPage: true })}>{followingcount}</Text>
-        </View>
-        <View style={styles.followingContainer}>
-          <Text style={styles.followingText}>Followers</Text>
-          <Text style={styles.followingNumber} onPress={() => navigation.navigate("Followers", { isFollowerPage: false })}>{followercount}</Text>
-        </View>
+        <View
+          style={{
+            flexDirection: "row",
+          }}
+        >
+          <View style={styles.followingContainer}>
+            <Text style={styles.followingText}>Following</Text>
+            <Text
+              style={styles.followingNumber}
+              onPress={() =>
+                navigation.navigate("Followers", { isFollowerPage: true })
+              }
+            >
+              {followingcount}
+            </Text>
+          </View>
+          <View style={styles.followingContainer}>
+            <Text style={styles.followingText}>Followers</Text>
+            <Text
+              style={styles.followingNumber}
+              onPress={() =>
+                navigation.navigate("Followers", { isFollowerPage: false })
+              }
+            >
+              {followercount}
+            </Text>
+          </View>
         </View>
         <TouchableOpacity onPress={() => setModalVisible(true)}>
           <Text style={styles.bioText}>Bio</Text>
           <Bio></Bio>
         </TouchableOpacity>
         {/*<Text style={styles.username}>@{username}</Text>*/}
-        <View style={{ flexDirection: "row", paddingTop: 15, paddingBottom: 15, maxWidth: 250 }}>
+        <View
+          style={{
+            flexDirection: "row",
+            paddingTop: 15,
+            paddingBottom: 15,
+            maxWidth: 250,
+          }}
+        >
           {/*
     <CustomButton
     text="Add Friend"
@@ -158,8 +205,7 @@ export function ProfileScreen(props) {
             paddingBottom: 30,
             paddingHorizontal: 80,
           }}
-        >
-        </View>
+        ></View>
         {/* Need for calendar style.
     <View style={{ flexdirection:"row", paddingBottom:30}}>
       
@@ -199,5 +245,33 @@ const styles = StyleSheet.create({
     borderRadius: 9,
     borderColor: blueThemeColor,
     backgroundColor: grayThemeColor,
+  },
+  followingContainer: {
+    width: 80,
+    height: 60,
+    backgroundColor: "white",
+    borderColor: "black",
+    borderWidth: 1,
+    minHeight: "auto",
+    flexDirection: "column",
+    alignItems: "center",
+    alignSelf: "flex-start",
+  },
+  followingText: {
+    fontSize: 11,
+    fontWeight: "bold",
+  },
+  followingNumber: {
+    fontSize: 20,
+    fontWeight: "bold",
+    paddingTop: 10,
+    color: blueThemeColor,
+  },
+  bioText: {
+    fontSize: 16,
+    fontWeight: "bold",
+    paddingTop: 10,
+    paddingBottom: 5,
+    paddingLeft: 10,
   },
 });
