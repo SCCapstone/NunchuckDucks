@@ -40,6 +40,8 @@ export function ProfileScreen(props) {
   const [showPfpUploaded, setShowPfpUploaded] = useState(false);
   useEffect(() => {
     renderProfileInfo();
+    getFollowersCount(username);
+    getFollowingCount(username);
   }, [modalVisible]);
 
   const showPfpUploadedToast = (usr) => {
@@ -81,6 +83,26 @@ export function ProfileScreen(props) {
     let username = await getCurrentUser();
     setUsername(username);
     setUsernameSet(true);
+  }
+
+  async function getFollowingCount(username) {
+    const followingList = await getFollowsList(username);
+    setFollowingCount(followingList.length);
+  }
+
+  async function getFollowersCount(username) {
+    const followersList = await getFollowersList(username);
+    setFollowerCount(followersList.length);
+  }
+
+  async function getFollowingCount(username) {
+    const followingList = await getFollowsList(username);
+    setFollowingCount(followingList.length);
+  }
+
+  async function getFollowersCount(username) {
+    const followersList = await getFollowersList(username);
+    setFollowerCount(followersList.length);
   }
 
   // async function getFollowerCount() {
@@ -133,16 +155,9 @@ export function ProfileScreen(props) {
   return (
     <>
       <View>
-        <Header title={"Profile"} />
+        <Header title={"Profile"} style={{ backgroundColor: "white" }} />
       </View>
-      <View
-        style={{
-          flex: 1,
-          alignItems: "center",
-          backgroundColor: "white",
-          justifyContent: "center",
-        }}
-      >
+      <View style={{ flex: 1, alignItems: "center", backgroundColor: "white", justifyContent: "center" }}>
         <ChangeBioModal modalVisible={modalVisible} setModalVisible={setModalVisible}></ChangeBioModal>
         <View style={{ paddingTop: 0, paddingBottom: 10, flexDirection: "row", alignContent: "center" }}>
           {usernameSet && (
@@ -156,7 +171,26 @@ export function ProfileScreen(props) {
           )}
           <Text style={styles.username}>@{username}</Text>
         </View>
+        <View
+          style={{
+            flexDirection: "row",
+          }}
+        >
+          <View style={styles.followingContainer}>
+            <Text style={styles.followingText}>Following</Text>
+            <Text style={styles.followingNumber} onPress={() => navigation.navigate("Followers", { isFollowerPage: true })}>
+              {followingcount}
+            </Text>
+          </View>
+          <View style={styles.followingContainer}>
+            <Text style={styles.followingText}>Followers</Text>
+            <Text style={styles.followingNumber} onPress={() => navigation.navigate("Followers", { isFollowerPage: false })}>
+              {followercount}
+            </Text>
+          </View>
+        </View>
         <TouchableOpacity onPress={() => setModalVisible(true)}>
+          <Text style={styles.bioText}>Bio</Text>
           <Bio />
         </TouchableOpacity>
         {/*<Text style={styles.username}>@{username}</Text>*/}
@@ -173,36 +207,13 @@ export function ProfileScreen(props) {
     */}
           <SignOutButton />
         </View>
-
-        <View style={{ flexDirection: "row", alignContent: "center" }}>
-          <Text style={styles.followercount}>{followercount}</Text>
-          <View style={{ width: 157 }}></View>
-          <Text style={styles.followercount}>{followingcount}</Text>
-        </View>
-
         <View
           style={{
             flexDirection: "row",
             paddingBottom: 30,
             paddingHorizontal: 80,
           }}
-        >
-          <CustomButton
-            text="Followers"
-            style={{ width: 100, borderRadius: 20 }}
-            textStyle={{ fontSize: 15, fontWeight: "700" }}
-            onClick={() => navigation.navigate("Followers", { isFollowerPage: true })}
-          ></CustomButton>
-
-          <View style={{ width: 83 }}></View>
-
-          <CustomButton
-            text="Following"
-            style={{ width: 100, borderRadius: 20 }}
-            textStyle={{ fontSize: 15, fontWeight: "700" }}
-            onClick={() => navigation.navigate("Followers", { isFollowerPage: false })}
-          ></CustomButton>
-        </View>
+        ></View>
         {/* Need for calendar style.
     <View style={{ flexdirection:"row", paddingBottom:30}}>
       
@@ -248,5 +259,33 @@ const styles = StyleSheet.create({
     borderRadius: 9,
     borderColor: blueThemeColor,
     backgroundColor: grayThemeColor,
+  },
+  followingContainer: {
+    width: 80,
+    height: 60,
+    backgroundColor: "white",
+    borderColor: "black",
+    borderWidth: 1,
+    minHeight: "auto",
+    flexDirection: "column",
+    alignItems: "center",
+    alignSelf: "flex-start",
+  },
+  followingText: {
+    fontSize: 11,
+    fontWeight: "bold",
+  },
+  followingNumber: {
+    fontSize: 20,
+    fontWeight: "bold",
+    paddingTop: 10,
+    color: blueThemeColor,
+  },
+  bioText: {
+    fontSize: 16,
+    fontWeight: "bold",
+    paddingTop: 10,
+    paddingBottom: 5,
+    paddingLeft: 10,
   },
 });

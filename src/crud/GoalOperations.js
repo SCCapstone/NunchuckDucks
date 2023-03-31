@@ -27,7 +27,6 @@ export async function createGoal(username, date, content) {
  */
 export async function getGoals(username) {
   try {
-    const userId = await getUserId(username);
     const goals = await DataStore.query(Goal, (g) => g.username.eq(username));
 
     console.log(`Successfully retrieved goals for ${username}`);

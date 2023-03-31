@@ -1,4 +1,4 @@
-import { Image, View, TouchableOpacity, StyleSheet, Touchable, Text, TextInput, ScrollView } from "react-native";
+import { Image, View, TouchableOpacity, StyleSheet, Touchable, Text, TextInput, ScrollView, Pressable } from "react-native";
 import React, { useRef } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { useState, useEffect } from "react";
@@ -17,17 +17,19 @@ import { useNetInfo } from "@react-native-community/netinfo";
 import { Toast } from "react-native-toast-message/lib/src/Toast";
 import CustomButton from "../CustomButton/CustomButton";
 import CreateWorkoutModal from "../modals/CreateWorkoutModal";
+import { getNotifications } from "../../crud/NotificationOperations";
 
 /**
  * Creates the header that will go above the two home screens (Mutual and Explore)
  */
 const HomeHeader = ({ handlePress }) => {
   const navigation = useNavigation();
-  const [refresh, setRefresh] = useState(false);
+  const [refresh, setRefresh] = useState(true);
   const [blowup, setBlowup] = useState(false);
   const [text, setText] = useState(""); // the caption you write
   const [workoutSelection, setWorkoutSelection] = useState(null); // array of workouts you selected
   const [image, setImage] = useState(null);
+  const [notificationCount, setNotificationCount] = useState(0);
   const networkConnection = useNetInfo();
   const [createPostTouched, setCreatePostTouched] = useState(false);
   const [showCreateWorkout, setShowCreateWorkout] = useState(false);
@@ -35,10 +37,20 @@ const HomeHeader = ({ handlePress }) => {
   const [scrollToBottom, setScrollToBottom] = useState(false);
 
   Storage.configure();
+  const imageSRC = require("../../../assets/icons/Gymbit_Icons_Black/Back_Icon_Black.png");
 
   const handleBlowUp = () => {
     setBlowup(!blowup);
+    const focusHandler = nav.addListener("focus", () => {
+      setRefresh(!refresh);
+    });
   };
+
+  async function findNotificationCount() {
+    const username = await getCurrentUser();
+    let notifications = await getNotifications(username);
+    setNotificationCount(notifications.length);
+  }
 
   const handleCreatePostBlowUp = () => {
     if (networkConnection.isConnected) {
@@ -46,6 +58,11 @@ const HomeHeader = ({ handlePress }) => {
     } else {
       setCreatePostTouched(!createPostTouched);
     }
+
+    useEffect(() => {
+      findNotificationCount();
+    }),
+      [navigation];
   };
 
   const showPostUploadedToast = () => {
@@ -115,6 +132,7 @@ const HomeHeader = ({ handlePress }) => {
             navigation.navigate("Notifications");
           }}
         >
+          <Text style={styles.counter}>{notificationCount}</Text>
           <Image style={styles.notification} source={require("../../../assets/icons/Gymbit_Icons_Black/Alert_Icon_Black.png")} />
         </TouchableOpacity>
 
@@ -289,13 +307,16 @@ const styles = StyleSheet.create({
 
   blowup: {
     width: "100%",
-    height: "75%",
+    width: "100%",
     right: 0,
     bottom: 0,
     backgroundColor: "rgba(200,212,225,0.75)",
     borderRightWidth: 0,
     borderLeftWidth: 0,
+    borderLeftWidth: 0,
     borderWidth: 2,
+    borderTopWidth: 3,
+    borderRightColor: "black",
     borderTopWidth: 3,
     borderRightColor: "black",
   },
@@ -358,6 +379,46 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderBottomWidth: 3,
+  },
+  backArrow: {
+    width: 60,
+    height: 60,
+    paddingBottom: 50,
+    alignSelf: "flex-start",
+    paddingLeft: 10,
+    backgroundColor: "rgba(200,212,225,0.75)",
+  },
+  counter: {
+    borderRadius: 100,
+    backgroundColor: blueThemeColor,
+    width: 20,
+    textAlign: "center",
+    height: 20,
+    textAlignVertical: "center",
+    position: "absolute",
+    zIndex: 5,
+    left: 42,
+    top: 10,
+  },
+  backArrow: {
+    width: 60,
+    height: 60,
+    paddingBottom: 50,
+    alignSelf: "flex-start",
+    paddingLeft: 10,
+    backgroundColor: "rgba(200,212,225,0.75)",
+  },
+  counter: {
+    borderRadius: 100,
+    backgroundColor: blueThemeColor,
+    width: 20,
+    textAlign: "center",
+    height: 20,
+    textAlignVertical: "center",
+    position: "absolute",
+    zIndex: 5,
+    left: 42,
+    top: 10,
   },
 });
 

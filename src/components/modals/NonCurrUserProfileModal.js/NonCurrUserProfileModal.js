@@ -51,7 +51,6 @@ const NonCurrUserProfileModal = ({ modalVisible, setModalVisible, username, imag
           flex: 1,
           alignItems: "center",
           backgroundColor: "white",
-          //   justifyContent: "top",
           paddingTop: 100,
         }}
       >
@@ -69,13 +68,19 @@ const NonCurrUserProfileModal = ({ modalVisible, setModalVisible, username, imag
           <ProfileMini username={username} />
           <Text style={styles.username}>@{username !== null ? username : ""}</Text>
         </View>
-        <View style={styles.followingContainer}>
-          <Text style={styles.followingText}>Following</Text>
-          <Text style={styles.followingText}>{followingCount}</Text>
-        </View>
-        <View style={styles.followingContainer}>
-          <Text style={styles.followingText}>Followers</Text>
-          <Text style={styles.followingText}>{followersCount}</Text>
+        <View
+          style={{
+            flexDirection: "row",
+          }}
+        >
+          <View style={styles.followingContainer}>
+            <Text style={styles.followingText}>Following</Text>
+            <Text style={styles.followingNumber}>{followingCount}</Text>
+          </View>
+          <View style={styles.followingContainer}>
+            <Text style={styles.followingText}>Followers</Text>
+            <Text style={styles.followingNumber}>{followersCount}</Text>
+          </View>
         </View>
         <Text style={styles.bioText}>Bio</Text>
         <View style={styles.bioContainer}>
@@ -99,7 +104,6 @@ const styles = StyleSheet.create({
     left: 0,
     height: "100%",
     width: "100%",
-
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
@@ -117,8 +121,9 @@ const styles = StyleSheet.create({
     paddingTop: 30,
     paddingBottom: 0,
     paddingLeft: 15,
-    fontSize: 15,
+    fontSize: 20,
     fontWeight: "bold",
+    color: "#2E8CFF",
   },
   followercount: {
     fontSize: 20,
@@ -141,7 +146,7 @@ const styles = StyleSheet.create({
     fontSize: 15,
   },
   followingContainer: {
-    width: 60,
+    width: 80,
     height: 60,
     backgroundColor: "white",
     borderColor: "black",
@@ -149,10 +154,16 @@ const styles = StyleSheet.create({
     minHeight: "auto",
     flexDirection: "column",
     alignItems: "center",
+    alignSelf: "flex-start",
   },
   followingText: {
     fontSize: 11,
     fontWeight: "bold",
+  },
+  followingNumber: {
+    fontSize: 20,
+    fontWeight: "bold",
+    paddingTop: 10,
   },
   bioText: {
     fontSize: 16,

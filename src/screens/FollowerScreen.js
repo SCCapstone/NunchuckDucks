@@ -1,7 +1,6 @@
-import { View, ScrollView, StyleSheet, Pressable } from "react-native";
+import { View, ScrollView, StyleSheet,} from "react-native";
 import { useState, useEffect, useCallback } from "react";
 import { Auth } from "aws-amplify";
-
 import { DataStore } from "aws-amplify";
 import Header from "../components/Header";
 import CustomButton from "../components/CustomButton";
@@ -105,7 +104,7 @@ const styles = StyleSheet.create({
     display: "flex",
     flexDirection: "column",
     height: "100%",
-
+    backgroundColor:"white",
     alignItems: "center",
   },
   stickyHeader: {

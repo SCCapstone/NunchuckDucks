@@ -15,6 +15,7 @@ import CustomTextInput from "../CustomTextInput/CustomTextInput";
 import CachedImage from "../CachedImage/CachedImage";
 import Workout from "../Workout/Workout";
 import { getWorkoutById } from "../../crud/WorkoutOperations";
+import { getAndObserveComments } from "../../crud/observeQueries/CommentObserveQueries";
 
 export default function Post(props) {
   const entry = props.entry;
@@ -29,6 +30,7 @@ export default function Post(props) {
   const navigation = useNavigation();
   const networkConnection = useNetInfo();
   const [modalVisible, setModalVisible] = useState("");
+  const [allComments, setAllComments] = useState([]);
   const [comments, setComments] = useState([]);
   const [replies, setReplies] = useState(new Map());
   const [shortCommentDisplay, setShortCommentDisplay] = useState(true);
@@ -42,7 +44,7 @@ export default function Post(props) {
   };
 
   let commentList = comments.map((val) => {
-    return <Comment key={val.id} postID={entry.id} commentModel={val} replies={replies.get(val.id)} refresh={refresh} />;
+    return <Comment key={val.id} postID={entry.id} commentModel={val} replies={replies.get(val.id)} />;
   });
 
   async function onCommentSubmit() {
@@ -54,31 +56,57 @@ export default function Post(props) {
     } catch (error) {
       console.error("Error: Could not create comment", error);
     }
-    // Add "fake" offline comment to comments to maintain UX
-    // Will need to be replaced with watching datastore at some point
     setCommentText("");
   }
 
   async function retrieveComments() {
     try {
-      const modelComments = await getComments(entry.id);
-      const topLevelComments = modelComments.filter((val) => !val.reply);
-      const replies = modelComments.filter((val) => val.reply);
-      const replyMap = new Map();
-      replies.forEach((val) => {
-        if (replyMap.has(val.reply)) {
-          const replyArrayForOneComment = replyMap.get(val.reply);
-          replyArrayForOneComment.push(val);
-        } else {
-          replyMap.set(val.reply, [val]);
-        }
-      });
-      setComments(topLevelComments);
-      setReplies(replyMap);
+      const subscription = getAndObserveComments(entry.id, setAllComments);
+      return subscription;
     } catch (error) {
       console.error("Retrieving Comments in Post: ", error);
     }
   }
+
+  async function handleUserClick(username) {
+    try {
+      if (username === (await getCurrentUser())) {
+        navigation.navigate("Profile");
+      } else {
+        setModalVisible(true);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  useEffect(() => {
+    const subscription = retrieveComments();
+    return () => {
+      if (subscription && subscription.unsubscribe) subscription.unsubscribe();
+    };
+  }, [refresh]);
+
+  useEffect(() => {
+    const topLevelComments = allComments.filter((val) => !val.reply);
+    const replies = allComments.filter((val) => val.reply);
+    const replyMap = new Map();
+    replies.forEach((val) => {
+      if (replyMap.has(val.reply)) {
+        const replyArrayForOneComment = replyMap.get(val.reply);
+        replyArrayForOneComment.push(val);
+      } else {
+        replyMap.set(val.reply, [val]);
+      }
+    });
+    setComments(topLevelComments);
+    setReplies(replyMap);
+  }, [allComments]);
+
+  useEffect(() => {
+    getWorkoutForPost();
+  }, []);
+
   async function getWorkoutForPost() {
     if (workoutId !== undefined && workoutId !== null) {
       let workout = await getWorkoutById(workoutId);
@@ -86,14 +114,6 @@ export default function Post(props) {
       setHasWorkout(true);
     }
   }
-
-  useEffect(() => {
-    getWorkoutForPost();
-  }, []);
-  useEffect(() => {
-    retrieveComments();
-  }, [refresh]);
-
   return (
     <View style={styles.postBox}>
       <NonCurrUserProfileModal
@@ -111,7 +131,7 @@ export default function Post(props) {
           onClick={() => setModalVisible(true)}
         />
         {/*Need to make it navigate to users specific profile*/}
-        <Text style={styles.postUsername} onPress={() => setModalVisible(true)}>
+        <Text style={styles.postUsername} onPress={() => handleUserClick(username)}>
           {username}
         </Text>
         <Text style={styles.createdAt}>{getTimeElapsed(entry.createdAt)}</Text>

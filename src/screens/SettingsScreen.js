@@ -18,6 +18,8 @@ export function SettingsScreen({ navigation }) {
     },
     container: {
       display: "flex",
+      height: "100%",
+      backgroundColor: "white",
     },
     text: {
       top: 33,
