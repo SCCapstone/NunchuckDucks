@@ -138,7 +138,7 @@ const styles = StyleSheet.create({
     borderRightWidth: 5,
     borderBottomWidth: 5,
     //alignItems: "center",
-    //alignSelf: "center",
+    alignSelf: "center",
     width: "80%",
   },
   exerciseContainer: {
