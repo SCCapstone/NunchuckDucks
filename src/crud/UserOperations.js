@@ -11,11 +11,16 @@ import { getCurrentUser } from "./CacheOperations";
  */
 export async function createUser(username, profilePicture, bio) {
   try {
+    let lowerUsername = username.toLowerCase();
     await DataStore.save(
       new User({
         username: username,
         profilePicture: profilePicture,
         bio: bio,
+        isPrivate: true,
+        currentStreak: 0,
+        WeeklyGoal: 3,
+        lowerUsername: lowerUsername
       })
     );
     console.log(`User ${username} successfully created.`);
@@ -45,7 +50,8 @@ export async function deleteUser(username) {
  */
 export async function findUserByUsername(username) {
   try {
-    const user = await DataStore.query(User, (u) => u.username.eq(username));
+    let lowerUsername = username.toLowerCase();
+    const user = await DataStore.query(User, (u) => u.lowerUsername.eq(lowerUsername));
     if (user.length === 1) return user[0];
     else {
       console.log(`Could not find ${username}`);
@@ -53,6 +59,19 @@ export async function findUserByUsername(username) {
     }
   } catch (error) {
     console.error(`Error finding ${username}`, error);
+  }
+}
+
+export async function getUserByLowerUsername(lowerUsername) {
+  try {
+    const userId = await getUserIdFromLowerUsername(lowerUsername);
+
+    const user = await DataStore.query(User, userId);
+    console.log(`Successfully found username for ${lowerUsername}`);
+
+    return user.username;
+  }catch(error) {
+    console.error("Error finding user by lowercase name ",error);
   }
 }
 
@@ -89,6 +108,20 @@ export async function getUserId(username) {
     return user[0].id;
   } catch (error) {
     console.error("Error finding user ID for", username, error);
+  }
+}
+
+export async function getUserIdFromLowerUsername(lowerUsername) {
+  try {
+    const user = await DataStore.query(User, (u) => {
+      return u.lowerUsername.eq(lowerUsername);
+    });
+
+    if (!user || !user.length) return "";
+
+    return user[0].id;
+  }catch(error) {
+    console.error("Error finding user ID for",lowerUsername, error);
   }
 }
 
@@ -173,8 +206,8 @@ export async function isCurrUser(username) {
  */
 export async function doesUserExist(username) {
   try {
-    username = username.toLowerCase();
-    const user = await DataStore.query(User, (u) => u.lowerUsername.eq(username));
+    let lowerUsername = username.toLowerCase();
+    const user = await DataStore.query(User, (u) => u.lowerUsername.eq(lowerUsername));
 
     if (user[0] === undefined) console.log(`This user does not exist.`);
 

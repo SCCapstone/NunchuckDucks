@@ -1,6 +1,6 @@
 import { DataStore } from "aws-amplify";
 import { User, Follows } from "../models";
-import { doesUserExist, getUserId, isCurrUser } from "./UserOperations";
+import { doesUserExist, getUserId, isCurrUser, getUserByLowerUsername } from "./UserOperations";
 import { createNotification } from "./NotificationOperations";
 import { getDate } from "../library/getDate";
 
@@ -17,16 +17,19 @@ export async function createFollower(username, followerUsername) {
     }
 
     const userId = await getUserId(username);
+    let lowerFollowerUsername = followerUsername.toLowerCase();
+    const displayUsername = await getUserByLowerUsername(lowerFollowerUsername);
 
     const follower = new Follows({
-      username: followerUsername,
+      username: displayUsername,
       userID: userId,
+      lowerUsername: lowerFollowerUsername,
     });
     await DataStore.save(follower);
     let date = getDate();
-    let content = followerUsername + " followed you!";
-    await createNotification(username, date, content, followerUsername);
-    console.log(`Follower ${followerUsername} of ${username} was saved successfully.`);
+    let content = displayUsername + " followed you!";
+    await createNotification(username, date, content, displayUsername);
+    console.log(`Follower ${displayUsername} of ${username} was saved successfully.`);
     return true;
   } catch (error) {
     console.error("Error saving follower.", error);
@@ -54,8 +57,9 @@ async function checkFollowRequirements(username, followerUsername) {
 async function doesFollowExist(username, followerUsername) {
   try {
     const userId = await getUserId(username);
+    let lowerFollowerUsername = followerUsername.toLowerCase();
 
-    const followerList = await DataStore.query(Follows, (f) => f.and((f) => [f.username.eq(followerUsername), f.userID.eq(userId)]));
+    const followerList = await DataStore.query(Follows, (f) => f.and((f) => [f.lowerUsername.eq(lowerFollowerUsername), f.userID.eq(userId)]));
 
     return followerList[0] !== undefined ? true : false;
   } catch (error) {
