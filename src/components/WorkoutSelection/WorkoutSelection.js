@@ -29,7 +29,6 @@ export default function WorkoutSelection({
     if (scrollToBottom === true) {
       //ScrollView.scrollToEnd
       //setWorkoutSelection(workouts[workouts.length - 1]);
-      console.log("halllo", workouts);
       setWorkoutSelection(workouts[workouts.length - 1]);
       scrollviewRef.current.scrollToEnd();
       setScrollToBottom(false);

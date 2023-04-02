@@ -1,10 +1,11 @@
 import { DataStore } from "aws-amplify";
-import { Comment } from "../models";
+import { Comment, Post } from "../models";
 import { getDate } from "../library/getDate";
 import { createNotification } from "./NotificationOperations";
 import { getCreatedAt } from "./PostOperations";
 import { getTimeElapsed } from "../library/getTimeElapsed";
 import { getUserByPostId } from "./PostOperations";
+import { getCurrentAuthenticatedUser } from "../library/GetAuthenticatedUser";
 
 export async function createComment(content, username, postID, replyID) {
   try {
@@ -33,6 +34,12 @@ export async function createComment(content, username, postID, replyID) {
   }
 }
 
+export async function deleteComment(commentsId) {
+  const comment = await DataStore.query(Comment, commentsId);
+
+  await DataStore.delete(comment);
+}
+
 export async function getComments(postID) {
   try {
     const comments = await DataStore.query(Comment, (c) => c.postID.eq(postID));
@@ -41,4 +48,14 @@ export async function getComments(postID) {
   } catch (error) {
     console.error("Error retrieving comments", error);
   }
+}
+
+export async function checkForDeletability(postID, username) {
+  const post = await DataStore.query(Post, postID);
+
+  const postUsername = post.username;
+
+  const currUsername = await getCurrentAuthenticatedUser();
+  
+  return postUsername === currUsername || username === currUsername
 }
