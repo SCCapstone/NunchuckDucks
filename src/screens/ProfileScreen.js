@@ -1,11 +1,11 @@
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
 import { Auth } from "aws-amplify";
 import GoalSummary from "../components/GoalSummary";
 import { blueThemeColor, grayThemeColor } from "../library/constants";
 import React from "react";
 import { getFollowsList } from "../crud/FollowingOperations";
 import { getFollowersList } from "../crud/FollowersOperations";
-import { getBio, updateProfilePicture } from "../crud/UserOperations";
+import { getBio, updateCurrentStreak, updateProfilePicture, getWeeklyGoal } from "../crud/UserOperations";
 import { findUserByUsername } from "../crud/UserOperations";
 import {
   getLastModifiedCache,
@@ -38,23 +38,31 @@ export function ProfileScreen(props) {
   const [followingcount, setFollowingCount] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
   const [showMakePfp, setShowMakePfp] = useState(false);
-  // const [image, setImage] = useState(""); // the image src to be displayed
   const [profilePic, setProfilePic] = useState("");
   const [reload, setReload] = useState(false);
+  const [streak, setStreak] = useState(0);
+  const [showStreak, setShowStreak] = useState(false);
 
   useEffect(() => {
     renderProfileInfo();
     getFollowersCount(username);
     getFollowingCount(username);
-  }, [modalVisible]);
+  }, [modalVisible, followercount, followingcount]);
 
   async function renderProfileInfo() {
     let username = await getCurrentUser();
     setUsername(username);
-    //const cacheImageFileUri = cacheDirectory + username + "pfp.png";
-    //const cacheLastModifiedUri = cacheDirectory + username + "pfp.png";
     const cachedImage = await getImageFromCache(username, "pfp.png");
     setProfilePic(cachedImage);
+    let currStreak = await updateCurrentStreak(username);
+    setStreak(currStreak);
+    console.log(streak);
+    if (streak > 0) {
+      setShowStreak(true);
+    }
+    else {
+      setShowStreak(false);
+    }
   }
 
   async function getFollowingCount(username) {
@@ -66,16 +74,6 @@ export function ProfileScreen(props) {
     const followersList = await getFollowersList(username);
     setFollowerCount(followersList.length);
   }
-
-  // async function getFollowerCount() {
-  //   const followercoun = await getFollowersList(username);
-  //   setFollowerCount(followercoun.length);
-  // }
-
-  // async function getFollowingCount() {
-  //   const followingcoun = await getFollowsList(username);
-  //   setFollowingCount(followingcoun.length);
-  // }
 
   const addProfileImage = async () => {
     let _image = await ImagePicker.launchImageLibraryAsync({
@@ -113,6 +111,14 @@ export function ProfileScreen(props) {
       <View style={{flex: 1, alignItems: "center", backgroundColor: "white", /*justifyContent: "center",*/}}>
         <ChangeBioModal modalVisible={modalVisible} setModalVisible={setModalVisible}></ChangeBioModal>
         <View style={{ paddingTop: 0, paddingBottom: 10, flexDirection: "row", alignContent: "center" }}>
+          {showStreak ? (
+            <View>
+              <Image source={require('../../assets/icons/Gymbit_Icons_Trans/flame.png')} style={styles.flame}/>
+              <Text style={styles.streak}>{streak}</Text>
+            </View>
+            ) : (
+              <Text></Text>
+            )}
           <ProfileMini onClick={() => addProfileImage()} src={profilePic} />
           <Text style={styles.username}>@{username}</Text>
         </View>
@@ -194,32 +200,4 @@ const styles = StyleSheet.create({
     borderColor: blueThemeColor,
     backgroundColor: grayThemeColor,
   },
-  followingContainer: {
-    width: 80,
-    height: 60,
-    backgroundColor: "white",
-    borderColor: "black",
-    borderWidth: 1,
-    minHeight: "auto",
-    flexDirection: "column",
-    alignItems: "center",
-    alignSelf: "flex-start"
-  },
-  followingText: {
-    fontSize: 11,
-    fontWeight: "bold",
-  },
-  followingNumber: {
-    fontSize: 20,
-    fontWeight: "bold",
-    paddingTop: 10,
-    color: blueThemeColor
-  },
-  bioText: {
-    fontSize: 16,
-    fontWeight: "bold",
-    paddingTop: 10,
-    paddingBottom: 5,
-    paddingLeft: 10
-  }
 });

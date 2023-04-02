@@ -1,14 +1,21 @@
 import React, { useState, useEffect } from "react";
-import { StyleSheet, View, Text } from "react-native";
+import { StyleSheet, View, Text, Image, TouchableOpacity } from "react-native";
 import { blueThemeColor, grayThemeColor } from "../../library/constants";
 import ProfileMini from "../ProfileMini";
 import { Storage } from "@aws-amplify/storage";
 import CustomButton from "../CustomButton/CustomButton";
 import CustomTextInput from "../CustomTextInput/CustomTextInput";
-import { createComment } from "../../crud/CommentOperations";
+import {
+  checkForDeletability,
+  createComment,
+} from "../../crud/CommentOperations";
 import { getCurrentUser, getImageFromCache } from "../../crud/CacheOperations";
 import NonCurrUserProfileModal from "../modals/NonCurrUserProfileModal.js/NonCurrUserProfileModal";
 import { getCurrentAuthenticatedUser } from "../../library/GetAuthenticatedUser";
+import DeleteComment from "../modals/DeleteComment";
+import ErrorModal from "../modals/ErrorModal/ErrorModal";
+
+const OptionsButton = require("../../../assets/icons/Gymbit_Icons_Black/Three_Dots_Black.png");
 
 const Comment = ({ commentModel, postID, replies, style }) => {
   const [pfp, setPfp] = useState("");
@@ -16,6 +23,9 @@ const Comment = ({ commentModel, postID, replies, style }) => {
   const [replyText, setReplyText] = useState("");
   const [repliesOpen, setRepliesOpen] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
+  const [commentModalVisible, setCommentModalVisible] = useState(false);
+  const [errorModalVisible, setErrorModalVisible] = useState(false);
+  const errorMessage = "You do not have permission to delete this comment.";
 
   const replyUI = replies
     ?.sort((a, b) => {
@@ -26,7 +36,7 @@ const Comment = ({ commentModel, postID, replies, style }) => {
       }
     })
     .map((val) => {
-      return <Comment commentModel={val} postID={postID} key={val.id} style={{ width: "90%", alignSelf: "flex-start" }} />;
+      return <Comment commentModel={val} postID={postID} key={val.id} />;
     });
 
   const showRepliesButton = (
@@ -53,6 +63,12 @@ const Comment = ({ commentModel, postID, replies, style }) => {
     }
   }
 
+  async function checkIfDeletable(postID, username) {
+    if (await checkForDeletability(postID, username)) {
+      setCommentModalVisible(true);
+    } else setErrorModalVisible(true);
+  }
+
   useEffect(() => {
     getPic();
   }, []);
@@ -75,13 +91,39 @@ const Comment = ({ commentModel, postID, replies, style }) => {
   return (
     <View style={{ ...styles.container, ...style }}>
       <NonCurrUserProfileModal
-      modalVisible={modalVisible}
-      setModalVisible={setModalVisible}
-      username={commentModel?.username}
-      image={pfp}></NonCurrUserProfileModal>
-      <ProfileMini src={pfp} onClick={() => setModalVisible(true)}></ProfileMini>
+        modalVisible={modalVisible}
+        setModalVisible={setModalVisible}
+        username={commentModel?.username}
+        image={pfp}
+      ></NonCurrUserProfileModal>
+      <DeleteComment
+        modalVisible={commentModalVisible}
+        setModalVisible={setCommentModalVisible}
+        commentID={commentModel.id}
+      ></DeleteComment>
+      <ErrorModal
+        popUpModalVisible={errorModalVisible}
+        setPopUpModalVisible={setErrorModalVisible}
+        errorMessage={errorMessage}
+        setExternalModal={setCommentModalVisible}
+      ></ErrorModal>
+      <ProfileMini
+        src={pfp}
+        onClick={() => setModalVisible(true)}
+        style={styles.leftSide}
+      ></ProfileMini>
       <View style={styles.rightSide}>
-        <Text style={styles.username} onPress={() => setModalVisible(true)}>{commentModel?.username}</Text>
+        <View style={styles.userNameAndDots}>
+          <Text style={styles.username} onPress={() => setModalVisible(true)}>
+            {commentModel?.username}
+          </Text>
+          <TouchableOpacity
+            onPress={() => checkIfDeletable(postID, commentModel?.username)}
+          >
+            <Image style={styles.deleteButton} source={OptionsButton}></Image>
+          </TouchableOpacity>
+        </View>
+
         <Text style={styles.content}>{commentModel?.content}</Text>
         <CustomButton
           buttonType={"hyperlink"}
@@ -125,7 +167,7 @@ const styles = StyleSheet.create({
     alignItems: "flex-start",
     alignSelf: "center",
 
-    width: "90%",
+    width: "100%",
     padding: 5,
     backgroundColor: grayThemeColor, // To be removed
   },
@@ -136,10 +178,13 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "flex-start",
     minWidth: "60%",
+    maxWidth: "70%",
 
+    // backgroundColor: "pink",
     marginLeft: 5,
-
-    // backgroundColor: "purple",
+  },
+  leftSide: {
+    maxWidth: "30%",
   },
   username: {
     color: blueThemeColor,
@@ -149,6 +194,21 @@ const styles = StyleSheet.create({
   },
   reply: {
     width: "90%",
+  },
+  deleteButton: {
+    flex: 1,
+    width: 30,
+    height: 30,
+    backgroundColor: grayThemeColor,
+    opacity: 0.6,
+    resizeMode: "center",
+  },
+  userNameAndDots: {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    width: "100%",
   },
 });
 
