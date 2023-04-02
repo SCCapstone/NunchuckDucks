@@ -15,7 +15,6 @@ export default function WorkoutSelection({
 }) {
   const scrollviewRef = useRef();
   useEffect(() => {
-    console.log("CURR workoutSele", workoutSelection);
     getWorkoutList();
 
     doStuff();

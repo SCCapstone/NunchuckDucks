@@ -35,9 +35,9 @@ import FastImage from "react-native-fast-image";
 /**
  * Creates the header that will go above the two home screens (Mutual and Explore)
  */
-const HomeHeader = ({ handlePress }) => {
+const HomeHeader = ({ handlePress, refresh, setRefresh }) => {
   const navigation = useNavigation();
-  const [refresh, setRefresh] = useState(true);
+  //const [refresh, setRefresh] = useState(true);
   const [blowup, setBlowup] = useState(false);
   const [text, setText] = useState(""); // the caption you write
   const [workoutSelection, setWorkoutSelection] = useState(null); // array of workouts you selected
@@ -129,7 +129,7 @@ const HomeHeader = ({ handlePress }) => {
       showPostNotUploadedToast(username);
       console.error("Error uploading file", error);
     }
-
+    setRefresh(!refresh);
     handleBlowUp();
   }
 

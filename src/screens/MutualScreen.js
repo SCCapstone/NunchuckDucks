@@ -20,7 +20,7 @@ export function MutualScreen(props) {
       testID="mutualScreen"
       style={{ height: "100%", backgroundColor: "white" /*,marginBottom:"22%" (i commented this out idk if it matters.*/ }}
     >
-      <HomeHeader handlePress={() => setRefresh(!refresh)} />
+      <HomeHeader refresh={refresh} setRefresh={setRefresh} handlePress={() => setRefresh(!refresh)} />
       <PostList refresh={refresh} setRefresh={setRefresh} />
     </View>
   );

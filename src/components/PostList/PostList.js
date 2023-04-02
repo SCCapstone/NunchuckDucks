@@ -207,7 +207,7 @@ export default function PostList(props) {
         showNotConnectedToast();
       }
     }
-    console.log("PostList refreshed");
+    //console.log("PostList refreshed");
   }, [refresh, networkConnection]);
 
   return (

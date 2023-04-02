@@ -75,8 +75,8 @@ export default function CreateWorkoutModal({
             <TextInput style={styles.workoutName} placeholder="Name the workout" onChangeText={setWorkoutTitle} />
           </View>
           <ScrollView>
-            {exerciseList.map((exercise) => (
-              <Exercise exercise={exercise} />
+            {exerciseList.map((exercise, index) => (
+              <Exercise key={index} exercise={exercise} />
             ))}
             {/*<Text style={styles.blowupbody}>- Hello</Text>*/}
             {addNewExercise && (
