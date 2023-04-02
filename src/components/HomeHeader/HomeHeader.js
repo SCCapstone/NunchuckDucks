@@ -1,13 +1,4 @@
-import {
-  Image,
-  View,
-  TouchableOpacity,
-  StyleSheet,
-  Touchable,
-  Text,
-  TextInput,
-  Pressable,
-} from "react-native";
+import { Image, View, TouchableOpacity, StyleSheet, Touchable, Text, TextInput, Pressable, Button } from "react-native";
 import React from "react";
 import { useNavigation } from "@react-navigation/native";
 import { useState, useEffect } from "react";
@@ -22,6 +13,8 @@ import { DataStore } from "@aws-amplify/datastore";
 import { getNotifications } from "../../crud/NotificationOperations";
 import { getCurrentUser } from "../../crud/CacheOperations";
 import { blueThemeColor } from "../../library/constants";
+import { Camera, CameraType } from "expo-camera";
+import CameraComponent from "../CameraComponent/CameraComponent";
 
 /**
  * Creates the header that will go above the two home screens (Mutual and Explore)
@@ -34,6 +27,7 @@ const HomeHeader = ({ handlePress }) => {
   const [workoutSelection, setWorkoutSelection] = useState([]); // array of workouts you selected
   const [image, setImage] = useState(null);
   const [notificationCount, setNotificationCount] = useState(0);
+  const [showCamera, setShowCamera] = useState(false);
 
   Storage.configure();
   const imageSRC = require("../../../assets/icons/Gymbit_Icons_Black/Back_Icon_Black.png");
@@ -87,24 +81,15 @@ const HomeHeader = ({ handlePress }) => {
           }}
         >
           <Text style={styles.counter}>{notificationCount}</Text>
-          <Image
-            style={styles.notification}
-            source={require("../../../assets/icons/Gymbit_Icons_Black/Alert_Icon_Black.png")}
-          />
+          <Image style={styles.notification} source={require("../../../assets/icons/Gymbit_Icons_Black/Alert_Icon_Black.png")} />
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.logoContainer} onPress={handlePress}>
-          <Image
-            style={styles.logo}
-            source={require("../../../assets/icons/Gymbit_Icons_Trans/Logo_Trans.png")}
-          />
+          <Image style={styles.logo} source={require("../../../assets/icons/Gymbit_Icons_Trans/Logo_Trans.png")} />
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.settingsButton} onPress={handleBlowUp}>
-          <Image
-            style={styles.settings}
-            source={require("../../../assets/icons/Gymbit_Icons_Black/Create_Post_Icon_Black.png")}
-          />
+          <Image style={styles.settings} source={require("../../../assets/icons/Gymbit_Icons_Black/Create_Post_Icon_Black.png")} />
         </TouchableOpacity>
       </View>
       <View>
@@ -116,25 +101,18 @@ const HomeHeader = ({ handlePress }) => {
               </Pressable>
               <View style={styles.header} />
               <View style={{ flexDirection: "row", flex: 1 }}>
-                <ImageSelector image={image} setImage={setImage} />
-                <WorkoutSelection
-                  workoutSelection={workoutSelection}
-                  setWorkoutSelection={setWorkoutSelection}
-                />
+                <ImageSelector image={image} setImage={setImage} setShowCamera={setShowCamera} />
+                <WorkoutSelection workoutSelection={workoutSelection} setWorkoutSelection={setWorkoutSelection} />
               </View>
               <View style={{ alignItems: "center", flex: 2 }}>
-                <TextInput
-                  style={styles.input}
-                  placeholder="Write your caption here"
-                  value={text}
-                  onChangeText={setText}
-                />
+                <TextInput style={styles.input} placeholder="Write your caption here" value={text} onChangeText={setText} />
                 <Text>{workoutSelection.join(", ")}</Text>
                 <TouchableOpacity style={styles.submit} onPress={savePost}>
                   <Text style={styles.submitText}>Post Gymbit</Text>
                 </TouchableOpacity>
               </View>
             </View>
+            {showCamera && <CameraComponent setImage={setImage} setShowCamera={setShowCamera} />}
           </View>
         ) : (
           <Text></Text>
@@ -153,39 +131,22 @@ function WorkoutSelection(props) {
   return (
     <View style={styles.workoutSelectionContainer}>
       <View style={styles.what}>
-        <Text style={{ color: "white", fontSize: 14 }}>
-          What did you do today?
-        </Text>
+        <Text style={{ color: "white", fontSize: 14 }}>What did you do today?</Text>
       </View>
       <View style={{ alignItems: "center", flex: 1 }}>
-        <TouchableOpacity
-          onPress={(event) => updateFunction("Run")}
-          style={styles.workoutSelection}
-        >
+        <TouchableOpacity onPress={(event) => updateFunction("Run")} style={styles.workoutSelection}>
           <Text>Run</Text>
         </TouchableOpacity>
-        <TouchableOpacity
-          onPress={(event) => updateFunction("Leg Day")}
-          style={styles.workoutSelection}
-        >
+        <TouchableOpacity onPress={(event) => updateFunction("Leg Day")} style={styles.workoutSelection}>
           <Text>Leg Day</Text>
         </TouchableOpacity>
-        <TouchableOpacity
-          onPress={(event) => updateFunction("Back and Biceps")}
-          style={styles.workoutSelection}
-        >
+        <TouchableOpacity onPress={(event) => updateFunction("Back and Biceps")} style={styles.workoutSelection}>
           <Text>Back and Biceps</Text>
         </TouchableOpacity>
-        <TouchableOpacity
-          onPress={(event) => updateFunction("Chest and Triceps")}
-          style={styles.workoutSelection}
-        >
+        <TouchableOpacity onPress={(event) => updateFunction("Chest and Triceps")} style={styles.workoutSelection}>
           <Text>Chest and Triceps</Text>
         </TouchableOpacity>
-        <TouchableOpacity
-          onPress={(event) => updateFunction("Bike")}
-          style={styles.workoutSelection}
-        >
+        <TouchableOpacity onPress={(event) => updateFunction("Bike")} style={styles.workoutSelection}>
           <Text>Bike</Text>
         </TouchableOpacity>
         <Text>{workoutSelection.join(", ")}</Text>
@@ -243,7 +204,7 @@ const styles = StyleSheet.create({
 
   blowup: {
     width: "100%",
-    height: "75%",
+    height: "100%",
     right: 0,
     bottom: 0,
     backgroundColor: "rgba(200,212,225,0.75)",
