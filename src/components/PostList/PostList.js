@@ -2,7 +2,11 @@ import { ScrollView, StyleSheet, Text, FlatList } from "react-native";
 import { useState, useEffect, useRef } from "react";
 import { DataStore, Predicates, SortDirection } from "@aws-amplify/datastore";
 import { Post as PostSchema } from "../../models";
-import { getPostsForMutualFeedFromAWS, getUsersFollowed, getUsersFollowedIds } from "../../crud/PostOperations";
+import {
+  getPostsForMutualFeedFromAWS,
+  getUsersFollowed,
+  getUsersFollowedIds,
+} from "../../crud/PostOperations";
 import { useNetInfo } from "@react-native-community/netinfo";
 // PostSchema, the schema above, and Post, the component below
 import Post from "../Post";
@@ -156,7 +160,10 @@ export default function PostList(props) {
     if (postsInitialCompleted === false) {
       fetchPostCache(); // will set postsInitialCompleted to true after completion
     }
-    if (networkConnection.isConnected === true && postsInitialCompleted === true) {
+    if (
+      networkConnection.isConnected === true &&
+      postsInitialCompleted === true
+    ) {
       //list.current.scrollToIndex({ index: 0 });
       cacheStuffFromAWS();
     } else {

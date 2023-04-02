@@ -210,6 +210,13 @@ export const schema = {
                     "isRequired": true,
                     "attributes": []
                 },
+                "lowerUsername": {
+                    "name": "lowerUsername",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
                 "createdAt": {
                     "name": "createdAt",
                     "isArray": false,
@@ -283,6 +290,13 @@ export const schema = {
                     "isArray": false,
                     "type": "ID",
                     "isRequired": true,
+                    "attributes": []
+                },
+                "lowerUsername": {
+                    "name": "lowerUsername",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
                     "attributes": []
                 },
                 "createdAt": {
@@ -748,6 +762,13 @@ export const schema = {
                     "isRequired": false,
                     "attributes": []
                 },
+                "lowerUsername": {
+                    "name": "lowerUsername",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
                 "createdAt": {
                     "name": "createdAt",
                     "isArray": false,
@@ -942,5 +963,5 @@ export const schema = {
     },
     "nonModels": {},
     "codegenVersion": "3.3.5",
-    "version": "e265dc9ee6f4338c7ab668eb8214d03a"
+    "version": "670ff763c6d2f3928345ecce13e9cc3e"
 };

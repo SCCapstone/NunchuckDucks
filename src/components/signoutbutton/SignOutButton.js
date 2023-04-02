@@ -12,9 +12,13 @@ import { deleteAllCache } from "../../crud/CacheOperations";
 
 const SignOutButton = () => {
   const signOut = async () => {
+    let subsCleared = false;
+    while (!subsCleared) {
+      subsCleared = await clearSubs();
+    }
+
     try {
       await DataStore.stop();
-      await DataStore.clear();
       await Auth.signOut();
     } catch (error) {
       console.error("Error signing out: ", error);
@@ -24,6 +28,16 @@ const SignOutButton = () => {
     await deleteAllCache();
     signOut();
   }
+
+  const clearSubs = async () => {
+    try {
+      await DataStore.clear();
+      return true;
+    } catch (error) {
+      console.log("Failed to clear subscriptions");
+      return false;
+    }
+  };
 
   return (
     <Pressable

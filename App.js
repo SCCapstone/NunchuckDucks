@@ -58,7 +58,7 @@ const app = () => {
           tabBarScrollEnabled: true,
           lazy: true,
           tabBarLabelStyle: {
-            width: 120,
+            width: 125,
             height: 30,
             textAlign: "center",
             color: "black",
@@ -144,7 +144,7 @@ const customTheme = {
     borderRadius: 20,
     borderWidth: 2,
     color: "#808080", //text color of user input
-    fontWeight: "480",
+    fontWeight: "500",
     fontSize: 16,
   },
   button: {

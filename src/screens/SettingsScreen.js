@@ -1,12 +1,24 @@
-import { View, Text, TouchableOpacity, StyleSheet, Switch, TextInput } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  Switch,
+  TextInput,
+} from "react-native";
 import Header from "../components/Header/Header";
 import {
   getPostsThatShouldBeCached,
   getAllCachedFiles,
   deleteCachedFile,
-  getCurrentUser
+  getCurrentUser,
 } from "../crud/CacheOperations";
-import { isUserPrivate, togglePrivacy, getWeeklyGoal, setWeeklyGoal } from "../crud/UserOperations";
+import {
+  isUserPrivate,
+  togglePrivacy,
+  getWeeklyGoal,
+  setWeeklyGoal,
+} from "../crud/UserOperations";
 import { getCurrentAuthenticatedUser } from "../library/GetAuthenticatedUser";
 import { useState, useEffect, useCallback } from "react";
 import { useNavigation } from "@react-navigation/native";
@@ -26,7 +38,7 @@ export function SettingsScreen() {
     container: {
       display: "flex",
       height: "100%",
-      backgroundColor:"white"
+      backgroundColor: "white",
     },
     text: {
       top: 33,
@@ -61,7 +73,7 @@ export function SettingsScreen() {
       left: 85,
       top: 15,
       borderRadius: 50,
-      padding: 10
+      padding: 10,
     },
   });
 
@@ -70,12 +82,17 @@ export function SettingsScreen() {
   const [privacy, setPrivacy] = useState(null);
   const [goal, setGoal] = useState(3);
   const [text, setText] = useState("");
-  const [placeHolder, setPlaceHolder] = useState("Enter new weekly workout goal here")
+  const [placeHolder, setPlaceHolder] = useState(
+    "Enter new weekly workout goal here"
+  );
   const [forceRefresh, setForceRefresh] = useState(true);
   const navigation = useNavigation();
 
   useEffect(() => {
     renderSettings();
+  }, [navigation, forceRefresh]);
+
+  useEffect(() => {
     if (privacy === true) {
       setIsEnabled(true);
     } else {
@@ -83,14 +100,14 @@ export function SettingsScreen() {
     }
   }, [navigation, privacy, forceRefresh]);
 
-  const toggleSwitch = () => {
+  const toggleSwitch = async () => {
     if (privacy === true) {
-      togglePrivacy(username, false);
-      setIsEnabled((previousState) => false);
+      await togglePrivacy(username, false);
+      // setIsEnabled((previousState) => false);
       setPrivacy(false);
     } else {
-      togglePrivacy(username, true);
-      setIsEnabled((previousState) => true);
+      await togglePrivacy(username, true);
+      // setIsEnabled((previousState) => true);
       setPrivacy(true);
     }
   };
@@ -99,9 +116,7 @@ export function SettingsScreen() {
     let username = await getCurrentUser();
 
     let Privacy = await isUserPrivate(username);
-    console.log("priv", Privacy);
     setPrivacy(Privacy);
-    console.log(privacy);
 
     const weeklyGoal = await getWeeklyGoal(username);
     setGoal(weeklyGoal);
@@ -133,12 +148,21 @@ export function SettingsScreen() {
         value={isEnabled}
         style={styles.switch}
       />
-      <Text style={styles.goalText}>Your current weekly workout goal is {goal}.  Change goal bellow</Text>
+      <Text style={styles.goalText}>
+        Your current weekly workout goal is {goal}. Change goal bellow
+      </Text>
       <View style={styles.goalContainer}>
-        <TextInput style={styles.textInput} placeholder={"Current Goal: " + goal} value={text} onChangeText={setText} />
+        <TextInput
+          style={styles.textInput}
+          placeholder={"Current Goal: " + goal}
+          value={text}
+          onChangeText={setText}
+        />
       </View>
       <TouchableOpacity style={styles.goalButton} onPress={saveNewGoal}>
-        <Text style={{textAlign: "center", color: "white"}}>Change weekly goal</Text>
+        <Text style={{ textAlign: "center", color: "white" }}>
+          Change weekly goal
+        </Text>
       </TouchableOpacity>
     </View>
   );
