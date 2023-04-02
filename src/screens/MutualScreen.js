@@ -22,7 +22,6 @@ export function MutualScreen(props) {
     >
       <HomeHeader handlePress={() => setRefresh(!refresh)} />
       <PostList refresh={refresh} setRefresh={setRefresh} />
-      <Text>Loading...</Text>
     </View>
   );
 }

@@ -65,8 +65,6 @@ export default function PostList(props) {
   }
 
   async function doOnlineOperations() {
-    console.log("Performing online operations");
-
     // Username not cached; cache username
     let usernameFromAWS = "";
     if (username === "" || username === null) {

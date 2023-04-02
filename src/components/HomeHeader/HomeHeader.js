@@ -1,4 +1,15 @@
-import { Image, View, TouchableOpacity, StyleSheet, Touchable, Text, TextInput, ScrollView, Pressable } from "react-native";
+import {
+  Image,
+  View,
+  TouchableOpacity,
+  StyleSheet,
+  Touchable,
+  Text,
+  TextInput,
+  ScrollView,
+  Pressable,
+  ActivityIndicator,
+} from "react-native";
 import React, { useRef } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { useState, useEffect } from "react";
@@ -18,6 +29,8 @@ import { Toast } from "react-native-toast-message/lib/src/Toast";
 import CustomButton from "../CustomButton/CustomButton";
 import CreateWorkoutModal from "../modals/CreateWorkoutModal";
 import { getNotifications } from "../../crud/NotificationOperations";
+import WorkoutSelection from "../WorkoutSelection";
+import FastImage from "react-native-fast-image";
 
 /**
  * Creates the header that will go above the two home screens (Mutual and Explore)
@@ -35,13 +48,14 @@ const HomeHeader = ({ handlePress }) => {
   const [showCreateWorkout, setShowCreateWorkout] = useState(false);
   const [refreshWorkout, setRefreshWorkout] = useState(false);
   const [scrollToBottom, setScrollToBottom] = useState(false);
+  const [showUploading, setShowUploading] = useState(false);
 
   Storage.configure();
   const imageSRC = require("../../../assets/icons/Gymbit_Icons_Black/Back_Icon_Black.png");
 
   const handleBlowUp = () => {
     setBlowup(!blowup);
-    const focusHandler = nav.addListener("focus", () => {
+    const focusHandler = navigation.addListener("focus", () => {
       setRefresh(!refresh);
     });
   };
@@ -98,6 +112,7 @@ const HomeHeader = ({ handlePress }) => {
     });
   };
   async function savePost() {
+    setShowUploading(true);
     //await DataStore.start();
     let username = await getCurrentUser();
     try {
@@ -108,11 +123,13 @@ const HomeHeader = ({ handlePress }) => {
       const blob = await response.blob();
       await createPost(text, fileName, username, workoutSelection);
       await Storage.put(fileName, blob);
+      setShowUploading(false);
       showPostUploadedToast();
     } catch (error) {
       showPostNotUploadedToast(username);
       console.error("Error uploading file", error);
     }
+
     handleBlowUp();
   }
 
@@ -172,9 +189,13 @@ const HomeHeader = ({ handlePress }) => {
               </View>
               <View style={{ alignItems: "center", flex: 2 }}>
                 <TextInput style={styles.input} placeholder="Write your caption here" value={text} onChangeText={setText} />
-                <TouchableOpacity style={styles.submit} onPress={savePost}>
-                  <Text style={styles.submitText}>Post Gymbit</Text>
-                </TouchableOpacity>
+                {showUploading ? (
+                  <ActivityIndicator size="large" color="#2E8CFF" />
+                ) : (
+                  <TouchableOpacity style={styles.submit} onPress={savePost}>
+                    <Text style={styles.submitText}>Post Gymbit</Text>
+                  </TouchableOpacity>
+                )}
               </View>
             </View>
           </View>
@@ -184,84 +205,15 @@ const HomeHeader = ({ handlePress }) => {
   );
 };
 
-/*function CreatePost() {
-  if (networkConnection.isConnected)
-
-}*/
-
-function WorkoutSelection({
-  workoutSelection,
-  setWorkoutSelection,
-  refreshWorkout,
-  setShowCreateWorkout,
-  scrollToBottom,
-  setScrollToBottom,
-}) {
-  const scrollviewRef = useRef();
-  useEffect(() => {
-    console.log("CURR workoutSele", workoutSelection);
-    getWorkoutList();
-
-    doStuff();
-  }, [refreshWorkout]);
-  const [workouts, setWorkouts] = useState([]);
-  async function getWorkoutList() {
-    let username = await getCurrentUser();
-    let workouts = await getWorkouts(username);
-    setWorkouts(workouts);
-  }
-  async function doStuff() {
-    if (scrollToBottom === true) {
-      //ScrollView.scrollToEnd
-      //setWorkoutSelection(workouts[workouts.length - 1]);
-      console.log("halllo", workouts);
-      setWorkoutSelection(workouts[workouts.length - 1]);
-      scrollviewRef.current.scrollToEnd();
-      setScrollToBottom(false);
-    }
-  }
-  function handleWorkoutSelectionPress(workout) {
-    setWorkoutSelection(workout);
-  }
-  function handleSelectedWorkoutPress() {
-    setWorkoutSelection(null);
-  }
-  return (
-    <View style={styles.workoutSelectionContainer}>
-      <View style={styles.what}>
-        <Text style={{ color: "white", fontSize: 14 }}>What workout did you do today?</Text>
-      </View>
-      <ScrollView ref={scrollviewRef} contentContainerStyle={styles.workoutMainContainer} style={{ width: "100%", flex: 1 }}>
-        <TouchableOpacity id={-1} onPress={() => setShowCreateWorkout(true)} style={styles.workoutSelection}>
-          <Text style={{ color: blueThemeColor, fontWeight: "bold" }}>Create new workout</Text>
-        </TouchableOpacity>
-        {workouts.map((workout, index) => {
-          if (workout === workoutSelection) {
-            console.log("THEY EQUAL EACH OTHER", workout);
-            // This will console.log successfully after creating a new workout, but won't return this. Will figure out later.
-            return (
-              <TouchableOpacity id={index} onPress={() => handleSelectedWorkoutPress(workout)} style={styles.workoutSelectionHighlighted}>
-                <Text style={{ color: "#ffffff", fontWeight: "bold" }}>{workout.workoutName}</Text>
-              </TouchableOpacity>
-            );
-          } else {
-            return (
-              <TouchableOpacity id={index} onPress={() => handleWorkoutSelectionPress(workout)} style={styles.workoutSelection}>
-                <Text style={{ color: blueThemeColor, fontWeight: "bold" }}>{workout.workoutName}</Text>
-              </TouchableOpacity>
-            );
-          }
-        })}
-      </ScrollView>
-    </View>
-  );
-}
-
 const styles = StyleSheet.create({
+  header: {
+    //height: "10%",
+  },
   container: {
     width: "100%",
     height: 100,
-    paddingTop: 30,
+    //alignItems: "center",
+    paddingTop: 38,
     backgroundColor: "white",
     flexDirection: "row",
   },
@@ -287,7 +239,7 @@ const styles = StyleSheet.create({
 
   logo: {
     width: 100,
-    height: 100,
+    height: 110,
     aspectRatio: 1,
   },
 
@@ -340,42 +292,6 @@ const styles = StyleSheet.create({
     fontSize: 18,
   },
 
-  workoutSelectionContainer: {
-    borderWidth: 3,
-    borderLeftWidth: 0,
-    alignItems: "center",
-    flex: 1,
-  },
-  workoutMainContainer: {
-    alignItems: "center",
-
-    width: "100%",
-  },
-
-  what: {
-    backgroundColor: "#2E8CFF",
-    height: 40,
-    alignItems: "center",
-    justifyContent: "center",
-    width: "100%",
-  },
-
-  workoutSelection: {
-    height: 50,
-    width: "100%",
-    alignItems: "center",
-    justifyContent: "center",
-    borderBottomWidth: 3,
-  },
-  workoutSelectionHighlighted: {
-    backgroundColor: blueThemeColor,
-    //overlayColor: blueThemeColor,
-    height: 50,
-    width: "100%",
-    alignItems: "center",
-    justifyContent: "center",
-    borderBottomWidth: 3,
-  },
   backArrow: {
     width: 60,
     height: 60,
@@ -386,26 +302,7 @@ const styles = StyleSheet.create({
   },
   counter: {
     borderRadius: 100,
-    backgroundColor: blueThemeColor,
-    width: 20,
-    textAlign: "center",
-    height: 20,
-    textAlignVertical: "center",
-    position: "absolute",
-    zIndex: 5,
-    left: 42,
-    top: 10,
-  },
-  backArrow: {
-    width: 60,
-    height: 60,
-    paddingBottom: 50,
-    alignSelf: "flex-start",
-    paddingLeft: 10,
-    backgroundColor: "rgba(200,212,225,0.75)",
-  },
-  counter: {
-    borderRadius: 100,
+    color: "#FFFFFF",
     backgroundColor: blueThemeColor,
     width: 20,
     textAlign: "center",

@@ -91,7 +91,8 @@ export async function getPostsForMutualFeedFromAWS(username) {
         sort: (s) => s.createdAt(SortDirection.DESCENDING),
       });
       for (let j = 0; j < postsToBeAdded.length; j++) {
-        posts.push(postsToBeAdded[j]);
+        if (dateIsInPast3Days(postsToBeAdded[j]))
+          posts.push(postsToBeAdded[j]);
       }
     }
 
@@ -114,6 +115,42 @@ export async function getPostsForMutualFeedFromAWS(username) {
     console.error(`Error retrieving posts for ${username}'s mutual feed, ${error}`);
   }
 }
+
+function dateIsInPast3Days(post) {
+
+  const createdAt = post.createdAt;
+
+  const difference = getTime(createdAt);
+
+  if (difference >= 3)
+    return false;
+  else
+    return true;
+
+  }
+
+  function getTime(createdAt) {
+    var ans = ""; // the output
+  if (createdAt == undefined) {
+    // Checks that createdAt exists
+    // Will not exist when DataStore is not connected to remote
+    return ans;
+  }
+  var createdAtFormatted = createdAt.substring(0, 19); //gets rid of a few milliseconds to make it proper format
+  var currDate = new Date(); // current date and time in UTC
+  var dateUploaded = new Date(createdAtFormatted); // date and time of upload in UTC
+
+  // Both dates are already in UTC, this just gets the time difference
+  var diff = currDate.getTime() - dateUploaded.getTime();
+  var minutesDifference = diff / (1000 * 60);
+  var hoursDifference = Math.floor(minutesDifference / 60);
+  var daysDifference = Math.floor(hoursDifference / 24);
+  
+
+    
+  return Math.floor(daysDifference);
+  }
+
 
 export async function getUserByPostId(postId) {
   const post = await DataStore.query(Post, postId);

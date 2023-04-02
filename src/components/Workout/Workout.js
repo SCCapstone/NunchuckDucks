@@ -2,7 +2,7 @@ import { View, ScrollView, Text, StyleSheet } from "react-native";
 import { blueThemeColor } from "../../library/constants";
 import Exercise from "../Exercise/Exercise";
 export default function Workout({ workout, isAbsolute = false }) {
-  if (Array.isArray(workout)) {
+  if (Array.isArray(workout) && workout.length > 0) {
     workout = workout[0];
   }
   let JsonWorkout = workout;
@@ -25,7 +25,7 @@ export default function Workout({ workout, isAbsolute = false }) {
       </View>
       <ScrollView>
         {JsonExercises.map((exercise, index) => (
-          <Exercise exercise={exercise} index={index} />
+          <Exercise key={index} exercise={exercise} index={index} />
         ))}
       </ScrollView>
     </View>

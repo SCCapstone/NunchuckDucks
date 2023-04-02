@@ -24,7 +24,6 @@ export async function createWorkout(username, workoutName, exercises) {
 export async function getWorkoutById(workoutId) {
   try {
     let workout = await DataStore.query(Workout, (w) => w.id.eq(workoutId));
-    console.log("Got workout", workout, "successfully");
     return workout;
   } catch (e) {
     console.error("Error retrieving the workout for the user", e);

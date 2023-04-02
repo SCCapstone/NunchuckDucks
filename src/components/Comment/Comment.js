@@ -39,10 +39,6 @@ const Comment = ({ commentModel, postID, replies, style, refresh }) => {
     ></CustomButton>
   );
 
-  useEffect(() => {
-    //getPic();
-  }, []);
-
   async function onReplySubmit() {
     setReplyOpen(false);
     // Call CRUD to make new datastore object

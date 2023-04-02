@@ -30,23 +30,6 @@ export default function CreateWorkoutModal({
     setModalVisible(false);
   };
 
-  /*const initialValues = {
-    workout: {
-      workoutname: "",
-      exercises: [
-        {
-          exerciseName: "",
-          sets: [
-            {
-              setNumber: 0,
-              reps: 0,
-            },
-          ],
-        },
-      ],
-    },
-  };*/
-
   function handleButtonPress() {
     setAddNewExercise(true);
     setButtonShown(false);

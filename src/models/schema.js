@@ -210,6 +210,13 @@ export const schema = {
                     "isRequired": true,
                     "attributes": []
                 },
+                "lowerUsername": {
+                    "name": "lowerUsername",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
                 "createdAt": {
                     "name": "createdAt",
                     "isArray": false,
@@ -283,6 +290,13 @@ export const schema = {
                     "isArray": false,
                     "type": "ID",
                     "isRequired": true,
+                    "attributes": []
+                },
+                "lowerUsername": {
+                    "name": "lowerUsername",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
                     "attributes": []
                 },
                 "createdAt": {
@@ -741,6 +755,20 @@ export const schema = {
                         "associatedWith": "userID"
                     }
                 },
+                "WeeklyGoal": {
+                    "name": "WeeklyGoal",
+                    "isArray": false,
+                    "type": "Int",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "lowerUsername": {
+                    "name": "lowerUsername",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
                 "createdAt": {
                     "name": "createdAt",
                     "isArray": false,
@@ -935,5 +963,5 @@ export const schema = {
     },
     "nonModels": {},
     "codegenVersion": "3.3.5",
-    "version": "265450763f2862ddd3fceb9ff6e0294a"
+    "version": "670ff763c6d2f3928345ecce13e9cc3e"
 };

@@ -1,11 +1,11 @@
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
 import { Auth } from "aws-amplify";
 import GoalSummary from "../components/GoalSummary";
 import { blueThemeColor, grayThemeColor } from "../library/constants";
 import React from "react";
 import { getFollowsList } from "../crud/FollowingOperations";
 import { getFollowersList } from "../crud/FollowersOperations";
-import { getBio, updateProfilePicture } from "../crud/UserOperations";
+import { getBio, updateCurrentStreak, getWeeklyGoal } from "../crud/UserOperations";
 import { saveImageToAWS, getCurrentUser, cacheRemoteUri } from "../crud/CacheOperations";
 import ProfileMini from "../components/ProfileMini";
 import Bio from "../components/Bio";
@@ -37,12 +37,18 @@ export function ProfileScreen(props) {
   const [followingcount, setFollowingCount] = useState(0);
   const [modalVisible, setModalVisible] = useState(false);
   const [showMakePfp, setShowMakePfp] = useState(false);
+  const [reload, setReload] = useState(false);
+  const [streak, setStreak] = useState(0);
+  const [showStreak, setShowStreak] = useState(false);
+
   const [showPfpUploaded, setShowPfpUploaded] = useState(false);
   useEffect(() => {
     renderProfileInfo();
-    getFollowersCount(username);
-    getFollowingCount(username);
-  }, [modalVisible]);
+    if (username !== "") {
+      getFollowersCount(username);
+      getFollowingCount(username);
+    }
+  }, [modalVisible, username]);
 
   const showPfpUploadedToast = (usr) => {
     Toast.show({
@@ -82,6 +88,13 @@ export function ProfileScreen(props) {
   async function renderProfileInfo() {
     let username = await getCurrentUser();
     setUsername(username);
+    /*let currStreak = await updateCurrentStreak(username);
+    setStreak(currStreak);
+    if (streak > 0) {
+      setShowStreak(true);
+    } else {
+      setShowStreak(false);
+    }*/
     setUsernameSet(true);
   }
 
@@ -91,7 +104,6 @@ export function ProfileScreen(props) {
   }
 
   async function getFollowersCount(username) {
-    console.log("HAYYAYY");
     const followersList = await getFollowersList(username);
     console.log("follsList", followersList.length);
     setFollowerCount(followersList.length);
@@ -117,7 +129,6 @@ export function ProfileScreen(props) {
       const response = await fetch(_image.uri);
       const blob = await response.blob();
       const fileName = username + "/pfp.png";
-      //updateProfilePicture(username, fileName);
       let pfpUploaded = await saveImageToAWS(fileName, blob);
       await cacheRemoteUri(username, "pfp.png");
       setRefresh(!refresh);
@@ -130,9 +141,7 @@ export function ProfileScreen(props) {
     } catch (error) {
       console.log("Error uploading image to S3", error);
     }
-    //updateProfilePicture(username,image);
   };
-  const delay = (ms) => new Promise((res) => setTimeout(res, ms));
 
   return (
     <>
@@ -142,15 +151,14 @@ export function ProfileScreen(props) {
       <View style={{ flex: 1, alignItems: "center", backgroundColor: "white", justifyContent: "center" }}>
         <ChangeBioModal modalVisible={modalVisible} setModalVisible={setModalVisible}></ChangeBioModal>
         <View style={{ paddingTop: 0, paddingBottom: 10, flexDirection: "row", alignContent: "center" }}>
-          {usernameSet && (
-            <ProfileMini
-              onClick={() => handleProfileImageClick()}
-              username={username}
-              refresh={refresh}
-              setRefresh={setRefresh}
-              userPfp={true}
-            />
+          {usernameSet && showStreak && (
+            <View>
+              <Image source={require("../../assets/icons/Gymbit_Icons_Trans/flame.png")} style={styles.flame} />
+              <Text style={styles.streak}>{streak}</Text>
+            </View>
           )}
+          <ProfileMini onClick={() => handleProfileImageClick()} username={username} refresh={refresh} setRefresh={setRefresh} />
+
           <Text style={styles.username}>@{username}</Text>
         </View>
         <View

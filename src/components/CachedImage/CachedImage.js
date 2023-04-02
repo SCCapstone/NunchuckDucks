@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { getUriFromCache, cacheRemoteUri } from "../../crud/CacheOperations";
 import FastImage from "react-native-fast-image";
 
-export default function CachedImage({ username, picName, imageStyle, resizeMode = "cover", isPfp = false, refresh, userPfp = false }) {
+export default function CachedImage({ username, picName, imageStyle, refresh, userPfp = false }) {
   const [imageUri, setImageUri] = useState(null);
   const [uriIsSet, setUriIsSet] = useState(false);
 

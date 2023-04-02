@@ -1,4 +1,4 @@
-import { View, Image, Text, StyleSheet, Pressable, TouchableOpacity } from "react-native";
+import { View, Image, Text, StyleSheet, Pressable, TouchableOpacity, ActivityIndicator } from "react-native";
 import { useState, useEffect } from "react";
 import { Storage } from "@aws-amplify/storage";
 import Reactions from "../Reactions";
@@ -16,6 +16,8 @@ import CachedImage from "../CachedImage/CachedImage";
 import Workout from "../Workout/Workout";
 import { getWorkoutById } from "../../crud/WorkoutOperations";
 import { getAndObserveComments } from "../../crud/observeQueries/CommentObserveQueries";
+import { getUriFromCache, cacheRemoteUri } from "../../crud/CacheOperations";
+import FastImage from "react-native-fast-image";
 
 export default function Post(props) {
   const entry = props.entry;
@@ -38,6 +40,8 @@ export default function Post(props) {
   const [commentText, setCommentText] = useState("");
   const [hasWorkout, setHasWorkout] = useState(false);
   const [workout, setWorkout] = useState(null);
+  const [uriIsSet, setUriIsSet] = useState(false);
+  const [imageUri, setImageUri] = useState(null);
 
   const handleBlowUp = () => {
     setBlowup(!blowup);
@@ -81,6 +85,7 @@ export default function Post(props) {
   }
 
   useEffect(() => {
+    setImageFromCacheOrAWS();
     const subscription = retrieveComments();
     return () => {
       if (subscription && subscription.unsubscribe) subscription.unsubscribe();
@@ -106,6 +111,15 @@ export default function Post(props) {
   useEffect(() => {
     getWorkoutForPost();
   }, []);
+
+  async function setImageFromCacheOrAWS() {
+    let uriFromCache = await getUriFromCache(username, picName);
+    if (uriFromCache === "") {
+      uriFromCache = await cacheRemoteUri(username, picName);
+    }
+    setImageUri(uriFromCache);
+    setUriIsSet(true);
+  }
 
   async function getWorkoutForPost() {
     if (workoutId !== undefined && workoutId !== null) {
@@ -137,7 +151,21 @@ export default function Post(props) {
         <Text style={styles.createdAt}>{getTimeElapsed(entry.createdAt)}</Text>
       </View>
       <Pressable onPress={handleBlowUp} style={{ backgroundColor: "rgba(30,144,255,0.5)", position: "relative" }}>
-        <CachedImage username={username} picName={picName} imageStyle={{ height: 400 }} />
+        {uriIsSet ? (
+          <FastImage
+            source={{
+              uri: imageUri,
+              headers: {},
+              priority: FastImage.priority.normal,
+            }}
+            style={{ height: 400 }}
+            resizeMode={FastImage.resizeMode.cover}
+          />
+        ) : (
+          <View style={{ height: 400, alignItems: "center", justifyContent: "center", backgroundColor: grayThemeColor }}>
+            <ActivityIndicator size="large" color="#2E8CFF" />
+          </View>
+        )}
         {blowup && hasWorkout && <Workout workout={workout} isAbsolute={true} />}
       </Pressable>
       {/*replace get time elapsed w/ actual on click utility*/}
@@ -162,12 +190,12 @@ export default function Post(props) {
         )}
         {showCommentOption && <CustomButton onClick={onCommentSubmit} text={"Submit"} />}
         {shortCommentDisplay ? commentList.slice(0, 2) : commentList}
-        {comments.length > 2 && shortCommentDisplay && (
+        {comments.length > 2 && (
           <CustomButton
             buttonType={"hyperlink"}
             isUnderlined={true}
-            onClick={() => setShortCommentDisplay(false)}
-            text={"Show More"}
+            onClick={() => setShortCommentDisplay(!shortCommentDisplay)}
+            text={`Show ${shortCommentDisplay ? "More" : "Less"}`}
             style={{ paddingBottom: 10 }}
           ></CustomButton>
         )}
@@ -245,7 +273,7 @@ const styles = StyleSheet.create({
   },
 });
 
-function getTimeElapsed(createdAt) {
+export function getTimeElapsed(createdAt) {
   var ans = ""; // the output
   if (createdAt == undefined) {
     // Checks that createdAt exists

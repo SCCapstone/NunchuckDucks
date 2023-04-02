@@ -148,7 +148,7 @@ const customTheme = {
     borderRadius: 20,
     borderWidth: 2,
     color: "#808080", //text color of user input
-    fontWeight: "480",
+    fontWeight: "500",
     fontSize: 16,
   },
   button: {
