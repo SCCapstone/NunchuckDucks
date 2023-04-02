@@ -2,6 +2,7 @@ import { DataStore, SortDirection } from "aws-amplify";
 import { Post, User } from "../models";
 import { Storage } from "aws-amplify";
 import { getCurrentUser } from "./CacheOperations";
+import { ConsoleLogger } from "@aws-amplify/core";
 
 /**
  * Creates a user and saves the new user in the backend

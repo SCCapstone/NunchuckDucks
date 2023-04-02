@@ -65,7 +65,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   blowupheader: {
-    height: 43,
+    height: 50,
     marginBottom: 10,
     borderColor: "black",
     color: blueThemeColor,
@@ -84,7 +84,7 @@ const styles = StyleSheet.create({
   },
   workoutName: {
     color: blueThemeColor,
-    fontSize: 35,
+    fontSize: 30,
     fontWeight: "bold",
     marginTop: 2,
     marginLeft: 10,

@@ -6,6 +6,8 @@ import CreateWorkoutModal from "../components/modals/CreateWorkoutModal";
 import { getWorkouts } from "../crud/WorkoutOperations";
 import { getCurrentUser } from "../crud/CacheOperations";
 import Workout from "../components/Workout/Workout";
+import Header from "../components/Header";
+
 export function WorkoutsScreen() {
   const [modalVisible, setModalVisible] = useState(false);
   const [workouts, setWorkouts] = useState([]);
@@ -20,32 +22,38 @@ export function WorkoutsScreen() {
     getWorkoutsForScreen();
   }, [refreshWorkouts]);
   return (
-    <View style={styles.container}>
-      <CreateWorkoutModal
-        modalVisible={modalVisible}
-        setModalVisible={setModalVisible}
-        refreshWorkouts={refreshWorkouts}
-        setRefreshWorkouts={setRefreshWorkouts}
-      />
-      <View style={styles.stickyHeader}>
-        <CustomButton
-          style={{ position: "relative" }}
-          buttonType={"default"}
-          text={"Create new workout"}
-          onClick={() => setModalVisible(true)}
-        />
+    <>
+      <View>
+        <Header title={"Profile"} style={{ backgroundColor: "white" }} />
       </View>
-      <ScrollView style={{ width: "100%" }}>
-        {workouts.map((workout, index) => (
-          <Workout key={index} workout={workout} />
-        ))}
-      </ScrollView>
-    </View>
+      <View style={styles.container}>
+        <CreateWorkoutModal
+          modalVisible={modalVisible}
+          setModalVisible={setModalVisible}
+          refreshWorkouts={refreshWorkouts}
+          setRefreshWorkouts={setRefreshWorkouts}
+        />
+        <View style={styles.stickyHeader}>
+          <CustomButton
+            style={{ position: "relative" }}
+            buttonType={"default"}
+            text={"Create new workout"}
+            onClick={() => setModalVisible(true)}
+          />
+        </View>
+        <ScrollView style={{ width: "100%" }}>
+          {workouts.map((workout, index) => (
+            <Workout key={index} workout={workout} />
+          ))}
+        </ScrollView>
+      </View>
+    </>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
+    backgroundColor: "white",
     display: "flex",
     flexDirection: "column",
     height: "100%",
@@ -54,7 +62,7 @@ const styles = StyleSheet.create({
   stickyHeader: {
     width: "100%",
     marginBottom: "5%",
-    marginTop: "20%",
+    //marginTop: "20%",
     display: "flex",
     flexDirection: "column",
     alignItems: "center",

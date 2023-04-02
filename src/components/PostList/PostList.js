@@ -6,14 +6,7 @@ import { getPostsForMutualFeedFromAWS, getUsersFollowed, getUsersFollowedIds } f
 import { useNetInfo } from "@react-native-community/netinfo";
 // PostSchema, the schema above, and Post, the component below
 import Post from "../Post";
-import {
-  getPostsFromCache,
-  cachePosts,
-  getCachedCurrUser,
-  cacheCurrUser,
-  cacheRemoteUri,
-  getUriFromCache,
-} from "../../crud/CacheOperations";
+import { getPostsFromCache, cachePosts, getCachedCurrUser, cacheCurrUser, cacheRemoteUri } from "../../crud/CacheOperations";
 import { getFollowsList } from "../../crud/FollowingOperations";
 import { Toast } from "react-native-toast-message/lib/src/Toast";
 import FastImage from "react-native-fast-image";
@@ -33,6 +26,11 @@ export default function PostList(props) {
   const [username, setUsername] = useState("");
   // used to avoid doing backend queries if no connection is available yet
   const networkConnection = useNetInfo();
+
+  useEffect(() => {
+    DataStore.clear();
+    DataStore.start();
+  }, []);
 
   async function fetchPostsFromAWS(usernameFromAWS) {
     // gets JSON Object full of Post types; these are read as JSON, but are NOT augmentable.
@@ -188,13 +186,16 @@ export default function PostList(props) {
     });
   };
 
+  async function offlineOperations() {
+    await fetchPostCache();
+  }
   useEffect(() => {
     setSwipeRefresh(true);
     // First thing done upon startup of the app
     if (postsInitialCompleted === false) {
-      fetchPostCache(); // will set postsInitialCompleted to true after completion
+      offlineOperations(); // will set postsInitialCompleted to true after completion
     }
-    if (networkConnection.isConnected && postsInitialCompleted) {
+    if (networkConnection.isConnected) {
       //list.current.scrollToIndex({ index: 0 });
       doOnlineOperations();
     } else if (postsInitialCompleted) {

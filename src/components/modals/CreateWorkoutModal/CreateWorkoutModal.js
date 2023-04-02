@@ -62,6 +62,8 @@ export default function CreateWorkoutModal({
     if (scrollToBottom !== null) {
       setScrollToBottom(true);
     }
+    setWorkoutTitle("");
+    setExerciseList([]);
     setRefreshWorkouts(!refreshWorkouts);
     setModalVisible(false);
   }
@@ -93,10 +95,12 @@ export default function CreateWorkoutModal({
                     />
                   </View>
                 </View>
-                {exerciseName !== "" && exerciseNotes !== "" && <CustomButton onClick={handleConfirmPress} text="Confirm Exercise" />}
+                {exerciseName !== "" && exerciseNotes !== "" && (
+                  <CustomButton onClick={handleConfirmPress} style={{ alignSelf: "center", marginTop: 20 }} text="Confirm Exercise" />
+                )}
               </View>
             )}
-            {buttonShown && <CustomButton onClick={handleButtonPress} style={{ alignSelf: "center" }} text="Add Exercise" />}
+            {buttonShown && <CustomButton onClick={handleButtonPress} style={{ alignSelf: "center", marginTop: 20 }} text="Add Exercise" />}
           </ScrollView>
         </View>
         {exerciseList.length > 0 && workoutTitle !== "" && (
@@ -121,6 +125,7 @@ const styles = StyleSheet.create({
     borderRightWidth: 5,
     borderBottomWidth: 5,
     //alignItems: "center",
+    marginTop: 10,
     alignSelf: "center",
     width: "80%",
   },
@@ -142,11 +147,11 @@ const styles = StyleSheet.create({
     borderBottomWidth: 3,
   },
   exerciseNameContainer: {
-    height: 30,
+    height: 40,
   },
   workoutName: {
     color: blueThemeColor,
-    fontSize: 35,
+    fontSize: 30,
     fontWeight: "bold",
     marginTop: 2,
     marginLeft: 10,
@@ -192,9 +197,10 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderTopWidth: 3,
     borderRightColor: "black",
+    //marginBottom: 20,
   },
   blowupheader: {
-    height: 43,
+    height: 50,
     marginBottom: 10,
     borderColor: "black",
     color: blueThemeColor,

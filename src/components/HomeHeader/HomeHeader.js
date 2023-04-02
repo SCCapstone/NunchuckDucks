@@ -124,6 +124,9 @@ const HomeHeader = ({ handlePress, refresh, setRefresh }) => {
       await createPost(text, fileName, username, workoutSelection);
       await Storage.put(fileName, blob);
       setShowUploading(false);
+      setText("");
+      setWorkoutSelection(null);
+      setImage(null);
       showPostUploadedToast();
     } catch (error) {
       showPostNotUploadedToast(username);
@@ -163,6 +166,7 @@ const HomeHeader = ({ handlePress, refresh, setRefresh }) => {
       <View>
         {blowup && (
           <View style={styles.blowup}>
+            <View></View>
             {showCreateWorkout && (
               <CreateWorkoutModal
                 modalVisible={showCreateWorkout}
@@ -175,6 +179,9 @@ const HomeHeader = ({ handlePress, refresh, setRefresh }) => {
               />
             )}
             <View style={{ flex: 1 }}>
+              <Pressable onPressOut={handleBlowUp} style={styles.backArrow}>
+                <Image source={imageSRC} style={styles.backArrow}></Image>
+              </Pressable>
               <View style={styles.header} />
               <View style={{ flexDirection: "row", flex: 1 }}>
                 <ImageSelector image={image} setImage={setImage} />
@@ -298,7 +305,7 @@ const styles = StyleSheet.create({
     paddingBottom: 50,
     alignSelf: "flex-start",
     paddingLeft: 10,
-    backgroundColor: "rgba(200,212,225,0.75)",
+    //backgroundColor: "rgba(200,212,225,0.75)",
   },
   counter: {
     borderRadius: 100,

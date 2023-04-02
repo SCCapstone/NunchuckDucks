@@ -4,6 +4,7 @@ import { getCurrentUser } from "./CacheOperations";
 import { DataStore, SortDirection } from "aws-amplify";
 import { Post, Follows, User } from "../models";
 import { getUserId } from "./UserOperations";
+import { getCurrentAuthenticatedUser } from "../library/GetAuthenticatedUser";
 /**
  * Creates a post and saves the new post in the backend
  * @param {String} username
@@ -75,8 +76,20 @@ export async function getUsersFollowed(username) {
 
 export async function getPostsForMutualFeedFromAWS(username) {
   try {
-    const userId = await getUserId(username);
+    setTimeout(() => (loop = false), 10000);
+    let loop = true;
+    let userId;
+    // TODO: Remove workaround
+    console.log("MY USERNAME::: ", username);
+    while (loop) {
+      userId = await getUserId(username);
+      console.log("IDIDIDID: ", userId);
+
+      if (userId) loop = false;
+    }
     const usersFollowed = await DataStore.query(Follows, (uf) => uf.username.eq(username));
+    console.log("USERS FOLLOWED");
+    usersFollowed.forEach((val) => console.log(val));
     const usersFollowedIDs = [userId];
     console.log(`Retrieved users followed for ${username}`);
 
@@ -91,8 +104,7 @@ export async function getPostsForMutualFeedFromAWS(username) {
         sort: (s) => s.createdAt(SortDirection.DESCENDING),
       });
       for (let j = 0; j < postsToBeAdded.length; j++) {
-        if (dateIsInPast3Days(postsToBeAdded[j]))
-          posts.push(postsToBeAdded[j]);
+        if (dateIsInPast3Days(postsToBeAdded[j])) posts.push(postsToBeAdded[j]);
       }
     }
 
@@ -117,20 +129,16 @@ export async function getPostsForMutualFeedFromAWS(username) {
 }
 
 function dateIsInPast3Days(post) {
-
   const createdAt = post.createdAt;
 
   const difference = getTime(createdAt);
 
-  if (difference >= 3)
-    return false;
-  else
-    return true;
+  if (difference >= 3) return false;
+  else return true;
+}
 
-  }
-
-  function getTime(createdAt) {
-    var ans = ""; // the output
+function getTime(createdAt) {
+  var ans = ""; // the output
   if (createdAt == undefined) {
     // Checks that createdAt exists
     // Will not exist when DataStore is not connected to remote
@@ -145,12 +153,9 @@ function dateIsInPast3Days(post) {
   var minutesDifference = diff / (1000 * 60);
   var hoursDifference = Math.floor(minutesDifference / 60);
   var daysDifference = Math.floor(hoursDifference / 24);
-  
 
-    
   return Math.floor(daysDifference);
-  }
-
+}
 
 export async function getUserByPostId(postId) {
   const post = await DataStore.query(Post, postId);
