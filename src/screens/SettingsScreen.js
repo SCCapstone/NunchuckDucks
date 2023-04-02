@@ -1,10 +1,11 @@
 import { View, Text, TouchableOpacity, StyleSheet, Switch, TextInput } from "react-native";
 import Header from "../components/Header/Header";
-import { isUserPrivate, togglePrivacy } from "../crud/UserOperations";
-import { useEffect, useState } from "react";
-import { useNavigation } from "@react-navigation/core";
-import { getCurrentUser } from "../crud/CacheOperations";
-import { blueThemeColor } from "../library/constants";
+import { getPostsThatShouldBeCached, getAllCachedFiles, deleteCachedFile, getCurrentUser } from "../crud/CacheOperations";
+import { isUserPrivate, togglePrivacy, getWeeklyGoal, setWeeklyGoal } from "../crud/UserOperations";
+import { getCurrentAuthenticatedUser } from "../library/GetAuthenticatedUser";
+import { useState, useEffect, useCallback } from "react";
+import { useNavigation } from "@react-navigation/native";
+import { blueThemeColor, grayThemeColor } from "../library/constants";
 
 export function SettingsScreen() {
   const styles = StyleSheet.create({
@@ -70,6 +71,9 @@ export function SettingsScreen() {
 
   useEffect(() => {
     renderSettings();
+  }, [navigation, forceRefresh]);
+
+  useEffect(() => {
     if (privacy === true) {
       setIsEnabled(true);
     } else {
@@ -77,14 +81,14 @@ export function SettingsScreen() {
     }
   }, [navigation, privacy, forceRefresh]);
 
-  const toggleSwitch = () => {
+  const toggleSwitch = async () => {
     if (privacy === true) {
-      togglePrivacy(username, false);
-      setIsEnabled((previousState) => false);
+      await togglePrivacy(username, false);
+      // setIsEnabled((previousState) => false);
       setPrivacy(false);
     } else {
-      togglePrivacy(username, true);
-      setIsEnabled((previousState) => true);
+      await togglePrivacy(username, true);
+      // setIsEnabled((previousState) => true);
       setPrivacy(true);
     }
   };
@@ -93,9 +97,7 @@ export function SettingsScreen() {
     let username = await getCurrentUser();
 
     let Privacy = await isUserPrivate(username);
-    console.log("priv", Privacy);
     setPrivacy(Privacy);
-    console.log(privacy);
 
     const weeklyGoal = await getWeeklyGoal(username);
     setGoal(weeklyGoal);
@@ -120,7 +122,7 @@ export function SettingsScreen() {
         value={isEnabled}
         style={styles.switch}
       />
-      <Text style={styles.goalText}>Your current weekly workout goal is {goal}. Change goal bellow</Text>
+      <Text style={styles.goalText}>Your current weekly workout goal is {goal}. Change goal below</Text>
       <View style={styles.goalContainer}>
         <TextInput style={styles.textInput} placeholder={"Current Goal: " + goal} value={text} onChangeText={setText} />
       </View>

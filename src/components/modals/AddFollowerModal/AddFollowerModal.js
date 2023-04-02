@@ -66,9 +66,9 @@ const AddFollowerModal = ({ modalVisible, setModalVisible }) => {
   }, [addFriendValue]);
 
   return (
-    <Modal visible={modalVisible} animationType="fade" transparent={true} onRequestClose={closeModal}>
-      <Pressable onPress={closeModal} style={styles.transparentView}></Pressable>
+    <Modal visible={modalVisible} animationType="fade" transparent={true} onRequestClose={() => closeModal}>
       <View style={styles.centeredView}>
+        <Pressable onPress={closeModal} style={styles.transparentView} />
         <ErrorModal
           popUpModalVisible={errorModal}
           setPopUpModalVisible={setErrorModal}

@@ -14,7 +14,6 @@ export function WorkoutsScreen() {
   async function getWorkoutsForScreen() {
     let currUser = await getCurrentUser();
     let ejercicios = await getWorkouts(currUser);
-    console.log("EJEE", ejercicios);
     setWorkouts(ejercicios);
   }
   useEffect(() => {
@@ -37,8 +36,8 @@ export function WorkoutsScreen() {
         />
       </View>
       <ScrollView style={{ width: "100%" }}>
-        {workouts.map((workout) => (
-          <Workout workout={workout} />
+        {workouts.map((workout, index) => (
+          <Workout key={index} workout={workout} />
         ))}
       </ScrollView>
     </View>

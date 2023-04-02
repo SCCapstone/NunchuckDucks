@@ -37,7 +37,6 @@ export default function PostList(props) {
   async function fetchPostsFromAWS(usernameFromAWS) {
     // gets JSON Object full of Post types; these are read as JSON, but are NOT augmentable.
     let postsFromAWS = await getPostsForMutualFeedFromAWS(usernameFromAWS);
-
     // turns posts into a true JSON object, allowing for augmentation as needed
     let postsString = JSON.stringify(postsFromAWS);
     let postsObject = JSON.parse(postsString);
@@ -74,8 +73,7 @@ export default function PostList(props) {
     } else {
       usernameFromAWS = username;
     }
-    let followers = await getUsersFollowed(username);
-
+    let followers = await getUsersFollowed(usernameFromAWS);
     await cachePfpInitially(usernameFromAWS, followers);
 
     if (offlineInitialCompleted === true) {

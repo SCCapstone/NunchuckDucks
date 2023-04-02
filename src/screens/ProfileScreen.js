@@ -105,7 +105,6 @@ export function ProfileScreen(props) {
 
   async function getFollowersCount(username) {
     const followersList = await getFollowersList(username);
-    console.log("follsList", followersList.length);
     setFollowerCount(followersList.length);
   }
 
@@ -184,7 +183,14 @@ export function ProfileScreen(props) {
           <Bio />
         </TouchableOpacity>
         {/*<Text style={styles.username}>@{username}</Text>*/}
-        <View style={{ flexDirection: "row", paddingTop: 15, paddingBottom: 15, maxWidth: 250 }}>
+        <View
+          style={{
+            flexDirection: "row",
+            paddingTop: 15,
+            paddingBottom: 15,
+            maxWidth: 250,
+          }}
+        >
           {/*
     <CustomButton
     text="Add Friend"

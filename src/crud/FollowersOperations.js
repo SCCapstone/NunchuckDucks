@@ -1,9 +1,14 @@
 import { DataStore } from "aws-amplify";
 import { User, Follows } from "../models";
-import { doesUserExist, getUserId, isCurrUser } from "./UserOperations";
+import {
+  doesUserExist,
+  getUserId,
+  isCurrUser,
+  getUserIdByLowerUsername,
+  doesUserExistLower,
+} from "./UserOperations";
 import { createNotification } from "./NotificationOperations";
 import { getDate } from "../library/getDate";
-
 
 /**
  * This method adds an external user to the primary user's followers list
@@ -12,11 +17,16 @@ import { getDate } from "../library/getDate";
  */
 export async function createFollower(username, followerUsername) {
   try {
-    if (await checkFollowRequirements(username, followerUsername)) {
+    // let lowerUsername = username.toLowerCase();
+    const userId = await getUserId(username);
+    if (!userId) return false;
+
+    const user = await DataStore.query(User, userId);
+    const actualUsername = user.username;
+
+    if (await checkFollowRequirements(actualUsername, followerUsername)) {
       return false;
     }
-
-    const userId = await getUserId(username);
 
     const follower = new Follows({
       username: followerUsername,
@@ -25,8 +35,10 @@ export async function createFollower(username, followerUsername) {
     await DataStore.save(follower);
     let date = getDate();
     let content = followerUsername + " followed you!";
-    await createNotification(username, date, content, followerUsername);
-    console.log(`Follower ${followerUsername} of ${username} was saved successfully.`);
+    await createNotification(actualUsername, date, content, followerUsername);
+    console.log(
+      `Follower ${actualUsername} of ${username} was saved successfully.`
+    );
     return true;
   } catch (error) {
     console.error("Error saving follower.", error);
@@ -42,7 +54,11 @@ export async function createFollower(username, followerUsername) {
  * @returns Boolean
  */
 async function checkFollowRequirements(username, followerUsername) {
-  return  (await isCurrUser(username)) || (await doesUserExist(username)) || (await doesFollowExist(username, followerUsername));
+  return (
+    (await isCurrUser(username)) ||
+    (await doesUserExist(username)) ||
+    (await doesFollowExist(username, followerUsername))
+  );
 }
 
 /**
@@ -55,7 +71,9 @@ async function doesFollowExist(username, followerUsername) {
   try {
     const userId = await getUserId(username);
 
-    const followerList = await DataStore.query(Follows, (f) => f.and((f) => [f.username.eq(followerUsername), f.userID.eq(userId)]));
+    const followerList = await DataStore.query(Follows, (f) =>
+      f.and((f) => [f.username.eq(followerUsername), f.userID.eq(userId)])
+    );
 
     return followerList[0] !== undefined ? true : false;
   } catch (error) {
@@ -71,7 +89,9 @@ async function doesFollowExist(username, followerUsername) {
 export async function getFollowersList(username) {
   try {
     const userId = await getUserId(username);
-    const followersList = await DataStore.query(Follows, (f) => f.userID.eq(userId));
+    const followersList = await DataStore.query(Follows, (f) =>
+      f.userID.eq(userId)
+    );
 
     return followersList;
   } catch (error) {
@@ -88,7 +108,9 @@ export async function deleteFollower(username, followerUsername) {
   try {
     const userId = await getUserId(username);
 
-    const followerToDelete = await DataStore.query(Follows, (f) => f.and((f) => [f.username.eq(followerUsername), f.userID.eq(userId)]));
+    const followerToDelete = await DataStore.query(Follows, (f) =>
+      f.and((f) => [f.username.eq(followerUsername), f.userID.eq(userId)])
+    );
 
     await DataStore.delete(followerToDelete[0]);
 

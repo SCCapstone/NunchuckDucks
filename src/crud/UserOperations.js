@@ -83,8 +83,15 @@ export async function getUserId(username) {
     const user = await DataStore.query(User, (u) => {
       return u.username.eq(username);
     });
-    if (!user || !user.length) return "";
-    return user[0].id;
+
+    if (user && user.length) return user[0].id;
+
+    const userLowerCase = await DataStore.query(User, (u) => {
+      return u.lowerUsername.eq(username.toLowerCase());
+    });
+
+    if (!userLowerCase || !userLowerCase.length) return "";
+    return userLowerCase[0].id;
   } catch (error) {
     console.error("Error finding user ID for", username, error);
   }
@@ -181,6 +188,30 @@ export async function doesUserExist(username) {
   }
 }
 
+export async function doesUserExistLower(lowerUsername) {
+  try {
+    const user = await DataStore.query(User, (u) => u.lowerUsername.eq(lowerUsername));
+
+    if (user[0] === undefined) console.log(`This user does not exist.`);
+
+    return user[0] === undefined;
+  } catch (error) {
+    console.error(`Error checking if user exists by username.`, error);
+  }
+}
+
+export async function getUserIdByLowerUsername(lowerUsername) {
+  try {
+    const user = await DataStore.query(User, (u) => u.lowerUsername.eq(lowerUsername));
+
+    if (!user || !user.length) return "";
+    console.log(`Successfully found actual username for ${lowerUsername}`);
+    return user[0].id;
+  } catch (error) {
+    console.error("Error finding username from lowercase input", error);
+  }
+}
+
 /**
  * Checks to see if the current user is a private user
  * @param {String} username
@@ -191,7 +222,8 @@ export async function isUserPrivate(username) {
     const userId = await getUserId(username);
     const user = await DataStore.query(User, userId);
 
-    console.log(`Found privacy status for ${username}`);
+    if (!user) return true;
+
     return user.isPrivate;
   } catch (error) {
     console.error("Error finding privacy status ", error);
@@ -355,12 +387,33 @@ export async function setWeeklyGoal(username, weeklyGoal) {
     const userId = await getUserId(username);
     const original = await DataStore.query(User, userId);
 
+    const number = Number(weeklyGoal);
+    if (!number || number <= 0) return;
+
     await DataStore.save(
       User.copyOf(original, (updated) => {
-        updated.WeeklyGoal = weeklyGoal;
+        updated.WeeklyGoal = number;
       })
     );
   } catch (error) {
     console.error("Error setting new weekly goal ", error);
+  }
+}
+
+export async function setLowerUsername(username) {
+  try {
+    const userId = await getUserId(username);
+    let lowerUsername = username.toLowerCase();
+
+    const original = await DataStore.query(User, userId);
+
+    if (original.lowerUsername === null || original.lowerUsername === undefined) {
+      await DataStore.save(User.copyOf(original, (updated) => (updated.lowerUsername = lowerUsername)));
+      console.log(`Successfully set lowercase username of ${username} to ${lowerUsername}`);
+    } else {
+      console.log("Lowercase username already set");
+    }
+  } catch (error) {
+    console.error("Error setting lowercase username.", error);
   }
 }

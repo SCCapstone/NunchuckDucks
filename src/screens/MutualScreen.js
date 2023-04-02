@@ -3,6 +3,8 @@ import { useState, useEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
 import PostList from "../components/PostList";
 import HomeHeader from "../components/HomeHeader/HomeHeader";
+import { setLowerUsername } from "../crud/UserOperations";
+import { getCurrentUser } from "../crud/CacheOperations";
 
 export function MutualScreen(props) {
   //const [refresh, setRefresh] = useState(false);
@@ -10,11 +12,18 @@ export function MutualScreen(props) {
   const setRefresh = props.setRefresh;
 
   const nav = useNavigation();
+
   useEffect(() => {
     const focusHandler = nav.addListener("focus", () => {
       setRefresh(!refresh);
+      //checkLowercaseUsername();
     });
   }, [refresh, nav]);
+
+  // async function checkLowercaseUsername() {
+  //   const username = await getCurrentUser();
+  //   await setLowerUsername(username);
+  // }
   return (
     <View
       testID="mutualScreen"
