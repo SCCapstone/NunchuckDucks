@@ -2,7 +2,6 @@ import { DataStore, SortDirection } from "aws-amplify";
 import { Post, User } from "../models";
 import { Storage } from "aws-amplify";
 import { getCurrentUser } from "./CacheOperations";
-import { getCurrentAuthenticatedUser } from "../library/GetAuthenticatedUser";
 
 /**
  * Creates a user and saves the new user in the backend
@@ -227,7 +226,7 @@ export async function isUserPrivate(username) {
     const userId = await getUserId(username);
     const user = await DataStore.query(User, userId);
 
-    if (!user || !user.length) return true;
+    if (!user) return true;
 
     return user.isPrivate;
   } catch (error) {
