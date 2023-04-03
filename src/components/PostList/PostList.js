@@ -27,11 +27,6 @@ export default function PostList(props) {
   // used to avoid doing backend queries if no connection is available yet
   const networkConnection = useNetInfo();
 
-  useEffect(() => {
-    DataStore.clear();
-    DataStore.start();
-  }, []);
-
   async function fetchPostsFromAWS(usernameFromAWS) {
     // gets JSON Object full of Post types; these are read as JSON, but are NOT augmentable.
     let postsFromAWS = await getPostsForMutualFeedFromAWS(usernameFromAWS);

@@ -82,7 +82,7 @@ const HomeHeader = ({ handlePress, refresh, setRefresh }) => {
     Toast.show({
       type: "success",
       text1: "Successfully uploaded your new post!",
-      text2: "Go check it out on your mutuals page 🔥",
+      //text2: "Go check it out on your mutuals page 🔥",
       position: "bottom",
       visibilityTime: 6000,
       bottomOffset: 80,
@@ -119,9 +119,18 @@ const HomeHeader = ({ handlePress, refresh, setRefresh }) => {
       // try catch just in case sending the image doesn't work
       //const { attributes } = await getCurrentUser();
       var fileName = username + "/" + getPictureFileName();
+      await createPost(text, fileName, username, workoutSelection);
+      handleBlowUp();
+      Toast.show({
+        type: "info",
+        text1: "Your new post is loading!",
+        text2: "It'll show up soon 😄",
+        position: "bottom",
+        visibilityTime: 3000,
+        bottomOffset: 80,
+      });
       const response = await fetch(image);
       const blob = await response.blob();
-      await createPost(text, fileName, username, workoutSelection);
       await Storage.put(fileName, blob);
       setShowUploading(false);
       setText("");
@@ -133,7 +142,6 @@ const HomeHeader = ({ handlePress, refresh, setRefresh }) => {
       console.error("Error uploading file", error);
     }
     setRefresh(!refresh);
-    handleBlowUp();
   }
 
   useEffect(() => {
