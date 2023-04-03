@@ -2,29 +2,14 @@ import { ScrollView, StyleSheet, Text, FlatList } from "react-native";
 import { useState, useEffect, useRef } from "react";
 import { DataStore, Predicates, SortDirection } from "@aws-amplify/datastore";
 import { Post as PostSchema } from "../../models";
-import {
-  getPostsForMutualFeedFromAWS,
-  getUsersFollowed,
-  getUsersFollowedIds,
-} from "../../crud/PostOperations";
+import { getPostsForMutualFeedFromAWS, getUsersFollowed, getUsersFollowedIds } from "../../crud/PostOperations";
 import { useNetInfo } from "@react-native-community/netinfo";
 // PostSchema, the schema above, and Post, the component below
 import Post from "../Post";
-import {
-  cacheImageFromAWS,
-  deleteCachedFile,
-  getImageFromCache,
-  updatePfpCache,
-  getPostsFromCache,
-  cachePosts,
-  findFileInCache,
-  getCachedCurrUser,
-  cacheCurrUser,
-  getAllCachedFiles,
-  cachePostsThatShouldBeCached,
-  logCache,
-} from "../../crud/CacheOperations";
+import { getPostsFromCache, cachePosts, getCachedCurrUser, cacheCurrUser, cacheRemoteUri } from "../../crud/CacheOperations";
 import { getFollowsList } from "../../crud/FollowingOperations";
+import { Toast } from "react-native-toast-message/lib/src/Toast";
+import FastImage from "react-native-fast-image";
 
 export default function PostList(props) {
   const list = useRef(null);
@@ -33,6 +18,8 @@ export default function PostList(props) {
   const setRefresh = props.setRefresh;
   // used to guarantee that cached posts are gathered before any backend action occurs
   const [postsInitialCompleted, setPostsInitialCompleted] = useState(false);
+  const [offlineInitialCompleted, setOfflineInitialCompleted] = useState(false);
+  const [onlineInital, setOnlineInitial] = useState(true);
   // used to compare cached posts length to backend to see if the cached needs to be updated
   const [postLength, setPostLength] = useState(0);
   const [swipeRefresh, setSwipeRefresh] = useState(true);
@@ -43,7 +30,6 @@ export default function PostList(props) {
   async function fetchPostsFromAWS(usernameFromAWS) {
     // gets JSON Object full of Post types; these are read as JSON, but are NOT augmentable.
     let postsFromAWS = await getPostsForMutualFeedFromAWS(usernameFromAWS);
-
     // turns posts into a true JSON object, allowing for augmentation as needed
     let postsString = JSON.stringify(postsFromAWS);
     let postsObject = JSON.parse(postsString);
@@ -65,64 +51,41 @@ export default function PostList(props) {
   }
 
   async function cacheAllPostsFromAWS(postsFromAWS) {
-    // caches posts from AWS and also deletes old cache
-    let postNames = [];
-    for (let i = 0; i < postsFromAWS.length; i++) {
-      let username = postsFromAWS[i].username;
-      let postImage = postsFromAWS[i].photo;
-      // postImage equals username/filename.png
-      let postImageName = postImage.substring(postImage.indexOf("/") + 1);
-      let postPfp = await getImageFromCache(username, "pfp.png");
-      //let postImgCache = await getImageFromCache(username, postImageName);
-      postsFromAWS[i].cachedPfp = postPfp;
-
-      if (i < 30) {
-        // only first 30 posts should be cached
-        postNames.push(username + "pfp.png"); // add the pfps that should be cached (redundant pfps will exist)
-        postNames.push(username + postImageName); // add the posts that should be cached
-        postsFromAWS[i].shouldBeCached = true;
-      } else {
-        postsFromAWS[i].shouldBeCached = false;
-      }
-    }
     await cachePosts(postsFromAWS);
     setPosts(postsFromAWS);
     setPostLength(postsFromAWS.length);
-    // we may want to move this to the settings page? Probably unnecessary to do every cacheAWS call
-
-    //this is used to set what should be cached so deleteOldCache in settings can delete unnecessary cache
-    await cachePostsThatShouldBeCached(postNames);
   }
 
-  async function updatePfpCacheForFollowing(usernameFromAWS) {
-    //const username = await getCurrentAuthenticatedUser();
-    const followers = await getUsersFollowed(usernameFromAWS);
-    await updatePfpCache(usernameFromAWS); // updating pfp cache for the current user
-    for (let i = 0; i < followers.length; i++) {
-      await updatePfpCache(followers[i]); // updating pfp cache for all people you are following
-    } // TODO: delete pfp cache of a user when you unfollow them
-  }
-
-  async function cacheStuffFromAWS() {
-    console.log("Network connection acquired");
-
+  async function doOnlineOperations() {
     // Username not cached; cache username
     let usernameFromAWS = "";
-    if (username === null) {
+    if (username === "" || username === null) {
+      // if username is not cached
       usernameFromAWS = await cacheCurrUser();
       setUsername(usernameFromAWS);
-    }
-    // Update pfp cache for all follows; causes few seconds delay in rendering posts :((
-
-    if (usernameFromAWS === "") {
+    } else {
       usernameFromAWS = username;
     }
-    await updatePfpCacheForFollowing(usernameFromAWS);
-    let temp = posts;
+    let followers = await getUsersFollowed(usernameFromAWS);
+    await cachePfpInitially(usernameFromAWS, followers);
+
+    if (offlineInitialCompleted === true) {
+      showOnlineToast(usernameFromAWS);
+    } else if (onlineInital === true) {
+      if (followers.length === 0) {
+        showWelcomeToast();
+      } else {
+        showWelcomeBackToast(usernameFromAWS);
+      }
+      setOnlineInitial(false);
+    }
+
+    /*let temp = posts;
     setPosts([]);
-    setPosts(temp);
+    setPosts(temp);*/
     // Fetching posts from AWS
     let postsFromAWS = await fetchPostsFromAWS(usernameFromAWS);
+    setPosts(postsFromAWS);
     let isCacheRefreshNeeded = await checkIfRefreshCacheNeeded(postsFromAWS);
     if (isCacheRefreshNeeded === true) {
       cacheAllPostsFromAWS(postsFromAWS);
@@ -150,41 +113,110 @@ export default function PostList(props) {
   async function fetchPostCache() {
     let usernameFromCache = await getCachedCurrUser();
     setUsername(usernameFromCache);
-    let postsFromCache = await fetchPostsFromCache();
+    await fetchPostsFromCache();
     setPostsInitialCompleted(true);
     setRefresh(!refresh);
   }
+  async function cachePfpInitially(username, followers) {
+    //let followers = await getUsersFollowed(username);
+    await cacheRemoteUri(username, "pfp.png");
+    for (let i = 0; i < followers.length; i++) {
+      await cacheRemoteUri(followers[i], "pfp.png");
+    }
+    return followers.length;
+  }
 
+  const showWelcomeToast = () => {
+    Toast.show({
+      type: "success",
+      text1: "Welcome to GymBit!",
+      text2: "We're glad you're here 😁💪",
+      position: "bottom",
+      visibilityTime: 4000,
+      bottomOffset: 80,
+    });
+  };
+
+  const showOnlineToast = (usr) => {
+    Toast.show({
+      type: "success",
+      text1: "You are now online!",
+      text2: "Welcome back, " + usr + " 😁💪",
+      position: "bottom",
+      visibilityTime: 4000,
+      bottomOffset: 80,
+    });
+  };
+
+  const showWelcomeBackToast = (usr) => {
+    Toast.show({
+      type: "success",
+      text1: "Welcome back, " + usr + " 💪",
+      //text2: "We're glad you're here 😁💪",
+      position: "bottom",
+      visibilityTime: 4000,
+      bottomOffset: 80,
+    });
+  };
+
+  const delay = (ms) => new Promise((res) => setTimeout(res, ms));
+
+  const showNotConnectedToast = async () => {
+    setOfflineInitialCompleted(true);
+    Toast.show({
+      type: "info",
+      text1: "You're not connected to the internet 😬",
+      position: "bottom",
+      visibilityTime: 3000,
+      bottomOffset: 80,
+    });
+    await delay(4000);
+    Toast.show({
+      type: "info",
+      text1: "You can still look around 👀",
+      text2: "And also create goals 💪",
+      position: "bottom",
+      visibilityTime: 3000,
+      bottomOffset: 80,
+    });
+  };
+
+  async function offlineOperations() {
+    await fetchPostCache();
+  }
   useEffect(() => {
+    setSwipeRefresh(true);
     // First thing done upon startup of the app
     if (postsInitialCompleted === false) {
-      fetchPostCache(); // will set postsInitialCompleted to true after completion
+      offlineOperations(); // will set postsInitialCompleted to true after completion
     }
-    if (
-      networkConnection.isConnected === true &&
-      postsInitialCompleted === true
-    ) {
+    if (networkConnection.isConnected) {
       //list.current.scrollToIndex({ index: 0 });
-      cacheStuffFromAWS();
-    } else {
-      // in case there is no conneciton, a swipe refresh should end with nothing happening
+      doOnlineOperations();
+    } else if (postsInitialCompleted) {
+      // in case there is no connection, a swipe refresh should end with nothing happening
       // need to test when using app with no connection
       setSwipeRefresh(false);
+      if (offlineInitialCompleted === false) {
+        showNotConnectedToast();
+      }
     }
-    console.log("PostList refreshed");
+    //console.log("PostList refreshed");
   }, [refresh, networkConnection]);
 
   return (
-    <FlatList
-      ref={list}
-      data={posts}
-      renderItem={({ item }) => <Post entry={item} />}
-      refreshing={swipeRefresh}
-      onRefresh={() => {
-        setSwipeRefresh(true);
-        setRefresh(!refresh);
-      }}
-      keyExtractor={(item) => item.id}
-    />
+    <>
+      <FlatList
+        ref={list}
+        data={posts}
+        renderItem={({ item }) => <Post entry={item} refresh={refresh} />}
+        extraData={refresh}
+        refreshing={swipeRefresh}
+        onRefresh={() => {
+          setRefresh(!refresh);
+        }}
+        keyExtractor={(item) => item.id}
+      />
+    </>
   );
 }

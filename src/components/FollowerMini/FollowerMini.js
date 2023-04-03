@@ -38,12 +38,13 @@ const FollowerMini = ({ username, onProfileClick, onDelete, style }) => {
   return (
     <View style={containerStyles}>
       <NonCurrUserProfileModal
-          modalVisible={modalVisible}
-          setModalVisible={setModalVisible}
-          username={username}
-          image={userImageSrc}></NonCurrUserProfileModal>
+        modalVisible={modalVisible}
+        setModalVisible={setModalVisible}
+        username={username}
+        image={userImageSrc}
+      ></NonCurrUserProfileModal>
       <View style={styles.leftSideContainer}>
-        <ProfileMini src={userImageSrc} onClick={() => setModalVisible(true)}></ProfileMini>
+        <ProfileMini username={username} onClick={() => setModalVisible(true)} />
         <Pressable onPressOut={() => setModalVisible(true)} style={styles.usernameContainer}>
           <Text style={styles.username}>@{username}</Text>
         </Pressable>

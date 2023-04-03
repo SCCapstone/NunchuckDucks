@@ -1,11 +1,4 @@
-import {
-  View,
-  Modal,
-  StyleSheet,
-  Pressable,
-  Text,
-  ScrollView,
-} from "react-native";
+import { View, Modal, StyleSheet, Pressable, Text, ScrollView } from "react-native";
 import React, { useState, useEffect } from "react";
 import { createFollower } from "../../../crud/FollowersOperations";
 
@@ -23,11 +16,7 @@ const AddFollowerModal = ({ modalVisible, setModalVisible }) => {
   const [suggestedUsers, setSuggestedUsers] = useState([]);
 
   const renderedSuggestedUsers = suggestedUsers.map((suggestedUser) => (
-    <SuggestedFollower
-      username={suggestedUser.username}
-      addNewFollower={addNewFollower}
-      key={suggestedUser.id}
-    ></SuggestedFollower>
+    <SuggestedFollower username={suggestedUser.username} addNewFollower={addNewFollower} key={suggestedUser.id}></SuggestedFollower>
   ));
 
   async function addNewFollower(desiredFollowValue) {
@@ -77,17 +66,9 @@ const AddFollowerModal = ({ modalVisible, setModalVisible }) => {
   }, [addFriendValue]);
 
   return (
-    <Modal
-      visible={modalVisible}
-      animationType="fade"
-      transparent={true}
-      onRequestClose={closeModal}
-    >
-      <Pressable
-        onPress={closeModal}
-        style={styles.transparentView}
-      ></Pressable>
+    <Modal visible={modalVisible} animationType="fade" transparent={true} onRequestClose={() => closeModal}>
       <View style={styles.centeredView}>
+        <Pressable onPress={closeModal} style={styles.transparentView} />
         <ErrorModal
           popUpModalVisible={errorModal}
           setPopUpModalVisible={setErrorModal}
@@ -110,14 +91,9 @@ const AddFollowerModal = ({ modalVisible, setModalVisible }) => {
               style={{ width: "35%" }}
             ></CustomButton>
           </View>
-          {suggestedUsers.length === 0 && (
-            <Text style={styles.noSuggestedUsers}>No Suggested Users</Text>
-          )}
+          {suggestedUsers.length === 0 && <Text style={styles.noSuggestedUsers}>No Suggested Users</Text>}
           {suggestedUsers.length !== 0 && (
-            <ScrollView
-              style={styles.suggestionsInner}
-              contentContainerStyle={{ flexGrow: 1 }}
-            >
+            <ScrollView style={styles.suggestionsInner} contentContainerStyle={{ flexGrow: 1 }}>
               {renderedSuggestedUsers}
             </ScrollView>
           )}

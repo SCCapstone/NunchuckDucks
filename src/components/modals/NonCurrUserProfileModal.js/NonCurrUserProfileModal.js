@@ -8,12 +8,7 @@ import { getFollowersList } from "../../../crud/FollowersOperations";
 
 const imageSRC = require("../../../../assets/icons/Gymbit_Icons_Black/Back_Icon_Black.png");
 
-const NonCurrUserProfileModal = ({
-  modalVisible,
-  setModalVisible,
-  username,
-  image,
-}) => {
+const NonCurrUserProfileModal = ({ modalVisible, setModalVisible, username, image }) => {
   const [user, setUser] = useState("");
   const [followingCount, setFollowingCount] = useState("");
   const [followersCount, setFollowersCount] = useState("");
@@ -50,12 +45,7 @@ const NonCurrUserProfileModal = ({
   }
 
   return (
-    <Modal
-      visible={modalVisible}
-      animationType="fade"
-      transparent={true}
-      onRequestClose={closeModal}
-    >
+    <Modal visible={modalVisible} animationType="fade" transparent={true} onRequestClose={closeModal}>
       <View
         style={{
           flex: 1,
@@ -75,22 +65,22 @@ const NonCurrUserProfileModal = ({
             alignContent: "center",
           }}
         >
-          <ProfileMini src={image} />
-          <Text style={styles.username}>
-            @{user.username !== null ? user.username : ""}
-          </Text>
+          <ProfileMini username={username} />
+          <Text style={styles.username}>@{username !== null ? username : ""}</Text>
         </View>
-        <View style={{
-          flexDirection: "row"
-        }}>
-        <View style={styles.followingContainer}>
-          <Text style={styles.followingText}>Following</Text>
-          <Text style={styles.followingNumber}>{followingCount}</Text>
-        </View>
-        <View style={styles.followingContainer}>
-          <Text style={styles.followingText}>Followers</Text>
-          <Text style={styles.followingNumber}>{followersCount}</Text>
-        </View>
+        <View
+          style={{
+            flexDirection: "row",
+          }}
+        >
+          <View style={styles.followingContainer}>
+            <Text style={styles.followingText}>Following</Text>
+            <Text style={styles.followingNumber}>{followingCount}</Text>
+          </View>
+          <View style={styles.followingContainer}>
+            <Text style={styles.followingText}>Followers</Text>
+            <Text style={styles.followingNumber}>{followersCount}</Text>
+          </View>
         </View>
         <Text style={styles.bioText}>Bio</Text>
         <View style={styles.bioContainer}>
@@ -124,8 +114,8 @@ const styles = StyleSheet.create({
     height: 80,
     backgroundColor: "white",
     paddingBottom: 50,
+    alignSelf: "flex-start",
     paddingLeft: 10,
-    alignSelf: "flex-start"
   },
   username: {
     paddingTop: 30,
@@ -133,7 +123,7 @@ const styles = StyleSheet.create({
     paddingLeft: 15,
     fontSize: 20,
     fontWeight: "bold",
-    color: "#2E8CFF"
+    color: "#2E8CFF",
   },
   followercount: {
     fontSize: 20,
@@ -164,7 +154,7 @@ const styles = StyleSheet.create({
     minHeight: "auto",
     flexDirection: "column",
     alignItems: "center",
-    alignSelf: "flex-start"
+    alignSelf: "flex-start",
   },
   followingText: {
     fontSize: 11,
@@ -173,7 +163,7 @@ const styles = StyleSheet.create({
   followingNumber: {
     fontSize: 20,
     fontWeight: "bold",
-    paddingTop: 10
+    paddingTop: 10,
   },
   bioText: {
     fontSize: 16,

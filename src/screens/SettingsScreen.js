@@ -1,24 +1,7 @@
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  Switch,
-  TextInput,
-} from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet, Switch, TextInput } from "react-native";
 import Header from "../components/Header/Header";
-import {
-  getPostsThatShouldBeCached,
-  getAllCachedFiles,
-  deleteCachedFile,
-  getCurrentUser,
-} from "../crud/CacheOperations";
-import {
-  isUserPrivate,
-  togglePrivacy,
-  getWeeklyGoal,
-  setWeeklyGoal,
-} from "../crud/UserOperations";
+import { getPostsThatShouldBeCached, getAllCachedFiles, deleteCachedFile, getCurrentUser } from "../crud/CacheOperations";
+import { isUserPrivate, togglePrivacy, getWeeklyGoal, setWeeklyGoal } from "../crud/UserOperations";
 import { getCurrentAuthenticatedUser } from "../library/GetAuthenticatedUser";
 import { useState, useEffect, useCallback } from "react";
 import { useNavigation } from "@react-navigation/native";
@@ -82,9 +65,7 @@ export function SettingsScreen() {
   const [privacy, setPrivacy] = useState(null);
   const [goal, setGoal] = useState(3);
   const [text, setText] = useState("");
-  const [placeHolder, setPlaceHolder] = useState(
-    "Enter new weekly workout goal here"
-  );
+  const [placeHolder, setPlaceHolder] = useState("Enter new weekly workout goal here");
   const [forceRefresh, setForceRefresh] = useState(true);
   const navigation = useNavigation();
 
@@ -132,13 +113,6 @@ export function SettingsScreen() {
   return (
     <View style={styles.container}>
       <Header title={"Settings"} />
-
-      <TouchableOpacity
-        style={styles.deleteCacheButton}
-        onPress={(event) => ""}
-      >
-        <Text style={{ color: "#FFFFFF" }}>Delete old cache</Text>
-      </TouchableOpacity>
       <Text style={styles.text}>Toggle privacy</Text>
       <Switch
         trackColor={{ false: "#767577", true: "#81b0ff" }}
@@ -148,21 +122,12 @@ export function SettingsScreen() {
         value={isEnabled}
         style={styles.switch}
       />
-      <Text style={styles.goalText}>
-        Your current weekly workout goal is {goal}. Change goal bellow
-      </Text>
+      <Text style={styles.goalText}>Your current weekly workout goal is {goal}. Change goal below</Text>
       <View style={styles.goalContainer}>
-        <TextInput
-          style={styles.textInput}
-          placeholder={"Current Goal: " + goal}
-          value={text}
-          onChangeText={setText}
-        />
+        <TextInput style={styles.textInput} placeholder={"Current Goal: " + goal} value={text} onChangeText={setText} />
       </View>
       <TouchableOpacity style={styles.goalButton} onPress={saveNewGoal}>
-        <Text style={{ textAlign: "center", color: "white" }}>
-          Change weekly goal
-        </Text>
+        <Text style={{ textAlign: "center", color: "white" }}>Change weekly goal</Text>
       </TouchableOpacity>
     </View>
   );

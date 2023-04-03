@@ -2,6 +2,7 @@ import { DataStore, SortDirection } from "aws-amplify";
 import { Post, User } from "../models";
 import { Storage } from "aws-amplify";
 import { getCurrentUser } from "./CacheOperations";
+import { ConsoleLogger } from "@aws-amplify/core";
 
 /**
  * Creates a user and saves the new user in the backend
@@ -190,9 +191,7 @@ export async function doesUserExist(username) {
 
 export async function doesUserExistLower(lowerUsername) {
   try {
-    const user = await DataStore.query(User, (u) =>
-      u.lowerUsername.eq(lowerUsername)
-    );
+    const user = await DataStore.query(User, (u) => u.lowerUsername.eq(lowerUsername));
 
     if (user[0] === undefined) console.log(`This user does not exist.`);
 
@@ -204,9 +203,7 @@ export async function doesUserExistLower(lowerUsername) {
 
 export async function getUserIdByLowerUsername(lowerUsername) {
   try {
-    const user = await DataStore.query(User, (u) =>
-      u.lowerUsername.eq(lowerUsername)
-    );
+    const user = await DataStore.query(User, (u) => u.lowerUsername.eq(lowerUsername));
 
     if (!user || !user.length) return "";
     console.log(`Successfully found actual username for ${lowerUsername}`);
@@ -246,9 +243,7 @@ export async function togglePrivacy(username, privacy) {
       })
     );
 
-    console.log(
-      `Successfully changed ${username}'s privacy status to ${privacy}`
-    );
+    console.log(`Successfully changed ${username}'s privacy status to ${privacy}`);
   } catch (error) {
     console.error(`Error changing ${username}'s privacy status to ${privacy}`);
   }
@@ -261,9 +256,7 @@ export async function togglePrivacy(username, privacy) {
  */
 export async function getUsersbyStartofUsername(username) {
   try {
-    const users = await DataStore.query(User, (u) =>
-      u.username.beginsWith(username)
-    );
+    const users = await DataStore.query(User, (u) => u.username.beginsWith(username));
     return users;
   } catch (error) {
     console.error(`Error getting users by start of username.`, error);
@@ -332,13 +325,9 @@ export async function getUsersPostTimes(username) {
 
     const posts = [];
 
-    const postList = await DataStore.query(
-      Post,
-      (p) => p.username.eq(username),
-      {
-        sort: (s) => s.createdAt(SortDirection.DESCENDING),
-      }
-    );
+    const postList = await DataStore.query(Post, (p) => p.username.eq(username), {
+      sort: (s) => s.createdAt(SortDirection.DESCENDING),
+    });
 
     for (let i = 0; i < postList.length; i++) {
       posts.push(postList[i].createdAt);
@@ -419,19 +408,9 @@ export async function setLowerUsername(username) {
 
     const original = await DataStore.query(User, userId);
 
-    if (
-      original.lowerUsername === null ||
-      original.lowerUsername === undefined
-    ) {
-      await DataStore.save(
-        User.copyOf(
-          original,
-          (updated) => (updated.lowerUsername = lowerUsername)
-        )
-      );
-      console.log(
-        `Successfully set lowercase username of ${username} to ${lowerUsername}`
-      );
+    if (original.lowerUsername === null || original.lowerUsername === undefined) {
+      await DataStore.save(User.copyOf(original, (updated) => (updated.lowerUsername = lowerUsername)));
+      console.log(`Successfully set lowercase username of ${username} to ${lowerUsername}`);
     } else {
       console.log("Lowercase username already set");
     }

@@ -5,10 +5,7 @@ import ProfileMini from "../ProfileMini";
 import { Storage } from "@aws-amplify/storage";
 import CustomButton from "../CustomButton/CustomButton";
 import CustomTextInput from "../CustomTextInput/CustomTextInput";
-import {
-  checkForDeletability,
-  createComment,
-} from "../../crud/CommentOperations";
+import { checkForDeletability, createComment } from "../../crud/CommentOperations";
 import { getCurrentUser, getImageFromCache } from "../../crud/CacheOperations";
 import NonCurrUserProfileModal from "../modals/NonCurrUserProfileModal.js/NonCurrUserProfileModal";
 import { getCurrentAuthenticatedUser } from "../../library/GetAuthenticatedUser";
@@ -17,8 +14,7 @@ import ErrorModal from "../modals/ErrorModal/ErrorModal";
 
 const OptionsButton = require("../../../assets/icons/Gymbit_Icons_Black/Three_Dots_Black.png");
 
-const Comment = ({ commentModel, postID, replies, style }) => {
-  const [pfp, setPfp] = useState("");
+const Comment = ({ commentModel, postID, replies, style, refresh }) => {
   const [replyOpen, setReplyOpen] = useState(false);
   const [replyText, setReplyText] = useState("");
   const [repliesOpen, setRepliesOpen] = useState(false);
@@ -69,9 +65,9 @@ const Comment = ({ commentModel, postID, replies, style }) => {
     } else setErrorModalVisible(true);
   }
 
-  useEffect(() => {
+  /*useEffect(() => {
     getPic();
-  }, []);
+  }, []);*/
 
   async function onReplySubmit() {
     setReplyOpen(false);
@@ -94,7 +90,6 @@ const Comment = ({ commentModel, postID, replies, style }) => {
         modalVisible={modalVisible}
         setModalVisible={setModalVisible}
         username={commentModel?.username}
-        image={pfp}
       ></NonCurrUserProfileModal>
       <DeleteComment
         modalVisible={commentModalVisible}
@@ -107,19 +102,13 @@ const Comment = ({ commentModel, postID, replies, style }) => {
         errorMessage={errorMessage}
         setExternalModal={setCommentModalVisible}
       ></ErrorModal>
-      <ProfileMini
-        src={pfp}
-        onClick={() => setModalVisible(true)}
-        style={styles.leftSide}
-      ></ProfileMini>
+      <ProfileMini username={commentModel.username} refresh={refresh} onClick={() => setModalVisible(true)} style={styles.leftSide} />
       <View style={styles.rightSide}>
         <View style={styles.userNameAndDots}>
           <Text style={styles.username} onPress={() => setModalVisible(true)}>
             {commentModel?.username}
           </Text>
-          <TouchableOpacity
-            onPress={() => checkIfDeletable(postID, commentModel?.username)}
-          >
+          <TouchableOpacity onPress={() => checkIfDeletable(postID, commentModel?.username)}>
             <Image style={styles.deleteButton} source={OptionsButton}></Image>
           </TouchableOpacity>
         </View>

@@ -6,6 +6,7 @@ import { ExploreScreen } from "./src/screens/ExploreScreen.js";
 import { MutualScreen } from "./src/screens/MutualScreen.js";
 import { CreatePost } from "./src/screens/CreatePost.js";
 import { CalendarScreen } from "./src/screens/CalendarScreen.js";
+import { WorkoutsScreen } from "./src/screens/WorkoutsScreen.js";
 import { GoalsScreen } from "./src/screens/GoalsScreen.js";
 import { ProfileScreen } from "./src/screens/ProfileScreen.js";
 import { FollowerScreen } from "./src/screens/FollowerScreen.js";
@@ -18,6 +19,8 @@ import { withAuthenticator, AmplifyTheme } from "aws-amplify-react-native";
 import { StyleSheet, View, TitleText } from "react-native";
 import { Storage } from "@aws-amplify/storage";
 import * as clients3 from "@aws-sdk/client-s3";
+import { useState } from "react";
+import { Toast } from "react-native-toast-message/lib/src/Toast.js";
 import { blueThemeColor } from "./src/library/constants.js";
 
 Amplify.configure({
@@ -49,42 +52,43 @@ Amplify.configure({
 const Stack = createMaterialTopTabNavigator();
 
 const app = () => {
+  const [refresh, setRefresh] = useState(false);
   return (
-    <NavigationContainer>
-      <Stack.Navigator
-        screenOptions={{
-          headerShown: false,
-          tabBarShowLabel: true,
-          tabBarScrollEnabled: true,
-          lazy: true,
-          tabBarLabelStyle: {
-            width: 125,
-            height: 30,
-            textAlign: "center",
-            color: "black",
-            fontSize: 15,
-            fontWeight: "bold",
-          },
-        }}
-        initialRouteName="Mutuals"
-        tabBarPosition="bottom"
-      >
-        <Stack.Screen name="Settings" component={SettingsScreen} />
-        {/* <Stack.Screen name="Explore" component={ExploreScreen} /> */}
-        <Stack.Screen name="Mutuals" component={MutualScreen} />
-        <Stack.Screen name="Profile" component={ProfileScreen} />
-        {/* <Stack.Screen name="CreatePost" component={CreatePost} /> */}
-        {/* <Stack.Screen name="Calendar" component={CalendarScreen} /> */}
-        <Stack.Screen name="Goals" component={GoalsScreen} />
-        <Stack.Screen
-          name="Followers"
-          component={FollowerScreen}
-          initialParams={{ isFollowerPage: false }}
-        />
-        <Stack.Screen name="Notifications" component={NotificationsScreen} />
-        {/* <Stack.Screen name="CreateGoal" component={CreateGoalScreen} /> */}
-      </Stack.Navigator>
-    </NavigationContainer>
+    <>
+      <NavigationContainer>
+        <Stack.Navigator
+          screenOptions={{
+            headerShown: false,
+            tabBarShowLabel: true,
+            tabBarScrollEnabled: true,
+            lazy: true,
+            tabBarLabelStyle: {
+              width: 125,
+              height: 30,
+              textAlign: "center",
+              color: "black",
+              fontSize: 15,
+              fontWeight: "bold",
+            },
+          }}
+          initialRouteName="Mutuals"
+          tabBarPosition="bottom"
+        >
+          <Stack.Screen name="Settings" component={SettingsScreen} />
+          {/* <Stack.Screen name="Explore" component={ExploreScreen} /> */}
+          <Stack.Screen name="Mutuals">{(props) => <MutualScreen {...props} refresh={refresh} setRefresh={setRefresh} />}</Stack.Screen>
+          <Stack.Screen name="Profile">{(props) => <ProfileScreen {...props} refresh={refresh} setRefresh={setRefresh} />}</Stack.Screen>
+          {/* <Stack.Screen name="CreatePost" component={CreatePost} /> */}
+          {/* <Stack.Screen name="Calendar" component={CalendarScreen} /> */}
+          <Stack.Screen name="Goals" component={GoalsScreen} />
+          <Stack.Screen name="Workouts" component={WorkoutsScreen} />
+          <Stack.Screen name="Followers" component={FollowerScreen} initialParams={{ isFollowerPage: false }} />
+          <Stack.Screen name="Notifications" component={NotificationsScreen} />
+          {/* <Stack.Screen name="CreateGoal" component={CreateGoalScreen} /> */}
+        </Stack.Navigator>
+      </NavigationContainer>
+      <Toast />
+    </>
   );
 };
 
