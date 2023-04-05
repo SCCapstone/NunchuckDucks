@@ -1,18 +1,33 @@
 import { Camera, CameraType } from "expo-camera";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Button, StyleSheet, Text, TouchableOpacity, View, Pressable } from "react-native";
 import CustomButton from "../CustomButton";
+import { AntDesign } from "@expo/vector-icons";
+import { blueThemeColor } from "../../library/constants";
+import { getCurrentAuthenticatedUser } from "../../library/GetAuthenticatedUser";
 
 export default function CameraComponent({ setImage, setShowCamera }) {
   let cameraRef = useRef();
   const [type, setType] = useState(CameraType.back);
   const [permission, requestPermission] = Camera.useCameraPermissions();
+  const [pictureSize, setPictureSize] = useState("1088x1088");
+
+  useEffect(() => {
+    //setPicSize();
+  }, []);
+
+  async function setPicSize() {
+    let sizes = await cameraRef.current.getAvailablePictureSizesAsync("1:1");
+    let chosenSize = sizes[0];
+    console.log("Yay", chosenSize);
+    setPictureSize(chosenSize);
+  }
 
   if (!permission) {
     // Camera permissions are still loading
     return <View />;
   }
-
+  console.log("EYYY", permission);
   if (!permission.granted) {
     // Camera permissions are not granted yet
     return (
@@ -29,13 +44,15 @@ export default function CameraComponent({ setImage, setShowCamera }) {
 
   async function takePicture() {
     let options = {
+      ImageType: "png",
       quality: 1,
-      base64: true,
-      exif: false,
+      //base64: true,
+      //exif: false,
     };
-
+    let sized = await cameraRef.current.getAvailablePictureSizesAsync("1:1");
+    let usr = await getCurrentAuthenticatedUser();
     let newPhoto = await cameraRef.current.takePictureAsync(options);
-    setImage(newPhoto);
+    setImage(newPhoto.uri);
     setShowCamera(false);
   }
 
@@ -46,10 +63,16 @@ export default function CameraComponent({ setImage, setShowCamera }) {
   return (
     <View style={styles.container}>
       <Pressable onPress={closeModal} style={styles.transparentView} />
-      <Camera style={styles.camera} type={type} ref={cameraRef}>
+      <Camera style={styles.camera} type={type} ref={cameraRef} ImageType="png">
         <View style={styles.buttonContainer}>
-          <CustomButton text="Flip Camera" onClick={toggleCameraType} />
-          <CustomButton text="Take Picture" onClick={takePicture} />
+          <Pressable style={styles.iconA} onPress={toggleCameraType}>
+            <AntDesign name="retweet" size={40} color="#FFFFFF" />
+          </Pressable>
+          <Pressable style={styles.iconB} onPress={takePicture}>
+            <AntDesign name="camera" size={40} color="#FFFFFF" />
+          </Pressable>
+          {/*<CustomButton text="Flip Camera" onClick={toggleCameraType} />
+          <CustomButton text="Take Picture" onClick={takePicture} />*/}
         </View>
       </Camera>
     </View>
@@ -57,20 +80,41 @@ export default function CameraComponent({ setImage, setShowCamera }) {
 }
 
 const styles = StyleSheet.create({
+  iconA: {
+    //left: "5%",
+    marginRight: 20,
+    alignItems: "center",
+    justifyContent: "center",
+    width: 60,
+    height: 60,
+    backgroundColor: blueThemeColor,
+    borderRadius: 100,
+  },
+  iconB: {
+    //right: "5%",
+    alignItems: "center",
+    justifyContent: "center",
+    width: 60,
+    height: 60,
+    backgroundColor: blueThemeColor,
+    borderRadius: 100,
+  },
   container: {
     alignItems: "center",
     position: "absolute",
-    //height: "100%",
+    height: "90%",
+    width: "100%",
     //flex: 1,
     justifyContent: "center",
     zIndex: 100,
   },
   containerA: {
-    //position: "absolute",
+    position: "absolute",
+    width: "100%",
     //height: "100%",
     //flex: 1,
+    bottom: "20%",
     justifyContent: "center",
-    zIndex: 100,
   },
   transparentView: {
     position: "absolute",
@@ -83,13 +127,16 @@ const styles = StyleSheet.create({
   },
   camera: {
     //flex: 1,
-    width: 400,
-    height: 400,
+    width: "100%",
+    height: 500,
   },
   buttonContainer: {
     flex: 1,
+    //width: "100%",
     flexDirection: "row",
     alignItems: "flex-end",
+    justifyContent: "flex-end",
+    bottom: "0%",
     backgroundColor: "transparent",
     //margin: 64,
   },
