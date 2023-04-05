@@ -22,6 +22,10 @@ import Header from "../components/Header";
 import { getCurrentAuthenticatedUser } from "../library/GetAuthenticatedUser";
 import { Toast } from "react-native-toast-message/lib/src/Toast";
 import { useNetInfo } from "@react-native-community/netinfo";
+import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
+import ProfilePostList from "../components/ProfilePostList/ProfilePostList";
+
+const Tab = createMaterialTopTabNavigator();
 
 //Need to also create the buttons to be clickable and call different functions
 export function ProfileScreen(props) {
@@ -219,10 +223,31 @@ export function ProfileScreen(props) {
 
     </View>
   */}
-        <TouchableOpacity onPress={() => navigation.navigate("Goals")}>
-          <GoalSummary></GoalSummary>
-        </TouchableOpacity>
       </View>
+      <Tab.Navigator
+        /*screenOptions={{
+            headerShown: false,
+            tabBarShowLabel: true,
+            tabBarScrollEnabled: true,
+            lazy: true,
+            tabBarLabelStyle: {
+              width: 125,
+              height: 30,
+              textAlign: "center",
+              color: "black",
+              fontSize: 15,
+              fontWeight: "bold",
+            },
+          }}*/
+        initialRouteName="GoalSummary"
+        tabBarPosition="top"
+      >
+        <Tab.Screen name="Goals Summary" component={GoalSummary} />
+        <Tab.Screen name="Your Posts" component={ProfilePostList} />
+        {/*<TouchableOpacity onPress={() => navigation.navigate("Goals")}>
+          <GoalSummary></GoalSummary>
+</TouchableOpacity>*/}
+      </Tab.Navigator>
     </>
   );
 }
