@@ -105,3 +105,5 @@ Cort Miles: cort.miles@outlook.com
 Kennedy Fairey: kgfairey11@gmail.com
 
 Nathan Dolbir: nathandolbir@gmail.com
+
+Bryson Carroll: bryson2809@gmail.com
