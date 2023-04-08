@@ -12,28 +12,30 @@ export default function CameraComponent({ setImage, setShowCamera }) {
   const [permission, requestPermission] = Camera.useCameraPermissions();
   const [pictureSize, setPictureSize] = useState("1088x1088");
 
-  useEffect(() => {
-    //setPicSize();
+  /*useEffect(() => {
+    setPicSize();
   }, []);
 
+  //This was my attempt to make a function that would set the
   async function setPicSize() {
     let sizes = await cameraRef.current.getAvailablePictureSizesAsync("1:1");
     let chosenSize = sizes[0];
     console.log("Yay", chosenSize);
     setPictureSize(chosenSize);
-  }
+  }*/
 
   if (!permission) {
     // Camera permissions are still loading
     return <View />;
   }
-  console.log("EYYY", permission);
+
   if (!permission.granted) {
     // Camera permissions are not granted yet
+    requestPermission();
     return (
-      <View style={styles.containerA}>
-        <Text style={{ textAlign: "center" }}>GymBit needs your permission to use the camera</Text>
-        <Button onPress={requestPermission} title="Grant permission" />
+      <View /*style={styles.containerA}*/>
+        {/*<Text style={{ textAlign: "center" }}>GymBit needs your permission to use the camera</Text>
+        <Button onPress={requestPermission} title="Grant permission" />*/}
       </View>
     );
   }
@@ -49,8 +51,6 @@ export default function CameraComponent({ setImage, setShowCamera }) {
       //base64: true,
       //exif: false,
     };
-    let sized = await cameraRef.current.getAvailablePictureSizesAsync("1:1");
-    let usr = await getCurrentAuthenticatedUser();
     let newPhoto = await cameraRef.current.takePictureAsync(options);
     setImage(newPhoto.uri);
     setShowCamera(false);
@@ -59,24 +59,25 @@ export default function CameraComponent({ setImage, setShowCamera }) {
   function closeModal() {
     setShowCamera(false);
   }
-
-  return (
-    <View style={styles.container}>
-      <Pressable onPress={closeModal} style={styles.transparentView} />
-      <Camera style={styles.camera} type={type} ref={cameraRef} ImageType="png">
-        <View style={styles.buttonContainer}>
-          <Pressable style={styles.iconA} onPress={toggleCameraType}>
-            <AntDesign name="retweet" size={40} color="#FFFFFF" />
-          </Pressable>
-          <Pressable style={styles.iconB} onPress={takePicture}>
-            <AntDesign name="camera" size={40} color="#FFFFFF" />
-          </Pressable>
-          {/*<CustomButton text="Flip Camera" onClick={toggleCameraType} />
+  if (permission.granted) {
+    return (
+      <View style={styles.container}>
+        <Pressable onPress={closeModal} style={styles.transparentView} />
+        <Camera style={styles.camera} type={type} ref={cameraRef} ImageType="png">
+          <View style={styles.buttonContainer}>
+            <Pressable style={styles.iconA} onPress={toggleCameraType}>
+              <AntDesign name="retweet" size={40} color="#FFFFFF" />
+            </Pressable>
+            <Pressable style={styles.iconB} onPress={takePicture}>
+              <AntDesign name="camera" size={40} color="#FFFFFF" />
+            </Pressable>
+            {/*<CustomButton text="Flip Camera" onClick={toggleCameraType} />
           <CustomButton text="Take Picture" onClick={takePicture} />*/}
-        </View>
-      </Camera>
-    </View>
-  );
+          </View>
+        </Camera>
+      </View>
+    );
+  }
 }
 
 const styles = StyleSheet.create({
@@ -128,7 +129,8 @@ const styles = StyleSheet.create({
   camera: {
     //flex: 1,
     width: "100%",
-    height: 500,
+    //height: 500,
+    aspectRatio: 3 / 4,
   },
   buttonContainer: {
     flex: 1,
