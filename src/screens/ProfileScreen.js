@@ -30,6 +30,8 @@ import "react-native-url-polyfill/auto";
 import "react-native-get-random-values";
 import Header from "../components/Header";
 
+//Need to fix style of profile screen
+
 //Need to also create the buttons to be clickable and call different functions
 export function ProfileScreen(props) {
   const navigation = useNavigation();
