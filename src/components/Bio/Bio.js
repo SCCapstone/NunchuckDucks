@@ -32,6 +32,7 @@ const styles = StyleSheet.create({
     minHeight: "auto",
     borderRadius: 10,
     flexDirection: "column",
+    bottom: "65%",
   },
   bio: {
     paddingTop: 5,
