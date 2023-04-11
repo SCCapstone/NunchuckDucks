@@ -110,27 +110,27 @@ export function ProfileScreen(props) {
       <View>
         <Header title={"Profile"} style={{backgroundColor:"white"}}/>
       </View>
-      <View style={{flex: 1, alignItems: "center", backgroundColor: "white", justifyContent: "center",}}>
+      <View style={{flex: 1, alignItems: "center", backgroundColor: "white", justifyContent: "center", top: -30}}>
         <ChangeBioModal modalVisible={modalVisible} setModalVisible={setModalVisible}></ChangeBioModal>
-        <View style={{ paddingTop: 0, paddingBottom: 10, flexDirection: "row", alignContent: "center" }}>
-          <ProfileMini onClick={() => addProfileImage()} src={profilePic} />
+        <View style={{ paddingTop: 0, paddingBottom: 10, flexDirection: "row"}}>
+          <ProfileMini onClick={() => addProfileImage()} src={profilePic} style={styles.profile} />
           <Text style={styles.username}>@{username}</Text>
         </View>
         <View style={{
           flexDirection: "row"
         }}>
         <View style={styles.followingContainer}>
+        <Text style={styles.followingNumber} onPress={() => navigation.navigate("Followers", { isFollowerPage: true })}>{followingcount}</Text>
           <Text style={styles.followingText}>Following</Text>
-          <Text style={styles.followingNumber} onPress={() => navigation.navigate("Followers", { isFollowerPage: true })}>{followingcount}</Text>
         </View>
         <View style={styles.followingContainer}>
+        <Text style={styles.followingNumber} onPress={() => navigation.navigate("Followers", { isFollowerPage: false })}>{followercount}</Text>
           <Text style={styles.followingText}>Followers</Text>
-          <Text style={styles.followingNumber} onPress={() => navigation.navigate("Followers", { isFollowerPage: false })}>{followercount}</Text>
         </View>
         </View>
         <TouchableOpacity onPress={() => setModalVisible(true)}>
-          <Text style={styles.bioText}>Bio</Text>
-          <Bio></Bio>
+          {/* <Text style={styles.bioText}>Bio</Text> */}
+          <Bio style={styles.bio}></Bio>
         </TouchableOpacity>
         {/*<Text style={styles.username}>@{username}</Text>*/}
         <View style={{ flexDirection: "row", paddingTop: 15, paddingBottom: 15, maxWidth: 250 }}>
@@ -172,11 +172,12 @@ export function ProfileScreen(props) {
 }
 const styles = StyleSheet.create({
   username: {
-    paddingTop: 30,
-    paddingBottom: 0,
-    paddingLeft: 15,
+    //paddingTop: 30,
+    //paddingBottom: 0,
+    //paddingLeft: 15,
     fontSize: 15,
     fontWeight: "bold",
+    right: "70%"
   },
   mainbutton: {
     fontSize: 30,
@@ -198,12 +199,13 @@ const styles = StyleSheet.create({
     width: 80,
     height: 60,
     backgroundColor: "white",
-    borderColor: "black",
-    borderWidth: 1,
+    //borderColor: "black",
+    //borderWidth: 1,
     minHeight: "auto",
     flexDirection: "column",
     alignItems: "center",
-    alignSelf: "flex-start"
+    alignSelf: "flex-start",
+    bottom: "18%"
   },
   followingText: {
     fontSize: 11,
@@ -218,8 +220,15 @@ const styles = StyleSheet.create({
   bioText: {
     fontSize: 16,
     fontWeight: "bold",
-    paddingTop: 10,
+    //paddingTop: 10,
     paddingBottom: 5,
-    paddingLeft: 10
+    paddingLeft: 10,
+    bottom: "50%"
+  },
+  profile: {
+    right: "90%",
+  },
+  bio: {
+    
   }
 });
