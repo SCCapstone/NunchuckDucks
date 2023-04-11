@@ -5,6 +5,7 @@ import { findUserByUsername } from "../../../crud/UserOperations";
 import ProfileMini from "../../ProfileMini";
 import { getFollowsList } from "../../../crud/FollowingOperations";
 import { getFollowersList } from "../../../crud/FollowersOperations";
+import GoalSummary from "../../GoalSummary";
 
 const imageSRC = require("../../../../assets/icons/Gymbit_Icons_Black/Back_Icon_Black.png");
 
@@ -86,6 +87,7 @@ const NonCurrUserProfileModal = ({ modalVisible, setModalVisible, username, imag
         <View style={styles.bioContainer}>
           <Text style={styles.bio}>{user.bio !== null ? user.bio : ""}</Text>
         </View>
+        <GoalSummary username={username} />
       </View>
     </Modal>
   );

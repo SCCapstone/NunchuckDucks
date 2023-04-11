@@ -71,15 +71,7 @@ export function SettingsScreen() {
 
   useEffect(() => {
     renderSettings();
-  }, [navigation, forceRefresh]);
-
-  useEffect(() => {
-    if (privacy === true) {
-      setIsEnabled(true);
-    } else {
-      setIsEnabled(false);
-    }
-  }, [navigation, privacy, forceRefresh]);
+  }, []);
 
   const toggleSwitch = async () => {
     if (privacy === true) {
@@ -96,10 +88,13 @@ export function SettingsScreen() {
   async function renderSettings() {
     let username = await getCurrentUser();
 
-    let Privacy = await isUserPrivate(username);
-    setPrivacy(Privacy);
-
+    let privacy = await isUserPrivate(username);
+    if (privacy === true) {
+      setIsEnabled(true);
+    }
+    setPrivacy(privacy);
     const weeklyGoal = await getWeeklyGoal(username);
+    console.log("Weekly goal", weeklyGoal);
     setGoal(weeklyGoal);
     setText(null);
     setUsername(username);

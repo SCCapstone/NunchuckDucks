@@ -8,6 +8,7 @@ import { getCurrentUser } from "../crud/CacheOperations";
 
 export function MutualScreen(props) {
   //const [refresh, setRefresh] = useState(false);
+  const [isEmpty, setIsEmpty] = useState(false);
   const refresh = props.refresh;
   const setRefresh = props.setRefresh;
 
@@ -30,7 +31,7 @@ export function MutualScreen(props) {
       style={{ height: "100%", backgroundColor: "white" /*,marginBottom:"22%" (i commented this out idk if it matters.*/ }}
     >
       <HomeHeader refresh={refresh} setRefresh={setRefresh} handlePress={() => setRefresh(!refresh)} />
-      <PostList refresh={refresh} setRefresh={setRefresh} />
+      <PostList refresh={refresh} setRefresh={setRefresh} setIsEmpty={setIsEmpty} />
     </View>
   );
 }

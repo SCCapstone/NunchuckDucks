@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, ScrollView, Pressable } from "react-native";
 import React, { useState, useEffect } from "react";
 import { Auth } from "aws-amplify";
 
@@ -7,12 +7,15 @@ import { blueThemeColor, grayThemeColor } from "../../library/constants";
 import { getCurrentAuthenticatedUser } from "../../library/GetAuthenticatedUser";
 import { getCurrentUser } from "../../crud/CacheOperations";
 import { getAndObserveGoals } from "../../crud/observeQueries/GoalObserveQueries";
+import CustomButton from "../CustomButton";
+import { useNavigation } from "@react-navigation/native";
 
-const GoalSummary = () => {
+const GoalSummary = ({ username, isCurrentUser = false }) => {
   const [goals, setGoals] = useState([]);
+  const navigation = useNavigation();
 
   async function goalList() {
-    let username = await getCurrentUser();
+    //let username = await getCurrentUser();
     const subscription = getAndObserveGoals(username, setGoals);
     return subscription;
   }
@@ -22,11 +25,10 @@ const GoalSummary = () => {
     return () => {
       if (subscription && subscription.unsubscribe) subscription.unsubscribe();
     };
-  }, []);
+  }, [username]);
 
   const listGoals = goals
     .filter((val) => !val.isCompleted)
-    .slice(0, 3)
     .map((goal, index) => (
       <View key={goal.id} style={styles.goaltextcontainer}>
         <Text style={styles.goaltitle}>Goal {index + 1}: </Text>
@@ -41,19 +43,39 @@ const GoalSummary = () => {
   );
 
   return (
-    <View style={styles.container}>
-      <View style={styles.title}>
-        <Text style={styles.title}>Your Goals</Text>
-      </View>
-      {listGoals.length === 0 ? defaultForNoGoals : listGoals}
-      <Text style={styles.text}>...</Text>
-    </View>
+    <>
+      {isCurrentUser ? (
+        <>
+          <Pressable onPress={() => navigation.navigate("Goals")} style={styles.titleBox}>
+            <Text style={styles.title}>Your Goals</Text>
+          </Pressable>
+          <ScrollView style={{ backgroundColor: "white" }}>{listGoals.length === 0 ? defaultForNoGoals : listGoals}</ScrollView>
+          <View style={{ backgroundColor: "white", paddingBottom: 15 }}>
+            {/*<CustomButton
+              style={{ alignSelf: "center", width: "75%" }}
+              text="Go to full goals page"
+              onClick={() => navigation.navigate("Goals")}
+      />*/}
+          </View>
+        </>
+      ) : (
+        <View style={styles.container}>
+          <View style={styles.titleBox}>
+            <Text style={styles.title}>{username + "'s"} goals</Text>
+          </View>
+          <ScrollView>{listGoals.length === 0 ? defaultForNoGoals : listGoals}</ScrollView>
+        </View>
+      )}
+    </>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    width: 310,
+    marginTop: 10,
+    //width: 310,
+    height: "30%",
+    width: "85%",
     backgroundColor: "white",
     borderColor: blueThemeColor,
     borderWidth: 4.5,
@@ -62,27 +84,37 @@ const styles = StyleSheet.create({
     flexDirection: "column",
   },
   goaltext: {
-    fontSize: 19,
-    maxWidth: 229,
+    fontSize: 30,
+    flex: 1,
+    //maxWidth: 300,
   },
   goaltextcontainer: {
     paddingTop: 5,
+    flex: 1,
     flexDirection: "row",
     textAlign: "left",
   },
   goaltitle: {
-    fontSize: 19,
+    fontSize: 30,
     paddingLeft: 5,
     fontWeight: "600",
+  },
+  titleBox: {
+    //position: "absolute",
+    borderColor: "#000000",
+    borderBottomWidth: 3,
   },
   title: {
     textAlign: "center",
     width: "auto", //this changes length of line/ box the text exits on
-    fontSize: 22,
+    fontSize: 30,
     paddingTop: 2,
-    height: 33,
+    height: 40,
+
+    borderRadius: 7,
     borderTopRightRadius: 7, //curves top right
     borderTopLeftRadius: 7, //curves top left
+
     color: blueThemeColor,
     fontWeight: "bold",
     backgroundColor: grayThemeColor,

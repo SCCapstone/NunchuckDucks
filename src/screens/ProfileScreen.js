@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView, FlatList } from "react-native";
 import { Auth } from "aws-amplify";
 import GoalSummary from "../components/GoalSummary";
 import { blueThemeColor, grayThemeColor } from "../library/constants";
@@ -148,54 +148,55 @@ export function ProfileScreen(props) {
 
   return (
     <>
-      <View>
-        <Header title={"Profile"} style={{ backgroundColor: "white" }} />
-      </View>
-      <View style={{ flex: 1, alignItems: "center", backgroundColor: "white", justifyContent: "center" }}>
-        <ChangeBioModal modalVisible={modalVisible} setModalVisible={setModalVisible}></ChangeBioModal>
-        <View style={{ paddingTop: 0, paddingBottom: 10, flexDirection: "row", alignContent: "center" }}>
-          {usernameSet && showStreak && (
-            <View>
-              <Image source={require("../../assets/icons/Gymbit_Icons_Trans/flame.png")} style={styles.flame} />
-              <Text style={styles.streak}>{streak}</Text>
-            </View>
-          )}
-          <ProfileMini onClick={() => handleProfileImageClick()} username={username} refresh={refresh} setRefresh={setRefresh} />
+      <View style={{ flex: 1, backgroundColor: "white", justifyContent: "center" }}>
+        <View>
+          <Header title={"Profile"} style={{ backgroundColor: "white" }} />
+        </View>
+        <View style={{ alignItems: "center", backgroundColor: "white", justifyContent: "center" }}>
+          <ChangeBioModal modalVisible={modalVisible} setModalVisible={setModalVisible}></ChangeBioModal>
+          <View style={{ paddingTop: 0, paddingBottom: 10, flexDirection: "row", alignContent: "center" }}>
+            {usernameSet && showStreak && (
+              <View>
+                <Image source={require("../../assets/icons/Gymbit_Icons_Trans/flame.png")} style={styles.flame} />
+                <Text style={styles.streak}>{streak}</Text>
+              </View>
+            )}
+            <ProfileMini onClick={() => handleProfileImageClick()} username={username} refresh={refresh} setRefresh={setRefresh} />
 
-          <Text style={styles.username}>@{username}</Text>
-        </View>
-        <View
-          style={{
-            flexDirection: "row",
-          }}
-        >
-          <View style={styles.followingContainer}>
-            <Text style={styles.followingText}>Following</Text>
-            <Text style={styles.followingNumber} onPress={() => navigation.navigate("Followers", { isFollowerPage: true })}>
-              {followingcount}
-            </Text>
+            <Text style={styles.username}>@{username}</Text>
           </View>
-          <View style={styles.followingContainer}>
-            <Text style={styles.followingText}>Followers</Text>
-            <Text style={styles.followingNumber} onPress={() => navigation.navigate("Followers", { isFollowerPage: false })}>
-              {followercount}
-            </Text>
+          <View
+            style={{
+              flexDirection: "row",
+            }}
+          >
+            <View style={styles.followingContainer}>
+              <Text style={styles.followingText}>Following</Text>
+              <Text style={styles.followingNumber} onPress={() => navigation.navigate("Followers", { isFollowerPage: true })}>
+                {followingcount}
+              </Text>
+            </View>
+            <View style={styles.followingContainer}>
+              <Text style={styles.followingText}>Followers</Text>
+              <Text style={styles.followingNumber} onPress={() => navigation.navigate("Followers", { isFollowerPage: false })}>
+                {followercount}
+              </Text>
+            </View>
           </View>
-        </View>
-        <TouchableOpacity onPress={() => setModalVisible(true)}>
-          <Text style={styles.bioText}>Bio</Text>
-          <Bio />
-        </TouchableOpacity>
-        {/*<Text style={styles.username}>@{username}</Text>*/}
-        <View
-          style={{
-            flexDirection: "row",
-            paddingTop: 15,
-            paddingBottom: 15,
-            maxWidth: 250,
-          }}
-        >
-          {/*
+          <TouchableOpacity onPress={() => setModalVisible(true)}>
+            <Text style={styles.bioText}>Bio</Text>
+            <Bio />
+          </TouchableOpacity>
+          {/*<Text style={styles.username}>@{username}</Text>*/}
+          <View
+            style={{
+              flexDirection: "row",
+              paddingTop: 15,
+              paddingBottom: 15,
+              maxWidth: 250,
+            }}
+          >
+            {/*
     <CustomButton
     text="Add Friend"
     textStyle = {{fontSize: 17}}
@@ -205,16 +206,16 @@ export function ProfileScreen(props) {
     //onClick={needs to add friend here}
     ></CustomButton>
     */}
-          <SignOutButton />
-        </View>
-        <View
-          style={{
-            flexDirection: "row",
-            paddingBottom: 30,
-            paddingHorizontal: 80,
-          }}
-        ></View>
-        {/* Need for calendar style.
+            <SignOutButton />
+          </View>
+          <View
+            style={{
+              flexDirection: "row",
+              paddingBottom: 30,
+              paddingHorizontal: 80,
+            }}
+          ></View>
+          {/* Need for calendar style.
     <View style={{ flexdirection:"row", paddingBottom:30}}>
       
       <TouchableOpacity onPress = {() => navigation.navigate("Calendar")}>
@@ -223,9 +224,9 @@ export function ProfileScreen(props) {
 
     </View>
   */}
-      </View>
-      <Tab.Navigator
-        /*screenOptions={{
+        </View>
+        <Tab.Navigator
+          /*screenOptions={{
             headerShown: false,
             tabBarShowLabel: true,
             tabBarScrollEnabled: true,
@@ -239,15 +240,16 @@ export function ProfileScreen(props) {
               fontWeight: "bold",
             },
           }}*/
-        initialRouteName="GoalSummary"
-        tabBarPosition="top"
-      >
-        <Tab.Screen name="Goals Summary" component={GoalSummary} />
-        <Tab.Screen name="Your Posts" component={ProfilePostList} />
-        {/*<TouchableOpacity onPress={() => navigation.navigate("Goals")}>
+          initialRouteName="GoalSummary"
+          tabBarPosition="top"
+        >
+          <Tab.Screen name="Goals Summary">{(props) => <GoalSummary {...props} username={username} isCurrentUser={true} />}</Tab.Screen>
+          <Tab.Screen name="Your Posts" component={ProfilePostList} />
+          {/*<TouchableOpacity onPress={() => navigation.navigate("Goals")}>
           <GoalSummary></GoalSummary>
 </TouchableOpacity>*/}
-      </Tab.Navigator>
+        </Tab.Navigator>
+      </View>
     </>
   );
 }

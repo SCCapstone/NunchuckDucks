@@ -16,6 +16,7 @@ export default function PostList(props) {
   const [posts, setPosts] = useState([]); // posts: all graphql post entries
   const refresh = props.refresh;
   const setRefresh = props.setRefresh;
+  const setIsEmpty = props.setIsEmpty;
   // used to guarantee that cached posts are gathered before any backend action occurs
   const [postsInitialCompleted, setPostsInitialCompleted] = useState(false);
   const [offlineInitialCompleted, setOfflineInitialCompleted] = useState(false);
@@ -85,6 +86,9 @@ export default function PostList(props) {
     setPosts(temp);*/
     // Fetching posts from AWS
     let postsFromAWS = await fetchPostsFromAWS(usernameFromAWS);
+    if (postsFromAWS.length === 0) {
+      setIsEmpty(true);
+    }
     setPosts(postsFromAWS);
     let isCacheRefreshNeeded = await checkIfRefreshCacheNeeded(postsFromAWS);
     if (isCacheRefreshNeeded === true) {
