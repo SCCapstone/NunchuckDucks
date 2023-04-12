@@ -74,6 +74,7 @@ local.properties
 *.iml
 *.hprof
 .cxx/
+android/local.properties
 
 # node.js
 #

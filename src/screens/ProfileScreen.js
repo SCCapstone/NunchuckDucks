@@ -147,9 +147,8 @@ export function ProfileScreen(props) {
       <View>
         <Header title={"Profile"} style={{ backgroundColor: "white" }} />
       </View>
-      <View style={{ flex: 1, alignItems: "center", backgroundColor: "white", justifyContent: "center" }}>
-        <ChangeBioModal modalVisible={modalVisible} setModalVisible={setModalVisible}></ChangeBioModal>
-        <View style={{ paddingTop: 0, paddingBottom: 10, flexDirection: "row", alignContent: "center" }}>
+      <View style={{ paddingTop: 0, paddingBottom: 10, backgroundColor: "white" }}>
+        <View style={{ paddingTop: 0, paddingBottom: 10, flexDirection: "row", backgroundColor: "white" }}>
           {usernameSet && showStreak && (
             <View>
               <Image source={require("../../assets/icons/Gymbit_Icons_Trans/flame.png")} style={styles.flame} />
@@ -157,14 +156,10 @@ export function ProfileScreen(props) {
             </View>
           )}
           <ProfileMini onClick={() => handleProfileImageClick()} username={username} refresh={refresh} setRefresh={setRefresh} />
-
+        
           <Text style={styles.username}>@{username}</Text>
         </View>
-        <View
-          style={{
-            flexDirection: "row",
-          }}
-        >
+        <View style={{ paddingTop: 0, paddingBottom: 10, backgroundColor: "white", flexDirection: "row" }}>
           <View style={styles.followingContainer}>
             <Text style={styles.followingText}>Following</Text>
             <Text style={styles.followingNumber} onPress={() => navigation.navigate("Followers", { isFollowerPage: true })}>
@@ -178,8 +173,19 @@ export function ProfileScreen(props) {
             </Text>
           </View>
         </View>
-        <TouchableOpacity onPress={() => setModalVisible(true)}>
-          <Text style={styles.bioText}>Bio</Text>
+
+      </View>
+      <View style={{ flex: 1, alignItems: "center", backgroundColor: "white", justifyContent: "center" }}>
+        <ChangeBioModal modalVisible={modalVisible} setModalVisible={setModalVisible}></ChangeBioModal>
+        
+        <View
+          style={{
+            flexDirection: "row",
+          }}
+        >
+          
+        </View>
+        <TouchableOpacity onPress={() => setModalVisible(true)} style={{bottom: "25%"}}>
           <Bio />
         </TouchableOpacity>
         {/*<Text style={styles.username}>@{username}</Text>*/}
@@ -234,7 +240,7 @@ const styles = StyleSheet.create({
     backgroundColor: grayThemeColor,
   },
   username: {
-    paddingTop: 30,
+    //paddingTop: 30,
     paddingBottom: 0,
     paddingLeft: 15,
     fontSize: 15,
@@ -260,12 +266,14 @@ const styles = StyleSheet.create({
     width: 80,
     height: 60,
     backgroundColor: "white",
-    borderColor: "black",
-    borderWidth: 1,
+    //borderColor: "black",
+    //borderWidth: 1,
     minHeight: "auto",
     flexDirection: "column",
     alignItems: "center",
     alignSelf: "flex-start",
+    left: "140%",
+    bottom: "15%",
   },
   followingText: {
     fontSize: 11,
