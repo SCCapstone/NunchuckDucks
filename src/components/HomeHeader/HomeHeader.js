@@ -31,6 +31,7 @@ import CreateWorkoutModal from "../modals/CreateWorkoutModal";
 import { getNotifications } from "../../crud/NotificationOperations";
 import WorkoutSelection from "../WorkoutSelection";
 import FastImage from "react-native-fast-image";
+import { getAndObserveNotificationCount } from "../../crud/observeQueries/NotificationObserveQueries";
 
 /**
  * Creates the header that will go above the two home screens (Mutual and Explore)
@@ -60,10 +61,24 @@ const HomeHeader = ({ handlePress, refresh, setRefresh }) => {
     });
   };
 
-  async function findNotificationCount() {
-    const username = await getCurrentUser();
-    let notifications = await getNotifications(username);
-    setNotificationCount(notifications.length);
+  useEffect(() => {
+    const subscription = retrieveNotificationCount();
+    return () => {
+      if (subscription && subscription.unsubscribe) subscription.unsubscribe();
+    };
+  }, []);
+
+  async function retrieveNotificationCount() {
+    try {
+      const username = await getCurrentUser();
+      const subscription = getAndObserveNotificationCount(
+        username,
+        setNotificationCount
+      );
+      return subscription;
+    } catch (error) {
+      console.error("Retrieving Notification Count in HomeHeader: ", error);
+    }
   }
 
   const handleCreatePostBlowUp = () => {
@@ -73,10 +88,6 @@ const HomeHeader = ({ handlePress, refresh, setRefresh }) => {
       setCreatePostTouched(!createPostTouched);
     }
   };
-
-  useEffect(() => {
-    findNotificationCount();
-  }, [navigation]);
 
   const showPostUploadedToast = () => {
     Toast.show({
@@ -160,15 +171,27 @@ const HomeHeader = ({ handlePress, refresh, setRefresh }) => {
           }}
         >
           <Text style={styles.counter}>{notificationCount}</Text>
-          <Image style={styles.notification} source={require("../../../assets/icons/Gymbit_Icons_Black/Alert_Icon_Black.png")} />
+          <Image
+            style={styles.notification}
+            source={require("../../../assets/icons/Gymbit_Icons_Black/Alert_Icon_Black.png")}
+          />
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.logoContainer} onPress={handlePress}>
-          <Image style={styles.logo} source={require("../../../assets/icons/Gymbit_Icons_Trans/Logo_Trans.png")} />
+          <Image
+            style={styles.logo}
+            source={require("../../../assets/icons/Gymbit_Icons_Trans/Logo_Trans.png")}
+          />
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.settingsButton} onPress={handleCreatePostBlowUp}>
-          <Image style={styles.settings} source={require("../../../assets/icons/Gymbit_Icons_Black/Create_Post_Icon_Black.png")} />
+        <TouchableOpacity
+          style={styles.settingsButton}
+          onPress={handleCreatePostBlowUp}
+        >
+          <Image
+            style={styles.settings}
+            source={require("../../../assets/icons/Gymbit_Icons_Black/Create_Post_Icon_Black.png")}
+          />
         </TouchableOpacity>
       </View>
       <View>
@@ -203,7 +226,12 @@ const HomeHeader = ({ handlePress, refresh, setRefresh }) => {
                 />
               </View>
               <View style={{ alignItems: "center", flex: 2 }}>
-                <TextInput style={styles.input} placeholder="Write your caption here" value={text} onChangeText={setText} />
+                <TextInput
+                  style={styles.input}
+                  placeholder="Write your caption here"
+                  value={text}
+                  onChangeText={setText}
+                />
                 {showUploading ? (
                   <ActivityIndicator size="large" color="#2E8CFF" />
                 ) : (

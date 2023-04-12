@@ -44,13 +44,23 @@ const FollowerMini = ({ username, onProfileClick, onDelete, style }) => {
         image={userImageSrc}
       ></NonCurrUserProfileModal>
       <View style={styles.leftSideContainer}>
-        <ProfileMini username={username} onClick={() => setModalVisible(true)} />
-        <Pressable onPressOut={() => setModalVisible(true)} style={styles.usernameContainer}>
+        <ProfileMini
+          username={username}
+          onClick={() => setModalVisible(true)}
+        />
+        <Pressable
+          onPressOut={() => setModalVisible(true)}
+          style={styles.usernameContainer}
+        >
           <Text style={styles.username}>@{username}</Text>
         </Pressable>
       </View>
       <Pressable onPressOut={onDelete}>
-        <Image source={deleteIconPath} resizeMode={"center"} style={styles.xIcon}></Image>
+        <Image
+          source={deleteIconPath}
+          resizeMode={"center"}
+          style={styles.xIcon}
+        ></Image>
       </Pressable>
     </View>
   );
@@ -84,6 +94,7 @@ const styles = StyleSheet.create({
     textAlignVertical: "center",
     fontSize: 20,
     padding: 5,
+    paddingLeft: 10,
     width: "100%",
   },
   xIcon: {

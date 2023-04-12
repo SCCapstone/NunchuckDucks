@@ -5,7 +5,10 @@ import ProfileMini from "../ProfileMini";
 import { Storage } from "@aws-amplify/storage";
 import CustomButton from "../CustomButton/CustomButton";
 import CustomTextInput from "../CustomTextInput/CustomTextInput";
-import { checkForDeletability, createComment } from "../../crud/CommentOperations";
+import {
+  checkForDeletability,
+  createComment,
+} from "../../crud/CommentOperations";
 import { getCurrentUser, getImageFromCache } from "../../crud/CacheOperations";
 import NonCurrUserProfileModal from "../modals/NonCurrUserProfileModal.js/NonCurrUserProfileModal";
 import { getCurrentAuthenticatedUser } from "../../library/GetAuthenticatedUser";
@@ -102,13 +105,20 @@ const Comment = ({ commentModel, postID, replies, style, refresh }) => {
         errorMessage={errorMessage}
         setExternalModal={setCommentModalVisible}
       ></ErrorModal>
-      <ProfileMini username={commentModel.username} refresh={refresh} onClick={() => setModalVisible(true)} style={styles.leftSide} />
+      <ProfileMini
+        username={commentModel.username}
+        refresh={refresh}
+        onClick={() => setModalVisible(true)}
+        style={styles.leftSide}
+      />
       <View style={styles.rightSide}>
         <View style={styles.userNameAndDots}>
           <Text style={styles.username} onPress={() => setModalVisible(true)}>
             {commentModel?.username}
           </Text>
-          <TouchableOpacity onPress={() => checkIfDeletable(postID, commentModel?.username)}>
+          <TouchableOpacity
+            onPress={() => checkIfDeletable(postID, commentModel?.username)}
+          >
             <Image style={styles.deleteButton} source={OptionsButton}></Image>
           </TouchableOpacity>
         </View>
@@ -158,7 +168,6 @@ const styles = StyleSheet.create({
 
     width: "100%",
     padding: 5,
-    backgroundColor: grayThemeColor, // To be removed
   },
 
   rightSide: {
@@ -169,7 +178,6 @@ const styles = StyleSheet.create({
     minWidth: "60%",
     maxWidth: "70%",
 
-    // backgroundColor: "pink",
     marginLeft: 5,
   },
   leftSide: {

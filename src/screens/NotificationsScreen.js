@@ -54,7 +54,9 @@ export function NotificationsScreen() {
         let notificationId = notification.id;
         console.log(notificationId);
         await deleteNotification(notificationId);
-        setForceRefresh(!forceRefresh);
+        // setForceRefresh(!forceRefresh); temporarily removed for now, since we're hiding the notifications
+        // This speeds up the UI immensely, since we don't have to wait on this query
+        // to rerender every time a deletion happens
       }}
       username={notification.interactingUserUsername}
     />
