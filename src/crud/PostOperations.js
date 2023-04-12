@@ -101,13 +101,13 @@ export async function getPostsForMutualFeedFromAWS(username) {
     let loop = true;
     let userId;
     // TODO: Remove workaround
-    console.log("MY USERNAME::: ", username);
+    /*console.log("MY USERNAME::: ", username);
     while (loop) {
       userId = await getUserId(username);
       console.log("IDIDIDID: ", userId);
 
       if (userId) loop = false;
-    }
+    }*/
     const usersFollowed = await DataStore.query(Follows, (uf) => uf.username.eq(username));
     console.log("USERS FOLLOWED");
     usersFollowed.forEach((val) => console.log(val));

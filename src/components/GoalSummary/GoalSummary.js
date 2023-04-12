@@ -50,13 +50,6 @@ const GoalSummary = ({ username, isCurrentUser = false }) => {
             <Text style={styles.title}>Your Goals</Text>
           </Pressable>
           <ScrollView style={{ backgroundColor: "white" }}>{listGoals.length === 0 ? defaultForNoGoals : listGoals}</ScrollView>
-          <View style={{ backgroundColor: "white", paddingBottom: 15 }}>
-            {/*<CustomButton
-              style={{ alignSelf: "center", width: "75%" }}
-              text="Go to full goals page"
-              onClick={() => navigation.navigate("Goals")}
-      />*/}
-          </View>
         </>
       ) : (
         <View style={styles.container}>
@@ -78,9 +71,9 @@ const styles = StyleSheet.create({
     width: "85%",
     backgroundColor: "white",
     borderColor: blueThemeColor,
-    borderWidth: 4.5,
+    borderWidth: 5,
     minHeight: "auto",
-    borderRadius: 10,
+    borderRadius: 20,
     flexDirection: "column",
   },
   goaltext: {
@@ -101,25 +94,24 @@ const styles = StyleSheet.create({
   },
   titleBox: {
     //position: "absolute",
+    backgroundColor: grayThemeColor,
+    borderTopRightRadius: 15,
+    borderTopLeftRadius: 15,
     borderColor: "#000000",
     borderBottomWidth: 3,
   },
   title: {
     textAlign: "center",
     width: "auto", //this changes length of line/ box the text exits on
-    fontSize: 30,
+    fontSize: 22,
     paddingTop: 2,
-    height: 40,
-
-    borderRadius: 7,
-    borderTopRightRadius: 7, //curves top right
-    borderTopLeftRadius: 7, //curves top left
-
+    height: 33,
     color: blueThemeColor,
     fontWeight: "bold",
-    backgroundColor: grayThemeColor,
   },
   text: {
+    borderTopRightRadius: 20, //curves top right
+    borderTopLeftRadius: 20, //curves top left
     fontSize: 40,
     textAlign: "center",
     fontWeight: "bold",
