@@ -359,16 +359,16 @@ export async function checkStreak(username) {
 export async function getWeeklyGoal(username) {
   try {
     const userId = await getUserId(username);
-
+    console.log("Uid", userId);
     const user = await DataStore.query(User, userId);
+    console.log("USER", user);
     console.log("Weekly goal: ", user.WeeklyGoal);
     const temp = user.WeeklyGoal;
 
     if (temp === null) {
-      const original = await DataStore.query(User, userId);
-
+      //const original = await DataStore.query(User, userId);
       await DataStore.save(
-        User.copyOf(original, (updated) => {
+        User.copyOf(user, (updated) => {
           updated.WeeklyGoal = 3;
         })
       );
@@ -387,17 +387,20 @@ export async function setWeeklyGoal(username, weeklyGoal) {
   try {
     const userId = await getUserId(username);
     const original = await DataStore.query(User, userId);
-
+    console.log("JAA", typeof weeklyGoal);
     const number = Number(weeklyGoal);
-    if (!number || number <= 0) return;
-
+    console.log("HUY", typeof number);
+    if (!number || number <= 0) return null;
+    console.log("NUMER O IS ", number);
     await DataStore.save(
       User.copyOf(original, (updated) => {
         updated.WeeklyGoal = number;
       })
     );
+    return number;
   } catch (error) {
     console.error("Error setting new weekly goal ", error);
+    return null;
   }
 }
 

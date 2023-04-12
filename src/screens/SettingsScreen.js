@@ -63,7 +63,7 @@ export function SettingsScreen() {
   const [username, setUsername] = useState("");
   const [isEnabled, setIsEnabled] = useState(false);
   const [privacy, setPrivacy] = useState(null);
-  const [goal, setGoal] = useState(3);
+  const [goal, setGoal] = useState(null);
   const [text, setText] = useState("");
   const [placeHolder, setPlaceHolder] = useState("Enter new weekly workout goal here");
   const [forceRefresh, setForceRefresh] = useState(true);
@@ -74,7 +74,9 @@ export function SettingsScreen() {
   }, []);
 
   const toggleSwitch = async () => {
-    if (privacy === true) {
+    await togglePrivacy(username, !privacy);
+    setPrivacy(!privacy);
+    /*if (privacy === true) {
       await togglePrivacy(username, false);
       // setIsEnabled((previousState) => false);
       setPrivacy(false);
@@ -82,7 +84,7 @@ export function SettingsScreen() {
       await togglePrivacy(username, true);
       // setIsEnabled((previousState) => true);
       setPrivacy(true);
-    }
+    }*/
   };
 
   async function renderSettings() {
@@ -101,8 +103,12 @@ export function SettingsScreen() {
   }
 
   async function saveNewGoal() {
-    await setWeeklyGoal(username, parseInt(text));
-    setForceRefresh(!forceRefresh);
+    let number = parseInt(text);
+    console.log("HUA", typeof number);
+    let confirm = await setWeeklyGoal(username, parseInt(text));
+    if (confirm !== null) {
+      setGoal(text);
+    }
   }
 
   return (

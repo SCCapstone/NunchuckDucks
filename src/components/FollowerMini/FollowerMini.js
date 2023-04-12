@@ -14,7 +14,7 @@ const FollowerMini = ({ username, onProfileClick, onDelete, style }) => {
   const containerStyles = { ...styles.container, ...style };
   const [userImageSrc, setUserImageSrc] = useState("");
   const [modalVisible, setModalVisible] = useState("");
-
+  console.log("in followermini of", username);
   async function closeModal() {
     setModalVisible(false);
   }

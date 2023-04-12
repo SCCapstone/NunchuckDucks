@@ -37,8 +37,8 @@ export function ProfileScreen(props) {
   const setRefresh = props.setRefresh;
   const [usernameSet, setUsernameSet] = useState(false);
   const [username, setUsername] = useState("");
-  const [followercount, setFollowerCount] = useState(0);
-  const [followingcount, setFollowingCount] = useState(0);
+  const [followercount, setFollowerCount] = useState("-");
+  const [followingcount, setFollowingCount] = useState("-");
   const [modalVisible, setModalVisible] = useState(false);
   const [showMakePfp, setShowMakePfp] = useState(false);
   const [reload, setReload] = useState(false);
@@ -225,29 +225,9 @@ export function ProfileScreen(props) {
     </View>
   */}
         </View>
-        <Tab.Navigator
-          /*screenOptions={{
-            headerShown: false,
-            tabBarShowLabel: true,
-            tabBarScrollEnabled: true,
-            lazy: true,
-            tabBarLabelStyle: {
-              width: 125,
-              height: 30,
-              textAlign: "center",
-              color: "black",
-              fontSize: 15,
-              fontWeight: "bold",
-            },
-          }}*/
-          initialRouteName="GoalSummary"
-          tabBarPosition="top"
-        >
+        <Tab.Navigator initialRouteName="GoalSummary" tabBarPosition="top">
           <Tab.Screen name="Goals Summary">{(props) => <GoalSummary {...props} username={username} isCurrentUser={true} />}</Tab.Screen>
           <Tab.Screen name="Your Posts" component={ProfilePostList} />
-          {/*<TouchableOpacity onPress={() => navigation.navigate("Goals")}>
-          <GoalSummary></GoalSummary>
-</TouchableOpacity>*/}
         </Tab.Navigator>
       </View>
     </>

@@ -5,6 +5,7 @@ import PostList from "../components/PostList";
 import HomeHeader from "../components/HomeHeader/HomeHeader";
 import { setLowerUsername } from "../crud/UserOperations";
 import { getCurrentUser } from "../crud/CacheOperations";
+import { grayThemeColor } from "../library/constants";
 
 export function MutualScreen(props) {
   //const [refresh, setRefresh] = useState(false);
@@ -32,6 +33,11 @@ export function MutualScreen(props) {
     >
       <HomeHeader refresh={refresh} setRefresh={setRefresh} handlePress={() => setRefresh(!refresh)} />
       <PostList refresh={refresh} setRefresh={setRefresh} setIsEmpty={setIsEmpty} />
+      {isEmpty && (
+        <Text style={{ fontSize: 55, fontWeight: "700", color: "#808080" }}>
+          Looks like your feed is empty. Fill it by posting a GymBit and following active friends!
+        </Text>
+      )}
     </View>
   );
 }
