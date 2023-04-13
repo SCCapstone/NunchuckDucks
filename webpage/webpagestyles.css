@@ -52,6 +52,24 @@ footer{
 	flex:1;
 	text-align: center;
 }
+.authordata{
+	text-align: center;
+}
+.authorlinks{
+	list-style-type: none;
+	align-content: center;
+	padding-right: 40px;
+}
+.authordata li{
+	display: inline;
+	background:#2E8CFF;
+	padding: 4px;
+    border-radius: 8px;
+}
+.authorlinks a{
+	text-decoration:none;
+	color:whitesmoke;
+}
 /*larger Resolutions*/
 @media(min-width:750px){
 #content{
