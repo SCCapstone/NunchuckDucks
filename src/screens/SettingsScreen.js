@@ -104,7 +104,6 @@ export function SettingsScreen() {
 
   async function saveNewGoal() {
     let number = parseInt(text);
-    console.log("HUA", typeof number);
     let confirm = await setWeeklyGoal(username, parseInt(text));
     if (confirm !== null) {
       setGoal(text);

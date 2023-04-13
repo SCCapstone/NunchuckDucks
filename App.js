@@ -65,7 +65,6 @@ const app = () => {
       console.log("DataStore event", event, data);
 
       if (event === "ready") {
-        console.log("HEY");
         setAppReady(true);
       }
     });

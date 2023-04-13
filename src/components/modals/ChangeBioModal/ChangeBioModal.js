@@ -42,10 +42,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   modalView: {
-    width: "50%",
+    width: "75%",
+    height: "25%",
     backgroundColor: "white",
-    minWidth: 500,
-    minHeight: 250,
+    //minWidth: 500,
+    //minHeight: 250,
     borderRadius: 20,
 
     display: "flex",

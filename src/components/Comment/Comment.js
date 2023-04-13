@@ -11,10 +11,12 @@ import NonCurrUserProfileModal from "../modals/NonCurrUserProfileModal.js/NonCur
 import { getCurrentAuthenticatedUser } from "../../library/GetAuthenticatedUser";
 import DeleteComment from "../modals/DeleteComment";
 import ErrorModal from "../modals/ErrorModal/ErrorModal";
+import { useNavigation } from "@react-navigation/native";
 
 const OptionsButton = require("../../../assets/icons/Gymbit_Icons_Black/Three_Dots_Black.png");
 
 const Comment = ({ commentModel, postID, replies, style, refresh }) => {
+  const navigation = useNavigation();
   const [replyOpen, setReplyOpen] = useState(false);
   const [replyText, setReplyText] = useState("");
   const [repliesOpen, setRepliesOpen] = useState(false);
@@ -46,28 +48,23 @@ const Comment = ({ commentModel, postID, replies, style, refresh }) => {
     ></CustomButton>
   );
 
-  async function getPic() {
-    try {
-      let pfps3 = await getImageFromCache(commentModel.username, "pfp.png");
-      if (pfps3 === "") {
-        pfps3 = await Storage.get(commentModel.username + "/pfp.png");
-      }
-      //const pfps3 = await Storage.get(commentModel.username + "/pfp.png");
-      setPfp(pfps3);
-    } catch (error) {
-      console.log("Error retrieving pfp in comment: " + error);
-    }
-  }
-
   async function checkIfDeletable(postID, username) {
     if (await checkForDeletability(postID, username)) {
       setCommentModalVisible(true);
     } else setErrorModalVisible(true);
   }
 
-  /*useEffect(() => {
-    getPic();
-  }, []);*/
+  async function handleUserClick() {
+    try {
+      if (commentModel.username === (await getCurrentUser())) {
+        navigation.navigate("Profile");
+      } else {
+        setModalVisible(true);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
 
   async function onReplySubmit() {
     setReplyOpen(false);
@@ -102,10 +99,10 @@ const Comment = ({ commentModel, postID, replies, style, refresh }) => {
         errorMessage={errorMessage}
         setExternalModal={setCommentModalVisible}
       ></ErrorModal>
-      <ProfileMini username={commentModel.username} refresh={refresh} onClick={() => setModalVisible(true)} style={styles.leftSide} />
+      <ProfileMini username={commentModel.username} refresh={refresh} onClick={() => handleUserClick()} style={styles.leftSide} />
       <View style={styles.rightSide}>
         <View style={styles.userNameAndDots}>
-          <Text style={styles.username} onPress={() => setModalVisible(true)}>
+          <Text style={styles.username} onPress={() => handleUserClick()}>
             {commentModel?.username}
           </Text>
           <TouchableOpacity onPress={() => checkIfDeletable(postID, commentModel?.username)}>

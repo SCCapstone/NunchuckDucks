@@ -142,7 +142,7 @@ export default function Post(props) {
           refresh={refresh}
           style={{ height: 42, width: 42, marginLeft: 6, marginRight: 6 }}
           imageStyle={{ height: 42, width: 42 }}
-          onClick={() => setModalVisible(true)}
+          onClick={() => handleUserClick(username)}
         />
         {/*Need to make it navigate to users specific profile*/}
         <Text style={styles.postUsername} onPress={() => handleUserClick(username)}>

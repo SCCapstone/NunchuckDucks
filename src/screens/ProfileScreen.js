@@ -191,7 +191,7 @@ export function ProfileScreen(props) {
         </View>
       </View>
       <View style={{ alignItems: "center", backgroundColor: "white", justifyContent: "center" }}>
-        <ChangeBioModal modalVisible={modalVisible} setModalVisible={setModalVisible}></ChangeBioModal>
+        <ChangeBioModal modalVisible={modalVisible} setModalVisible={setModalVisible} />
         <View
           style={{
             flexDirection: "row",

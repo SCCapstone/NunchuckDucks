@@ -6,10 +6,12 @@ import HomeHeader from "../components/HomeHeader/HomeHeader";
 import { setLowerUsername } from "../crud/UserOperations";
 import { getCurrentUser } from "../crud/CacheOperations";
 import { grayThemeColor } from "../library/constants";
+import CustomButton from "../components/CustomButton";
 
 export function MutualScreen(props) {
   //const [refresh, setRefresh] = useState(false);
   const [isEmpty, setIsEmpty] = useState(false);
+  const [blowup, setBlowup] = useState(false);
   const refresh = props.refresh;
   const setRefresh = props.setRefresh;
 
@@ -31,13 +33,30 @@ export function MutualScreen(props) {
       testID="mutualScreen"
       style={{ height: "100%", backgroundColor: "white" /*,marginBottom:"22%" (i commented this out idk if it matters.*/ }}
     >
-      <HomeHeader refresh={refresh} setRefresh={setRefresh} handlePress={() => setRefresh(!refresh)} />
-      <PostList refresh={refresh} setRefresh={setRefresh} setIsEmpty={setIsEmpty} />
+      <HomeHeader
+        refresh={refresh}
+        setRefresh={setRefresh}
+        blowup={blowup}
+        setBlowup={setBlowup}
+        handlePress={() => setRefresh(!refresh)}
+      />
       {isEmpty && (
-        <Text style={{ fontSize: 55, fontWeight: "700", color: "#808080" }}>
-          Looks like your feed is empty. Fill it by posting a GymBit and following active friends!
-        </Text>
+        <View>
+          <Text style={{ fontSize: 55, fontWeight: "700", color: "#808080", padding: 10 }}>
+            Looks like your feed is empty. Fill it by posting a GymBit and following active friends!
+          </Text>
+          <Text style={{ fontSize: 20, fontWeight: "700", color: "#808080", padding: 10, alignSelf: "center" }}>
+            Posts only last in your feed for 72 hours after posting. Fill the feed up by working out regularly, adding friends, and building
+            an active GymBit community!
+          </Text>
+          <View style={{ flexDirection: "row", justifyContent: "center" }}>
+            <CustomButton style={{ width: "40%" }} text="Create a post" onClick={() => setBlowup(true)} />
+            <View style={{ width: "5%" }} />
+            <CustomButton style={{ width: "40%" }} text="Add a friend" onClick={() => nav.navigate("Followers")} />
+          </View>
+        </View>
       )}
+      <PostList refresh={refresh} setRefresh={setRefresh} setIsEmpty={setIsEmpty} />
     </View>
   );
 }
