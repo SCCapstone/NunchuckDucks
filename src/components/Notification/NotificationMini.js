@@ -7,11 +7,19 @@ import { AntDesign } from "@expo/vector-icons";
 import { grayThemeColor, blueThemeColor } from "../../library/constants";
 
 const NotificationMini = ({ content, onDeleteHandler, username }) => {
+  const [isHidden, setIsHidden] = useState(false);
+
   return (
-    <View style={styles.container}>
+    <View style={isHidden ? { ...styles.container, display: "none" } : styles.container}>
       <ProfileMini username={username} />
       <Text style={styles.text}>{content}</Text>
-      <TouchableOpacity onPress={onDeleteHandler} style={styles.imgContainer}>
+      <TouchableOpacity
+        onPress={() => {
+          setIsHidden(true);
+          onDeleteHandler();
+        }}
+        style={styles.imgContainer}
+      >
         <AntDesign name="closecircleo" color={blueThemeColor} size={40} />
       </TouchableOpacity>
     </View>

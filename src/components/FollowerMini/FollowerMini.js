@@ -67,6 +67,7 @@ const styles = StyleSheet.create({
     textAlignVertical: "center",
     fontSize: 20,
     padding: 5,
+    paddingLeft: 10,
     width: "100%",
   },
   xIcon: {

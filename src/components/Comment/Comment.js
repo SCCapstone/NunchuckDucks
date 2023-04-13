@@ -155,7 +155,6 @@ const styles = StyleSheet.create({
 
     width: "100%",
     padding: 5,
-    backgroundColor: grayThemeColor, // To be removed
   },
 
   rightSide: {
@@ -166,7 +165,6 @@ const styles = StyleSheet.create({
     minWidth: "60%",
     maxWidth: "70%",
 
-    // backgroundColor: "pink",
     marginLeft: 5,
   },
   leftSide: {
