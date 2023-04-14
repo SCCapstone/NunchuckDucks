@@ -5,6 +5,9 @@ export default function Workout({ workout, isAbsolute = false }) {
   if (Array.isArray(workout) && workout.length > 0) {
     workout = workout[0];
   }
+  if (workout.length === 0) {
+    return;
+  }
   let JsonWorkout = workout;
   try {
     JsonWorkout = JSON.parse(JsonWorkout);
