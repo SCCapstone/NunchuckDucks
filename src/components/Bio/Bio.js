@@ -25,7 +25,8 @@ const Bio = () => {
 
 const styles = StyleSheet.create({
   container: {
-    width: 310,
+    marginTop: 5,
+    minWidth: "80%",
     backgroundColor: "white",
     borderColor: "black",
     borderWidth: 0.5,
@@ -35,7 +36,8 @@ const styles = StyleSheet.create({
   },
   bio: {
     paddingTop: 5,
-    paddingBottom: 50,
+    minHeight: 50,
+    paddingBottom: 5,
     paddingLeft: 5,
     paddingRight: 5,
     fontSize: 15,

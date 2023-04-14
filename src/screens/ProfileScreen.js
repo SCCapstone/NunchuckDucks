@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView, FlatList } from "react-native";
 import { Auth } from "aws-amplify";
 import GoalSummary from "../components/GoalSummary";
 import { blueThemeColor, grayThemeColor } from "../library/constants";
@@ -22,6 +22,10 @@ import Header from "../components/Header";
 import { getCurrentAuthenticatedUser } from "../library/GetAuthenticatedUser";
 import { Toast } from "react-native-toast-message/lib/src/Toast";
 import { useNetInfo } from "@react-native-community/netinfo";
+import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
+import ProfilePostList from "../components/ProfilePostList/ProfilePostList";
+
+const Tab = createMaterialTopTabNavigator();
 
 //Need to also create the buttons to be clickable and call different functions
 export function ProfileScreen(props) {
@@ -33,15 +37,13 @@ export function ProfileScreen(props) {
   const setRefresh = props.setRefresh;
   const [usernameSet, setUsernameSet] = useState(false);
   const [username, setUsername] = useState("");
-  const [followercount, setFollowerCount] = useState(0);
-  const [followingcount, setFollowingCount] = useState(0);
+  const [followercount, setFollowerCount] = useState("-");
+  const [followingcount, setFollowingCount] = useState("-");
   const [modalVisible, setModalVisible] = useState(false);
   const [showMakePfp, setShowMakePfp] = useState(false);
-  const [reload, setReload] = useState(false);
   const [streak, setStreak] = useState(0);
   const [showStreak, setShowStreak] = useState(false);
 
-  const [showPfpUploaded, setShowPfpUploaded] = useState(false);
   useEffect(() => {
     renderProfileInfo();
     if (username !== "") {
@@ -88,13 +90,13 @@ export function ProfileScreen(props) {
   async function renderProfileInfo() {
     let username = await getCurrentUser();
     setUsername(username);
-    /*let currStreak = await updateCurrentStreak(username);
+    let currStreak = await updateCurrentStreak(username);
     setStreak(currStreak);
     if (streak > 0) {
       setShowStreak(true);
     } else {
       setShowStreak(false);
-    }*/
+    }
     setUsernameSet(true);
   }
 
@@ -147,42 +149,51 @@ export function ProfileScreen(props) {
       <View>
         <Header title={"Profile"} style={{ backgroundColor: "white" }} />
       </View>
-      <View style={{ flex: 1, alignItems: "center", backgroundColor: "white", justifyContent: "center" }}>
-        <ChangeBioModal modalVisible={modalVisible} setModalVisible={setModalVisible}></ChangeBioModal>
-        <View style={{ paddingTop: 0, paddingBottom: 10, flexDirection: "row", alignContent: "center" }}>
-          {usernameSet && showStreak && (
-            <View>
-              <Image source={require("../../assets/icons/Gymbit_Icons_Trans/flame.png")} style={styles.flame} />
-              <Text style={styles.streak}>{streak}</Text>
-            </View>
-          )}
-          <ProfileMini onClick={() => handleProfileImageClick()} username={username} refresh={refresh} setRefresh={setRefresh} />
-
-          <Text style={styles.username}>@{username}</Text>
-        </View>
+      <View style={{ backgroundColor: "white" }}>
         <View
           style={{
-            flexDirection: "row",
+            padding: 10,
+            backgroundColor: grayThemeColor,
+            borderWidth: 2,
+            borderRadius: 20,
+            alignSelf: "center",
+            width: "70%",
           }}
         >
-          <View style={styles.followingContainer}>
-            <Text style={styles.followingText}>Following</Text>
-            <Text style={styles.followingNumber} onPress={() => navigation.navigate("Followers", { isFollowerPage: true })}>
-              {followingcount}
-            </Text>
+          <View style={{ flexDirection: "row" }}>
+            {usernameSet && showStreak && (
+              <View>
+                <Image source={require("../../assets/icons/Gymbit_Icons_Trans/flame.png")} style={styles.flame} />
+                <Text style={styles.streak}>{streak}</Text>
+              </View>
+            )}
+            <ProfileMini onClick={() => handleProfileImageClick()} username={username} refresh={refresh} setRefresh={setRefresh} />
+            <View style={{ flexdirection: "column", paddingTop: 5, paddingLeft: 15 }}>
+              <Text style={styles.username}>@{username}</Text>
+              <View style={{ paddingTop: 5, flexDirection: "row" }}>
+                <View style={styles.followingContainer}>
+                  <Text style={styles.followingText}>Following</Text>
+                  <Text style={styles.followingNumber} onPress={() => navigation.navigate("Followers", { isFollowerPage: true })}>
+                    {followingcount}
+                  </Text>
+                </View>
+                <View style={styles.followingContainer}>
+                  <Text style={styles.followingText}>Followers</Text>
+                  <Text style={styles.followingNumber} onPress={() => navigation.navigate("Followers", { isFollowerPage: false })}>
+                    {followercount}
+                  </Text>
+                </View>
+              </View>
+            </View>
           </View>
-          <View style={styles.followingContainer}>
-            <Text style={styles.followingText}>Followers</Text>
-            <Text style={styles.followingNumber} onPress={() => navigation.navigate("Followers", { isFollowerPage: false })}>
-              {followercount}
-            </Text>
-          </View>
+
+          <TouchableOpacity onPress={() => setModalVisible(true)}>
+            <Bio />
+          </TouchableOpacity>
         </View>
-        <TouchableOpacity onPress={() => setModalVisible(true)}>
-          <Text style={styles.bioText}>Bio</Text>
-          <Bio />
-        </TouchableOpacity>
-        {/*<Text style={styles.username}>@{username}</Text>*/}
+      </View>
+      <View style={{ alignItems: "center", backgroundColor: "white", justifyContent: "center" }}>
+        <ChangeBioModal modalVisible={modalVisible} setModalVisible={setModalVisible} />
         <View
           style={{
             flexDirection: "row",
@@ -191,38 +202,13 @@ export function ProfileScreen(props) {
             maxWidth: 250,
           }}
         >
-          {/*
-    <CustomButton
-    text="Add Friend"
-    textStyle = {{fontSize: 17}}
-    style = {{borderRadius:20}}
-    //onClick = {() => }
-    //TO-DO
-    //onClick={needs to add friend here}
-    ></CustomButton>
-    */}
           <SignOutButton />
         </View>
-        <View
-          style={{
-            flexDirection: "row",
-            paddingBottom: 30,
-            paddingHorizontal: 80,
-          }}
-        ></View>
-        {/* Need for calendar style.
-    <View style={{ flexdirection:"row", paddingBottom:30}}>
-      
-      <TouchableOpacity onPress = {() => navigation.navigate("Calendar")}>
-      <View style={styles.calendar} />
-      </TouchableOpacity>
-
-    </View>
-  */}
-        <TouchableOpacity onPress={() => navigation.navigate("Goals")}>
-          <GoalSummary></GoalSummary>
-        </TouchableOpacity>
       </View>
+      <Tab.Navigator initialRouteName="GoalSummary" tabBarPosition="top">
+        <Tab.Screen name="Goals Summary">{(props) => <GoalSummary {...props} username={username} isCurrentUser={true} />}</Tab.Screen>
+        <Tab.Screen name="Your Posts" component={ProfilePostList} />
+      </Tab.Navigator>
     </>
   );
 }
@@ -234,10 +220,10 @@ const styles = StyleSheet.create({
     backgroundColor: grayThemeColor,
   },
   username: {
-    paddingTop: 30,
+    //paddingTop: 30,
     paddingBottom: 0,
-    paddingLeft: 15,
-    fontSize: 15,
+
+    fontSize: 20,
     fontWeight: "bold",
   },
   mainbutton: {
@@ -258,14 +244,13 @@ const styles = StyleSheet.create({
   },
   followingContainer: {
     width: 80,
-    height: 60,
-    backgroundColor: "white",
-    borderColor: "black",
-    borderWidth: 1,
+    height: 50,
+    //borderColor: "black",
+    //borderWidth: 1,
     minHeight: "auto",
     flexDirection: "column",
     alignItems: "center",
-    alignSelf: "flex-start",
+    //alignSelf: "flex-start",
   },
   followingText: {
     fontSize: 11,
@@ -274,7 +259,7 @@ const styles = StyleSheet.create({
   followingNumber: {
     fontSize: 20,
     fontWeight: "bold",
-    paddingTop: 10,
+    paddingTop: 5,
     color: blueThemeColor,
   },
   bioText: {

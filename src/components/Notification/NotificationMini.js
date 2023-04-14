@@ -1,27 +1,15 @@
 import { Text, TouchableOpacity, View, StyleSheet, Image, Pressable } from "react-native";
-import { grayThemeColor, blueThemeColor } from "../../library/constants";
 import ProfileMini from "../ProfileMini/ProfileMini";
 import { useState, useEffect } from "react";
 import { getImageFromCache } from "../../crud/CacheOperations";
 import { Storage } from "aws-amplify";
 import NonCurrUserProfileModal from "../modals/NonCurrUserProfileModal.js/NonCurrUserProfileModal";
+import { AntDesign } from "@expo/vector-icons";
+import { grayThemeColor, blueThemeColor } from "../../library/constants";
 
 const NotificationMini = ({ content, onDeleteHandler, username }) => {
-  const [userImageSrc, setUserImageSrc] = useState("");
   const [isHidden, setIsHidden] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
-
-  async function getUserImageSrc(username) {
-    let pfp = await getImageFromCache(username, "pfp.png");
-    if (pfp === "") {
-      pfp = await Storage.get(username + "/pfp.png");
-    }
-    setUserImageSrc(pfp);
-  }
-
-  useEffect(() => {
-    getUserImageSrc(username);
-  }, [username]);
 
   return (
     <View
@@ -35,6 +23,9 @@ const NotificationMini = ({ content, onDeleteHandler, username }) => {
       <Text style={styles.usernameText} onPress={() => setModalVisible(true)}>{username}
         <Text style={styles.text}>{content.substring(username.length)}</Text>
         </Text>
+    <View style={isHidden ? { ...styles.container, display: "none" } : styles.container}>
+      <ProfileMini username={username} />
+      <Text style={styles.text}>{content}</Text>
       <TouchableOpacity
         onPress={() => {
           setIsHidden(true);
@@ -42,11 +33,7 @@ const NotificationMini = ({ content, onDeleteHandler, username }) => {
         }}
         style={styles.imgContainer}
       >
-        <Image
-          source={require("../../../assets/icons/Gymbit_Icons_Black/X_Icon_Black.png")} // Placeholder Icon
-          style={styles.icon}
-          resizeMethod={"auto"}
-        />
+        <AntDesign name="closecircleo" color={blueThemeColor} size={40} />
       </TouchableOpacity>
     </View>
   );
