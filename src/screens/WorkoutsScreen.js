@@ -1,17 +1,37 @@
 import { useEffect, useState } from "react";
-import { View, Image, Text, StyleSheet, Pressable, TouchableOpacity, ScrollView } from "react-native";
+import {
+  View,
+  Image,
+  Text,
+  StyleSheet,
+  Pressable,
+  TouchableOpacity,
+  ScrollView,
+} from "react-native";
 import CustomButton from "../components/CustomButton";
-import { blueThemeColor, grayThemeColor } from "../library/constants";
 import CreateWorkoutModal from "../components/modals/CreateWorkoutModal";
 import { getWorkouts } from "../crud/WorkoutOperations";
 import { getCurrentUser } from "../crud/CacheOperations";
 import Workout from "../components/Workout/Workout";
+import WorkoutMini from "../components/WorkoutMini/WorkoutMini";
 import Header from "../components/Header";
 
 export function WorkoutsScreen() {
   const [modalVisible, setModalVisible] = useState(false);
   const [workouts, setWorkouts] = useState([]);
   const [refreshWorkouts, setRefreshWorkouts] = useState(false);
+  const [workoutForModal, setWorkoutForModal] = useState(null);
+  const [exercisesForModal, setExercisesForModal] = useState(null);
+
+  const openCreateWorkoutModal = (workout, exercises) => {
+    if (!workout) {
+      setModalVisible(true);
+      return;
+    }
+    setWorkoutForModal(workout);
+    setExercisesForModal(exercises);
+    setModalVisible(true);
+  };
 
   async function getWorkoutsForScreen() {
     let currUser = await getCurrentUser();
@@ -32,18 +52,33 @@ export function WorkoutsScreen() {
           setModalVisible={setModalVisible}
           refreshWorkouts={refreshWorkouts}
           setRefreshWorkouts={setRefreshWorkouts}
+          workout={workoutForModal}
+          setWorkout={setWorkoutForModal}
+          modelExerciseList={exercisesForModal}
+          setModelExerciseList={setExercisesForModal}
         />
         <View style={styles.stickyHeader}>
           <CustomButton
             style={{ position: "relative" }}
             buttonType={"default"}
             text={"Create new workout"}
-            onClick={() => setModalVisible(true)}
+            onClick={() => {
+              openCreateWorkoutModal();
+            }}
           />
         </View>
-        <ScrollView style={{ width: "100%" }}>
-          {workouts.map((workout, index) => (
-            <Workout key={index} workout={workout} />
+        <ScrollView
+          style={{ width: "100%" }}
+          contentContainerStyle={{ paddingBottom: 125 }}
+        >
+          {workouts.map((workout) => (
+            <WorkoutMini
+              key={workout.id}
+              workout={workout}
+              refreshWorkouts={refreshWorkouts}
+              setRefreshWorkouts={setRefreshWorkouts}
+              openCreateWorkoutModal={openCreateWorkoutModal}
+            />
           ))}
         </ScrollView>
       </View>
@@ -62,7 +97,6 @@ const styles = StyleSheet.create({
   stickyHeader: {
     width: "100%",
     marginBottom: "5%",
-    //marginTop: "20%",
     display: "flex",
     flexDirection: "column",
     alignItems: "center",

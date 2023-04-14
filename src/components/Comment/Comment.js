@@ -5,11 +5,15 @@ import ProfileMini from "../ProfileMini";
 import { Storage } from "@aws-amplify/storage";
 import CustomButton from "../CustomButton/CustomButton";
 import CustomTextInput from "../CustomTextInput/CustomTextInput";
-import { checkForDeletability, createComment } from "../../crud/CommentOperations";
+import {
+  checkForDeletability,
+  createComment,
+  deleteComment,
+} from "../../crud/CommentOperations";
 import { getCurrentUser, getImageFromCache } from "../../crud/CacheOperations";
 import NonCurrUserProfileModal from "../modals/NonCurrUserProfileModal.js/NonCurrUserProfileModal";
 import { getCurrentAuthenticatedUser } from "../../library/GetAuthenticatedUser";
-import DeleteComment from "../modals/DeleteComment";
+import ConfirmDelete from "../modals/ConfirmDelete";
 import ErrorModal from "../modals/ErrorModal/ErrorModal";
 import { useNavigation } from "@react-navigation/native";
 
@@ -88,24 +92,33 @@ const Comment = ({ commentModel, postID, replies, style, refresh }) => {
         setModalVisible={setModalVisible}
         username={commentModel?.username}
       ></NonCurrUserProfileModal>
-      <DeleteComment
+      <ConfirmDelete
         modalVisible={commentModalVisible}
         setModalVisible={setCommentModalVisible}
-        commentID={commentModel.id}
-      ></DeleteComment>
+        id={commentModel.id}
+        text={"Delete Comment?"}
+        deletefunc={deleteComment}
+      ></ConfirmDelete>
       <ErrorModal
         popUpModalVisible={errorModalVisible}
         setPopUpModalVisible={setErrorModalVisible}
         errorMessage={errorMessage}
         setExternalModal={setCommentModalVisible}
       ></ErrorModal>
-      <ProfileMini username={commentModel.username} refresh={refresh} onClick={() => handleUserClick()} style={styles.leftSide} />
+      <ProfileMini
+        username={commentModel.username}
+        refresh={refresh}
+        onClick={() => handleUserClick()}
+        style={styles.leftSide}
+      />
       <View style={styles.rightSide}>
         <View style={styles.userNameAndDots}>
           <Text style={styles.username} onPress={() => handleUserClick()}>
             {commentModel?.username}
           </Text>
-          <TouchableOpacity onPress={() => checkIfDeletable(postID, commentModel?.username)}>
+          <TouchableOpacity
+            onPress={() => checkIfDeletable(postID, commentModel?.username)}
+          >
             <Image style={styles.deleteButton} source={OptionsButton}></Image>
           </TouchableOpacity>
         </View>
