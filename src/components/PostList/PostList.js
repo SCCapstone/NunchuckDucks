@@ -16,10 +16,11 @@ export default function PostList(props) {
   const [posts, setPosts] = useState([]); // posts: all graphql post entries
   const refresh = props.refresh;
   const setRefresh = props.setRefresh;
+  const setIsEmpty = props.setIsEmpty;
   // used to guarantee that cached posts are gathered before any backend action occurs
   const [postsInitialCompleted, setPostsInitialCompleted] = useState(false);
   const [offlineInitialCompleted, setOfflineInitialCompleted] = useState(false);
-  const [onlineInital, setOnlineInitial] = useState(true);
+  const [onlineInitial, setOnlineInitial] = useState(true);
   // used to compare cached posts length to backend to see if the cached needs to be updated
   const [postLength, setPostLength] = useState(0);
   const [swipeRefresh, setSwipeRefresh] = useState(true);
@@ -66,12 +67,15 @@ export default function PostList(props) {
     } else {
       usernameFromAWS = username;
     }
+
     let followers = await getUsersFollowed(usernameFromAWS);
-    await cachePfpInitially(usernameFromAWS, followers);
+    if (onlineInitial === true) {
+      await cachePfpInitially(usernameFromAWS, followers);
+    }
 
     if (offlineInitialCompleted === true) {
       showOnlineToast(usernameFromAWS);
-    } else if (onlineInital === true) {
+    } else if (onlineInitial === true) {
       if (followers.length === 0) {
         showWelcomeToast();
       } else {
@@ -85,6 +89,11 @@ export default function PostList(props) {
     setPosts(temp);*/
     // Fetching posts from AWS
     let postsFromAWS = await fetchPostsFromAWS(usernameFromAWS);
+    if (postsFromAWS.length === 0) {
+      setIsEmpty(true);
+    } else {
+      setIsEmpty(false);
+    }
     setPosts(postsFromAWS);
     let isCacheRefreshNeeded = await checkIfRefreshCacheNeeded(postsFromAWS);
     if (isCacheRefreshNeeded === true) {

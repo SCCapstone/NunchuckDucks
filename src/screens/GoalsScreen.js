@@ -1,12 +1,4 @@
-import {
-  View,
-  StyleSheet,
-  ScrollView,
-  Text,
-  TextInput,
-  Image,
-  TouchableOpacity,
-} from "react-native";
+import { View, StyleSheet, ScrollView, Text, TextInput, Image, TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import Header from "../components/Header/Header";
 import CustomButton from "../components/CustomButton/CustomButton";
@@ -15,7 +7,7 @@ import GoalMini from "../components/GoalMini/GoalMini";
 import CompletedGoalMini from "../components/CompletedGoalMini";
 import { getGoals, deleteGoal, updateGoal } from "../crud/GoalOperations";
 import { Auth } from "aws-amplify";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import React from "react";
 import { Storage } from "@aws-amplify/storage";
 import { createGoal } from "../crud/GoalOperations";
@@ -26,6 +18,7 @@ Storage.configure();
 //Display users goals and allow them to navigate to the create goals screen
 export function GoalsScreen() {
   const nav = useNavigation();
+  const goalRef = useRef(null);
   const [incompletegoals, setIncompleteGoals] = useState([]);
   const [completegoals, setCompleteGoals] = useState([]); //set array of all user goals
   const [forceRefresh, setForceRefresh] = useState(true); //refresh the goal list
@@ -44,6 +37,7 @@ export function GoalsScreen() {
     handleBlowUp();
     setForceRefresh(!forceRefresh);
     onChangeText(null);
+    goalRef.current.scrollToEnd();
   }
 
   //retrieve all goals for signed in user
@@ -112,12 +106,7 @@ export function GoalsScreen() {
           <Header title={"Goals"} />
 
           <View style={styles.container}>
-            <CustomButton
-              text="Create Goal"
-              onClick={handleBlowUp}
-              style={styles.button1}
-              textStyle={styles.button1text}
-            />
+            <CustomButton text="Create Goal" onClick={handleBlowUp} style={styles.button1} textStyle={styles.button1text} />
           </View>
         </View>
 
@@ -153,11 +142,7 @@ export function GoalsScreen() {
                     value={text}
                   />
                   <View style={styles.miniContainer}>
-                    <CustomButton
-                      text="Create Goal"
-                      style={styles.button0}
-                      onClick={saveGoal}
-                    />
+                    <CustomButton text="Create Goal" style={styles.button0} onClick={saveGoal} />
                   </View>
                 </View>
               </View>
@@ -166,7 +151,7 @@ export function GoalsScreen() {
             <Text></Text>
           )}
         </View>
-        <ScrollView contentContainerStyle={styles.list}>
+        <ScrollView ref={goalRef} contentContainerStyle={styles.list}>
           {incompleteListGoals}
         </ScrollView>
 
@@ -180,9 +165,7 @@ export function GoalsScreen() {
         </View>
 
         <View style={styles.scrollListsContainer}>
-          <ScrollView contentContainerStyle={styles.list}>
-            {completedListGoals}
-          </ScrollView>
+          <ScrollView contentContainerStyle={styles.list}>{completedListGoals}</ScrollView>
         </View>
       </View>
     </>

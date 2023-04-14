@@ -74,21 +74,31 @@ export async function getUsersFollowed(username) {
   }
 }
 
+export async function getUserPostsForProfileScreenFromAWS() {
+  try {
+    let username = await getCurrentUser();
+    let userId = await getUserId(username);
+    let posts = [];
+    posts = await DataStore.query(Post, (p) => p.userID.eq(userId), {
+      sort: (s) => s.createdAt(SortDirection.DESCENDING),
+    });
+    posts.sort(function (a, b) {
+      if (b.createdAt > a.createdAt) {
+        return 1; // if that post is newer (higher number), then keep them in order; a then b
+      } else {
+        return -1; // if not, then reverse; b then a
+      }
+    });
+    return posts;
+  } catch (e) {
+    console.log("Error getting user's profile post list", e);
+  }
+}
+
 export async function getPostsForMutualFeedFromAWS(username) {
   try {
-    setTimeout(() => (loop = false), 10000);
-    let loop = true;
-    let userId;
-    // TODO: Remove workaround
-    console.log("MY USERNAME::: ", username);
-    while (loop) {
-      userId = await getUserId(username);
-      console.log("IDIDIDID: ", userId);
-
-      if (userId) loop = false;
-    }
+    let userId = await getUserId(username);
     const usersFollowed = await DataStore.query(Follows, (uf) => uf.username.eq(username));
-    console.log("USERS FOLLOWED");
     usersFollowed.forEach((val) => console.log(val));
     const usersFollowedIDs = [userId];
     console.log(`Retrieved users followed for ${username}`);

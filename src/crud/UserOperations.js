@@ -191,9 +191,7 @@ export async function doesUserExist(username) {
 
 export async function doesUserExistLower(lowerUsername) {
   try {
-    const user = await DataStore.query(User, (u) =>
-      u.lowerUsername.eq(lowerUsername)
-    );
+    const user = await DataStore.query(User, (u) => u.lowerUsername.eq(lowerUsername));
 
     if (user[0] === undefined) console.log(`This user does not exist.`);
 
@@ -205,9 +203,7 @@ export async function doesUserExistLower(lowerUsername) {
 
 export async function getUserIdByLowerUsername(lowerUsername) {
   try {
-    const user = await DataStore.query(User, (u) =>
-      u.lowerUsername.eq(lowerUsername)
-    );
+    const user = await DataStore.query(User, (u) => u.lowerUsername.eq(lowerUsername));
 
     if (!user || !user.length) return "";
     console.log(`Successfully found actual username for ${lowerUsername}`);
@@ -247,9 +243,7 @@ export async function togglePrivacy(username, privacy) {
       })
     );
 
-    console.log(
-      `Successfully changed ${username}'s privacy status to ${privacy}`
-    );
+    console.log(`Successfully changed ${username}'s privacy status to ${privacy}`);
   } catch (error) {
     console.error(`Error changing ${username}'s privacy status to ${privacy}`);
   }
@@ -262,9 +256,7 @@ export async function togglePrivacy(username, privacy) {
  */
 export async function getUsersbyStartofUsername(username) {
   try {
-    const users = await DataStore.query(User, (u) =>
-      u.username.beginsWith(username)
-    );
+    const users = await DataStore.query(User, (u) => u.username.beginsWith(username));
     const currUserName = await getCurrentUser();
     if (!currUserName) return users;
     return users.filter((val) => val.username !== currUserName);
@@ -335,13 +327,9 @@ export async function getUsersPostTimes(username) {
 
     const posts = [];
 
-    const postList = await DataStore.query(
-      Post,
-      (p) => p.username.eq(username),
-      {
-        sort: (s) => s.createdAt(SortDirection.DESCENDING),
-      }
-    );
+    const postList = await DataStore.query(Post, (p) => p.username.eq(username), {
+      sort: (s) => s.createdAt(SortDirection.DESCENDING),
+    });
 
     for (let i = 0; i < postList.length; i++) {
       posts.push(postList[i].createdAt);
@@ -373,20 +361,16 @@ export async function checkStreak(username) {
 export async function getWeeklyGoal(username) {
   try {
     const userId = await getUserId(username);
-
     const user = await DataStore.query(User, userId);
-    console.log("Weekly goal: ", user.WeeklyGoal);
     const temp = user.WeeklyGoal;
 
     if (temp === null) {
-      const original = await DataStore.query(User, userId);
-
+      //const original = await DataStore.query(User, userId);
       await DataStore.save(
-        User.copyOf(original, (updated) => {
+        User.copyOf(user, (updated) => {
           updated.WeeklyGoal = 3;
         })
       );
-      console.log("Weekly goal set to default");
     }
 
     console.log(`Successfully retrieved weekly goal for ${username}`);
@@ -401,17 +385,17 @@ export async function setWeeklyGoal(username, weeklyGoal) {
   try {
     const userId = await getUserId(username);
     const original = await DataStore.query(User, userId);
-
     const number = Number(weeklyGoal);
-    if (!number || number <= 0) return;
-
+    if (!number || number <= 0) return null;
     await DataStore.save(
       User.copyOf(original, (updated) => {
         updated.WeeklyGoal = number;
       })
     );
+    return number;
   } catch (error) {
     console.error("Error setting new weekly goal ", error);
+    return null;
   }
 }
 
@@ -422,19 +406,9 @@ export async function setLowerUsername(username) {
 
     const original = await DataStore.query(User, userId);
 
-    if (
-      original.lowerUsername === null ||
-      original.lowerUsername === undefined
-    ) {
-      await DataStore.save(
-        User.copyOf(
-          original,
-          (updated) => (updated.lowerUsername = lowerUsername)
-        )
-      );
-      console.log(
-        `Successfully set lowercase username of ${username} to ${lowerUsername}`
-      );
+    if (original.lowerUsername === null || original.lowerUsername === undefined) {
+      await DataStore.save(User.copyOf(original, (updated) => (updated.lowerUsername = lowerUsername)));
+      console.log(`Successfully set lowercase username of ${username} to ${lowerUsername}`);
     } else {
       console.log("Lowercase username already set");
     }

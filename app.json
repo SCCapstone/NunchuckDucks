@@ -24,7 +24,7 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#478bf6"
       },
-      "softwareKeyboardLayoutMode":"pan",
+      "softwareKeyboardLayoutMode": "pan",
       "package": "com.jewzydee.gymbit"
     },
     "web": {
