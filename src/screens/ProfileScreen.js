@@ -41,6 +41,7 @@ export function ProfileScreen(props) {
   const [followingcount, setFollowingCount] = useState("-");
   const [modalVisible, setModalVisible] = useState(false);
   const [showMakePfp, setShowMakePfp] = useState(false);
+  const [streak, setStreak] = useState(0);
   const [showStreak, setShowStreak] = useState(false);
 
   useEffect(() => {
