@@ -21,6 +21,26 @@ export async function createWorkout(username, workoutName, exercises) {
   }
 }
 
+export async function updateWorkoutById(workoutId, workoutName, exercises) {
+  try {
+    let queriedWorkout = await DataStore.query(Workout, workoutId);
+    console.log(queriedWorkout);
+    let exercisesString = JSON.stringify(exercises);
+
+    const workout = await DataStore.save(
+      Workout.copyOf(queriedWorkout, (updated) => {
+        updated.workoutName = workoutName;
+        updated.exercises = exercisesString;
+      })
+    );
+    console.log(`Workout ${workout.id} successfully updated.`);
+    return workout;
+  } catch (error) {
+    console.error("Error updating workout", error);
+    return "";
+  }
+}
+
 export async function getWorkoutById(workoutId) {
   try {
     let workout = await DataStore.query(Workout, (w) => w.id.eq(workoutId));
@@ -38,7 +58,9 @@ export async function getWorkoutById(workoutId) {
 export async function getWorkouts(username) {
   try {
     const userId = await getUserId(username);
-    const workouts = await DataStore.query(Workout, (w) => w.username.eq(username));
+    const workouts = await DataStore.query(Workout, (w) =>
+      w.username.eq(username)
+    );
     console.log(`Successfully retrieved workouts for ${username}`);
 
     return workouts;
