@@ -26,7 +26,7 @@ export default function Workout({ workout, isAbsolute = false }) {
       <View style={styles.blowupheader}>
         <Text style={styles.workoutName}>{workoutName}</Text>
       </View>
-      <ScrollView>
+      <ScrollView nestedScrollEnabled={true}>
         {JsonExercises.map((exercise, index) => (
           <Exercise key={index} exercise={exercise} index={index} />
         ))}
