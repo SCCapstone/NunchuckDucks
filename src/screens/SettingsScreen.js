@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, StyleSheet, Switch, TextInput } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet, Switch, TextInput, ToastAndroid } from "react-native";
 import Header from "../components/Header/Header";
 import { getPostsThatShouldBeCached, getAllCachedFiles, deleteCachedFile, getCurrentUser } from "../crud/CacheOperations";
 import { isUserPrivate, togglePrivacy, getWeeklyGoal, setWeeklyGoal } from "../crud/UserOperations";
@@ -6,6 +6,7 @@ import { getCurrentAuthenticatedUser } from "../library/GetAuthenticatedUser";
 import { useState, useEffect, useCallback } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { blueThemeColor, grayThemeColor } from "../library/constants";
+import InfoModal from "../components/modals/InfoModal"
 
 export function SettingsScreen() {
   const styles = StyleSheet.create({
@@ -22,13 +23,6 @@ export function SettingsScreen() {
       display: "flex",
       height: "100%",
       backgroundColor: "white",
-    },
-    text: {
-      top: 33,
-      left: 20,
-    },
-    switch: {
-      right: 175,
     },
     textInput: {
       textAlign: "center",
@@ -53,7 +47,7 @@ export function SettingsScreen() {
       justifyContent: "center",
       alignContent: "center",
       width: 180,
-      left: 85,
+      //left: "25%",
       top: 15,
       borderRadius: 50,
       padding: 10,
@@ -68,6 +62,8 @@ export function SettingsScreen() {
   const [placeHolder, setPlaceHolder] = useState("Enter new weekly workout goal here");
   const [forceRefresh, setForceRefresh] = useState(true);
   const navigation = useNavigation();
+  const [modalVisible, setModalVisible] = useState(false);
+  const [message, setMessage] = useState("test");
 
   useEffect(() => {
     renderSettings();
@@ -93,6 +89,13 @@ export function SettingsScreen() {
     }
   };
 
+  const showModal = (message) => {
+    setModalVisible(true);
+    setMessage(message);
+  }
+
+
+
   async function renderSettings() {
     let username = await getCurrentUser();
 
@@ -113,22 +116,37 @@ export function SettingsScreen() {
   return (
     <View style={styles.container}>
       <Header title={"Settings"} />
-      <Text style={styles.text}>Toggle privacy</Text>
-      <Switch
-        trackColor={{ false: "#767577", true: "#81b0ff" }}
-        thumbColor={isEnabled ? "#f5dd4b" : "#f4f3f4"}
-        ios_backgroundColor="#3e3e3e"
-        onValueChange={toggleSwitch}
-        value={isEnabled}
-        style={styles.switch}
-      />
+      <View style={{ flexDirection: "row" }}>
+      <InfoModal modalVisible={modalVisible} setModalVisible={setModalVisible} message={message}></InfoModal>
+        <Text style={styles.goalText}>Toggle privacy</Text>
+        <Switch
+          trackColor={{ false: "#767577", true: "#81b0ff" }}
+          thumbColor={isEnabled ? "#f5dd4b" : "#f4f3f4"}
+          ios_backgroundColor="#3e3e3e"
+          onValueChange={toggleSwitch}
+          value={isEnabled}
+          style={styles.switch}
+        />
+      </View>
+      <View style={{alignContent: "center", alignItems: "center", bottom: "2%"}}>
+          <TouchableOpacity onPress={() =>  showModal("Setting your account to private will disable other users from seeing your personal goals when they view your account.")}>
+            <Text style={{ fontSize: 12, color: "gray", top: 20 }} >more info</Text>
+          </TouchableOpacity>
+      </View>
       <Text style={styles.goalText}>Your current weekly workout goal is {goal}. Change goal below</Text>
+      <View style={{alignContent: "center", alignItems: "center", bottom: "2%"}}>
+        <TouchableOpacity style={{ bottom: "2%" }} onPress={() =>  showModal("Your weekly goal will keep track of how many times per week you would like to work out.  We track your goal progress through the number of posts that you have made in the past week.\nIf you meet your goal for a week your streak will inscrease on your profile.") }>
+          <Text style={{ fontSize: 12, color: "gray" }}>more info</Text>
+        </TouchableOpacity>
+      </View>
       <View style={styles.goalContainer}>
         <TextInput style={styles.textInput} placeholder={"Current Goal: " + goal} value={text} onChangeText={setText} />
       </View>
-      <TouchableOpacity style={styles.goalButton} onPress={saveNewGoal}>
-        <Text style={{ textAlign: "center", color: "white" }}>Change weekly goal</Text>
-      </TouchableOpacity>
+      <View style={{alignContent: "center", alignItems: "center"}}>
+        <TouchableOpacity style={styles.goalButton} onPress={saveNewGoal}>
+          <Text style={{ textAlign: "center", color: "white" }}>Change weekly goal</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }
