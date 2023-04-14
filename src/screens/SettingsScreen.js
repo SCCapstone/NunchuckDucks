@@ -6,6 +6,7 @@ import { getCurrentAuthenticatedUser } from "../library/GetAuthenticatedUser";
 import { useState, useEffect, useCallback } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { blueThemeColor, grayThemeColor } from "../library/constants";
+import { Toast } from "react-native-toast-message/lib/src/Toast.js";
 
 export function SettingsScreen() {
   const styles = StyleSheet.create({
@@ -103,10 +104,22 @@ export function SettingsScreen() {
   }
 
   async function saveNewGoal() {
-    let number = parseInt(text);
-    let confirm = await setWeeklyGoal(username, parseInt(text));
-    if (confirm !== null) {
-      setGoal(text);
+    let number = parseInt(text, 10);
+
+    if (text.length > 1 || !Number.isInteger(number)) {
+      setText("");
+      Toast.show({
+        type: "error",
+        text1: "Please enter a number 1-7",
+        position: "bottom",
+        visibilityTime: 3000,
+        bottomOffset: 80,
+      });
+    } else {
+      let confirm = await setWeeklyGoal(username, number);
+      if (confirm !== null) {
+        setGoal(text);
+      }
     }
   }
 

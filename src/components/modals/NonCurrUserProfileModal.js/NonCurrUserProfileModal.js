@@ -7,6 +7,7 @@ import { getFollowsList } from "../../../crud/FollowingOperations";
 import { getFollowersList } from "../../../crud/FollowersOperations";
 import GoalSummary from "../../GoalSummary";
 import { blueThemeColor, grayThemeColor } from "../../../library/constants";
+import FastImage from "react-native-fast-image";
 
 const imageSRC = require("../../../../assets/icons/Gymbit_Icons_Black/Back_Icon_Black.png");
 

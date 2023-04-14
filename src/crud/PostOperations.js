@@ -97,19 +97,8 @@ export async function getUserPostsForProfileScreenFromAWS() {
 
 export async function getPostsForMutualFeedFromAWS(username) {
   try {
-    setTimeout(() => (loop = false), 10000);
-    let loop = true;
-    let userId;
-    // TODO: Remove workaround
-    /*console.log("MY USERNAME::: ", username);
-    while (loop) {
-      userId = await getUserId(username);
-      console.log("IDIDIDID: ", userId);
-
-      if (userId) loop = false;
-    }*/
+    let userId = await getUserId(username);
     const usersFollowed = await DataStore.query(Follows, (uf) => uf.username.eq(username));
-    console.log("USERS FOLLOWED");
     usersFollowed.forEach((val) => console.log(val));
     const usersFollowedIDs = [userId];
     console.log(`Retrieved users followed for ${username}`);

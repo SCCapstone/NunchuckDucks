@@ -41,6 +41,7 @@ export function ProfileScreen(props) {
   const [followingcount, setFollowingCount] = useState("-");
   const [modalVisible, setModalVisible] = useState(false);
   const [showMakePfp, setShowMakePfp] = useState(false);
+  const [showStreak, setShowStreak] = useState(false);
 
   useEffect(() => {
     renderProfileInfo();
@@ -88,13 +89,13 @@ export function ProfileScreen(props) {
   async function renderProfileInfo() {
     let username = await getCurrentUser();
     setUsername(username);
-    /*let currStreak = await updateCurrentStreak(username);
+    let currStreak = await updateCurrentStreak(username);
     setStreak(currStreak);
     if (streak > 0) {
       setShowStreak(true);
     } else {
       setShowStreak(false);
-    }*/
+    }
     setUsernameSet(true);
   }
 
@@ -159,12 +160,12 @@ export function ProfileScreen(props) {
           }}
         >
           <View style={{ flexDirection: "row" }}>
-            {/*usernameSet && showStreak && (
-            <View>
-              <Image source={require("../../assets/icons/Gymbit_Icons_Trans/flame.png")} style={styles.flame} />
-              <Text style={styles.streak}>{streak}</Text>
-            </View>
-          )*/}
+            {usernameSet && showStreak && (
+              <View>
+                <Image source={require("../../assets/icons/Gymbit_Icons_Trans/flame.png")} style={styles.flame} />
+                <Text style={styles.streak}>{streak}</Text>
+              </View>
+            )}
             <ProfileMini onClick={() => handleProfileImageClick()} username={username} refresh={refresh} setRefresh={setRefresh} />
             <View style={{ flexdirection: "column", paddingTop: 5, paddingLeft: 15 }}>
               <Text style={styles.username}>@{username}</Text>

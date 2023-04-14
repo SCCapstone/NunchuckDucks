@@ -7,7 +7,6 @@ import FastImage from "react-native-fast-image";
 const defaultProfile = require("../../../assets/icons/Gymbit_Icons_Black/Profile_Icon.png");
 
 const ProfileMini = ({ style, onClick, imageStyle, username }) => {
-  console.log("in profilemini of", username);
   let containerStyles = { ...styles.container, ...style };
   let imageStyles = { ...styles.image, ...imageStyle };
   let picName = "pfp.png";
@@ -16,8 +15,6 @@ const ProfileMini = ({ style, onClick, imageStyle, username }) => {
 
   async function setImageFromCacheOrAWS() {
     let uriFromCache = await getUriFromCache(username, picName);
-    console.log("Got uriFromCache for", username);
-    console.log("The first 10 chars of the uri are", uriFromCache.substring(0, 10));
     if (uriFromCache === "") {
       uriFromCache = await cacheRemoteUri(username, picName);
     }

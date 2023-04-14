@@ -30,7 +30,7 @@ export default function WorkoutSelection({
       //ScrollView.scrollToEnd
       //setWorkoutSelection(workouts[workouts.length - 1]);
       setWorkoutSelection(workouts[workouts.length - 1]);
-      scrollviewRef.current.scrollToEnd();
+      await scrollviewRef.current.scrollToEnd();
       setScrollToBottom(false);
     }
   }
