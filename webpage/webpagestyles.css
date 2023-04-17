@@ -1,3 +1,6 @@
+#content{
+	font-family: "Gill Sans", sans-serif;
+}
 header{
 	padding:5px;
 	background:#72797bc4;
@@ -51,6 +54,24 @@ footer{
 .authorcol{
 	flex:1;
 	text-align: center;
+}
+.authordata{
+	text-align: center;
+}
+.authorlinks{
+	list-style-type: none;
+	align-content: center;
+	padding-right: 40px;
+}
+.authordata li{
+	display: inline;
+	background:#2E8CFF;
+	padding: 4px;
+    border-radius: 8px;
+}
+.authorlinks a{
+	text-decoration:none;
+	color:whitesmoke;
 }
 /*larger Resolutions*/
 @media(min-width:750px){
