@@ -20,7 +20,6 @@ import {
   getNotifications,
   deleteNotification,
   getNotificationCount,
-  deleteAllNotifications
 } from "../crud/NotificationOperations";
 import { getCurrentUser } from "../crud/CacheOperations";
 import NotificationMini from "../components/Notification/NotificationMini";
@@ -30,7 +29,6 @@ Storage.configure();
 
 export function NotificationsScreen() {
   const nav = useNavigation();
-  const currUser = getCurrentUser();
   const [notifications, setNotifications] = useState([]);
   const [forceRefresh, setForceRefresh] = useState(true);
 
@@ -38,11 +36,6 @@ export function NotificationsScreen() {
     const username = await getCurrentUser();
     const Notifications = await getNotifications(username);
     setNotifications(Notifications);
-  }
-
-  async function deleteAllButton(username) {
-      await deleteAllNotifications(username);
-      setForceRefresh(!forceRefresh);
   }
 
   useEffect(() => {
@@ -71,13 +64,12 @@ export function NotificationsScreen() {
 
   return (
     <>
-      <View style={{ backgroundColor: "white", height: "100%"}}>
-        <View style={{alignItems: "center"}}>
+      <View style={{ backgroundColor: "white", height: "100%" }}>
+        <View>
           <Header
             title={"Notifications"}
             style={{ backgroundColor: "white" }}
           />
-          <CustomButton buttonType={"default"} text={"Delete All"} onClick={() => deleteAllButton(currUser)}></CustomButton>
         </View>
         <View>
           <ScrollView contentContainerStyle={styles.scroll}>
@@ -97,7 +89,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     display: "flex",
     backgroundColor: DefaultTheme,
-    paddingBottom: 50
   },
   button: {
     width: 100,
