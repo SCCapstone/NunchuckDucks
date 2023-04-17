@@ -50,7 +50,7 @@ export function ProfileScreen(props) {
       getFollowersCount(username);
       getFollowingCount(username);
     }
-  }, [modalVisible, username, followercount, followingcount]);
+  }, [modalVisible, username]);
 
   const showPfpUploadedToast = (usr) => {
     Toast.show({
