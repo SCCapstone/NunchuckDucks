@@ -18,6 +18,7 @@ import { getWorkoutById } from "../../crud/WorkoutOperations";
 import { getAndObserveComments } from "../../crud/observeQueries/CommentObserveQueries";
 import { getUriFromCache, cacheRemoteUri } from "../../crud/CacheOperations";
 import FastImage from "react-native-fast-image";
+import * as Progress from "react-native-progress";
 
 export default function Post(props) {
   const entry = props.entry;
@@ -42,6 +43,8 @@ export default function Post(props) {
   const [workout, setWorkout] = useState(null);
   const [uriIsSet, setUriIsSet] = useState(false);
   const [imageUri, setImageUri] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [loadingPercent, setLoadingPercent] = useState(0);
 
   const handleBlowUp = () => {
     setBlowup(!blowup);
@@ -150,17 +153,38 @@ export default function Post(props) {
         </Text>
         <Text style={styles.createdAt}>{getTimeElapsed(entry.createdAt)}</Text>
       </View>
-      <Pressable onPress={handleBlowUp} style={{ backgroundColor: "rgba(30,144,255,0.5)", position: "relative" }}>
+      <Pressable onPress={handleBlowUp} style={{ backgroundColor: grayThemeColor, position: "relative" }}>
         {uriIsSet ? (
-          <FastImage
-            source={{
-              uri: imageUri,
-              headers: {},
-              priority: FastImage.priority.normal,
-            }}
-            style={{ height: 400 }}
-            resizeMode={FastImage.resizeMode.cover}
-          />
+          <View>
+            {loading && (
+              <View
+                style={{
+                  position: "absolute",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  height: 400,
+                  width: "100%",
+                  backgroundColor: grayThemeColor,
+                }}
+              >
+                <Progress.Bar width={200} progress={loadingPercent} color={blueThemeColor} unfilledColor={grayThemeColor} />
+              </View>
+            )}
+            <FastImage
+              style={{ height: 400 }}
+              source={{
+                uri: imageUri,
+                headers: {},
+                priority: FastImage.priority.normal,
+              }}
+              resizeMode={FastImage.resizeMode.cover}
+              onLoadStart={() => setLoading(true)}
+              onProgress={(e) => {
+                setLoadingPercent(e.nativeEvent.loaded / e.nativeEvent.total);
+              }}
+              onLoadEnd={() => setLoading(false)}
+            />
+          </View>
         ) : (
           <View style={{ height: 400, alignItems: "center", justifyContent: "center", backgroundColor: grayThemeColor }}>
             <ActivityIndicator size="large" color="#2E8CFF" />

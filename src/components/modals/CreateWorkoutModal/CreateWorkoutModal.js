@@ -1,25 +1,11 @@
 import { useEffect, useState } from "react";
-import {
-  View,
-  Image,
-  Text,
-  StyleSheet,
-  Pressable,
-  TouchableOpacity,
-  Modal,
-  TextInput,
-  Button,
-  ScrollView,
-} from "react-native";
+import { View, Image, Text, StyleSheet, Pressable, TouchableOpacity, Modal, TextInput, Button, ScrollView } from "react-native";
 
 import CustomButton from "../../CustomButton";
 import { blueThemeColor } from "../../../library/constants";
 import { Toast } from "react-native-toast-message/lib/src/Toast";
 import { getCurrentUser } from "../../../crud/CacheOperations";
-import {
-  createWorkout,
-  updateWorkoutById,
-} from "../../../crud/WorkoutOperations";
+import { createWorkout, updateWorkoutById } from "../../../crud/WorkoutOperations";
 import CustomTextInputWithError from "../../CustomTextInputWithError/CustomTextInputWithError";
 import useInput from "../../../hooks/useInput";
 import ExerciseInput from "../../ExerciseInput/ExerciseInput";
@@ -58,10 +44,7 @@ export default function CreateWorkoutModal({
 
   const validateForm = () => {
     // Check for overall form errors (combined exercises)
-    const allExercisesConfirmed = exerciseListIsValid.reduce(
-      (prev, curr) => prev && curr,
-      true
-    );
+    const allExercisesConfirmed = exerciseListIsValid.reduce((prev, curr) => prev && curr, true);
     if (!allExercisesConfirmed) {
       return {
         hasError: true,
@@ -140,11 +123,7 @@ export default function CreateWorkoutModal({
   async function createOrUpdateWorkout() {
     if (!workout) {
       let currUser = await getCurrentUser();
-      let newWorkout = await createWorkout(
-        currUser,
-        workoutTitle,
-        exerciseList
-      );
+      let newWorkout = await createWorkout(currUser, workoutTitle, exerciseList);
     } else {
       await updateWorkoutById(workout.id, workoutTitle, exerciseList);
     }
@@ -158,12 +137,7 @@ export default function CreateWorkoutModal({
   }
 
   return (
-    <Modal
-      visible={modalVisible}
-      animationType="fade"
-      transparent={true}
-      onRequestClose={() => setModalVisible(false)}
-    >
+    <Modal visible={modalVisible} animationType="fade" transparent={true} onRequestClose={() => setModalVisible(false)}>
       <View style={styles.centeredView}>
         <Pressable onPress={closeModal} style={styles.transparentView} />
         <View style={styles.blowupmain}>
@@ -179,11 +153,7 @@ export default function CreateWorkoutModal({
           </View>
           <ScrollView>
             {exercises}
-            <CustomButton
-              onClick={handleAddExercise}
-              style={{ alignSelf: "center", marginTop: 20 }}
-              text="Add Exercise"
-            />
+            <CustomButton onClick={handleAddExercise} style={{ alignSelf: "center", marginTop: 20 }} text="Add Exercise" />
           </ScrollView>
           <CustomButton
             onClick={handleSubmit}

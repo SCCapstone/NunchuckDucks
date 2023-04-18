@@ -41,19 +41,25 @@ export function MutualScreen(props) {
         handlePress={() => setRefresh(!refresh)}
       />
       {isEmpty && (
-        <View>
-          <Text style={{ fontSize: 55, fontWeight: "700", color: "#808080", padding: 10 }}>
-            Looks like your feed is empty. Fill it by posting a GymBit and following active friends!
-          </Text>
-          <Text style={{ fontSize: 20, fontWeight: "700", color: "#808080", padding: 10, alignSelf: "center" }}>
-            Posts only last in your feed for 72 hours after posting. Fill the feed up by working out regularly, adding friends, and building
-            an active GymBit community!
-          </Text>
-          <View style={{ flexDirection: "row", justifyContent: "center" }}>
+        <View style={{ alignItems: "center", height: "100%" }}>
+          <View style={{ flexDirection: "row", justifyContent: "center", marginTop: "50%" }}>
             <CustomButton style={{ width: "40%" }} text="Create a post" onClick={() => setBlowup(true)} />
             <View style={{ width: "5%" }} />
             <CustomButton style={{ width: "40%" }} text="Add a friend" onClick={() => nav.navigate("Followers")} />
           </View>
+          <View style={{ height: "5%" }} />
+          <Text
+            style={{
+              fontSize: 20,
+              fontWeight: "700",
+              color: "#808080",
+              padding: 10,
+              textAlign: "center",
+            }}
+          >
+            Posts only last in your feed for 72 hours after posting. Fill the feed up by working out regularly, adding friends, and building
+            an active GymBit community!
+          </Text>
         </View>
       )}
       <PostList refresh={refresh} setRefresh={setRefresh} setIsEmpty={setIsEmpty} />

@@ -60,6 +60,7 @@ export default function PostList(props) {
   async function doOnlineOperations() {
     // Username not cached; cache username
     let usernameFromAWS = "";
+    console.log("A");
     if (username === "" || username === null) {
       // if username is not cached
       usernameFromAWS = await cacheCurrUser();
@@ -67,12 +68,9 @@ export default function PostList(props) {
     } else {
       usernameFromAWS = username;
     }
-
+    console.log("B");
     let followers = await getUsersFollowed(usernameFromAWS);
-    if (onlineInitial === true) {
-      await cachePfpInitially(usernameFromAWS, followers);
-    }
-
+    console.log("C");
     if (offlineInitialCompleted === true) {
       showOnlineToast(usernameFromAWS);
     } else if (onlineInitial === true) {
@@ -88,13 +86,20 @@ export default function PostList(props) {
     setPosts([]);
     setPosts(temp);*/
     // Fetching posts from AWS
+    console.log("D");
     let postsFromAWS = await fetchPostsFromAWS(usernameFromAWS);
     if (postsFromAWS.length === 0) {
       setIsEmpty(true);
     } else {
       setIsEmpty(false);
     }
+    console.log("E");
     setPosts(postsFromAWS);
+    console.log("F");
+    if (onlineInitial === true) {
+      await cachePfpInitially(usernameFromAWS, followers);
+    }
+    console.log("G");
     let isCacheRefreshNeeded = await checkIfRefreshCacheNeeded(postsFromAWS);
     if (isCacheRefreshNeeded === true) {
       cacheAllPostsFromAWS(postsFromAWS);
@@ -199,10 +204,10 @@ export default function PostList(props) {
     if (postsInitialCompleted === false) {
       offlineOperations(); // will set postsInitialCompleted to true after completion
     }
-    if (networkConnection.isConnected) {
+    if (networkConnection.isConnected && postsInitialCompleted) {
       //list.current.scrollToIndex({ index: 0 });
       doOnlineOperations();
-    } else if (postsInitialCompleted) {
+    } else if (postsInitialCompleted && postsInitialCompleted) {
       // in case there is no connection, a swipe refresh should end with nothing happening
       // need to test when using app with no connection
       setSwipeRefresh(false);

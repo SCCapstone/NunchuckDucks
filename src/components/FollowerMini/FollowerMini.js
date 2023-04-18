@@ -33,7 +33,7 @@ const FollowerMini = ({ username, onProfileClick, onDelete, style }) => {
         </Pressable>
       </View>
       <Pressable onPressOut={onDelete}>
-        <AntDesign name="closecircleo" color={blueThemeColor} size={40} />
+        <AntDesign name="close" size={40} />
       </Pressable>
     </View>
   );

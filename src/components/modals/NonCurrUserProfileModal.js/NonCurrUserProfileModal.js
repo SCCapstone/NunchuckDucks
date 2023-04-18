@@ -8,6 +8,7 @@ import { getFollowersList } from "../../../crud/FollowersOperations";
 import GoalSummary from "../../GoalSummary";
 import { blueThemeColor, grayThemeColor } from "../../../library/constants";
 import FastImage from "react-native-fast-image";
+import Bio from "../../Bio/Bio";
 
 const imageSRC = require("../../../../assets/icons/Gymbit_Icons_Black/Back_Icon_Black.png");
 
@@ -100,9 +101,7 @@ const NonCurrUserProfileModal = ({ modalVisible, setModalVisible, username, imag
               </View>
             </View>
           </View>
-          <View style={styles.bioContainer}>
-            <Text style={styles.bio}>{user.bio !== null ? user.bio : ""}</Text>
-          </View>
+          <Bio username={username} />
         </View>
         {isPrivate ? (
           <View style={{ marginTop: "10%", maxWidth: "85%" }}>

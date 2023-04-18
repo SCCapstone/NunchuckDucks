@@ -146,16 +146,18 @@ export async function updateBio(username, newBio) {
 }
 
 export async function getBio(username) {
-  try {
-    const userId = await getUserId(username);
+  if (username !== undefined && username !== null && username !== "") {
+    try {
+      const userId = await getUserId(username);
 
-    const user = await DataStore.query(User, userId);
+      const user = await DataStore.query(User, userId);
 
-    console.log(`Successfully retrieved the bio for ${username}`);
+      console.log(`Successfully retrieved the bio for ${username}`);
 
-    return user.bio;
-  } catch (error) {
-    console.error(`Error retrieving the bio for ${username}`, error);
+      return user.bio;
+    } catch (error) {
+      console.error(`Error retrieving the bio for ${username}`, error);
+    }
   }
 }
 

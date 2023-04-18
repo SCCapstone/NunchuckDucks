@@ -20,7 +20,7 @@ const NotificationMini = ({ content, onDeleteHandler, username }) => {
         }}
         style={styles.imgContainer}
       >
-        <AntDesign name="closecircleo" color={blueThemeColor} size={40} />
+        <AntDesign name="close" size={40} />
       </TouchableOpacity>
     </View>
   );

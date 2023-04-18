@@ -45,12 +45,17 @@ const GoalSummary = ({ username, isCurrentUser = false }) => {
   return (
     <>
       {isCurrentUser ? (
-        <>
-          <Pressable onPress={() => navigation.navigate("Goals")} style={styles.titleBox}>
+        <View style={{ backgroundColor: "white", height: "100%" }}>
+          <View style={styles.titleBox}>
             <Text style={styles.title}>Your Goals</Text>
-          </Pressable>
+          </View>
           <ScrollView style={{ backgroundColor: "white" }}>{listGoals.length === 0 ? defaultForNoGoals : listGoals}</ScrollView>
-        </>
+          <CustomButton
+            style={{ alignSelf: "center", marginBottom: "5%", position: "absolute", bottom: "0%" }}
+            text="Go to Goals"
+            onClick={() => navigation.navigate("Goals")}
+          />
+        </View>
       ) : (
         <View style={styles.container}>
           <View style={styles.titleBox}>
@@ -77,7 +82,7 @@ const styles = StyleSheet.create({
     flexDirection: "column",
   },
   goaltext: {
-    fontSize: 30,
+    fontSize: 25,
     flex: 1,
     //maxWidth: 300,
   },
@@ -85,6 +90,7 @@ const styles = StyleSheet.create({
     paddingTop: 5,
     flex: 1,
     flexDirection: "row",
+    alignItems: "center",
     textAlign: "left",
   },
   goaltitle: {

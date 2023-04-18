@@ -59,13 +59,15 @@ export async function deletePost(postID) {
 export async function getUsersFollowed(username) {
   try {
     const followsList = await DataStore.query(Follows, (f) => f.username.eq(username));
-
+    console.log("HI");
     const newFollowsList = [];
 
     for (let i = 0; i < followsList.length; i++) {
+      console.log("Hello", i);
       let follow = await DataStore.query(User, followsList[i].userID);
       newFollowsList.push(follow.username);
     }
+    console.log("HII");
     console.log(`Successfully retrieved follows list for ${username}.`);
 
     return newFollowsList;
@@ -99,7 +101,6 @@ export async function getPostsForMutualFeedFromAWS(username) {
   try {
     let userId = await getUserId(username);
     const usersFollowed = await DataStore.query(Follows, (uf) => uf.username.eq(username));
-    usersFollowed.forEach((val) => console.log(val));
     const usersFollowedIDs = [userId];
     console.log(`Retrieved users followed for ${username}`);
 
