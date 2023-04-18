@@ -69,7 +69,6 @@ export function FollowerScreen({ route, navigation }) {
             await deleteFollower(val.username, currUser);
             showFollowerDeletionSuccess(val.username, isFollowerPage);
           }
-          console.log("WOW done");
           setForceRefresh(!forceRefresh);
           console.log(
             `Removed ${val.username}'s profile from your follower / following list!`

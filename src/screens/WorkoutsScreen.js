@@ -36,6 +36,7 @@ export function WorkoutsScreen() {
   async function getWorkoutsForScreen() {
     let currUser = await getCurrentUser();
     let ejercicios = await getWorkouts(currUser);
+    if (!ejercicios || !Array.isArray(ejercicios)) return;
     setWorkouts(ejercicios);
   }
   useEffect(() => {
