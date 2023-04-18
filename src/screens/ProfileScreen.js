@@ -89,7 +89,6 @@ export function ProfileScreen(props) {
 
   async function renderProfileInfo() {
     let username = await getCurrentUser();
-    console.log("CURR CURR", username);
     setUsername(username);
     let currStreak = await updateCurrentStreak(username);
     setStreak(currStreak);

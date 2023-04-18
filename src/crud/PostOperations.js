@@ -59,7 +59,6 @@ export async function deletePost(postID) {
 export async function getUsersFollowed(username) {
   try {
     const followsList = await DataStore.query(Follows, (f) => f.username.eq(username));
-    console.log("HI");
     const newFollowsList = [];
 
     for (let i = 0; i < followsList.length; i++) {

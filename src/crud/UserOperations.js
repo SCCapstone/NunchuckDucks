@@ -146,18 +146,17 @@ export async function updateBio(username, newBio) {
 }
 
 export async function getBio(username) {
-  if (username !== undefined && username !== null && username !== "") {
-    try {
-      const userId = await getUserId(username);
+  try {
+    const userId = await getUserId(username);
 
-      const user = await DataStore.query(User, userId);
+    const user = await DataStore.query(User, userId);
 
-      console.log(`Successfully retrieved the bio for ${username}`);
+    console.log(`Successfully retrieved the bio for ${username}`);
 
-      return user.bio;
-    } catch (error) {
-      console.error(`Error retrieving the bio for ${username}`, error);
-    }
+    return user.bio;
+  } catch (error) {
+    console.log(`Error retrieving the bio for ${username}`, error);
+    return "";
   }
 }
 
@@ -319,7 +318,8 @@ export async function updateCurrentStreak(username) {
     const user = await DataStore.query(User, userId);
     return user.currentStreak;
   } catch (error) {
-    console.error("Error updating streak ", error);
+    console.log("Error updating streak ", error);
+    return 0;
   }
 }
 
@@ -379,7 +379,7 @@ export async function getWeeklyGoal(username) {
 
     return user.WeeklyGoal;
   } catch (error) {
-    console.error("Error getting weekly goal ", error);
+    console.log("Error getting weekly goal ", error);
   }
 }
 
