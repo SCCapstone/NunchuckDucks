@@ -1,4 +1,4 @@
-import { View, Image, Text, StyleSheet, Pressable, TouchableOpacity, ActivityIndicator } from "react-native";
+import { View, Image, Text, StyleSheet, Pressable, TouchableOpacity, ActivityIndicator, ProgressBarA } from "react-native";
 import { useState, useEffect } from "react";
 import { Storage } from "@aws-amplify/storage";
 import Reactions from "../Reactions";
@@ -167,6 +167,7 @@ export default function Post(props) {
                   backgroundColor: grayThemeColor,
                 }}
               >
+                {/*<ActivityIndicator color={blueThemeColor} />*/}
                 <Progress.Bar width={200} progress={loadingPercent} color={blueThemeColor} unfilledColor={grayThemeColor} />
               </View>
             )}
@@ -180,7 +181,10 @@ export default function Post(props) {
               resizeMode={FastImage.resizeMode.cover}
               onLoadStart={() => setLoading(true)}
               onProgress={(e) => {
-                setLoadingPercent(e.nativeEvent.loaded / e.nativeEvent.total);
+                let loaded = e.nativeEvent.loaded / e.nativeEvent.total;
+                if (loaded % 0.2 < 0.01) {
+                  setLoadingPercent(loaded);
+                }
               }}
               onLoadEnd={() => setLoading(false)}
             />

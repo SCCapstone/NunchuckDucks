@@ -205,10 +205,10 @@ export default function PostList(props) {
     if (postsInitialCompleted === false) {
       offlineOperations(); // will set postsInitialCompleted to true after completion
     }
-    if (networkConnection.isConnected && postsInitialCompleted) {
+    if (networkConnection.isConnected) {
       //list.current.scrollToIndex({ index: 0 });
       doOnlineOperations();
-    } else if (postsInitialCompleted && postsInitialCompleted) {
+    } else if (postsInitialCompleted) {
       // in case there is no connection, a swipe refresh should end with nothing happening
       // need to test when using app with no connection
       setSwipeRefresh(false);
