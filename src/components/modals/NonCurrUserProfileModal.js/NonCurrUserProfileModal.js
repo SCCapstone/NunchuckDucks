@@ -9,6 +9,7 @@ import GoalSummary from "../../GoalSummary";
 import { blueThemeColor, grayThemeColor } from "../../../library/constants";
 import FastImage from "react-native-fast-image";
 import Bio from "../../Bio/Bio";
+import { AntDesign } from "@expo/vector-icons";
 
 const imageSRC = require("../../../../assets/icons/Gymbit_Icons_Black/Back_Icon_Black.png");
 
@@ -65,7 +66,7 @@ const NonCurrUserProfileModal = ({ modalVisible, setModalVisible, username, imag
       >
         <View style={{ height: "10%" }} />
         <Pressable onPressOut={closeModal} style={styles.backArrow}>
-          <Image source={imageSRC} style={styles.backArrow} />
+          <AntDesign name="arrowleft" size={40} style={styles.backArrow} />
         </Pressable>
         <View
           style={{
