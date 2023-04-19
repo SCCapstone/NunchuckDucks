@@ -1,21 +1,27 @@
 #content{
+	/*Font Family Below to Change for the Website Upon Nathans Suggestion*/
 	font-family: "Gill Sans", sans-serif;
+	color: black
 }
+
 header{
 	padding:5px;
-	background:#72797bc4;
+	background:white;/*#72797bc4;*/
 	text-align:center;
 }
 nav{
 	padding:5px;
-	background:#ced4df;
+	background:white;
     text-align: center;
 }
 nav li{
-	background:#2E8CFF;
-	border: 3px solid #ced4df;
+	background:black;
+	border: 1px solid;
 	padding: 4px;
-    border-radius: 8px;
+    border-radius: 6px;
+}
+h2{
+	text-align: center;
 }
 nav ul{
 	list-style-type:none;
@@ -23,21 +29,21 @@ nav ul{
 }
 nav a{
 	text-decoration:none;
-	color:whitesmoke;
+	color:white;
 }
 main{
 	padding:5px;
-	background:#72797bc4;
+	background:white;
 }
 body{
-	background:#17467f;
+	background:#2282f6;;
     color: whitesmoke;
 }
 footer{
 	padding:5px;
 	background:#2282f6;
 	text-align:center;
-    color: whitesmoke;
+    color: whitesmoke;     
 }
 #gallery{
 	text-align: center;
@@ -65,7 +71,7 @@ footer{
 }
 .authordata li{
 	display: inline;
-	background:#2E8CFF;
+	background:black;
 	padding: 4px;
     border-radius: 8px;
 }
@@ -81,7 +87,7 @@ footer{
 }
 header{
 	padding:5px;
-	background:#72797bc4;
+	background:white;
 	text-align:center;
 }
 nav{
@@ -99,7 +105,7 @@ nav a{
 }
 main{
 	padding:5px;
-	background:#72797bc4;
+	background:white;
 }
 h2{
     text-align: center;
@@ -112,8 +118,5 @@ h2{
 }
 .col-main{
 	flex:3;
-}
-.colsidebar{
-	flex:1;
 }
 }
