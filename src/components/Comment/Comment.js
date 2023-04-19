@@ -17,7 +17,7 @@ import ConfirmDelete from "../modals/ConfirmDelete";
 import ErrorModal from "../modals/ErrorModal/ErrorModal";
 import { useNavigation } from "@react-navigation/native";
 
-const OptionsButton = require("../../../assets/icons/Gymbit_Icons_Black/Three_Dots_Black.png");
+const OptionsButton = require("../../../assets/icons/Gymbit_Icons_Black/X_Icon_Black.png");
 
 const Comment = ({ commentModel, postID, replies, style, refresh }) => {
   const navigation = useNavigation();
@@ -52,9 +52,9 @@ const Comment = ({ commentModel, postID, replies, style, refresh }) => {
     ></CustomButton>
   );
 
-  async function checkIfDeletable(postID, username) {
+  async function checkIfDeletable(postID, username, commentId) {
     if (await checkForDeletability(postID, username)) {
-      setCommentModalVisible(true);
+      deleteComment(commentId)
     } else setErrorModalVisible(true);
   }
 
@@ -117,7 +117,7 @@ const Comment = ({ commentModel, postID, replies, style, refresh }) => {
             {commentModel?.username}
           </Text>
           <TouchableOpacity
-            onPress={() => checkIfDeletable(postID, commentModel?.username)}
+            onPress={() => checkIfDeletable(postID, commentModel?.username,commentModel?.id)}
           >
             <Image style={styles.deleteButton} source={OptionsButton}></Image>
           </TouchableOpacity>

@@ -295,15 +295,17 @@ export function getTimeElapsed(createdAt) {
   if (minutesDifference < 1) {
     ans = "less than a minute ago";
   } else if (minutesDifference <= 60) {
-    ans = Math.round(minutesDifference.toString()) + ` minute${minutesDifference === 1 ? "" : "s"} ago`;
+    ans = Math.round(minutesDifference.toString()) + ` minute${Math.floor(minutesDifference) === 1 ? "" : "s"} ago`;
   } else if (hoursDifference <= 24) {
-    ans = Math.round(hoursDifference.toString()) + ` hour${hoursDifference === 1 ? "" : "s"} ago`;
+    ans = Math.round(hoursDifference.toString()) + ` hour${Math.floor(hoursDifference) === 1 ? "" : "s"} ago`;
   } else if (daysDifference <= 30) {
-    ans = Math.round(daysDifference.toString()) + ` day${daysDifference === 1 ? "" : "s"} ago`;
+    ans = Math.round(daysDifference.toString()) + ` day${Math.floor(daysDifference) === 1 ? "" : "s"} ago`;
+  } else if (monthsDifference === 1) {
+    ans = "1 month ago";
   } else if (monthsDifference <= 12) {
-    ans = Math.round(monthsDifference.toString()) + ` month${monthsDifference === 1 ? "" : "s"} ago`;
+    ans = Math.round(monthsDifference.toString()) + ` month${Math.floor(monthsDifference) === 1 ? "" : "s"} ago`;
   } else {
-    ans = Math.round(yearsDifference.toString()) + ` year${yearsDifference === 1 ? "" : "s"} ago`;
+    ans = Math.round(yearsDifference.toString()) + ` year${Math.floor(yearsDifference) === 1 ? "" : "s"} ago`;
   }
   return ans;
 }
