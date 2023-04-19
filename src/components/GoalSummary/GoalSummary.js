@@ -1,13 +1,8 @@
 import { View, Text, StyleSheet, ScrollView, Pressable } from "react-native";
 import React, { useState, useEffect } from "react";
-import { Auth } from "aws-amplify";
 
-import { getGoals } from "../../crud/GoalOperations";
 import { blueThemeColor, grayThemeColor } from "../../library/constants";
-import { getCurrentAuthenticatedUser } from "../../library/GetAuthenticatedUser";
-import { getCurrentUser } from "../../crud/CacheOperations";
 import { getAndObserveGoals } from "../../crud/observeQueries/GoalObserveQueries";
-import CustomButton from "../CustomButton";
 import { useNavigation } from "@react-navigation/native";
 
 const GoalSummary = ({ username, isCurrentUser = false }) => {

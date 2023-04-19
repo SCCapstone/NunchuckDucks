@@ -1,8 +1,10 @@
 import * as React from "react";
 import renderer, { act } from "react-test-renderer";
-import Bio from "./Bio";
+import ExerciseInput from "./ExerciseInput";
 
 it(`renders correctly`, async () => {
-  const tree = await act(async () => renderer.create(<Bio></Bio>));
+  const tree = await act(async () =>
+    renderer.create(<ExerciseInput></ExerciseInput>)
+  );
   expect(tree).toBeDefined();
 });

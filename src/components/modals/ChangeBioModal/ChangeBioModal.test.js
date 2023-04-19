@@ -1,8 +1,8 @@
 import * as React from "react";
 import renderer from "react-test-renderer";
-import BackButton from "./BackButton";
+import ChangeBioModal from "./ChangeBioModal";
 
 it(`renders correctly`, () => {
-  const tree = renderer.create(<BackButton></BackButton>);
+  const tree = renderer.create(<ChangeBioModal></ChangeBioModal>);
   expect(tree).toBeDefined();
 });

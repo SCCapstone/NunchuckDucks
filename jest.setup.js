@@ -10,3 +10,29 @@ jest.mock("@expo/vector-icons", () => {
     AntDesign: View,
   };
 });
+jest.mock("@react-navigation/native", () => {
+  return {
+    useNavigation: () => {
+      return {
+        goBack: () => console.log("Went back"),
+        navigate: (page) => jest.fn(),
+      };
+    },
+  };
+});
+
+// local mocks
+// ../../crud/UserOperations
+jest.mock("./src/crud/UserOperations", () => {
+  return {
+    getBio: () => "test bio",
+  };
+});
+jest.mock("./src/crud/CacheOperations", () => {
+  return { getCurrentUser: () => "test user" };
+});
+jest.mock("./src/library/GetAuthenticatedUser", () => {
+  return {
+    getCurrentAuthenticatedUser: () => "test user",
+  };
+});
