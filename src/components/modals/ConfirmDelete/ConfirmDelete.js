@@ -13,7 +13,7 @@ const ConfirmDelete = ({
     setModalVisible(false);
   };
 
-  async function deleteById(id) {
+  async function deleteCallback(id) {
     await deletefunc(id);
     closeModal();
   }
@@ -32,7 +32,13 @@ const ConfirmDelete = ({
             <CustomButton
               buttonType={"default"}
               text={"Confirm"}
-              onClick={() => deleteById(id)}
+              onClick={() => {
+                if (id) {
+                  deleteCallback(id);
+                } else {
+                  deleteCallback();
+                }
+              }}
             ></CustomButton>
             <CustomButton
               buttonType={"default"}
