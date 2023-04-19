@@ -1,28 +1,15 @@
-import { Text, TouchableOpacity, View, StyleSheet, Image, Pressable } from "react-native";
+import { Text, TouchableOpacity, View, StyleSheet, Image } from "react-native";
 import ProfileMini from "../ProfileMini/ProfileMini";
 import { useState, useEffect } from "react";
 import { getImageFromCache } from "../../crud/CacheOperations";
 import { Storage } from "aws-amplify";
-import NonCurrUserProfileModal from "../modals/NonCurrUserProfileModal.js/NonCurrUserProfileModal";
 import { AntDesign } from "@expo/vector-icons";
 import { grayThemeColor, blueThemeColor } from "../../library/constants";
 
 const NotificationMini = ({ content, onDeleteHandler, username }) => {
   const [isHidden, setIsHidden] = useState(false);
-  const [modalVisible, setModalVisible] = useState(false);
 
   return (
-    <View
-      style={
-        isHidden ? { ...styles.container, display: "none" } : styles.container
-      }
-    >
-    <NonCurrUserProfileModal modalVisible={modalVisible} setModalVisible={setModalVisible} username={username} image={userImageSrc}>
-    </NonCurrUserProfileModal>
-      <ProfileMini src={userImageSrc} />
-      <Text style={styles.usernameText} onPress={() => setModalVisible(true)}>{username}
-        <Text style={styles.text}>{content.substring(username.length)}</Text>
-        </Text>
     <View style={isHidden ? { ...styles.container, display: "none" } : styles.container}>
       <ProfileMini username={username} />
       <Text style={styles.text}>{content}</Text>
@@ -60,14 +47,6 @@ const styles = StyleSheet.create({
     textAlignVertical: "center",
     width: "60%",
     fontSize: 17,
-    color: "black"
-  },
-  usernameText: {
-    textAlign: "center",
-    textAlignVertical: "center",
-    width: "60%",
-    fontSize: 17,
-    color: blueThemeColor
   },
   icon: {
     width: 64,
