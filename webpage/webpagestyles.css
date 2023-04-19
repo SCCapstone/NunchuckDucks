@@ -16,7 +16,7 @@ nav{
 }
 nav li{
 	background:black;
-	border: 1px solid;
+	border: 2px solid white;
 	padding: 4px;
     border-radius: 6px;
 }
