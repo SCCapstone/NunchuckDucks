@@ -7,11 +7,15 @@ import { getFollowsList } from "../../../crud/FollowingOperations";
 import { getFollowersList } from "../../../crud/FollowersOperations";
 import GoalSummary from "../../GoalSummary";
 import { blueThemeColor, grayThemeColor } from "../../../library/constants";
-import FastImage from "react-native-fast-image";
 
 const imageSRC = require("../../../../assets/icons/Gymbit_Icons_Black/Back_Icon_Black.png");
 
-const NonCurrUserProfileModal = ({ modalVisible, setModalVisible, username, image }) => {
+const NonCurrUserProfileModal = ({
+  modalVisible,
+  setModalVisible,
+  username,
+  image,
+}) => {
   const [user, setUser] = useState("");
   const [followingCount, setFollowingCount] = useState("");
   const [followersCount, setFollowersCount] = useState("");
@@ -48,7 +52,12 @@ const NonCurrUserProfileModal = ({ modalVisible, setModalVisible, username, imag
   }
 
   return (
-    <Modal visible={modalVisible} animationType="fade" transparent={true} onRequestClose={closeModal}>
+    <Modal
+      visible={modalVisible}
+      animationType="fade"
+      transparent={true}
+      onRequestClose={closeModal}
+    >
       <View
         style={{
           flex: 1,
@@ -80,7 +89,13 @@ const NonCurrUserProfileModal = ({ modalVisible, setModalVisible, username, imag
             </View>
           )*/}
             <ProfileMini username={username} />
-            <View style={{ flexdirection: "column", paddingTop: 5, paddingLeft: 15 }}>
+            <View
+              style={{
+                flexdirection: "column",
+                paddingTop: 5,
+                paddingLeft: 15,
+              }}
+            >
               <Text style={styles.username}>@{username}</Text>
               <View style={{ paddingTop: 5, flexDirection: "row" }}>
                 <View style={styles.followingContainer}>

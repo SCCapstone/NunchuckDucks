@@ -1,13 +1,5 @@
-import {
-  Text,
-  Image,
-  TouchableOpacity,
-  View,
-  Pressable,
-  ImageBackground,
-  ImageBackgroundComponent,
-} from "react-native";
-import { Auth, Amplify, DataStore } from "aws-amplify";
+import { Text, Pressable } from "react-native";
+import { Auth, DataStore } from "aws-amplify";
 import { deleteAllCache } from "../../crud/CacheOperations";
 import FastImage from "react-native-fast-image";
 

@@ -1,10 +1,10 @@
 import * as React from "react";
 import renderer, { act } from "react-test-renderer";
-import GoalSummary from "./GoalSummary";
+import FollowerMini from "./FollowerMini";
 
 it(`renders correctly`, async () => {
   const tree = await act(async () =>
-    renderer.create(<GoalSummary username={"testUsername"}></GoalSummary>)
+    renderer.create(<FollowerMini username={"invalid"}></FollowerMini>)
   );
-  expect(tree).toBeDefined();
+  await expect(tree).toBeDefined();
 });

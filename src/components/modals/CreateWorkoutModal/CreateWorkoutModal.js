@@ -1,20 +1,15 @@
 import { useEffect, useState } from "react";
 import {
   View,
-  Image,
   Text,
   StyleSheet,
   Pressable,
-  TouchableOpacity,
   Modal,
-  TextInput,
-  Button,
   ScrollView,
 } from "react-native";
 
 import CustomButton from "../../CustomButton";
 import { blueThemeColor } from "../../../library/constants";
-import { Toast } from "react-native-toast-message/lib/src/Toast";
 import { getCurrentUser } from "../../../crud/CacheOperations";
 import {
   createWorkout,

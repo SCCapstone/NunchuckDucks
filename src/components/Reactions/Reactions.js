@@ -1,16 +1,12 @@
 import { View, Image, Text, StyleSheet, Pressable } from "react-native";
 import { useEffect, useState } from "react";
-import { getCurrentAuthenticatedUser } from "../../library/GetAuthenticatedUser";
 import {
   createReaction,
-  getReactions,
   getUserReactions,
   removeReaction,
 } from "../../crud/ReactionOperations";
-import { ReactionType } from "../../models/index";
 import { getCurrentUser } from "../../crud/CacheOperations";
 import { getAndObserveReactions } from "../../crud/observeQueries/ReactionsObserveQueries";
-import { DataStore } from "aws-amplify";
 
 export default function Reactions({
   postID,

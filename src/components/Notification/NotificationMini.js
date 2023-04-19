@@ -1,8 +1,6 @@
 import { Text, TouchableOpacity, View, StyleSheet, Image } from "react-native";
 import ProfileMini from "../ProfileMini/ProfileMini";
-import { useState, useEffect } from "react";
-import { getImageFromCache } from "../../crud/CacheOperations";
-import { Storage } from "aws-amplify";
+import { useState } from "react";
 import { AntDesign } from "@expo/vector-icons";
 import { grayThemeColor, blueThemeColor } from "../../library/constants";
 
@@ -10,7 +8,11 @@ const NotificationMini = ({ content, onDeleteHandler, username }) => {
   const [isHidden, setIsHidden] = useState(false);
 
   return (
-    <View style={isHidden ? { ...styles.container, display: "none" } : styles.container}>
+    <View
+      style={
+        isHidden ? { ...styles.container, display: "none" } : styles.container
+      }
+    >
       <ProfileMini username={username} />
       <Text style={styles.text}>{content}</Text>
       <TouchableOpacity
