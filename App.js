@@ -83,31 +83,40 @@ const app = () => {
           <Stack.Navigator
             screenOptions={{
               headerShown: false,
-              tabBarShowLabel: true,
-              tabBarScrollEnabled: true,
-              tabBarLabelStyle: {
-                width: 125,
-                height: 30,
-                textAlign: "center",
-                color: "black",
-                fontSize: 15,
-                fontWeight: "bold",
-              },
+              tabBarShowLabel: false,
+              tabBarShowIcon: true,
+              tabBarScrollEnabled: false,
+              // tabBarLabelStyle: {
+              //   width: 130,
+              //   height: 30,
+              //   textAlign: "center",
+              //   color: "black",
+              //   fontSize: 15,
+              //   fontWeight: "bold",
+              // },
+              tabBarIconStyle: {
+                width: 'auto',
+                height: 20,
+              }
             }}
             initialRouteName="Mutuals"
             tabBarPosition="bottom"
           >
-            <Stack.Screen name="Settings" component={SettingsScreen} />
             {/* <Stack.Screen name="Explore" component={ExploreScreen} /> */}
-            <Stack.Screen name="Mutuals">{(props) => <MutualScreen {...props} refresh={refresh} setRefresh={setRefresh} />}</Stack.Screen>
-            <Stack.Screen name="Profile">{(props) => <ProfileScreen {...props} refresh={refresh} setRefresh={setRefresh} />}</Stack.Screen>
+            <Stack.Screen name="Mutuals" options={{tabBarIcon: () => <Image source={require("./assets/icons/tab-bar/tabHome.png")} style={styles.tabIcon}/>}}>
+              {(props) => <MutualScreen {...props} refresh={refresh} setRefresh={setRefresh} />}
+              </Stack.Screen>
+            <Stack.Screen name="Profile" options={{tabBarIcon: () => <Image source={require("./assets/icons/tab-bar/tabProfile.png")} style={styles.tabIcon}/>}}>
+              {(props) => <ProfileScreen {...props} refresh={refresh} setRefresh={setRefresh} />}
+              </Stack.Screen>
             {/* <Stack.Screen name="CreatePost" component={CreatePost} /> */}
             {/* <Stack.Screen name="Calendar" component={CalendarScreen} /> */}
-            <Stack.Screen name="Goals" component={GoalsScreen} />
-            <Stack.Screen name="Workouts" component={WorkoutsScreen} />
-            <Stack.Screen name="Followers" component={FollowerScreen} initialParams={{ isFollowerPage: false }} />
-            <Stack.Screen name="Notifications" component={NotificationsScreen} />
+            <Stack.Screen name="Goals" component={GoalsScreen} options={{tabBarIcon: () => <Image source={require("./assets/icons/tab-bar/tabGoals.png")} style={styles.tabIcon}/>}}/>
+            <Stack.Screen name="Workouts" component={WorkoutsScreen} options={{tabBarIcon: () => <Image source={require("./assets/icons/tab-bar/tabWorkouts.png")} style={styles.tabIcon}/>}}/>
+            <Stack.Screen name="Followers" component={FollowerScreen} initialParams={{ isFollowerPage: false }} options={{tabBarIcon: () => <Image source={require("./assets/icons/tab-bar/tabFollowers.png")} style={styles.tabIcon}/>}}/>
+            <Stack.Screen name="Notifications" component={NotificationsScreen} options={{tabBarIcon: () => <Image source={require("./assets/icons/tab-bar/tabNotifications.png")} style={styles.tabIcon}/>}}/>
             {/* <Stack.Screen name="CreateGoal" component={CreateGoalScreen} /> */}
+            <Stack.Screen name="Settings" component={SettingsScreen} options={{tabBarIcon: () => <Image source={require("./assets/icons/tab-bar/tabSettings.png")} style={styles.tabIcon}/>}}/>
           </Stack.Navigator>
         </NavigationContainer>
       ) : (
@@ -213,5 +222,12 @@ const customTheme = {
     fontSize: 16,
   },
 };
+
+const styles = StyleSheet.create({
+  tabIcon: {
+    width: 20,
+    height: 20,
+  },
+})
 
 export default withAuthenticator(app, { signUpConfig, theme: customTheme });
