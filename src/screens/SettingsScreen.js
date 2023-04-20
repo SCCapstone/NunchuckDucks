@@ -93,7 +93,7 @@ export function SettingsScreen() {
 
   const showGoalModal = () => {
     setModalVisible(true);
-    saveNewGoal();
+    //saveNewGoal();
   }
 
   async function renderSettings() {
@@ -111,25 +111,25 @@ export function SettingsScreen() {
     setUsername(username);
   }
 
-  async function saveNewGoal() {
-    let number = parseInt(text, 10);
+  // async function saveNewGoal() {
+  //   let number = parseInt(text, 10);
 
-    if (text.length > 1 || !Number.isInteger(number)) {
-      setText("");
-      Toast.show({
-        type: "error",
-        text1: "Please enter a number 1-7",
-        position: "bottom",
-        visibilityTime: 3000,
-        bottomOffset: 80,
-      });
-    } else {
-      let confirm = await setWeeklyGoal(username, number);
-      if (confirm !== null) {
-        setGoal(text);
-      }
-    }
-  }
+  //   if (text.length > 1 || !Number.isInteger(number)) {
+  //     setText("");
+  //     Toast.show({
+  //       type: "error",
+  //       text1: "Please enter a number 1-7",
+  //       position: "bottom",
+  //       visibilityTime: 3000,
+  //       bottomOffset: 80,
+  //     });
+  //   } else {
+  //     let confirm = await setWeeklyGoal(username, number);
+  //     if (confirm !== null) {
+  //       setGoal(text);
+  //     }
+  //   }
+  // }
 
   return (
     <View style={styles.container}>

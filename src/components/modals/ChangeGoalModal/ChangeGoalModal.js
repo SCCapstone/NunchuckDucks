@@ -5,17 +5,19 @@ import CustomButton from "../../CustomButton";
 import CustomTextInput from "../../CustomTextInput";
 import { setWeeklyGoal } from "../../../crud/UserOperations";
 import SignOutButton from "../../signoutbutton/SignOutButton";
+import { Toast } from "react-native-toast-message/lib/src/Toast";
 
 const ChangeGoalModal = ({ modalVisible, setModalVisible }) => {
-  const [goalValue, setGoalValue] = useState(goalValue);
+  const [goalValue, setGoalValue] = useState("");
 
   async function changeGoal() {
     const currUser = await getCurrentAuthenticatedUser();
 
     let number = parseInt(goalValue, 10);
 
-    if (goalValue.length > 1 || !Number.isInteger(number)) {
-        setText("");
+    // if ((goalValue.length > 1 || !Number.isInteger(number)) && number <= 7 && number >= 1) 
+    if (!Number.isInteger(number) || number > 7 || number < 1) {
+        setGoalValue("");
         Toast.show({
           type: "error",
           text1: "Please enter a number 1-7",
@@ -23,11 +25,10 @@ const ChangeGoalModal = ({ modalVisible, setModalVisible }) => {
           visibilityTime: 3000,
           bottomOffset: 80,
         });
-    } else {
+    } 
+    else {
         await setWeeklyGoal(currUser, goalValue);
     }
-
-
     closeModal();
   }
 
