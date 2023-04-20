@@ -63,18 +63,22 @@ export default function CameraComponent({ setImage, setShowCamera }) {
     return (
       <View style={styles.container}>
         <Pressable onPress={closeModal} style={styles.transparentView} />
-        <Camera style={styles.camera} type={type} ref={cameraRef} ImageType="png">
-          <View style={styles.buttonContainer}>
-            <Pressable style={styles.iconA} onPress={toggleCameraType}>
-              <AntDesign name="retweet" size={40} color="#FFFFFF" />
-            </Pressable>
-            <Pressable style={styles.iconB} onPress={takePicture}>
-              <AntDesign name="camera" size={40} color="#FFFFFF" />
-            </Pressable>
-            {/*<CustomButton text="Flip Camera" onClick={toggleCameraType} />
+        <View style={{ overflow: "hidden", width: "100%", aspectRatio: 1 / 1 }}>
+          <View style={{ position: "absolute", width: "100%", height: "100%", justifyContent: "center" }}>
+            <Camera style={styles.camera} type={type} ref={cameraRef} ImageType="png">
+              <View style={styles.buttonContainer}>
+                <Pressable style={styles.iconA} onPress={toggleCameraType}>
+                  <AntDesign name="retweet" size={40} color="#FFFFFF" />
+                </Pressable>
+                <Pressable style={styles.iconB} onPress={takePicture}>
+                  <AntDesign name="camera" size={40} color="#FFFFFF" />
+                </Pressable>
+                {/*<CustomButton text="Flip Camera" onClick={toggleCameraType} />
           <CustomButton text="Take Picture" onClick={takePicture} />*/}
+              </View>
+            </Camera>
           </View>
-        </Camera>
+        </View>
       </View>
     );
   }
@@ -128,17 +132,20 @@ const styles = StyleSheet.create({
   },
   camera: {
     //flex: 1,
+    position: "absolute",
     width: "100%",
     //height: 500,
+    alignSelf: "center",
     aspectRatio: 3 / 4,
+    justifyContent: "center",
   },
   buttonContainer: {
-    flex: 1,
+    //flex: 1,
     //width: "100%",
     flexDirection: "row",
-    alignItems: "flex-end",
+    //alignItems: "center",
     justifyContent: "flex-end",
-    bottom: "0%",
+    //bottom: "0%",
     backgroundColor: "transparent",
     //margin: 64,
   },
