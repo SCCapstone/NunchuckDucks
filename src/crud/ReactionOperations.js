@@ -8,7 +8,6 @@ import { getTimeElapsed } from "../library/getTimeElapsed";
 
 export async function createReaction(username, reactionType, postID) {
   try {
-    console.log("POSTID: ", postID);
     const reaction = new Reaction({
       postID: postID,
       username: username,
@@ -23,9 +22,7 @@ export async function createReaction(username, reactionType, postID) {
     let time = getTimeElapsed(createdAt);
     let content = username + " reacted to your post from " + time;
 
-    if (postsUsername !== username)
-      await createNotification(postsUsername, date, content, username);
-      
+    if (postsUsername !== username) await createNotification(postsUsername, date, content, username);
   } catch (error) {
     console.error(`There was an error creating a reaction.`, error);
   }
@@ -34,11 +31,7 @@ export async function createReaction(username, reactionType, postID) {
 export async function removeReaction(username, reactionType, postID) {
   try {
     const reactionToDelete = await DataStore.query(Reaction, (r) =>
-      r.and((r) => [
-        r.username.eq(username),
-        r.reactionType.eq(reactionType),
-        r.postID.eq(postID),
-      ])
+      r.and((r) => [r.username.eq(username), r.reactionType.eq(reactionType), r.postID.eq(postID)])
     );
     if (reactionToDelete.length === 0) return;
     await DataStore.delete(reactionToDelete[0]);
@@ -51,9 +44,7 @@ export async function removeReaction(username, reactionType, postID) {
 
 export async function getReactions(postID) {
   try {
-    const reactionList = await DataStore.query(Reaction, (r) =>
-      r.postID.eq(postID)
-    );
+    const reactionList = await DataStore.query(Reaction, (r) => r.postID.eq(postID));
     return reactionList;
   } catch (error) {
     console.error("There was an error retrieving reaction list.", error);
@@ -63,11 +54,7 @@ export async function getReactions(postID) {
 export async function getUserReactions(postID, username, reactionType) {
   try {
     const reactions = await DataStore.query(Reaction, (r) =>
-      r.and((r) => [
-        r.username.eq(username),
-        r.reactionType.eq(reactionType),
-        r.postID.eq(postID),
-      ])
+      r.and((r) => [r.username.eq(username), r.reactionType.eq(reactionType), r.postID.eq(postID)])
     );
     return reactions;
   } catch (error) {

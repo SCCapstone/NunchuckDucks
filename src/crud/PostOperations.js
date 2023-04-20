@@ -4,6 +4,7 @@ import { getCurrentUser } from "./CacheOperations";
 import { DataStore, SortDirection } from "aws-amplify";
 import { Post, Follows, User } from "../models";
 import { getUserId } from "./UserOperations";
+import { getCurrentAuthenticatedUser } from "../library/GetAuthenticatedUser";
 /**
  * Creates a post and saves the new post in the backend
  * @param {String} username
@@ -11,20 +12,31 @@ import { getUserId } from "./UserOperations";
  * @param {Image} profilePicture
  * @param {String} bio
  */
-export async function createPost(caption, photo, username) {
+export async function createPost(caption, photo, username, workout) {
   try {
     const user = await getCurrentUser();
 
     const userId = await getUserId(user);
-
-    await DataStore.save(
-      new Post({
-        caption: caption,
-        photo: photo,
-        username: username,
-        userID: userId,
-      })
-    );
+    if (workout === null) {
+      await DataStore.save(
+        new Post({
+          caption: caption,
+          photo: photo,
+          username: username,
+          userID: userId,
+        })
+      );
+    } else {
+      await DataStore.save(
+        new Post({
+          caption: caption,
+          photo: photo,
+          username: username,
+          userID: userId,
+          Workout: workout,
+        })
+      );
+    }
     console.log(`Post  successfully created.`);
   } catch (error) {
     console.error("Error saving post", error);
@@ -62,13 +74,33 @@ export async function getUsersFollowed(username) {
   }
 }
 
+export async function getUserPostsForProfileScreenFromAWS() {
+  try {
+    let username = await getCurrentUser();
+    let userId = await getUserId(username);
+    let posts = [];
+    posts = await DataStore.query(Post, (p) => p.userID.eq(userId), {
+      sort: (s) => s.createdAt(SortDirection.DESCENDING),
+    });
+    posts.sort(function (a, b) {
+      if (b.createdAt > a.createdAt) {
+        return 1; // if that post is newer (higher number), then keep them in order; a then b
+      } else {
+        return -1; // if not, then reverse; b then a
+      }
+    });
+    return posts;
+  } catch (e) {
+    console.log("Error getting user's profile post list", e);
+  }
+}
+
 export async function getPostsForMutualFeedFromAWS(username) {
   try {
-    const userId = await getUserId(username);
-
+    let userId = await getUserId(username);
     const usersFollowed = await DataStore.query(Follows, (uf) => uf.username.eq(username));
+    usersFollowed.forEach((val) => console.log(val));
     const usersFollowedIDs = [userId];
-
     console.log(`Retrieved users followed for ${username}`);
 
     for (let i = 0; i < usersFollowed.length; i++) {
@@ -82,8 +114,7 @@ export async function getPostsForMutualFeedFromAWS(username) {
         sort: (s) => s.createdAt(SortDirection.DESCENDING),
       });
       for (let j = 0; j < postsToBeAdded.length; j++) {
-        if (dateIsInPast3Days(postsToBeAdded[j]))
-          posts.push(postsToBeAdded[j]);
+        if (dateIsInPast3Days(postsToBeAdded[j])) posts.push(postsToBeAdded[j]);
       }
     }
 
@@ -108,20 +139,16 @@ export async function getPostsForMutualFeedFromAWS(username) {
 }
 
 function dateIsInPast3Days(post) {
-
   const createdAt = post.createdAt;
 
   const difference = getTime(createdAt);
 
-  if (difference >= 3)
-    return false;
-  else
-    return true;
+  if (difference >= 3) return false;
+  else return true;
+}
 
-  }
-
-  function getTime(createdAt) {
-    var ans = ""; // the output
+function getTime(createdAt) {
+  var ans = ""; // the output
   if (createdAt == undefined) {
     // Checks that createdAt exists
     // Will not exist when DataStore is not connected to remote
@@ -136,16 +163,13 @@ function dateIsInPast3Days(post) {
   var minutesDifference = diff / (1000 * 60);
   var hoursDifference = Math.floor(minutesDifference / 60);
   var daysDifference = Math.floor(hoursDifference / 24);
-  
 
-    
   return Math.floor(daysDifference);
-  }
-
+}
 
 export async function getUserByPostId(postId) {
-    const post = await DataStore.query(Post, postId);
-    return post.username;
+  const post = await DataStore.query(Post, postId);
+  return post.username;
 }
 
 export async function getCreatedAt(postId) {

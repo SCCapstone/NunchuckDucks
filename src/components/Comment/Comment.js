@@ -8,17 +8,19 @@ import CustomTextInput from "../CustomTextInput/CustomTextInput";
 import {
   checkForDeletability,
   createComment,
+  deleteComment,
 } from "../../crud/CommentOperations";
 import { getCurrentUser, getImageFromCache } from "../../crud/CacheOperations";
 import NonCurrUserProfileModal from "../modals/NonCurrUserProfileModal.js/NonCurrUserProfileModal";
 import { getCurrentAuthenticatedUser } from "../../library/GetAuthenticatedUser";
-import DeleteComment from "../modals/DeleteComment";
+import ConfirmDelete from "../modals/ConfirmDelete";
 import ErrorModal from "../modals/ErrorModal/ErrorModal";
+import { useNavigation } from "@react-navigation/native";
 
 const OptionsButton = require("../../../assets/icons/Gymbit_Icons_Black/Three_Dots_Black.png");
 
-const Comment = ({ commentModel, postID, replies, style }) => {
-  const [pfp, setPfp] = useState("");
+const Comment = ({ commentModel, postID, replies, style, refresh }) => {
+  const navigation = useNavigation();
   const [replyOpen, setReplyOpen] = useState(false);
   const [replyText, setReplyText] = useState("");
   const [repliesOpen, setRepliesOpen] = useState(false);
@@ -50,28 +52,23 @@ const Comment = ({ commentModel, postID, replies, style }) => {
     ></CustomButton>
   );
 
-  async function getPic() {
-    try {
-      let pfps3 = await getImageFromCache(commentModel.username, "pfp.png");
-      if (pfps3 === "") {
-        pfps3 = await Storage.get(commentModel.username + "/pfp.png");
-      }
-      //const pfps3 = await Storage.get(commentModel.username + "/pfp.png");
-      setPfp(pfps3);
-    } catch (error) {
-      console.log("Error retrieving pfp in comment: " + error);
-    }
-  }
-
   async function checkIfDeletable(postID, username) {
     if (await checkForDeletability(postID, username)) {
       setCommentModalVisible(true);
     } else setErrorModalVisible(true);
   }
 
-  useEffect(() => {
-    getPic();
-  }, []);
+  async function handleUserClick() {
+    try {
+      if (commentModel.username === (await getCurrentUser())) {
+        navigation.navigate("Profile");
+      } else {
+        setModalVisible(true);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
 
   async function onReplySubmit() {
     setReplyOpen(false);
@@ -94,13 +91,14 @@ const Comment = ({ commentModel, postID, replies, style }) => {
         modalVisible={modalVisible}
         setModalVisible={setModalVisible}
         username={commentModel?.username}
-        image={pfp}
       ></NonCurrUserProfileModal>
-      <DeleteComment
+      <ConfirmDelete
         modalVisible={commentModalVisible}
         setModalVisible={setCommentModalVisible}
-        commentID={commentModel.id}
-      ></DeleteComment>
+        id={commentModel.id}
+        text={"Delete Comment?"}
+        deletefunc={deleteComment}
+      ></ConfirmDelete>
       <ErrorModal
         popUpModalVisible={errorModalVisible}
         setPopUpModalVisible={setErrorModalVisible}
@@ -108,13 +106,14 @@ const Comment = ({ commentModel, postID, replies, style }) => {
         setExternalModal={setCommentModalVisible}
       ></ErrorModal>
       <ProfileMini
-        src={pfp}
-        onClick={() => setModalVisible(true)}
+        username={commentModel.username}
+        refresh={refresh}
+        onClick={() => handleUserClick()}
         style={styles.leftSide}
-      ></ProfileMini>
+      />
       <View style={styles.rightSide}>
         <View style={styles.userNameAndDots}>
-          <Text style={styles.username} onPress={() => setModalVisible(true)}>
+          <Text style={styles.username} onPress={() => handleUserClick()}>
             {commentModel?.username}
           </Text>
           <TouchableOpacity
@@ -169,7 +168,6 @@ const styles = StyleSheet.create({
 
     width: "100%",
     padding: 5,
-    backgroundColor: grayThemeColor, // To be removed
   },
 
   rightSide: {
@@ -180,7 +178,6 @@ const styles = StyleSheet.create({
     minWidth: "60%",
     maxWidth: "70%",
 
-    // backgroundColor: "pink",
     marginLeft: 5,
   },
   leftSide: {

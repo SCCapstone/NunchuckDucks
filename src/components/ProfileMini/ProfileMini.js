@@ -1,26 +1,42 @@
 import { Image, StyleSheet, Pressable } from "react-native";
+import { useEffect, useState } from "react";
+import CachedImage from "../CachedImage/CachedImage";
+import { getUriFromCache, cacheRemoteUri } from "../../crud/CacheOperations";
+import FastImage from "react-native-fast-image";
 
 const defaultProfile = require("../../../assets/icons/Gymbit_Icons_Black/Profile_Icon.png");
 
-const ProfileMini = ({ style, src, onClick, imageStyle }) => {
+const ProfileMini = ({ style, onClick, imageStyle, username }) => {
   let containerStyles = { ...styles.container, ...style };
   let imageStyles = { ...styles.image, ...imageStyle };
+  let picName = "pfp.png";
+  const [imageUri, setImageUri] = useState(null);
+  const [uriIsSet, setUriIsSet] = useState(false);
 
+  async function setImageFromCacheOrAWS() {
+    let uriFromCache = await getUriFromCache(username, picName);
+    if (uriFromCache === "") {
+      uriFromCache = await cacheRemoteUri(username, picName);
+    }
+    setImageUri(uriFromCache);
+    setUriIsSet(true);
+  }
+  useEffect(() => {
+    setImageFromCacheOrAWS();
+  });
   return (
     <Pressable onPressOut={onClick} style={containerStyles}>
-      <Image
-        style={imageStyles}
-        resizeMode={"contain"}
-        source={defaultProfile}
-      ></Image>
-      {src && (
-        <Image
-          style={imageStyles}
-          resizeMode={"contain"} //was center
+      <Image style={imageStyles} resizeMode={"contain"} source={defaultProfile}></Image>
+      {uriIsSet && (
+        <FastImage
           source={{
-            uri: src,
+            uri: imageUri,
+            headers: {},
+            priority: FastImage.priority.high,
           }}
-        ></Image>
+          style={imageStyles}
+          resizeMode={FastImage.resizeMode.cover}
+        />
       )}
     </Pressable>
   );

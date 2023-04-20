@@ -2,6 +2,7 @@ import { DataStore, SortDirection } from "aws-amplify";
 import { Post, User } from "../models";
 import { Storage } from "aws-amplify";
 import { getCurrentUser } from "./CacheOperations";
+import { ConsoleLogger } from "@aws-amplify/core";
 
 /**
  * Creates a user and saves the new user in the backend
@@ -84,9 +85,14 @@ export async function getUserId(username) {
       return u.username.eq(username);
     });
 
-    if (!user || !user.length) return "";
+    if (user && user.length) return user[0].id;
 
-    return user[0].id;
+    const userLowerCase = await DataStore.query(User, (u) => {
+      return u.lowerUsername.eq(username.toLowerCase());
+    });
+
+    if (!userLowerCase || !userLowerCase.length) return "";
+    return userLowerCase[0].id;
   } catch (error) {
     console.error("Error finding user ID for", username, error);
   }
@@ -183,6 +189,30 @@ export async function doesUserExist(username) {
   }
 }
 
+export async function doesUserExistLower(lowerUsername) {
+  try {
+    const user = await DataStore.query(User, (u) => u.lowerUsername.eq(lowerUsername));
+
+    if (user[0] === undefined) console.log(`This user does not exist.`);
+
+    return user[0] === undefined;
+  } catch (error) {
+    console.error(`Error checking if user exists by username.`, error);
+  }
+}
+
+export async function getUserIdByLowerUsername(lowerUsername) {
+  try {
+    const user = await DataStore.query(User, (u) => u.lowerUsername.eq(lowerUsername));
+
+    if (!user || !user.length) return "";
+    console.log(`Successfully found actual username for ${lowerUsername}`);
+    return user[0].id;
+  } catch (error) {
+    console.error("Error finding username from lowercase input", error);
+  }
+}
+
 /**
  * Checks to see if the current user is a private user
  * @param {String} username
@@ -193,9 +223,10 @@ export async function isUserPrivate(username) {
     const userId = await getUserId(username);
     const user = await DataStore.query(User, userId);
 
-    console.log(`Found privacy status for ${username}`);
+    if (!user) return true;
+
     return user.isPrivate;
-  }catch(error) {
+  } catch (error) {
     console.error("Error finding privacy status ", error);
   }
 }
@@ -212,9 +243,7 @@ export async function togglePrivacy(username, privacy) {
       })
     );
 
-    console.log(
-      `Successfully changed ${username}'s privacy status to ${privacy}`
-    );
+    console.log(`Successfully changed ${username}'s privacy status to ${privacy}`);
   } catch (error) {
     console.error(`Error changing ${username}'s privacy status to ${privacy}`);
   }
@@ -227,10 +256,10 @@ export async function togglePrivacy(username, privacy) {
  */
 export async function getUsersbyStartofUsername(username) {
   try {
-    const users = await DataStore.query(User, (u) =>
-      u.username.beginsWith(username)
-    );
-    return users;
+    const users = await DataStore.query(User, (u) => u.username.beginsWith(username));
+    const currUserName = await getCurrentUser();
+    if (!currUserName) return users;
+    return users.filter((val) => val.username !== currUserName);
   } catch (error) {
     console.error(`Error getting users by start of username.`, error);
   }
@@ -244,7 +273,7 @@ export async function getCurrentStreak(username) {
     console.log(`Successfully retrieved current streak for ${username}`);
 
     return user.currentStreak;
-  }catch(error) {
+  } catch (error) {
     console.log("Error finding current streak ", error);
   }
 }
@@ -264,18 +293,16 @@ export async function updateCurrentStreak(username) {
           updated.currentStreak = 0;
         })
       );
-    }
-    else if (needUpdate === true && currDate.getDay() === 4) {
+    } else if (needUpdate === true && currDate.getDay() === 4) {
       const original = await DataStore.query(User, userId);
-      
+
       await DataStore.save(
         User.copyOf(original, (updated) => {
           updated.currentStreak += 1;
         })
       );
       console.log(`Successfully updated current streak of ${username}`);
-    }
-    else if (needUpdate === false) {
+    } else if (needUpdate === false) {
       const original = await DataStore.query(User, userId);
 
       await DataStore.save(
@@ -284,13 +311,12 @@ export async function updateCurrentStreak(username) {
         })
       );
       console.log(`Successfully updated current streak of ${username}`);
-    }
-    else {
+    } else {
       console.log("No update needed");
     }
     const user = await DataStore.query(User, userId);
     return user.currentStreak;
-  }catch(error) {
+  } catch (error) {
     console.error("Error updating streak ", error);
   }
 }
@@ -306,10 +332,10 @@ export async function getUsersPostTimes(username) {
     });
 
     for (let i = 0; i < postList.length; i++) {
-      posts.push(postList[i].createdAt)
+      posts.push(postList[i].createdAt);
     }
     return posts;
-  }catch(error) {
+  } catch (error) {
     console.error("Error retrieving users own posts ", error);
   }
 }
@@ -317,19 +343,17 @@ export async function getUsersPostTimes(username) {
 export async function checkStreak(username) {
   const posts = await getUsersPostTimes(username);
   let goalDays = await getWeeklyGoal(username);
-  if (goalDays > posts.length)
-    return false;
-  
+  if (goalDays > posts.length) return false;
+
   for (let i = 0; i < goalDays; i++) {
-      var createdAtFormatted = posts[i].substring(0,19);
-      var currDate = new Date();
-      var dateUploaded = new Date(createdAtFormatted);
-      var diff = currDate.getTime() - dateUploaded.getTime();
-      var minutesDifference = diff / (1000 * 60);
-      var hoursDifference = Math.floor(minutesDifference / 60);
-      var daysDifference = Math.floor(hoursDifference / 24);
-      if (daysDifference > 7) 
-        return false;
+    var createdAtFormatted = posts[i].substring(0, 19);
+    var currDate = new Date();
+    var dateUploaded = new Date(createdAtFormatted);
+    var diff = currDate.getTime() - dateUploaded.getTime();
+    var minutesDifference = diff / (1000 * 60);
+    var hoursDifference = Math.floor(minutesDifference / 60);
+    var daysDifference = Math.floor(hoursDifference / 24);
+    if (daysDifference > 7) return false;
   }
   return true;
 }
@@ -337,26 +361,22 @@ export async function checkStreak(username) {
 export async function getWeeklyGoal(username) {
   try {
     const userId = await getUserId(username);
-
     const user = await DataStore.query(User, userId);
-    console.log("Weekly goal: ", user.WeeklyGoal);
     const temp = user.WeeklyGoal;
 
     if (temp === null) {
-      const original = await DataStore.query(User, userId);
-
+      //const original = await DataStore.query(User, userId);
       await DataStore.save(
-        User.copyOf(original, (updated) => {
+        User.copyOf(user, (updated) => {
           updated.WeeklyGoal = 3;
         })
       );
-      console.log("Weekly goal set to default");
     }
 
     console.log(`Successfully retrieved weekly goal for ${username}`);
 
     return user.WeeklyGoal;
-  }catch(error) {
+  } catch (error) {
     console.error("Error getting weekly goal ", error);
   }
 }
@@ -365,13 +385,34 @@ export async function setWeeklyGoal(username, weeklyGoal) {
   try {
     const userId = await getUserId(username);
     const original = await DataStore.query(User, userId);
-
+    const number = Number(weeklyGoal);
+    if (!number || number <= 0) return null;
     await DataStore.save(
       User.copyOf(original, (updated) => {
-        updated.WeeklyGoal = weeklyGoal;
+        updated.WeeklyGoal = number;
       })
     );
-  }catch(error) {
+    return number;
+  } catch (error) {
     console.error("Error setting new weekly goal ", error);
+    return null;
+  }
+}
+
+export async function setLowerUsername(username) {
+  try {
+    const userId = await getUserId(username);
+    let lowerUsername = username.toLowerCase();
+
+    const original = await DataStore.query(User, userId);
+
+    if (original.lowerUsername === null || original.lowerUsername === undefined) {
+      await DataStore.save(User.copyOf(original, (updated) => (updated.lowerUsername = lowerUsername)));
+      console.log(`Successfully set lowercase username of ${username} to ${lowerUsername}`);
+    } else {
+      console.log("Lowercase username already set");
+    }
+  } catch (error) {
+    console.error("Error setting lowercase username.", error);
   }
 }

@@ -1,37 +1,30 @@
-import {
-  View,
-  Image,
-  Text,
-  StyleSheet,
-  Pressable,
-  TouchableOpacity,
-} from "react-native";
+import { View, Image, Text, StyleSheet, Pressable, TouchableOpacity, ActivityIndicator } from "react-native";
 import { useState, useEffect } from "react";
 import { Storage } from "@aws-amplify/storage";
 import Reactions from "../Reactions";
 import { blueThemeColor, grayThemeColor } from "../../library/constants";
 import ProfileMini from "../ProfileMini";
 import { useNavigation } from "@react-navigation/native";
-import {
-  cacheImageFromAWS,
-  getCurrentUser,
-  getImageFromCache,
-} from "../../crud/CacheOperations";
+import { getCurrentUser } from "../../crud/CacheOperations";
 import { useNetInfo } from "@react-native-community/netinfo";
 import NonCurrUserProfileModal from "../modals/NonCurrUserProfileModal.js/NonCurrUserProfileModal";
 import Comment from "../Comment";
 import { createComment, getComments } from "../../crud/CommentOperations";
 import CustomButton from "../CustomButton/CustomButton";
 import CustomTextInput from "../CustomTextInput/CustomTextInput";
-import { getCurrentAuthenticatedUser } from "../../library/GetAuthenticatedUser";
+import CachedImage from "../CachedImage/CachedImage";
+import Workout from "../Workout/Workout";
+import { getWorkoutById } from "../../crud/WorkoutOperations";
 import { getAndObserveComments } from "../../crud/observeQueries/CommentObserveQueries";
-
+import { getUriFromCache, cacheRemoteUri } from "../../crud/CacheOperations";
+import FastImage from "react-native-fast-image";
 
 export default function Post(props) {
   const entry = props.entry;
   const username = entry.username;
   const refresh = props.refresh;
   const photoStr = entry.photo;
+  const workoutId = entry.postWorkoutId;
   const picName = photoStr.substring(photoStr.indexOf("/") + 1);
   const [picture, setPicture] = useState(null);
   const [pfp, setPfp] = useState("");
@@ -45,58 +38,18 @@ export default function Post(props) {
   const [shortCommentDisplay, setShortCommentDisplay] = useState(true);
   const [showCommentOption, setCommentOption] = useState(false);
   const [commentText, setCommentText] = useState("");
+  const [hasWorkout, setHasWorkout] = useState(false);
+  const [workout, setWorkout] = useState(null);
+  const [uriIsSet, setUriIsSet] = useState(false);
+  const [imageUri, setImageUri] = useState(null);
 
   const handleBlowUp = () => {
     setBlowup(!blowup);
   };
 
   let commentList = comments.map((val) => {
-    return (
-      <Comment
-        key={val.id}
-        postID={entry.id}
-        commentModel={val}
-        replies={replies.get(val.id)}
-      />
-    );
+    return <Comment key={val.id} postID={entry.id} commentModel={val} replies={replies.get(val.id)} />;
   });
-
-  async function getPictures() {
-    // TODO retrieve post picture from the passed entry fileName
-    //const postPfp = await getImageFromCache(username, "pfp.png"); // console logs pic "pfp.png found for user x..."
-    const postPfp = entry.cachedPfp;
-
-    if (postPfp !== "") {
-      setPfp(postPfp);
-    }
-    //const pic = entry.cachedPostPicture;
-    const pic = await getImageFromCache(username, picName);
-    if (pic !== "") {
-      setPicture(pic);
-    } else if (entry.shouldBeCached === true) {
-      console.log("Pic not in cache but it should be", entry.caption);
-      let picCached = await cacheImageFromAWS(username, picName);
-      //let picha = await Storage.get(photoStr);
-      setPicture(picCached);
-    } else {
-      console.log(
-        "Pic",
-        picName,
-        "for",
-        username,
-        "must be acquired using Storage.get"
-      );
-      try {
-        let picFromAWS = await Storage.get(photoStr);
-        setPicture(picFromAWS);
-      } catch (e) {
-        console.log(
-          "Storage.get failed; connection unavailable to render",
-          picName
-        );
-      }
-    }
-  }
 
   async function onCommentSubmit() {
     setCommentOption(false);
@@ -121,7 +74,7 @@ export default function Post(props) {
 
   async function handleUserClick(username) {
     try {
-      if (username === await getCurrentAuthenticatedUser()) {
+      if (username === (await getCurrentUser())) {
         navigation.navigate("Profile");
       } else {
         setModalVisible(true);
@@ -132,7 +85,7 @@ export default function Post(props) {
   }
 
   useEffect(() => {
-    getPictures();
+    setImageFromCacheOrAWS();
     const subscription = retrieveComments();
     return () => {
       if (subscription && subscription.unsubscribe) subscription.unsubscribe();
@@ -155,20 +108,41 @@ export default function Post(props) {
     setReplies(replyMap);
   }, [allComments]);
 
+  useEffect(() => {
+    getWorkoutForPost();
+  }, []);
+
+  async function setImageFromCacheOrAWS() {
+    let uriFromCache = await getUriFromCache(username, picName);
+    if (uriFromCache === "") {
+      uriFromCache = await cacheRemoteUri(username, picName);
+    }
+    setImageUri(uriFromCache);
+    setUriIsSet(true);
+  }
+
+  async function getWorkoutForPost() {
+    if (workoutId !== undefined && workoutId !== null) {
+      let workout = await getWorkoutById(workoutId);
+      setWorkout(workout);
+      setHasWorkout(true);
+    }
+  }
   return (
     <View style={styles.postBox}>
       <NonCurrUserProfileModal
         modalVisible={modalVisible}
         setModalVisible={setModalVisible}
-        username={entry.username}
-        image={pfp}
+        username={username}
+        picName={picName}
       ></NonCurrUserProfileModal>
       <View name="Header" flexDirection="row" style={styles.postHeader}>
         <ProfileMini
-          src={pfp}
+          username={username}
+          refresh={refresh}
           style={{ height: 42, width: 42, marginLeft: 6, marginRight: 6 }}
           imageStyle={{ height: 42, width: 42 }}
-          onClick={() => setModalVisible(true)}
+          onClick={() => handleUserClick(username)}
         />
         {/*Need to make it navigate to users specific profile*/}
         <Text style={styles.postUsername} onPress={() => handleUserClick(username)}>
@@ -176,34 +150,29 @@ export default function Post(props) {
         </Text>
         <Text style={styles.createdAt}>{getTimeElapsed(entry.createdAt)}</Text>
       </View>
-      <Pressable
-        onPress={handleBlowUp}
-        style={{
-          backgroundColor: "rgba(30,144,255,0.5)",
-          position: "relative",
-        }}
-      >
-        <Image source={{ uri: picture }} style={{ height: 400 }} />
-        {blowup && (
-          <View style={styles.blowupmain}>
-            <View style={styles.blowupheader}>
-              <Text style={styles.blowupheader}>Today's Workout</Text>
-            </View>
-            <View>
-              <Text style={styles.blowupbody}>- {entry.caption}</Text>
-            </View>
+      <Pressable onPress={handleBlowUp} style={{ backgroundColor: "rgba(30,144,255,0.5)", position: "relative" }}>
+        {uriIsSet ? (
+          <FastImage
+            source={{
+              uri: imageUri,
+              headers: {},
+              priority: FastImage.priority.normal,
+            }}
+            style={{ height: 400 }}
+            resizeMode={FastImage.resizeMode.cover}
+          />
+        ) : (
+          <View style={{ height: 400, alignItems: "center", justifyContent: "center", backgroundColor: grayThemeColor }}>
+            <ActivityIndicator size="large" color="#2E8CFF" />
           </View>
         )}
+        {blowup && hasWorkout && <Workout workout={workout} isAbsolute={true} />}
       </Pressable>
       {/*replace get time elapsed w/ actual on click utility*/}
       {/*<View style={styles.captionBox} /> Need to implement caption box as intended*/}
       <View name="Footer" style={styles.footer}>
         <Text>{entry.caption}</Text>
-        <Reactions
-          postID={entry.id}
-          commentsClicked={showCommentOption}
-          setCommentsClicked={setCommentOption}
-        />
+        <Reactions postID={entry.id} commentsClicked={showCommentOption} setCommentsClicked={setCommentOption} />
 
         {showCommentOption && (
           <CustomTextInput
@@ -219,9 +188,7 @@ export default function Post(props) {
             multiline={true}
           />
         )}
-        {showCommentOption && (
-          <CustomButton onClick={onCommentSubmit} text={"Submit"} />
-        )}
+        {showCommentOption && <CustomButton onClick={onCommentSubmit} text={"Submit"} />}
         {shortCommentDisplay ? commentList.slice(0, 2) : commentList}
         {comments.length > 2 && (
           <CustomButton
@@ -328,25 +295,15 @@ export function getTimeElapsed(createdAt) {
   if (minutesDifference < 1) {
     ans = "less than a minute ago";
   } else if (minutesDifference <= 60) {
-    ans =
-      Math.round(minutesDifference.toString()) +
-      ` minute${minutesDifference === 1 ? "" : "s"} ago`;
+    ans = Math.round(minutesDifference.toString()) + ` minute${minutesDifference === 1 ? "" : "s"} ago`;
   } else if (hoursDifference <= 24) {
-    ans =
-      Math.round(hoursDifference.toString()) +
-      ` hour${hoursDifference === 1 ? "" : "s"} ago`;
+    ans = Math.round(hoursDifference.toString()) + ` hour${hoursDifference === 1 ? "" : "s"} ago`;
   } else if (daysDifference <= 30) {
-    ans =
-      Math.round(daysDifference.toString()) +
-      ` day${daysDifference === 1 ? "" : "s"} ago`;
+    ans = Math.round(daysDifference.toString()) + ` day${daysDifference === 1 ? "" : "s"} ago`;
   } else if (monthsDifference <= 12) {
-    ans =
-      Math.round(monthsDifference.toString()) +
-      ` month${monthsDifference === 1 ? "" : "s"} ago`;
+    ans = Math.round(monthsDifference.toString()) + ` month${monthsDifference === 1 ? "" : "s"} ago`;
   } else {
-    ans =
-      Math.round(yearsDifference.toString()) +
-      ` year${yearsDifference === 1 ? "" : "s"} ago`;
+    ans = Math.round(yearsDifference.toString()) + ` year${yearsDifference === 1 ? "" : "s"} ago`;
   }
   return ans;
 }

@@ -1,55 +1,52 @@
 import { Pressable, Image, StyleSheet, View, Text } from "react-native";
 import ProfileMini from "../ProfileMini";
-import { grayThemeColor } from "../../library/constants";
+import { grayThemeColor, blueThemeColor } from "../../library/constants";
 import { findUserByUsername } from "../../crud/UserOperations";
 import { useState, useEffect, useCallback } from "react";
 import { getImageFromCache } from "../../crud/CacheOperations";
 import { Storage } from "aws-amplify";
 import NonCurrUserProfileModal from "../modals/NonCurrUserProfileModal.js/NonCurrUserProfileModal";
+import { AntDesign } from "@expo/vector-icons";
+import ConfirmDelete from "../modals/ConfirmDelete/ConfirmDelete";
 
 const deleteIconPath = require("../../../assets/icons/Gymbit_Icons_Black/X_Icon_Black.png");
 
-const FollowerMini = ({ username, onProfileClick, onDelete, style }) => {
+const FollowerMini = ({ username, onDelete, style, isFollowerPage }) => {
   const containerStyles = { ...styles.container, ...style };
-  const [userImageSrc, setUserImageSrc] = useState("");
   const [modalVisible, setModalVisible] = useState("");
-
-  useEffect(() => {
-    getUserImageSrc(username);
-  }, [username]);
-
-  async function getUserImageSrc(username) {
-    let pfp = await getImageFromCache(username, "pfp.png");
-    if (pfp === "") {
-      pfp = await Storage.get(username + "/pfp.png");
-    }
-    setUserImageSrc(pfp);
-  }
-
-  async function closeModal() {
-    setModalVisible(false);
-  }
-  /*const getUserImageSrc = useCallback(async (username) => {
-    const user = await findUserByUsername(username);
-    if (!user || !user.profilePicture) return;
-    setUserImageSrc(user.profilePicture);
-  }, []);*/
+  const [deleteModalVisible, setDeleteModalVisible] = useState(false);
 
   return (
     <View style={containerStyles}>
       <NonCurrUserProfileModal
-          modalVisible={modalVisible}
-          setModalVisible={setModalVisible}
-          username={username}
-          image={userImageSrc}></NonCurrUserProfileModal>
+        modalVisible={modalVisible}
+        setModalVisible={setModalVisible}
+        username={username}
+      ></NonCurrUserProfileModal>
+      <ConfirmDelete
+        modalVisible={deleteModalVisible}
+        setModalVisible={setDeleteModalVisible}
+        text={`${
+          isFollowerPage
+            ? `Are you sure you want ${username} to stop following you?`
+            : `Are you sure you want to stop following ${username}?`
+        }`}
+        deletefunc={onDelete}
+      ></ConfirmDelete>
       <View style={styles.leftSideContainer}>
-        <ProfileMini src={userImageSrc} onClick={() => setModalVisible(true)}></ProfileMini>
-        <Pressable onPressOut={() => setModalVisible(true)} style={styles.usernameContainer}>
+        <ProfileMini
+          username={username}
+          onClick={() => setModalVisible(true)}
+        />
+        <Pressable
+          onPressOut={() => setModalVisible(true)}
+          style={styles.usernameContainer}
+        >
           <Text style={styles.username}>@{username}</Text>
         </Pressable>
       </View>
-      <Pressable onPressOut={onDelete}>
-        <Image source={deleteIconPath} resizeMode={"center"} style={styles.xIcon}></Image>
+      <Pressable onPressOut={() => setDeleteModalVisible(true)}>
+        <AntDesign name="closecircleo" color={blueThemeColor} size={40} />
       </Pressable>
     </View>
   );
@@ -83,6 +80,7 @@ const styles = StyleSheet.create({
     textAlignVertical: "center",
     fontSize: 20,
     padding: 5,
+    paddingLeft: 10,
     width: "100%",
   },
   xIcon: {

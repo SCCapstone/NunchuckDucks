@@ -6,18 +6,22 @@ import { ExploreScreen } from "./src/screens/ExploreScreen.js";
 import { MutualScreen } from "./src/screens/MutualScreen.js";
 import { CreatePost } from "./src/screens/CreatePost.js";
 import { CalendarScreen } from "./src/screens/CalendarScreen.js";
+import { WorkoutsScreen } from "./src/screens/WorkoutsScreen.js";
 import { GoalsScreen } from "./src/screens/GoalsScreen.js";
 import { ProfileScreen } from "./src/screens/ProfileScreen.js";
 import { FollowerScreen } from "./src/screens/FollowerScreen.js";
 import { CreateGoalScreen } from "./src/screens/CreateGoalScreen.js";
 import { NotificationsScreen } from "./src/screens/NotificationsScreen.js";
 import Navbar from "./src/components/Navbar";
-import { Amplify, API } from "@aws-amplify/core";
+import { Amplify, API, Hub } from "@aws-amplify/core";
 import awsmobile from "./src/aws-exports";
 import { withAuthenticator, AmplifyTheme } from "aws-amplify-react-native";
-import { StyleSheet, View, TitleText } from "react-native";
+import { DataStore, Predicates } from "@aws-amplify/datastore";
+import { StyleSheet, View, TitleText, Text, Image, ActivityIndicator } from "react-native";
 import { Storage } from "@aws-amplify/storage";
 import * as clients3 from "@aws-sdk/client-s3";
+import { useState, useEffect } from "react";
+import { Toast } from "react-native-toast-message/lib/src/Toast.js";
 import { blueThemeColor } from "./src/library/constants.js";
 
 Amplify.configure({
@@ -49,42 +53,71 @@ Amplify.configure({
 const Stack = createMaterialTopTabNavigator();
 
 const app = () => {
+  const [refresh, setRefresh] = useState(false);
+  const [appReady, setAppReady] = useState(false);
+  useEffect(() => {
+    // Create listener that will stop observing the model once the sync process is done
+    const removeListener = Hub.listen("datastore", async (capsule) => {
+      const {
+        payload: { event, data },
+      } = capsule;
+
+      console.log("DataStore event", event, data);
+
+      if (event === "ready") {
+        setAppReady(true);
+      }
+    });
+
+    // Start the DataStore, this kicks-off the sync process.
+    DataStore.start();
+
+    return () => {
+      removeListener();
+    };
+  }, []);
   return (
-    <NavigationContainer>
-      <Stack.Navigator
-        screenOptions={{
-          headerShown: false,
-          tabBarShowLabel: true,
-          tabBarScrollEnabled: true,
-          lazy: true,
-          tabBarLabelStyle: {
-            width: 120,
-            height: 30,
-            textAlign: "center",
-            color: "black",
-            fontSize: 15,
-            fontWeight: "bold",
-          },
-        }}
-        initialRouteName="Mutuals"
-        tabBarPosition="bottom"
-      >
-        <Stack.Screen name="Settings" component={SettingsScreen} />
-        {/* <Stack.Screen name="Explore" component={ExploreScreen} /> */}
-        <Stack.Screen name="Mutuals" component={MutualScreen} />
-        <Stack.Screen name="Profile" component={ProfileScreen} />
-        {/* <Stack.Screen name="CreatePost" component={CreatePost} /> */}
-        {/* <Stack.Screen name="Calendar" component={CalendarScreen} /> */}
-        <Stack.Screen name="Goals" component={GoalsScreen} />
-        <Stack.Screen
-          name="Followers"
-          component={FollowerScreen}
-          initialParams={{ isFollowerPage: false }}
-        />
-        <Stack.Screen name="Notifications" component={NotificationsScreen} />
-        {/* <Stack.Screen name="CreateGoal" component={CreateGoalScreen} /> */}
-      </Stack.Navigator>
-    </NavigationContainer>
+    <>
+      {appReady ? (
+        <NavigationContainer>
+          <Stack.Navigator
+            screenOptions={{
+              headerShown: false,
+              tabBarShowLabel: true,
+              tabBarScrollEnabled: true,
+              tabBarLabelStyle: {
+                width: 125,
+                height: 30,
+                textAlign: "center",
+                color: "black",
+                fontSize: 15,
+                fontWeight: "bold",
+              },
+            }}
+            initialRouteName="Mutuals"
+            tabBarPosition="bottom"
+          >
+            <Stack.Screen name="Settings" component={SettingsScreen} />
+            {/* <Stack.Screen name="Explore" component={ExploreScreen} /> */}
+            <Stack.Screen name="Mutuals">{(props) => <MutualScreen {...props} refresh={refresh} setRefresh={setRefresh} />}</Stack.Screen>
+            <Stack.Screen name="Profile">{(props) => <ProfileScreen {...props} refresh={refresh} setRefresh={setRefresh} />}</Stack.Screen>
+            {/* <Stack.Screen name="CreatePost" component={CreatePost} /> */}
+            {/* <Stack.Screen name="Calendar" component={CalendarScreen} /> */}
+            <Stack.Screen name="Goals" component={GoalsScreen} />
+            <Stack.Screen name="Workouts" component={WorkoutsScreen} />
+            <Stack.Screen name="Followers" component={FollowerScreen} initialParams={{ isFollowerPage: false }} />
+            <Stack.Screen name="Notifications" component={NotificationsScreen} />
+            {/* <Stack.Screen name="CreateGoal" component={CreateGoalScreen} /> */}
+          </Stack.Navigator>
+        </NavigationContainer>
+      ) : (
+        <View style={{ alignItems: "center", justifyContent: "center", flex: 1 }}>
+          <Image style={{ width: 300 }} source={require("./assets/icons/Gymbit_Icons_Trans/Logo_Trans.png")} />
+          <ActivityIndicator style={{ transform: [{ scaleX: 2 }, { scaleY: 2 }] }} size="large" color="#2E8CFF" />
+        </View>
+      )}
+      <Toast />
+    </>
   );
 };
 
@@ -144,7 +177,7 @@ const customTheme = {
     borderRadius: 20,
     borderWidth: 2,
     color: "#808080", //text color of user input
-    fontWeight: "480",
+    fontWeight: "500",
     fontSize: 16,
   },
   button: {

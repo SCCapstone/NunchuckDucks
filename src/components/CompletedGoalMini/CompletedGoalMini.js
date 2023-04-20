@@ -1,18 +1,15 @@
 import { View, Image, Text, StyleSheet, Pressable } from "react-native";
 import { blueThemeColor, grayThemeColor } from "../../library/constants";
 import React from "react";
+import { AntDesign } from "@expo/vector-icons";
 
 // Component that provides a short goal description and handles a custom click event
-const CompletedGoalMini = ({ description, onDeleteHandler}) => {
+const CompletedGoalMini = ({ description, onDeleteHandler }) => {
   return (
     <View style={styles.container}>
       <Text style={styles.text}>{description}</Text>
       <Pressable onPress={onDeleteHandler} style={styles.imgContainer}>
-        <Image
-          source={require("../../../assets/icons/Gymbit_Icons_Black/X_Icon_Black.png")} // Placeholder Icon
-          style={styles.icon}
-          resizeMethod={"auto"}
-        />
+        <AntDesign name="closecircleo" color={blueThemeColor} size={40} />
       </Pressable>
     </View>
   );
@@ -23,7 +20,7 @@ const styles = StyleSheet.create({
     width: "83%", // following original figma designs
     backgroundColor: grayThemeColor,
     borderColor: blueThemeColor,
-    borderWidth:3,
+    borderWidth: 3,
     padding: 10,
     minHeight: 60,
     borderRadius: 10,
@@ -32,7 +29,6 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     margin: 10,
-    
   },
   text: {
     textAlign: "center",
