@@ -1,7 +1,7 @@
 import { Modal, StyleSheet, View, Text, Image, Pressable } from "react-native";
 import React from "react";
 import { useEffect, useState } from "react";
-import { findUserByUsername } from "../../../crud/UserOperations";
+import { findUserByUsername, isUserPrivate } from "../../../crud/UserOperations";
 import ProfileMini from "../../ProfileMini";
 import { getFollowsList } from "../../../crud/FollowingOperations";
 import { getFollowersList } from "../../../crud/FollowersOperations";
@@ -15,13 +15,19 @@ const NonCurrUserProfileModal = ({ modalVisible, setModalVisible, username, imag
   const [user, setUser] = useState("");
   const [followingCount, setFollowingCount] = useState("");
   const [followersCount, setFollowersCount] = useState("");
+  const [isPrivate, setIsPrivate] = useState(false);
 
   useEffect(() => {
     getUserObject(username);
     getFollowingCount(username);
     getFollowersCount(username);
+    getIsPrivate();
   }, []);
 
+  async function getIsPrivate() {
+    let userPrivacy = await isUserPrivate(username);
+    setIsPrivate(userPrivacy);
+  }
   const closeModal = () => {
     setModalVisible(false);
   };
@@ -98,7 +104,13 @@ const NonCurrUserProfileModal = ({ modalVisible, setModalVisible, username, imag
             <Text style={styles.bio}>{user.bio !== null ? user.bio : ""}</Text>
           </View>
         </View>
-        <GoalSummary username={username} />
+        {isPrivate ? (
+          <View style={{ marginTop: "10%", maxWidth: "85%" }}>
+            <Text style={{ fontSize: 30, fontWeight: "bold", textAlign: "center" }}>This user has set their goals to be private.</Text>
+          </View>
+        ) : (
+          <GoalSummary username={username} />
+        )}
       </View>
     </Modal>
   );
