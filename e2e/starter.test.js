@@ -1,3 +1,7 @@
+// https://www.npmjs.com/package/aws-amplify-react-native?activeTab=code
+// the withAuthenticator testIDs can be found in this repo ^^ at /aws-amplify-react-native/src/AmplifyTestIDs.js
+
+
 const { device } = require("detox");
 
 describe("Example", () => {
