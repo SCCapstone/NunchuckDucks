@@ -33,12 +33,15 @@ export function NotificationsScreen() {
   const currUser = getCurrentUser();
   const [notifications, setNotifications] = useState([]);
   const [forceRefresh, setForceRefresh] = useState(true);
+  const [isEmpty, setIsEmpty] = useState(false);
 
   async function notificationList() {
     const username = await getCurrentUser();
     const Notifications = await getNotifications(username);
     if (!Notifications || !Array.isArray(Notifications)) return;
     setNotifications(Notifications);
+    if (Notifications.length === 0)
+        setIsEmpty(true);
   }
 
   async function deleteAllButton(username) {
@@ -78,7 +81,14 @@ export function NotificationsScreen() {
             title={"Notifications"}
             style={{ backgroundColor: "white" }}
           />
+          { isEmpty && (
+            <View>
+                <Text style={styles.defaultText}>Looks like there are no new notifications!</Text>
+            </View>
+          )}
+          { !isEmpty && (
           <CustomButton buttonType={"default"} text={"Delete All"} onClick={() => deleteAllButton(currUser)}></CustomButton>
+          )}
         </View>
         <View>
           <ScrollView contentContainerStyle={styles.scroll}>
@@ -104,5 +114,10 @@ const styles = StyleSheet.create({
     width: 100,
     margin: 10,
   },
+  defaultText: {
+    fontSize: 20,
+    fontWeight: "bold",
+    paddingTop: 30
+  }
 });
 
