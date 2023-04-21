@@ -5,9 +5,11 @@ import CustomButton from "../CustomButton";
 import { AntDesign } from "@expo/vector-icons";
 import { blueThemeColor } from "../../library/constants";
 import { getCurrentAuthenticatedUser } from "../../library/GetAuthenticatedUser";
+import { useIsFocused } from "@react-navigation/native";
 
 export default function CameraComponent({ setImage, setShowCamera }) {
   let cameraRef = useRef();
+  let isFocused = useIsFocused();
   const [type, setType] = useState(CameraType.back);
   const [permission, requestPermission] = Camera.useCameraPermissions();
   const [pictureSize, setPictureSize] = useState("1088x1088");
@@ -55,7 +57,7 @@ export default function CameraComponent({ setImage, setShowCamera }) {
   function closeModal() {
     setShowCamera(false);
   }
-  if (permission.granted) {
+  if (permission.granted && isFocused) {
     return (
       <View style={styles.container}>
         <Pressable onPress={closeModal} style={styles.transparentView} />
@@ -77,6 +79,8 @@ export default function CameraComponent({ setImage, setShowCamera }) {
         </View>
       </View>
     );
+  } else if (permission.granted) {
+    setShowCamera(false);
   }
 }
 
