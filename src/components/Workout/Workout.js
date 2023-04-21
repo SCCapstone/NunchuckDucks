@@ -11,18 +11,23 @@ export default function Workout({ workout, isAbsolute = false }) {
   let JsonWorkout = workout;
   try {
     JsonWorkout = JSON.parse(JsonWorkout);
-  } catch {
+  } catch (error) {
+    console.log("Workout Parsing: ", error);
     JsonWorkout = workout;
   }
   let JsonExercises = JsonWorkout.exercises;
   try {
     JsonExercises = JSON.parse(JsonExercises);
-  } catch {
+  } catch (error) {
+    console.log("Workout Exercises: ", error);
     JsonExercises = JsonWorkout.exercises;
   }
   let workoutName = JsonWorkout.workoutName;
   return (
-    <View key={workout.id} style={isAbsolute ? styles.blowupmainAbsolute : styles.blowupmain}>
+    <View
+      key={workout.id}
+      style={isAbsolute ? styles.blowupmainAbsolute : styles.blowupmain}
+    >
       <View style={styles.blowupheader}>
         <Text style={styles.workoutName}>{workoutName}</Text>
       </View>

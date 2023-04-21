@@ -12,13 +12,26 @@ import { useNavigation } from "@react-navigation/native";
 
 const GoalSummary = ({ username, isCurrentUser = false }) => {
   const [goals, setGoals] = useState([]);
+  const [retrieveGoals, setRetrieveGoals] = useState(0);
   const navigation = useNavigation();
 
   async function goalList() {
-    //let username = await getCurrentUser();
-    const subscription = getAndObserveGoals(username, setGoals);
+    const subscription = getAndObserveGoals(username, setRetrieveGoals);
     return subscription;
   }
+
+  useEffect(() => {
+    const updateGoalList = async () => {
+      try {
+        const goals = await getGoals(username);
+        setGoals(goals);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    updateGoalList().catch((err) => console.error(err));
+    return () => {};
+  }, [retrieveGoals, username]);
 
   useEffect(() => {
     const subscription = goalList();
@@ -46,17 +59,24 @@ const GoalSummary = ({ username, isCurrentUser = false }) => {
     <>
       {isCurrentUser ? (
         <>
-          <Pressable onPress={() => navigation.navigate("Goals")} style={styles.titleBox}>
+          <Pressable
+            onPress={() => navigation.navigate("Goals")}
+            style={styles.titleBox}
+          >
             <Text style={styles.title}>Your Goals</Text>
           </Pressable>
-          <ScrollView style={{ backgroundColor: "white" }}>{listGoals.length === 0 ? defaultForNoGoals : listGoals}</ScrollView>
+          <ScrollView style={{ backgroundColor: "white" }}>
+            {listGoals.length === 0 ? defaultForNoGoals : listGoals}
+          </ScrollView>
         </>
       ) : (
         <View style={styles.container}>
           <View style={styles.titleBox}>
             <Text style={styles.title}>{username + "'s"} goals</Text>
           </View>
-          <ScrollView>{listGoals.length === 0 ? defaultForNoGoals : listGoals}</ScrollView>
+          <ScrollView>
+            {listGoals.length === 0 ? defaultForNoGoals : listGoals}
+          </ScrollView>
         </View>
       )}
     </>

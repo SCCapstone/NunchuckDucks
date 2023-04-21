@@ -17,12 +17,20 @@ import { Amplify, API, Hub } from "@aws-amplify/core";
 import awsmobile from "./src/aws-exports";
 import { withAuthenticator, AmplifyTheme } from "aws-amplify-react-native";
 import { DataStore, Predicates } from "@aws-amplify/datastore";
-import { StyleSheet, View, TitleText, Text, Image, ActivityIndicator } from "react-native";
+import {
+  StyleSheet,
+  View,
+  TitleText,
+  Text,
+  Image,
+  ActivityIndicator,
+} from "react-native";
 import { Storage } from "@aws-amplify/storage";
 import * as clients3 from "@aws-sdk/client-s3";
 import { useState, useEffect } from "react";
 import { Toast } from "react-native-toast-message/lib/src/Toast.js";
 import { blueThemeColor } from "./src/library/constants.js";
+import { AntDesign } from "@expo/vector-icons";
 
 Amplify.configure({
   ...awsmobile,
@@ -62,7 +70,7 @@ const app = () => {
         payload: { event, data },
       } = capsule;
 
-      console.log("DataStore event", event, data);
+      // console.log("DataStore event", event, data);
 
       if (event === "ready") {
         setAppReady(true);
@@ -83,37 +91,43 @@ const app = () => {
           <Stack.Navigator
             screenOptions={{
               headerShown: false,
-              tabBarShowLabel: true,
-              tabBarScrollEnabled: true,
-              tabBarLabelStyle: {
-                width: 125,
-                height: 30,
-                textAlign: "center",
-                color: "black",
-                fontSize: 15,
-                fontWeight: "bold",
-              },
+              tabBarShowLabel: false,
+              tabBarShowIcon: true,
+              tabBarScrollEnabled: false,
+              tabBarIconStyle: {
+                width: 'auto',
+                height: 20,
+              }
             }}
             initialRouteName="Mutuals"
             tabBarPosition="bottom"
           >
-            <Stack.Screen name="Settings" component={SettingsScreen} />
-            {/* <Stack.Screen name="Explore" component={ExploreScreen} /> */}
-            <Stack.Screen name="Mutuals">{(props) => <MutualScreen {...props} refresh={refresh} setRefresh={setRefresh} />}</Stack.Screen>
-            <Stack.Screen name="Profile">{(props) => <ProfileScreen {...props} refresh={refresh} setRefresh={setRefresh} />}</Stack.Screen>
-            {/* <Stack.Screen name="CreatePost" component={CreatePost} /> */}
-            {/* <Stack.Screen name="Calendar" component={CalendarScreen} /> */}
-            <Stack.Screen name="Goals" component={GoalsScreen} />
-            <Stack.Screen name="Workouts" component={WorkoutsScreen} />
-            <Stack.Screen name="Followers" component={FollowerScreen} initialParams={{ isFollowerPage: false }} />
-            <Stack.Screen name="Notifications" component={NotificationsScreen} />
-            {/* <Stack.Screen name="CreateGoal" component={CreateGoalScreen} /> */}
+            <Stack.Screen name="Mutuals" options={{tabBarIcon: () => <AntDesign name="home" size={20}></AntDesign>}}>
+              {(props) => <MutualScreen {...props} refresh={refresh} setRefresh={setRefresh} />}
+              </Stack.Screen>
+            <Stack.Screen name="Workouts" component={WorkoutsScreen} options={{tabBarIcon: () => <Image source={require("./assets/icons/tab-bar/tabWorkoutThick.png")} style={styles.tabIcon}/>}}/>
+            <Stack.Screen name="Goals" component={GoalsScreen} options={{tabBarIcon: () => <Image source={require("./assets/icons/tab-bar/tabGoalThick.png")} style={styles.tabIcon}/>}}/>
+            <Stack.Screen name="Followers" component={FollowerScreen} initialParams={{ isFollowerPage: false }} options={{tabBarIcon: () => <AntDesign name={"team"} size={20}></AntDesign>}}/>
+            <Stack.Screen name="Profile" options={{tabBarIcon: () => <AntDesign name={"user"} size={20}></AntDesign>}}>
+              {(props) => <ProfileScreen {...props} refresh={refresh} setRefresh={setRefresh} />}
+              </Stack.Screen>
+            <Stack.Screen name="Settings" component={SettingsScreen} options={{tabBarIcon: () => <Image source={require("./assets/icons/tab-bar/tabSettingsThick.png")} style={styles.tabIcon}/>}}/>
+            <Stack.Screen name="Notifications" component={NotificationsScreen} options={{tabBarIcon: () => <AntDesign name={"bells"} size={20}></AntDesign>}}/>
           </Stack.Navigator>
         </NavigationContainer>
       ) : (
-        <View style={{ alignItems: "center", justifyContent: "center", flex: 1 }}>
-          <Image style={{ width: 300 }} source={require("./assets/icons/Gymbit_Icons_Trans/Logo_Trans.png")} />
-          <ActivityIndicator style={{ transform: [{ scaleX: 2 }, { scaleY: 2 }] }} size="large" color="#2E8CFF" />
+        <View
+          style={{ alignItems: "center", justifyContent: "center", flex: 1 }}
+        >
+          <Image
+            style={{ width: 300 }}
+            source={require("./assets/icons/Gymbit_Icons_Trans/Logo_Trans.png")}
+          />
+          <ActivityIndicator
+            style={{ transform: [{ scaleX: 2 }, { scaleY: 2 }] }}
+            size="large"
+            color="#2E8CFF"
+          />
         </View>
       )}
       <Toast />
@@ -213,5 +227,12 @@ const customTheme = {
     fontSize: 16,
   },
 };
+
+const styles = StyleSheet.create({
+  tabIcon: {
+    width: 20,
+    height: 20,
+  },
+})
 
 export default withAuthenticator(app, { signUpConfig, theme: customTheme });
