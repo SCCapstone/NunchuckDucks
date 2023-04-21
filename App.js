@@ -23,6 +23,7 @@ import * as clients3 from "@aws-sdk/client-s3";
 import { useState, useEffect } from "react";
 import { Toast } from "react-native-toast-message/lib/src/Toast.js";
 import { blueThemeColor } from "./src/library/constants.js";
+import { AntDesign } from "@expo/vector-icons";
 
 Amplify.configure({
   ...awsmobile,
@@ -103,20 +104,20 @@ const app = () => {
             tabBarPosition="bottom"
           >
             {/* <Stack.Screen name="Explore" component={ExploreScreen} /> */}
-            <Stack.Screen name="Mutuals" options={{tabBarIcon: () => <Image source={require("./assets/icons/tab-bar/tabHome.png")} style={styles.tabIcon}/>}}>
+            <Stack.Screen name="Mutuals" options={{tabBarIcon: () => /*<Image source={require("./assets/icons/tab-bar/tabHome.png")} style={styles.tabIcon}/>*/ <AntDesign name="home" size={20}></AntDesign>}}>
               {(props) => <MutualScreen {...props} refresh={refresh} setRefresh={setRefresh} />}
               </Stack.Screen>
-            <Stack.Screen name="Profile" options={{tabBarIcon: () => <Image source={require("./assets/icons/tab-bar/tabProfile.png")} style={styles.tabIcon}/>}}>
+            <Stack.Screen name="Profile" options={{tabBarIcon: () => /*<Image source={require("./assets/icons/tab-bar/tabProfile.png")} style={styles.tabIcon}/>*/ <AntDesign name={"user"} size={20}></AntDesign>}}>
               {(props) => <ProfileScreen {...props} refresh={refresh} setRefresh={setRefresh} />}
               </Stack.Screen>
             {/* <Stack.Screen name="CreatePost" component={CreatePost} /> */}
             {/* <Stack.Screen name="Calendar" component={CalendarScreen} /> */}
             <Stack.Screen name="Goals" component={GoalsScreen} options={{tabBarIcon: () => <Image source={require("./assets/icons/tab-bar/tabGoals.png")} style={styles.tabIcon}/>}}/>
             <Stack.Screen name="Workouts" component={WorkoutsScreen} options={{tabBarIcon: () => <Image source={require("./assets/icons/tab-bar/tabWorkouts.png")} style={styles.tabIcon}/>}}/>
-            <Stack.Screen name="Followers" component={FollowerScreen} initialParams={{ isFollowerPage: false }} options={{tabBarIcon: () => <Image source={require("./assets/icons/tab-bar/tabFollowers.png")} style={styles.tabIcon}/>}}/>
-            <Stack.Screen name="Notifications" component={NotificationsScreen} options={{tabBarIcon: () => <Image source={require("./assets/icons/tab-bar/tabNotifications.png")} style={styles.tabIcon}/>}}/>
+            <Stack.Screen name="Followers" component={FollowerScreen} initialParams={{ isFollowerPage: false }} options={{tabBarIcon: () => /*<Image source={require("./assets/icons/tab-bar/tabFollowers.png")} style={styles.tabIcon}/>*/ <AntDesign name={"team"} size={20}></AntDesign>}}/>
+            <Stack.Screen name="Notifications" component={NotificationsScreen} options={{tabBarIcon: () => <Image source={require("./assets/icons/Gymbit_Icons_Black/Alert_Icon_Black.png")} style={styles.tabIcon}/>}}/>
             {/* <Stack.Screen name="CreateGoal" component={CreateGoalScreen} /> */}
-            <Stack.Screen name="Settings" component={SettingsScreen} options={{tabBarIcon: () => <Image source={require("./assets/icons/tab-bar/tabSettings.png")} style={styles.tabIcon}/>}}/>
+            <Stack.Screen name="Settings" component={SettingsScreen} options={{tabBarIcon: () => <Image source={require("./assets/icons/Gymbit_Icons_Black/Settings_Icon_Black.png")} style={styles.tabIcon}/>}}/>
           </Stack.Navigator>
         </NavigationContainer>
       ) : (
