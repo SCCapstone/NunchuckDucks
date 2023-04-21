@@ -124,6 +124,7 @@ const app = () => {
 const signUpConfig = {
   header: "Sign Up",
   hideAllDefaults: true,
+  testID: "Sign_Up_Page",
   signUpFields: [
     {
       label: "Full name",

@@ -9,7 +9,8 @@ describe("Example", () => {
     await device.reloadReactNative();
   });
 
-  it("Sign in page shows text", async () => {
-    await expect(element(by.text("Sign in to your account"))).toBeVisible();
+  it("Navigates to the sign-up page", async () => {
+    await element(by.label("aws-amplify__auth--sign-up-button")).tap();
+    expect(element(by.id("Sign_Up_Page"))).toBeVisible();
   });
 });
