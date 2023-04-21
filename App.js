@@ -94,14 +94,6 @@ const app = () => {
               tabBarShowLabel: false,
               tabBarShowIcon: true,
               tabBarScrollEnabled: false,
-              // tabBarLabelStyle: {
-              //   width: 130,
-              //   height: 30,
-              //   textAlign: "center",
-              //   color: "black",
-              //   fontSize: 15,
-              //   fontWeight: "bold",
-              // },
               tabBarIconStyle: {
                 width: 'auto',
                 height: 20,
@@ -110,7 +102,6 @@ const app = () => {
             initialRouteName="Mutuals"
             tabBarPosition="bottom"
           >
-            {/* <Stack.Screen name="Explore" component={ExploreScreen} /> */}
             <Stack.Screen name="Mutuals" options={{tabBarIcon: () => <AntDesign name="home" size={20}></AntDesign>}}>
               {(props) => <MutualScreen {...props} refresh={refresh} setRefresh={setRefresh} />}
               </Stack.Screen>
@@ -120,9 +111,6 @@ const app = () => {
             <Stack.Screen name="Profile" options={{tabBarIcon: () => <AntDesign name={"user"} size={20}></AntDesign>}}>
               {(props) => <ProfileScreen {...props} refresh={refresh} setRefresh={setRefresh} />}
               </Stack.Screen>
-            {/* <Stack.Screen name="CreatePost" component={CreatePost} /> */}
-            {/* <Stack.Screen name="Calendar" component={CalendarScreen} /> */}
-            {/* <Stack.Screen name="CreateGoal" component={CreateGoalScreen} /> */}
             <Stack.Screen name="Settings" component={SettingsScreen} options={{tabBarIcon: () => <Image source={require("./assets/icons/tab-bar/tabSettingsThick.png")} style={styles.tabIcon}/>}}/>
             <Stack.Screen name="Notifications" component={NotificationsScreen} options={{tabBarIcon: () => <AntDesign name={"bells"} size={20}></AntDesign>}}/>
           </Stack.Navigator>
