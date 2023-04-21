@@ -54,7 +54,7 @@ const Comment = ({ commentModel, postID, replies, style, refresh }) => {
 
   async function checkIfDeletable(postID, username, commentId) {
     if (await checkForDeletability(postID, username)) {
-      deleteComment(commentId)
+      setCommentModalVisible(true);
     } else setErrorModalVisible(true);
   }
 
