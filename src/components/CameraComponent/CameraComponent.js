@@ -1,6 +1,6 @@
 import { Camera, CameraType } from "expo-camera";
 import { useState, useRef, useEffect } from "react";
-import { Button, StyleSheet, Text, TouchableOpacity, View, Pressable } from "react-native";
+import { Button, StyleSheet, Text, TouchableOpacity, View, Pressable, BackHandler } from "react-native";
 import CustomButton from "../CustomButton";
 import { AntDesign } from "@expo/vector-icons";
 import { blueThemeColor } from "../../library/constants";
@@ -12,18 +12,14 @@ export default function CameraComponent({ setImage, setShowCamera }) {
   const [permission, requestPermission] = Camera.useCameraPermissions();
   const [pictureSize, setPictureSize] = useState("1088x1088");
 
-  /*useEffect(() => {
-    setPicSize();
-  }, []);
-
-  //This was my attempt to make a function that would set the
-  async function setPicSize() {
-    let sizes = await cameraRef.current.getAvailablePictureSizesAsync("1:1");
-    let chosenSize = sizes[0];
-    console.log("Yay", chosenSize);
-    setPictureSize(chosenSize);
-  }*/
-
+  useEffect(() => {
+    const backAction = () => {
+      setShowCamera(false);
+      return true;
+    };
+    const backHandler = BackHandler.addEventListener("hardwareBackPress", backAction);
+    return () => backHandler.remove();
+  });
   if (!permission) {
     // Camera permissions are still loading
     return <View />;
