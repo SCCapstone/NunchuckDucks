@@ -15,6 +15,7 @@ it(`renders correctly`, () => {
 });
 
 it(`renders text`, () => {
-  render(<CompletedGoalMini description={text}></CompletedGoalMini>)
-  expect(screen.getByText(text)).toBeDefined();
+  const tree = renderer.create(<CompletedGoalMini description={text}></CompletedGoalMini>);
+  const testInstance = tree.root;
+  expect(testInstance.findByType(CompletedGoalMini).props.description).toBe("test");
 });
