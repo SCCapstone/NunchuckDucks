@@ -109,9 +109,9 @@ const styles = StyleSheet.create({
   title: {
     textAlign: "center",
     width: "auto", //this changes length of line/ box the text exits on
-    fontSize: 22,
+    fontSize: 35,
     paddingTop: 2,
-    height: 33,
+    height: 35,
     color: blueThemeColor,
     fontWeight: "bold",
   },
