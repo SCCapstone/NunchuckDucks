@@ -1,6 +1,10 @@
+/**
+ *  @jest-environment jsdom
+ */
+
 import * as React from "react";
 import renderer from "react-test-renderer";
-import { screen } from "@testing-library/react";
+import { screen, render, getByText } from "@testing-library/react";
 import CompletedGoalMini from "./CompletedGoalMini";
 
 let text = "test";
@@ -11,6 +15,6 @@ it(`renders correctly`, () => {
 });
 
 it(`renders text`, () => {
-  const goal = renderer.create(<CompletedGoalMini description={text}></CompletedGoalMini>);
-  expect(screen.findByText("test")).toBeInDocument();
+  render(<CompletedGoalMini description={text}></CompletedGoalMini>)
+  expect(screen.getByText(text)).toBeDefined();
 });
