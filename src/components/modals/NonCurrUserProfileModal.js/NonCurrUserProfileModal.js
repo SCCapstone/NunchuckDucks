@@ -1,7 +1,7 @@
 import { Modal, StyleSheet, View, Text, Image, Pressable } from "react-native";
 import React from "react";
 import { useEffect, useState } from "react";
-import { findUserByUsername } from "../../../crud/UserOperations";
+import { findUserByUsername, isUserPrivate } from "../../../crud/UserOperations";
 import ProfileMini from "../../ProfileMini";
 import { getFollowsList } from "../../../crud/FollowingOperations";
 import { getFollowersList } from "../../../crud/FollowersOperations";
@@ -11,17 +11,28 @@ import FastImage from "react-native-fast-image";
 
 const imageSRC = require("../../../../assets/icons/Gymbit_Icons_Black/Back_Icon_Black.png");
 
-const NonCurrUserProfileModal = ({ modalVisible, setModalVisible, username, image }) => {
+const NonCurrUserProfileModal = ({
+  modalVisible,
+  setModalVisible,
+  username,
+  image,
+}) => {
   const [user, setUser] = useState("");
   const [followingCount, setFollowingCount] = useState("");
   const [followersCount, setFollowersCount] = useState("");
+  const [isPrivate, setIsPrivate] = useState(false);
 
   useEffect(() => {
     getUserObject(username);
     getFollowingCount(username);
     getFollowersCount(username);
+    getIsPrivate();
   }, []);
 
+  async function getIsPrivate() {
+    let userPrivacy = await isUserPrivate(username);
+    setIsPrivate(userPrivacy);
+  }
   const closeModal = () => {
     setModalVisible(false);
   };
@@ -39,16 +50,23 @@ const NonCurrUserProfileModal = ({ modalVisible, setModalVisible, username, imag
 
   async function getFollowingCount(username) {
     const followingList = await getFollowsList(username);
+    if (!followingList || !Array.isArray(followingList)) return;
     setFollowingCount(followingList.length);
   }
 
   async function getFollowersCount(username) {
     const followersList = await getFollowersList(username);
+    if (!followersList || !Array.isArray(followersList)) return;
     setFollowersCount(followersList.length);
   }
 
   return (
-    <Modal visible={modalVisible} animationType="fade" transparent={true} onRequestClose={closeModal}>
+    <Modal
+      visible={modalVisible}
+      animationType="fade"
+      transparent={true}
+      onRequestClose={closeModal}
+    >
       <View
         style={{
           flex: 1,
@@ -80,7 +98,13 @@ const NonCurrUserProfileModal = ({ modalVisible, setModalVisible, username, imag
             </View>
           )*/}
             <ProfileMini username={username} />
-            <View style={{ flexdirection: "column", paddingTop: 5, paddingLeft: 15 }}>
+            <View
+              style={{
+                flexdirection: "column",
+                paddingTop: 5,
+                paddingLeft: 15,
+              }}
+            >
               <Text style={styles.username}>@{username}</Text>
               <View style={{ paddingTop: 5, flexDirection: "row" }}>
                 <View style={styles.followingContainer}>
@@ -95,10 +119,16 @@ const NonCurrUserProfileModal = ({ modalVisible, setModalVisible, username, imag
             </View>
           </View>
           <View style={styles.bioContainer}>
-            <Text style={styles.bio}>{user.bio !== null ? user.bio : ""}</Text>
+            <Text style={styles.bio}>{user?.bio ? user.bio : ""}</Text>
           </View>
         </View>
-        <GoalSummary username={username} />
+        {isPrivate ? (
+          <View style={{ marginTop: "10%", maxWidth: "85%" }}>
+            <Text style={{ fontSize: 30, fontWeight: "bold", textAlign: "center" }}>This user has set their goals to be private.</Text>
+          </View>
+        ) : (
+          <GoalSummary username={username} />
+        )}
       </View>
     </Modal>
   );

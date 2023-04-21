@@ -73,6 +73,7 @@ export function SettingsScreen() {
   const toggleSwitch = async () => {
     await togglePrivacy(username, !privacy);
     setPrivacy(!privacy);
+    setIsEnabled(!isEnabled);
     /*if (privacy === true) {
       await togglePrivacy(username, false);
       // setIsEnabled((previousState) => false);
@@ -127,7 +128,7 @@ export function SettingsScreen() {
   return (
     <View style={styles.container}>
       <Header title={"Settings"} />
-      <View style={{ flexDirection: "row" }}>
+      <View style={{ flexDirection: "row", alignItems: "center" }}>
         <InfoModal modalVisible={modalVisible} setModalVisible={setModalVisible} message={message}></InfoModal>
         <Text style={styles.goalText}>Toggle privacy</Text>
         <Switch

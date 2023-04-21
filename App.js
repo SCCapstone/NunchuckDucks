@@ -17,7 +17,14 @@ import { Amplify, API, Hub } from "@aws-amplify/core";
 import awsmobile from "./src/aws-exports";
 import { withAuthenticator, AmplifyTheme } from "aws-amplify-react-native";
 import { DataStore, Predicates } from "@aws-amplify/datastore";
-import { StyleSheet, View, TitleText, Text, Image, ActivityIndicator } from "react-native";
+import {
+  StyleSheet,
+  View,
+  TitleText,
+  Text,
+  Image,
+  ActivityIndicator,
+} from "react-native";
 import { Storage } from "@aws-amplify/storage";
 import * as clients3 from "@aws-sdk/client-s3";
 import { useState, useEffect } from "react";
@@ -63,7 +70,7 @@ const app = () => {
         payload: { event, data },
       } = capsule;
 
-      console.log("DataStore event", event, data);
+      // console.log("DataStore event", event, data);
 
       if (event === "ready") {
         setAppReady(true);
@@ -121,9 +128,18 @@ const app = () => {
           </Stack.Navigator>
         </NavigationContainer>
       ) : (
-        <View style={{ alignItems: "center", justifyContent: "center", flex: 1 }}>
-          <Image style={{ width: 300 }} source={require("./assets/icons/Gymbit_Icons_Trans/Logo_Trans.png")} />
-          <ActivityIndicator style={{ transform: [{ scaleX: 2 }, { scaleY: 2 }] }} size="large" color="#2E8CFF" />
+        <View
+          style={{ alignItems: "center", justifyContent: "center", flex: 1 }}
+        >
+          <Image
+            style={{ width: 300 }}
+            source={require("./assets/icons/Gymbit_Icons_Trans/Logo_Trans.png")}
+          />
+          <ActivityIndicator
+            style={{ transform: [{ scaleX: 2 }, { scaleY: 2 }] }}
+            size="large"
+            color="#2E8CFF"
+          />
         </View>
       )}
       <Toast />

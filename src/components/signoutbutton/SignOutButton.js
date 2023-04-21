@@ -10,8 +10,11 @@ import {
 import { Auth, Amplify, DataStore } from "aws-amplify";
 import { deleteAllCache } from "../../crud/CacheOperations";
 import FastImage from "react-native-fast-image";
+import { useState } from "react";
 
 const SignOutButton = () => {
+  const [isClicked, setIsClicked] = useState(false);
+
   const signOut = async () => {
     let subsCleared = false;
     while (!subsCleared) {
@@ -26,6 +29,8 @@ const SignOutButton = () => {
     }
   };
   async function signOutOps() {
+    if (isClicked) return;
+    setIsClicked(true);
     await deleteAllCache();
     await FastImage.clearDiskCache();
     await FastImage.clearMemoryCache();
