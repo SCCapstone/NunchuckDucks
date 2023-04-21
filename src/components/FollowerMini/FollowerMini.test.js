@@ -8,3 +8,12 @@ it(`renders correctly`, async () => {
   );
   await expect(tree).toBeDefined();
 });
+
+let username = "test_username";
+
+it(`Displays username`, async () => {
+  const tree = await act(async () =>
+  renderer.create(<FollowerMini username={username}></FollowerMini>));
+  const treeInstance = tree.root;
+  expect(treeInstance.findByType(FollowerMini).props.username).toBe("test_username");
+})
