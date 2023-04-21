@@ -20,6 +20,7 @@ import {
   getNotifications,
   deleteNotification,
   getNotificationCount,
+  deleteAllNotifications
 } from "../crud/NotificationOperations";
 import { getCurrentUser } from "../crud/CacheOperations";
 import NotificationMini from "../components/Notification/NotificationMini";
@@ -29,6 +30,7 @@ Storage.configure();
 
 export function NotificationsScreen() {
   const nav = useNavigation();
+  const currUser = getCurrentUser();
   const [notifications, setNotifications] = useState([]);
   const [forceRefresh, setForceRefresh] = useState(true);
   const [isEmpty, setIsEmpty] = useState(false);
@@ -36,9 +38,15 @@ export function NotificationsScreen() {
   async function notificationList() {
     const username = await getCurrentUser();
     const Notifications = await getNotifications(username);
+    if (!Notifications || !Array.isArray(Notifications)) return;
     setNotifications(Notifications);
     if (Notifications.length === 0)
         setIsEmpty(true);
+  }
+
+  async function deleteAllButton(username) {
+      await deleteAllNotifications(username);
+      setForceRefresh(!forceRefresh);
   }
 
   useEffect(() => {
@@ -67,8 +75,8 @@ export function NotificationsScreen() {
 
   return (
     <>
-      <View style={{ backgroundColor: "white", height: "100%" }}>
-        <View>
+      <View style={{ backgroundColor: "white", height: "100%"}}>
+        <View style={{alignItems: "center"}}>
           <Header
             title={"Notifications"}
             style={{ backgroundColor: "white" }}
@@ -100,6 +108,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     display: "flex",
     backgroundColor: DefaultTheme,
+    paddingBottom: 50
   },
   button: {
     width: 100,
@@ -111,3 +120,4 @@ const styles = StyleSheet.create({
     paddingTop: 30
   }
 });
+
