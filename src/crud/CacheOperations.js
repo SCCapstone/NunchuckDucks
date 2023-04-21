@@ -42,10 +42,16 @@ export async function deleteOldCache() {
   let filesInCache = await getAllCachedFiles();
   for (let i = 0; i < filesInCache.length; i++) {
     let curr = filesInCache[i];
-    if (curr.substring(curr.length - 3) === "png" && postNames.indexOf(curr) === -1) {
+    if (
+      curr.substring(curr.length - 3) === "png" &&
+      postNames.indexOf(curr) === -1
+    ) {
       await deleteCachedFile(curr);
       console.log("Deleted file", curr);
-    } else if (!isNaN(curr.substring(curr.length - 1)) && postNames.indexOf(curr) === -1) {
+    } else if (
+      !isNaN(curr.substring(curr.length - 1)) &&
+      postNames.indexOf(curr) === -1
+    ) {
       // this is for the old posts that don't have "png" at the end; they with in a number
       await deleteCachedFile(curr);
       console.log("Deleted file", curr);
@@ -62,7 +68,7 @@ export async function getCurrentUser() {
   let username = "";
   try {
     username = await getCachedCurrUser();
-    if (username === undefined || username === null) {
+    if (!username) {
       username = await getCurrentAuthenticatedUser();
     }
     return username;
@@ -73,11 +79,16 @@ export async function getCurrentUser() {
 }
 
 export async function cacheLastModified(username, lastModifiedMessage) {
-  const cacheLastModifiedUri = cacheDirectory + username + "pfplastModified.txt";
+  const cacheLastModifiedUri =
+    cacheDirectory + username + "pfplastModified.txt";
   try {
-    await FileSystem.writeAsStringAsync(cacheLastModifiedUri, lastModifiedMessage, {
-      encoding: "utf8",
-    });
+    await FileSystem.writeAsStringAsync(
+      cacheLastModifiedUri,
+      lastModifiedMessage,
+      {
+        encoding: "utf8",
+      }
+    );
   } catch (error) {
     console.log("Error: Could not cache last modified attribute", error);
   }
@@ -87,9 +98,13 @@ export async function cacheRemoteUri(username, fileName) {
   const cacheLastModifiedUri = cacheDirectory + username + fileName + "Uri.txt";
   let remoteUri = await Storage.get(username + "/" + fileName);
   try {
-    let cachedRemoteUri = await FileSystem.writeAsStringAsync(cacheLastModifiedUri, remoteUri, {
-      encoding: "utf8",
-    });
+    let cachedRemoteUri = await FileSystem.writeAsStringAsync(
+      cacheLastModifiedUri,
+      remoteUri,
+      {
+        encoding: "utf8",
+      }
+    );
     return remoteUri;
   } catch (error) {
     console.log("Error: Could not cache pfp uri", error);
@@ -110,11 +125,15 @@ export async function getUriFromCache(username, fileName) {
 }
 
 export async function getLastModifiedCache(username, ending) {
-  const cacheLastModifiedUri = cacheDirectory + username + ending + "lastModified.txt";
+  const cacheLastModifiedUri =
+    cacheDirectory + username + ending + "lastModified.txt";
   try {
-    let lastModified = await FileSystem.readAsStringAsync(cacheLastModifiedUri, {
-      encoding: "utf8",
-    });
+    let lastModified = await FileSystem.readAsStringAsync(
+      cacheLastModifiedUri,
+      {
+        encoding: "utf8",
+      }
+    );
     return lastModified;
   } catch (e) {
     console.log("Could not find lastModified for", username);
@@ -126,7 +145,9 @@ export async function getPostsFromCache() {
   try {
     let files = await FileSystem.readDirectoryAsync(cacheDirectory);
     const cachedPostsUri = cacheDirectory + "posts.txt";
-    let postsString = await FileSystem.readAsStringAsync(cachedPostsUri, { encoding: "utf8" });
+    let postsString = await FileSystem.readAsStringAsync(cachedPostsUri, {
+      encoding: "utf8",
+    });
     let posts = JSON.parse(postsString);
     return posts;
   } catch (e) {
@@ -138,7 +159,9 @@ export async function getPostsFromCache() {
 export async function getCachedCurrUser() {
   try {
     const cachedUserUri = cacheDirectory + "currUser.txt";
-    const cachedUserString = await FileSystem.readAsStringAsync(cachedUserUri, { encoding: "utf8" });
+    const cachedUserString = await FileSystem.readAsStringAsync(cachedUserUri, {
+      encoding: "utf8",
+    });
     return cachedUserString;
   } catch (e) {
     console.log("Error: Could not read who the current user is from cache", e);
@@ -150,7 +173,11 @@ export async function cacheCurrUser() {
   const cachedUserUri = cacheDirectory + "currUser.txt";
   try {
     const username = await getCurrentAuthenticatedUser();
-    let cachedUsername = await FileSystem.writeAsStringAsync(cachedUserUri, username, { encoding: "utf8" });
+    let cachedUsername = await FileSystem.writeAsStringAsync(
+      cachedUserUri,
+      username,
+      { encoding: "utf8" }
+    );
     return username;
   } catch (e) {
     console.log("Error: Could not cache username from backend", e);
@@ -172,11 +199,16 @@ export async function cachePosts(posts) {
 export async function getPostsThatShouldBeCached() {
   try {
     const cachedPostsUri = cacheDirectory + "postsCached.txt";
-    let cachedPostsString = await FileSystem.readAsStringAsync(cachedPostsUri, { encoding: "utf8" });
+    let cachedPostsString = await FileSystem.readAsStringAsync(cachedPostsUri, {
+      encoding: "utf8",
+    });
     let cachedPostsArray = cachedPostsString.split(",");
     return cachedPostsArray;
   } catch (e) {
-    console.log("Error: Could not read what the cached posts are supposed to be", e);
+    console.log(
+      "Error: Could not read what the cached posts are supposed to be",
+      e
+    );
     return null;
   }
 }
@@ -242,7 +274,14 @@ export async function getImageFromAWS(username, ending) {
     const uriAWS = await Storage.get(username + "/" + ending);
     return uriAWS;
   } catch (e) {
-    console.log("Error: could not get image", ending, "for", username, "from aws", e);
+    console.log(
+      "Error: could not get image",
+      ending,
+      "for",
+      username,
+      "from aws",
+      e
+    );
     return null;
   }
 }
@@ -254,7 +293,14 @@ export async function cacheUriForImageFromAWS(username, ending) {
     await cacheImage(uriAWS, cacheFile);
     return uriAWS;
   } catch (e) {
-    console.log("Error: could not get image", ending, "for", username, "from aws", e);
+    console.log(
+      "Error: could not get image",
+      ending,
+      "for",
+      username,
+      "from aws",
+      e
+    );
     return null;
   }
 }

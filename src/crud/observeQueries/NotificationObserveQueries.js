@@ -9,16 +9,22 @@ import { getUserId } from "../UserOperations";
  * @param {Function} setNotificationCount
  * @returns subscription
  */
-export async function getAndObserveNotificationCount(username, setNotificationCount) {
+export async function getAndObserveNotificationCount(
+  username,
+  setRetrieveNotificationCount
+) {
   try {
     const userId = await getUserId(username);
-    const subscription = await DataStore.observeQuery(Notification, (n) =>
+    const subscription = DataStore.observe(Notification, (n) =>
       n.userID.eq(userId)
-    ).subscribe((snapshot) => {
-      const { items, isSynced } = snapshot;
-      if (isSynced) setNotificationCount(items.length);
-    });
-    console.log("RETURN NOTIFICATION SUBSCRIPTION");
+    ).subscribe(
+      (snapshot) => {
+        setRetrieveNotificationCount(Math.random());
+      },
+      (error) => {
+        console.error("Notification Count subscription Error: ", error);
+      }
+    );
     return subscription;
   } catch (error) {
     console.error("Retrieving notification count subscription:", error);

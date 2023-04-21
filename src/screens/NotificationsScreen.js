@@ -35,6 +35,7 @@ export function NotificationsScreen() {
   async function notificationList() {
     const username = await getCurrentUser();
     const Notifications = await getNotifications(username);
+    if (!Notifications || !Array.isArray(Notifications)) return;
     setNotifications(Notifications);
   }
 
