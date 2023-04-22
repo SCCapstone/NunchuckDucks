@@ -33,6 +33,7 @@ const HomeHeader = ({ handlePress, refresh, setRefresh, blowup, setBlowup }) => 
   const [text, setText] = useState(""); // the caption you write
   const [workoutSelection, setWorkoutSelection] = useState(null); // array of workouts you selected
   const [image, setImage] = useState(null);
+  const [retrieveNotificationCount, setRetrieveNotificationCount] = useState(0);
   const [notificationCount, setNotificationCount] = useState(0);
   const networkConnection = useNetInfo();
   const [createPostTouched, setCreatePostTouched] = useState(false);
@@ -58,22 +59,43 @@ const HomeHeader = ({ handlePress, refresh, setRefresh, blowup, setBlowup }) => 
     }, [])
   );
 
-  useEffect(() => {
-    const subscription = retrieveNotificationCount();
-    return () => {
-      if (subscription && subscription.unsubscribe) subscription.unsubscribe();
-    };
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      setShowCamera(false);
+    }, [])
+  );
 
-  async function retrieveNotificationCount() {
+  async function subscribeToNotificationCount() {
     try {
       const username = await getCurrentUser();
-      const subscription = getAndObserveNotificationCount(username, setNotificationCount);
+      const subscription = await getAndObserveNotificationCount(username, setNotificationCount);
       return subscription;
     } catch (error) {
       console.error("Retrieving Notification Count in HomeHeader: ", error);
     }
   }
+
+  async function updateNotificationCount() {
+    try {
+      const username = await getCurrentUser();
+      console.log("NOTIFICATION: ", username);
+      const notifications = await getNotifications(username);
+      setNotificationCount(notifications.length);
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  useEffect(() => {
+    updateNotificationCount();
+  }, [retrieveNotificationCount]);
+
+  useEffect(() => {
+    const subscription = subscribeToNotificationCount();
+    return () => {
+      if (subscription && subscription.unsubscribe) subscription.unsubscribe();
+    };
+  }, []);
 
   const handleCreatePostBlowUp = () => {
     if (networkConnection.isConnected) {

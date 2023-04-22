@@ -1,4 +1,12 @@
-import { View, Image, Text, StyleSheet, Pressable, TouchableOpacity, ActivityIndicator } from "react-native";
+import {
+  View,
+  Image,
+  Text,
+  StyleSheet,
+  Pressable,
+  TouchableOpacity,
+  ActivityIndicator,
+} from "react-native";
 import { useState, useEffect } from "react";
 import { Storage } from "@aws-amplify/storage";
 import Reactions from "../Reactions";
@@ -32,6 +40,7 @@ export default function Post(props) {
   const navigation = useNavigation();
   const networkConnection = useNetInfo();
   const [modalVisible, setModalVisible] = useState("");
+  const [retrieveComments, setRetrieveComments] = useState(0);
   const [allComments, setAllComments] = useState([]);
   const [comments, setComments] = useState([]);
   const [replies, setReplies] = useState(new Map());
@@ -48,7 +57,14 @@ export default function Post(props) {
   };
 
   let commentList = comments.map((val) => {
-    return <Comment key={val.id} postID={entry.id} commentModel={val} replies={replies.get(val.id)} />;
+    return (
+      <Comment
+        key={val.id}
+        postID={entry.id}
+        commentModel={val}
+        replies={replies.get(val.id)}
+      />
+    );
   });
 
   async function onCommentSubmit() {
@@ -56,16 +72,19 @@ export default function Post(props) {
     // Call CRUD to make new datastore object
     try {
       const comenterName = await getCurrentUser();
-      createComment(commentText, comenterName, entry.id, null);
+      await createComment(commentText, comenterName, entry.id, null);
     } catch (error) {
       console.error("Error: Could not create comment", error);
     }
     setCommentText("");
   }
 
-  async function retrieveComments() {
+  async function observeComments() {
     try {
-      const subscription = getAndObserveComments(entry.id, setAllComments);
+      const subscription = await getAndObserveComments(
+        entry.id,
+        setRetrieveComments
+      );
       return subscription;
     } catch (error) {
       console.error("Retrieving Comments in Post: ", error);
@@ -86,11 +105,24 @@ export default function Post(props) {
 
   useEffect(() => {
     setImageFromCacheOrAWS();
-    const subscription = retrieveComments();
+    const subscription = observeComments();
     return () => {
       if (subscription && subscription.unsubscribe) subscription.unsubscribe();
     };
   }, [refresh]);
+
+  useEffect(() => {
+    const updateAllComments = async () => {
+      try {
+        const comments = await getComments(entry.id);
+        setAllComments(comments);
+      } catch (error) {
+        console.error("Retrieving Comments in Post: ", error);
+      }
+    };
+    updateAllComments().catch((err) => console.error(err));
+    return () => {};
+  }, [retrieveComments]);
 
   useEffect(() => {
     const topLevelComments = allComments.filter((val) => !val.reply);
@@ -145,12 +177,21 @@ export default function Post(props) {
           onClick={() => handleUserClick(username)}
         />
         {/*Need to make it navigate to users specific profile*/}
-        <Text style={styles.postUsername} onPress={() => handleUserClick(username)}>
+        <Text
+          style={styles.postUsername}
+          onPress={() => handleUserClick(username)}
+        >
           {username}
         </Text>
         <Text style={styles.createdAt}>{getTimeElapsed(entry.createdAt)}</Text>
       </View>
-      <Pressable onPress={handleBlowUp} style={{ backgroundColor: "rgba(30,144,255,0.5)", position: "relative" }}>
+      <Pressable
+        onPress={handleBlowUp}
+        style={{
+          backgroundColor: "rgba(30,144,255,0.5)",
+          position: "relative",
+        }}
+      >
         {uriIsSet ? (
           <FastImage
             source={{
@@ -162,17 +203,30 @@ export default function Post(props) {
             resizeMode={FastImage.resizeMode.cover}
           />
         ) : (
-          <View style={{ height: 400, alignItems: "center", justifyContent: "center", backgroundColor: grayThemeColor }}>
+          <View
+            style={{
+              height: 400,
+              alignItems: "center",
+              justifyContent: "center",
+              backgroundColor: grayThemeColor,
+            }}
+          >
             <ActivityIndicator size="large" color="#2E8CFF" />
           </View>
         )}
-        {blowup && hasWorkout && <Workout workout={workout} isAbsolute={true} />}
+        {blowup && hasWorkout && (
+          <Workout workout={workout} isAbsolute={true} />
+        )}
       </Pressable>
       {/*replace get time elapsed w/ actual on click utility*/}
       {/*<View style={styles.captionBox} /> Need to implement caption box as intended*/}
       <View name="Footer" style={styles.footer}>
         <Text>{entry.caption}</Text>
-        <Reactions postID={entry.id} commentsClicked={showCommentOption} setCommentsClicked={setCommentOption} />
+        <Reactions
+          postID={entry.id}
+          commentsClicked={showCommentOption}
+          setCommentsClicked={setCommentOption}
+        />
 
         {showCommentOption && (
           <CustomTextInput
@@ -188,7 +242,9 @@ export default function Post(props) {
             multiline={true}
           />
         )}
-        {showCommentOption && <CustomButton onClick={onCommentSubmit} text={"Submit"} />}
+        {showCommentOption && (
+          <CustomButton onClick={onCommentSubmit} text={"Submit"} />
+        )}
         {shortCommentDisplay ? commentList.slice(0, 2) : commentList}
         {comments.length > 2 && (
           <CustomButton
@@ -295,15 +351,17 @@ export function getTimeElapsed(createdAt) {
   if (minutesDifference < 1) {
     ans = "less than a minute ago";
   } else if (minutesDifference <= 60) {
-    ans = Math.round(minutesDifference.toString()) + ` minute${minutesDifference === 1 ? "" : "s"} ago`;
+    ans = Math.round(minutesDifference.toString()) + ` minute${Math.floor(minutesDifference) === 1 ? "" : "s"} ago`;
   } else if (hoursDifference <= 24) {
-    ans = Math.round(hoursDifference.toString()) + ` hour${hoursDifference === 1 ? "" : "s"} ago`;
+    ans = Math.round(hoursDifference.toString()) + ` hour${Math.floor(hoursDifference) === 1 ? "" : "s"} ago`;
   } else if (daysDifference <= 30) {
-    ans = Math.round(daysDifference.toString()) + ` day${daysDifference === 1 ? "" : "s"} ago`;
+    ans = Math.round(daysDifference.toString()) + ` day${Math.floor(daysDifference) === 1 ? "" : "s"} ago`;
+  } else if (monthsDifference === 1) {
+    ans = "1 month ago";
   } else if (monthsDifference <= 12) {
-    ans = Math.round(monthsDifference.toString()) + ` month${monthsDifference === 1 ? "" : "s"} ago`;
+    ans = Math.round(monthsDifference.toString()) + ` month${Math.floor(monthsDifference) === 1 ? "" : "s"} ago`;
   } else {
-    ans = Math.round(yearsDifference.toString()) + ` year${yearsDifference === 1 ? "" : "s"} ago`;
-  }
+    ans = Math.round(yearsDifference.toString()) + ` year${Math.floor(yearsDifference) === 1 ? "" : "s"} ago`;
+    }
   return ans;
 }
