@@ -8,7 +8,7 @@
     "web": "expo start --web",
     "amplify-modelgen": "node amplify/scripts/amplify-modelgen.js",
     "amplify-push": "node amplify/scripts/amplify-push.js",
-    "test": "jest",
+    "test": "jest --testPathPattern=src",
     "test:components": "jest --testPathPattern=src/components"
   },
   "dependencies": {
