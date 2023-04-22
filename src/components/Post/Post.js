@@ -26,6 +26,7 @@ import { getWorkoutById } from "../../crud/WorkoutOperations";
 import { getAndObserveComments } from "../../crud/observeQueries/CommentObserveQueries";
 import { getUriFromCache, cacheRemoteUri } from "../../crud/CacheOperations";
 import FastImage from "react-native-fast-image";
+import { Toast } from "react-native-toast-message/lib/src/Toast";
 
 export default function Post(props) {
   const entry = props.entry;
@@ -245,6 +246,12 @@ export default function Post(props) {
         )}
         {showCommentOption && (
           <CustomButton onClick={onCommentSubmit} text={"Submit"} />
+        )}
+        {showCommentOption && commentText.length < 250 &&(
+          <Text style={{fontSize: 14, color: "gray"}}>{commentText.length}/250</Text>
+        )}
+        {showCommentOption && commentText.length === 250 && (
+          <Text style={{fontSize: 14, color: "red"}}>{commentText.length}/250</Text>
         )}
         {shortCommentDisplay ? commentList.slice(0, 2) : commentList}
         {comments.length > 2 && (
