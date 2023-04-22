@@ -4,13 +4,24 @@ import { updateBio } from "../../../crud/UserOperations";
 import { getCurrentAuthenticatedUser } from "../../../library/GetAuthenticatedUser";
 import CustomButton from "../../CustomButton";
 import CustomTextInput from "../../CustomTextInput";
+import { Toast } from "react-native-toast-message/lib/src/Toast";
 
 const ChangeBioModal = ({ modalVisible, setModalVisible }) => {
   const [bioValue, setBioValue] = useState(bioValue);
 
   async function changeBio() {
     const currUser = await getCurrentAuthenticatedUser();
-    await updateBio(currUser, bioValue);
+    if (bioValue.length > 500) {
+      Toast.show({
+        type: "error",
+        text1: "Bio can not be more than 500 characters",
+        position: "bottom",
+        visibilityTime: 3000,
+        bottomOffset: 80,
+      })
+    }
+    else 
+      await updateBio(currUser, bioValue);
     closeModal();
   }
 
@@ -27,6 +38,7 @@ const ChangeBioModal = ({ modalVisible, setModalVisible }) => {
             placeholder={"Write new bio..."}
             enteredValue={bioValue}
             onChangeHandler={(text) => setBioValue(text)}
+            maxLength={100}
           ></CustomTextInput>
           <CustomButton buttonType={"default"} text={"Confirm Updated Bio"} onClick={changeBio}></CustomButton>
         </View>

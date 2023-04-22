@@ -240,6 +240,7 @@ export default function Post(props) {
               marginBottom: 5,
             }}
             multiline={true}
+            maxLength={150}
           />
         )}
         {showCommentOption && (

@@ -264,6 +264,7 @@ const HomeHeader = ({
                   placeholder="Write your caption here"
                   value={text}
                   onChangeText={setText}
+                  maxLength={500}
                 />
                 {showUploading ? (
                   <ActivityIndicator size="large" color="#2E8CFF" />
