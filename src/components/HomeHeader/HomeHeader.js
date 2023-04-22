@@ -59,12 +59,6 @@ const HomeHeader = ({ handlePress, refresh, setRefresh, blowup, setBlowup }) => 
     }, [])
   );
 
-  useFocusEffect(
-    useCallback(() => {
-      setShowCamera(false);
-    }, [])
-  );
-
   async function subscribeToNotificationCount() {
     try {
       const username = await getCurrentUser();
