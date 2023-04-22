@@ -10,11 +10,3 @@ it(`renders correctly`, async () => {
   );
   expect(tree).toBeDefined();
 });
-
-// it(`Shows modal`, async () => {
-//   const tree = await act(
-//     async () => await renderer.create(<AddFollowerModal></AddFollowerModal>)
-//   );
-//   const treeInstance = tree.root;
-//   expect(treeInstance.findByType(AddFollowerModal).props.modalVisible).toBe(true);
-// });

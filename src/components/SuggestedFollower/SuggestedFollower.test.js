@@ -10,3 +10,12 @@ it(`renders correctly`, async () => {
   );
   expect(tree).toBeDefined();
 });
+
+const func = jest.fn();
+
+it(`adds new follower`, async () => {
+  const tree = await act(async () => 
+  renderer.create(<SuggestedFollower addNewFollower={func}></SuggestedFollower>));
+  const treeInstance = tree.root;
+  expect(treeInstance.findByType(SuggestedFollower).props.addNewFollower).toBe(func);
+});
