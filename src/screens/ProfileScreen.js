@@ -256,7 +256,6 @@ export function ProfileScreen(props) {
             maxWidth: 250,
           }}
         >
-          <SignOutButton />
         </View>
       </View>
       <Tab.Navigator initialRouteName="GoalSummary" tabBarPosition="top">
