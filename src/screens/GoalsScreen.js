@@ -1,8 +1,15 @@
-import { View, StyleSheet, ScrollView, Text, TextInput, Image, TouchableOpacity } from "react-native";
+import {
+  View,
+  StyleSheet,
+  ScrollView,
+  Text,
+  TextInput,
+  Image,
+  TouchableOpacity,
+} from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import Header from "../components/Header/Header";
 import CustomButton from "../components/CustomButton/CustomButton";
-import { grayThemeColor, blueThemeColor } from "../library/constants";
 import GoalMini from "../components/GoalMini/GoalMini";
 import CompletedGoalMini from "../components/CompletedGoalMini";
 import { getGoals, deleteGoal, updateGoal } from "../crud/GoalOperations";
@@ -12,11 +19,13 @@ import React from "react";
 import { Storage } from "@aws-amplify/storage";
 import { createGoal } from "../crud/GoalOperations";
 import { getDate } from "../library/getDate";
+import { getCurrentUser } from "../crud/CacheOperations";
 
 Storage.configure();
 
 //Display users goals and allow them to navigate to the create goals screen
-export function GoalsScreen() {
+export function GoalsScreen({ route }) {
+  const { isCompletedPage } = route.params;
   const nav = useNavigation();
   const goalRef = useRef(null);
   const [incompletegoals, setIncompleteGoals] = useState([]);
@@ -30,31 +39,30 @@ export function GoalsScreen() {
   };
 
   async function saveGoal() {
-    const { attributes } = await Auth.currentAuthenticatedUser();
-    let username = attributes.preferred_username;
+    const username = await getCurrentUser();
     var date = getDate();
     await createGoal(username, date, text);
     handleBlowUp();
     setForceRefresh(!forceRefresh);
     onChangeText(null);
+    nav.navigate("Goals", { isCompletedPage: false });
     goalRef.current.scrollToEnd();
   }
 
   //retrieve all goals for signed in user
   async function goalList() {
-    const { attributes } = await Auth.currentAuthenticatedUser();
-    let username = attributes.preferred_username;
-    //if checkcompleted is true -> add to this comp list of goals, else uncomp list
+    const username = await getCurrentUser();
+    //if checkcompleted is true -> add to this comp list of goals, else incomplete list
     const goals = await getGoals(username);
     tempincgoals = [];
     tempcompgoals = [];
     for (let i = 0; i < goals.length; i++) {
-      if (goals[i].isCompleted === false || goals[i].isCompleted === null) {
+      if (!goals[i].isCompleted) {
         tempincgoals.push(goals[i]);
       } else if (goals[i].isCompleted === true) {
         tempcompgoals.push(goals[i]);
       } else {
-        console.log("Error YOU SHOULDNT SEE THIS EVER");
+        console.error("Goal Screen: Invalid isCompleted Attribute on a goal");
       }
     }
     setCompleteGoals(tempcompgoals);
@@ -70,7 +78,7 @@ export function GoalsScreen() {
   }, [forceRefresh, nav]);
 
   //Generate the list of user goals on the screen
-  const incompleteListGoals = incompletegoals.map((goal) => (
+  let incompleteListGoals = incompletegoals.map((goal) => (
     <GoalMini
       description={goal.content}
       key={goal.id}
@@ -86,8 +94,12 @@ export function GoalsScreen() {
       }}
     />
   ));
+  if (!incompletegoals?.length)
+    incompleteListGoals = (
+      <Text style={styles.placeholder}>No In Progress Goals</Text>
+    );
 
-  const completedListGoals = completegoals.map((goal) => (
+  let completedListGoals = completegoals.map((goal) => (
     <CompletedGoalMini
       description={goal.content}
       key={goal.id}
@@ -98,77 +110,88 @@ export function GoalsScreen() {
       }}
     />
   ));
+  if (!completegoals?.length) {
+    completedListGoals = (
+      <Text style={styles.placeholder}>No Completed Goals</Text>
+    );
+  }
 
   return (
-    <>
-      <View style={{ backgroundColor: "white", height: "100%" }}>
-        <View>
-          <Header title={"Goals"} />
+    <View style={{ backgroundColor: "white", height: "100%" }}>
+      <View style={styles.stickyHeader}>
+        <Header title={"Goals"} />
 
-          <View style={styles.container}>
-            <CustomButton text="Create Goal" onClick={handleBlowUp} style={styles.button1} textStyle={styles.button1text} />
-          </View>
+        <CustomButton text="Create Goal" onClick={handleBlowUp} />
+
+        <View style={styles.pageChangeButtons}>
+          <CustomButton
+            buttonType={"hyperlink"}
+            isUnderlined={true}
+            isSelected={!isCompletedPage}
+            text={"In Progress"}
+            onClick={() => nav.navigate("Goals", { isCompletedPage: false })}
+            textStyle={styles.pageChangeButtonsText}
+          ></CustomButton>
+          <CustomButton
+            buttonType={"hyperlink"}
+            isUnderlined={true}
+            isSelected={isCompletedPage}
+            text={"Completed"}
+            onClick={() => nav.navigate("Goals", { isCompletedPage: true })}
+            textStyle={styles.pageChangeButtonsText}
+          ></CustomButton>
         </View>
+      </View>
+      <ScrollView ref={goalRef} contentContainerStyle={styles.list}>
+        {isCompletedPage ? completedListGoals : incompleteListGoals}
+      </ScrollView>
 
-        <View>
-          {blowup ? (
-            <View style={styles.blowup}>
-              <View>
-                <View style={styles.headerContainer}>
-                  <TouchableOpacity
+      <View>
+        {blowup ? (
+          <View style={styles.blowup}>
+            <View>
+              <View style={styles.headerContainer}>
+                <TouchableOpacity
+                  style={{
+                    width: 100,
+                    height: 100,
+                  }}
+                  onPress={handleBlowUp}
+                >
+                  <Image
+                    source={require("../../assets/icons/Gymbit_Icons_Black/Back_Icon_Black.png")}
+                    resizeMode="cover"
                     style={{
-                      width: 100,
-                      height: 100,
+                      width: "100%",
+                      height: "100%",
                     }}
-                    onPress={handleBlowUp}
-                  >
-                    <Image
-                      source={require("../../assets/icons/Gymbit_Icons_Black/Back_Icon_Black.png")}
-                      resizeMode="cover"
-                      style={{
-                        width: "100%",
-                        height: "100%",
-                      }}
-                    />
-                  </TouchableOpacity>
-                  <Text style={styles.headerText}>Create Goal</Text>
-                </View>
-
-                <View>
-                  <TextInput
-                    style={styles.textInput}
-                    onChangeText={onChangeText}
-                    placeholder={"Enter details about your goal"}
-                    value={text}
                   />
-                  <View style={styles.miniContainer}>
-                    <CustomButton text="Create Goal" style={styles.button0} onClick={saveGoal} />
-                  </View>
+                </TouchableOpacity>
+                <Text style={styles.headerText}>Create Goal</Text>
+              </View>
+
+              <View>
+                <TextInput
+                  style={styles.textInput}
+                  onChangeText={onChangeText}
+                  placeholder={"Enter details about your goal"}
+                  value={text}
+                />
+                <View style={styles.miniContainer}>
+                  <CustomButton
+                    text="Create Goal"
+                    style={styles.button0}
+                    onClick={saveGoal}
+                  />
                 </View>
               </View>
             </View>
-          ) : (
-            <Text></Text>
-          )}
-        </View>
-        <ScrollView ref={goalRef} contentContainerStyle={styles.list}>
-          {incompleteListGoals}
-        </ScrollView>
-
-        <View style={styles.container}>
-          <CustomButton
-            text="Completed Goals"
-            //Onclick could be added if needed.
-            style={styles.button2}
-            textStyle={styles.button2text}
-          />
-        </View>
-
-        <View style={styles.scrollListsContainer}>
-          <ScrollView contentContainerStyle={styles.list}>{completedListGoals}</ScrollView>
-        </View>
+          </View>
+        ) : (
+          <Text></Text>
+        )}
       </View>
-    </>
+    </View>
   );
 }
 
@@ -176,29 +199,31 @@ const styles = StyleSheet.create({
   container: {
     alignItems: "center",
   },
-  button1: {
-    margin: 10,
-    width: 150,
-    fontSize: 28,
+  stickyHeader: {
+    width: "100%",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    paddingBottom: 5,
   },
-  button1text: {
-    fontSize: 17,
+  pageChangeButtons: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-around",
+    paddingTop: 10,
   },
-  button2: {
-    margin: 20,
-    width: 170,
+  pageChangeButtonsText: {
+    fontSize: 20,
   },
-  button2text: {
-    fontSize: 17,
+  placeholder: {
+    fontSize: 18,
+    padding: 10,
   },
   list: {
     alignItems: "center",
     display: "flex",
     backgroundColor: "white",
-    // flex: 1,
-  },
-  scrollListsContainer: {
-    maxHeight: "30%",
+    width: "100%",
   },
   textInput: {
     textAlign: "center",
