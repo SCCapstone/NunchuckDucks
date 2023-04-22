@@ -12,13 +12,26 @@ import { useNavigation } from "@react-navigation/native";
 
 const GoalSummary = ({ username, isCurrentUser = false }) => {
   const [goals, setGoals] = useState([]);
+  const [retrieveGoals, setRetrieveGoals] = useState(0);
   const navigation = useNavigation();
 
   async function goalList() {
-    //let username = await getCurrentUser();
-    const subscription = getAndObserveGoals(username, setGoals);
+    const subscription = getAndObserveGoals(username, setRetrieveGoals);
     return subscription;
   }
+
+  useEffect(() => {
+    const updateGoalList = async () => {
+      try {
+        const goals = await getGoals(username);
+        setGoals(goals);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    updateGoalList().catch((err) => console.error(err));
+    return () => {};
+  }, [retrieveGoals, username]);
 
   useEffect(() => {
     const subscription = goalList();
@@ -46,7 +59,7 @@ const GoalSummary = ({ username, isCurrentUser = false }) => {
     <>
       {isCurrentUser ? (
         <View style={{ backgroundColor: "white", height: "100%" }}>
-          <View style={styles.titleBox}>
+          <View style={styles.titleBoxCurrUser}>
             <Text style={styles.title}>Your Goals</Text>
           </View>
           <ScrollView style={{ backgroundColor: "white" }}>{listGoals.length === 0 ? defaultForNoGoals : listGoals}</ScrollView>
@@ -100,9 +113,16 @@ const styles = StyleSheet.create({
   },
   titleBox: {
     //position: "absolute",
+    padding: 3,
     backgroundColor: grayThemeColor,
     borderTopRightRadius: 15,
     borderTopLeftRadius: 15,
+    borderColor: "#000000",
+    borderBottomWidth: 3,
+  },
+  titleBoxCurrUser: {
+    padding: 3,
+    backgroundColor: grayThemeColor,
     borderColor: "#000000",
     borderBottomWidth: 3,
   },

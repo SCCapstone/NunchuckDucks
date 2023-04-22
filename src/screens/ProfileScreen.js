@@ -1,12 +1,28 @@
-import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView, FlatList } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Image,
+  ScrollView,
+  FlatList,
+} from "react-native";
 import { Auth } from "aws-amplify";
 import GoalSummary from "../components/GoalSummary";
 import { blueThemeColor, grayThemeColor } from "../library/constants";
 import React from "react";
 import { getFollowsList } from "../crud/FollowingOperations";
 import { getFollowersList } from "../crud/FollowersOperations";
-import { getBio, updateCurrentStreak, getWeeklyGoal } from "../crud/UserOperations";
-import { saveImageToAWS, getCurrentUser, cacheRemoteUri } from "../crud/CacheOperations";
+import {
+  getBio,
+  updateCurrentStreak,
+  getWeeklyGoal,
+} from "../crud/UserOperations";
+import {
+  saveImageToAWS,
+  getCurrentUser,
+  cacheRemoteUri,
+} from "../crud/CacheOperations";
 import ProfileMini from "../components/ProfileMini";
 import Bio from "../components/Bio";
 import CustomButton from "../components/CustomButton";
@@ -103,11 +119,13 @@ export function ProfileScreen(props) {
 
   async function getFollowingCount(username) {
     const followingList = await getFollowsList(username);
+    if (!followingList || !Array.isArray(followingList)) return;
     setFollowingCount(followingList.length);
   }
 
   async function getFollowersCount(username) {
     const followersList = await getFollowersList(username);
+    if (!followersList || !Array.isArray(followersList)) return;
     setFollowerCount(followersList.length);
   }
 
@@ -120,7 +138,8 @@ export function ProfileScreen(props) {
   }
   const addProfileImage = async () => {
     let _image = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images /*Only allow image upload */,
+      mediaTypes:
+        ImagePicker.MediaTypeOptions.Images /*Only allow image upload */,
       allowsEditing: true /*true= pull up an editing interface after image upload */,
       aspect: [1, 1] /*1:1 image ratio, so it will be a square */,
       quality: 1 /*highest quality image possible, on a scale of 0-1 we want 1 lol */,
@@ -164,23 +183,49 @@ export function ProfileScreen(props) {
           <View style={{ flexDirection: "row" }}>
             {usernameSet && showStreak && (
               <View>
-                <Image source={require("../../assets/icons/Gymbit_Icons_Trans/flame.png")} style={styles.flame} />
+                <Image
+                  source={require("../../assets/icons/Gymbit_Icons_Trans/flame.png")}
+                  style={styles.flame}
+                />
                 <Text style={styles.streak}>{streak}</Text>
               </View>
             )}
-            <ProfileMini onClick={() => handleProfileImageClick()} username={username} refresh={refresh} setRefresh={setRefresh} />
-            <View style={{ flexdirection: "column", paddingTop: 5, paddingLeft: 15 }}>
+            <ProfileMini
+              onClick={() => handleProfileImageClick()}
+              username={username}
+              refresh={refresh}
+              setRefresh={setRefresh}
+            />
+            <View
+              style={{
+                flexdirection: "column",
+                paddingTop: 5,
+                paddingLeft: 15,
+              }}
+            >
               <Text style={styles.username}>@{username}</Text>
               <View style={{ paddingTop: 5, flexDirection: "row" }}>
                 <View style={styles.followingContainer}>
                   <Text style={styles.followingText}>Following</Text>
-                  <Text style={styles.followingNumber} onPress={() => navigation.navigate("Followers", { isFollowerPage: true })}>
+                  <Text
+                    style={styles.followingNumber}
+                    onPress={() =>
+                      navigation.navigate("Followers", { isFollowerPage: true })
+                    }
+                  >
                     {followingcount}
                   </Text>
                 </View>
                 <View style={styles.followingContainer}>
                   <Text style={styles.followingText}>Followers</Text>
-                  <Text style={styles.followingNumber} onPress={() => navigation.navigate("Followers", { isFollowerPage: false })}>
+                  <Text
+                    style={styles.followingNumber}
+                    onPress={() =>
+                      navigation.navigate("Followers", {
+                        isFollowerPage: false,
+                      })
+                    }
+                  >
                     {followercount}
                   </Text>
                 </View>
@@ -193,8 +238,17 @@ export function ProfileScreen(props) {
           </TouchableOpacity>
         </View>
       </View>
-      <View style={{ alignItems: "center", backgroundColor: "white", justifyContent: "center" }}>
-        <ChangeBioModal modalVisible={modalVisible} setModalVisible={setModalVisible} />
+      <View
+        style={{
+          alignItems: "center",
+          backgroundColor: "white",
+          justifyContent: "center",
+        }}
+      >
+        <ChangeBioModal
+          modalVisible={modalVisible}
+          setModalVisible={setModalVisible}
+        />
         <View
           style={{
             flexDirection: "row",
@@ -203,11 +257,14 @@ export function ProfileScreen(props) {
             maxWidth: 250,
           }}
         >
-          <SignOutButton />
         </View>
       </View>
       <Tab.Navigator initialRouteName="GoalSummary" tabBarPosition="top">
-        <Tab.Screen name="Goals Summary">{(props) => <GoalSummary {...props} username={username} isCurrentUser={true} />}</Tab.Screen>
+        <Tab.Screen name="Goals Summary">
+          {(props) => (
+            <GoalSummary {...props} username={username} isCurrentUser={true} />
+          )}
+        </Tab.Screen>
         <Tab.Screen name="Your Posts" component={ProfilePostList} />
       </Tab.Navigator>
     </>

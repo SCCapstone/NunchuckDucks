@@ -17,7 +17,7 @@ const NonCurrUserProfileModal = ({ modalVisible, setModalVisible, username, imag
   const [user, setUser] = useState("");
   const [followingCount, setFollowingCount] = useState("");
   const [followersCount, setFollowersCount] = useState("");
-  const [isPrivate, setIsPrivate] = useState(false);
+  const [isPrivate, setIsPrivate] = useState(true);
 
   useEffect(() => {
     getUserObject(username);
@@ -47,11 +47,13 @@ const NonCurrUserProfileModal = ({ modalVisible, setModalVisible, username, imag
 
   async function getFollowingCount(username) {
     const followingList = await getFollowsList(username);
+    if (!followingList || !Array.isArray(followingList)) return;
     setFollowingCount(followingList.length);
   }
 
   async function getFollowersCount(username) {
     const followersList = await getFollowersList(username);
+    if (!followersList || !Array.isArray(followersList)) return;
     setFollowersCount(followersList.length);
   }
 
@@ -88,7 +90,13 @@ const NonCurrUserProfileModal = ({ modalVisible, setModalVisible, username, imag
             </View>
           )*/}
             <ProfileMini username={username} />
-            <View style={{ flexdirection: "column", paddingTop: 5, paddingLeft: 15 }}>
+            <View
+              style={{
+                flexdirection: "column",
+                paddingTop: 5,
+                paddingLeft: 15,
+              }}
+            >
               <Text style={styles.username}>@{username}</Text>
               <View style={{ paddingTop: 5, flexDirection: "row" }}>
                 <View style={styles.followingContainer}>
