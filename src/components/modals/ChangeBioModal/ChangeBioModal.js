@@ -11,17 +11,7 @@ const ChangeBioModal = ({ modalVisible, setModalVisible }) => {
 
   async function changeBio() {
     const currUser = await getCurrentAuthenticatedUser();
-    if (bioValue.length > 500) {
-      Toast.show({
-        type: "error",
-        text1: "Bio can not be more than 500 characters",
-        position: "bottom",
-        visibilityTime: 3000,
-        bottomOffset: 80,
-      })
-    }
-    else 
-      await updateBio(currUser, bioValue);
+    await updateBio(currUser, bioValue);
     closeModal();
   }
 
