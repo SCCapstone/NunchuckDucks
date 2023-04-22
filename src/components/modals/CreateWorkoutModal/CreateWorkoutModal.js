@@ -10,6 +10,7 @@ import CustomTextInputWithError from "../../CustomTextInputWithError/CustomTextI
 import useInput from "../../../hooks/useInput";
 import ExerciseInput from "../../ExerciseInput/ExerciseInput";
 import { validateWorkoutTitle } from "../../../library/Validators";
+import ConfirmDelete from "../ConfirmDelete/ConfirmDelete";
 
 export default function CreateWorkoutModal({
   modalVisible,
@@ -25,7 +26,9 @@ export default function CreateWorkoutModal({
 }) {
   const [exerciseList, setExerciseList] = useState([]);
   const [exerciseListIsValid, setExerciseListIsValid] = useState([]);
+  const [exerciseListIsModified, setExerciseListIsModified] = useState(false);
   const [submitTouched, setSubmitTouched] = useState(false);
+  const [confirmCloseModalVisible, setConfirmCloseModalVisible] = useState(false);
   const {
     value: workoutTitle,
     isValid: workoutTitleIsValid,
@@ -34,7 +37,11 @@ export default function CreateWorkoutModal({
     inputBlurHandler: workoutTitleBlurHandler,
     onChangeHandler: workoutTitleOnChangeHandler,
     reset: workoutTitleReset,
+    isTouched: workoutIsTouched,
   } = useInput(validateWorkoutTitle, workout?.workoutName);
+
+  // TODO: More effective check for if the form was modified
+  const formIsModified = (workoutTitleIsValid && workoutIsTouched) || exerciseListIsModified;
 
   useEffect(() => {
     if (!modelExerciseList) return;
@@ -49,11 +56,6 @@ export default function CreateWorkoutModal({
       return {
         hasError: true,
         errorMessage: "All exercises must be confirmed",
-      };
-    } else if (exerciseList.length === 0) {
-      return {
-        hasError: true,
-        errorMessage: "A workout must have at least one exercise",
       };
     } else if (!workoutTitleIsValid || !allExercisesConfirmed) {
       // We don't want to display an errorMessage at the form level here
@@ -74,6 +76,7 @@ export default function CreateWorkoutModal({
         setExerciseListIsValid={setExerciseListIsValid}
         exerciseList={exerciseList}
         setExerciseList={setExerciseList}
+        setExerciseListIsModified={setExerciseListIsModified}
       />
     );
   });
@@ -81,6 +84,14 @@ export default function CreateWorkoutModal({
   const closeModal = () => {
     resetForm();
     setModalVisible(false);
+  };
+
+  const optionalCloseModal = () => {
+    if (!formIsModified) {
+      closeModal();
+      return;
+    }
+    setConfirmCloseModalVisible(true);
   };
 
   const resetForm = () => {
@@ -137,9 +148,15 @@ export default function CreateWorkoutModal({
   }
 
   return (
-    <Modal visible={modalVisible} animationType="fade" transparent={true} onRequestClose={() => setModalVisible(false)}>
+    <Modal visible={modalVisible} animationType="fade" transparent={true} onRequestClose={optionalCloseModal}>
+      <ConfirmDelete
+        modalVisible={confirmCloseModalVisible}
+        setModalVisible={setConfirmCloseModalVisible}
+        deletefunc={closeModal}
+        text={"Close create workout screen? You will lose all your progress."}
+      ></ConfirmDelete>
       <View style={styles.centeredView}>
-        <Pressable onPress={closeModal} style={styles.transparentView} />
+        <Pressable onPress={optionalCloseModal} style={styles.transparentView} />
         <View style={styles.blowupmain}>
           <View style={styles.blowupheader}>
             <CustomTextInputWithError

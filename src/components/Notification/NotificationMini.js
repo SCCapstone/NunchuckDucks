@@ -20,10 +20,6 @@ const NotificationMini = ({ content, onDeleteHandler, username }) => {
     setUserImageSrc(pfp);
   }
 
-  useEffect(() => {
-    getUserImageSrc(username);
-  }, [username]);
-
   return (
     <View style={isHidden ? { ...styles.container, display: "none" } : styles.container}>
       <NonCurrUserProfileModal
@@ -32,7 +28,7 @@ const NotificationMini = ({ content, onDeleteHandler, username }) => {
         username={username}
         image={userImageSrc}
       ></NonCurrUserProfileModal>
-      <ProfileMini src={userImageSrc} />
+      <ProfileMini username={username} />
       <Text style={styles.usernameText} onPress={() => setModalVisible(true)}>
         {username}
         <Text style={styles.text}>{content.substring(username.length)}</Text>

@@ -31,6 +31,13 @@ export default function WorkoutMini({ workout, refreshWorkouts, setRefreshWorkou
 
   const displayedExercises = viewMore ? JsonExercises : JsonExercises.slice(0, 2);
 
+  let blowUpMainStyles = styles.blowupmain;
+  let blowUpHeaderStyles = styles.blowupheader;
+  if (!displayedExercises?.length || displayedExercises?.length <= 0) {
+    blowUpMainStyles = { ...blowUpMainStyles, paddingBottom: 0 };
+    blowUpHeaderStyles = { ...blowUpHeaderStyles, marginBottom: 0 };
+  }
+
   async function DeleteWorkoutHandler(id) {
     // TODO: Check for error
     await deleteWorkout(id);
@@ -38,7 +45,7 @@ export default function WorkoutMini({ workout, refreshWorkouts, setRefreshWorkou
   }
 
   return (
-    <View style={styles.blowupmain}>
+    <View style={blowUpMainStyles}>
       <ConfirmDelete
         modalVisible={deleteModalVisible}
         setModalVisible={setDeleteModalVisible}
@@ -46,7 +53,7 @@ export default function WorkoutMini({ workout, refreshWorkouts, setRefreshWorkou
         text={"Delete Workout?"}
         deletefunc={DeleteWorkoutHandler}
       ></ConfirmDelete>
-      <View style={styles.blowupheader}>
+      <View style={blowUpHeaderStyles}>
         <View style={styles.buttonsContainer}></View>
         <Text style={styles.workoutName}>{workoutName}</Text>
         <View style={styles.buttonsContainer}>

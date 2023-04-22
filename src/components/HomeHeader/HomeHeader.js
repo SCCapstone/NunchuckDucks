@@ -33,6 +33,7 @@ import WorkoutSelection from "../WorkoutSelection";
 import FastImage from "react-native-fast-image";
 import { getAndObserveNotificationCount } from "../../crud/observeQueries/NotificationObserveQueries";
 import { AntDesign } from "@expo/vector-icons";
+import { NotificationsScreen } from "../../screens/NotificationsScreen";
 
 /**
  * Creates the header that will go above the two home screens (Mutual and Explore)
@@ -51,6 +52,8 @@ const HomeHeader = ({ handlePress, refresh, setRefresh, blowup, setBlowup }) => 
   const [refreshWorkout, setRefreshWorkout] = useState(false);
   const [scrollToBottom, setScrollToBottom] = useState(false);
   const [showUploading, setShowUploading] = useState(false);
+  const [error, setError] = useState("");
+  const [showNotifications, setShowNotifications] = useState(false);
 
   Storage.configure();
   const imageSRC = require("../../../assets/icons/Gymbit_Icons_Black/Back_Icon_Black.png");
@@ -135,6 +138,15 @@ const HomeHeader = ({ handlePress, refresh, setRefresh, blowup, setBlowup }) => 
       bottomOffset: 80,
     });
   };
+
+  async function attemptToCreatePost() {
+    if (!image) {
+      setError("Posts require an Image");
+      return;
+    }
+    savePost();
+  }
+
   async function savePost() {
     setShowUploading(true);
     //await DataStore.start();
@@ -144,7 +156,13 @@ const HomeHeader = ({ handlePress, refresh, setRefresh, blowup, setBlowup }) => 
       //const { attributes } = await getCurrentUser();
       var fileName = username + "/" + getPictureFileName();
       await createPost(text, fileName, username, workoutSelection);
+      const copyImage = image;
       handleBlowUp();
+      setShowUploading(false);
+      setText("");
+      setWorkoutSelection(null);
+      setImage(null);
+      setError("");
       Toast.show({
         type: "info",
         text1: "Your new post is loading!",
@@ -153,13 +171,9 @@ const HomeHeader = ({ handlePress, refresh, setRefresh, blowup, setBlowup }) => 
         visibilityTime: 3000,
         bottomOffset: 80,
       });
-      const response = await fetch(image);
+      const response = await fetch(copyImage);
       const blob = await response.blob();
       await Storage.put(fileName, blob);
-      setShowUploading(false);
-      setText("");
-      setWorkoutSelection(null);
-      setImage(null);
       showPostUploadedToast();
     } catch (error) {
       showPostNotUploadedToast(username);
@@ -180,13 +194,13 @@ const HomeHeader = ({ handlePress, refresh, setRefresh, blowup, setBlowup }) => 
         <TouchableOpacity
           style={styles.notiButton}
           onPress={() => {
-            navigation.navigate("Notifications");
+            setShowNotifications(true);
           }}
         >
           <Text style={styles.counter}>{notificationCount}</Text>
           <Image style={styles.notification} source={require("../../../assets/icons/Gymbit_Icons_Black/Alert_Icon_Black.png")} />
         </TouchableOpacity>
-
+        {showNotifications && <NotificationsScreen setShowNotifications={setShowNotifications} />}
         <TouchableOpacity style={styles.logoContainer} onPress={handlePress}>
           <Image style={styles.logo} source={require("../../../assets/icons/Gymbit_Icons_Trans/Logo_Trans.png")} />
         </TouchableOpacity>
@@ -231,10 +245,12 @@ const HomeHeader = ({ handlePress, refresh, setRefresh, blowup, setBlowup }) => 
                 {showUploading ? (
                   <ActivityIndicator size="large" color="#2E8CFF" />
                 ) : (
-                  <TouchableOpacity style={styles.submit} onPress={savePost}>
+                  <TouchableOpacity style={styles.submit} onPress={attemptToCreatePost}>
                     <Text style={styles.submitText}>Post Gymbit</Text>
                   </TouchableOpacity>
                 )}
+                {!showUploading && error && <Text style={styles.error}>{error}</Text>}
+                {!showUploading && !error && <Text style={styles.error}> </Text>}
               </View>
             </View>
           </View>
@@ -324,6 +340,15 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     alignItems: "center",
     justifyContent: "center",
+  },
+
+  submitButtonContainer: {},
+
+  error: {
+    color: "red",
+    fontSize: 11,
+    minHeight: 20,
+    textAlign: "center",
   },
 
   submitText: {
