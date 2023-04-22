@@ -124,7 +124,6 @@ const app = () => {
 const signUpConfig = {
   header: "Sign Up",
   hideAllDefaults: true,
-  testID: "Sign_Up_Page",
   signUpFields: [
     {
       label: "Full name",
@@ -132,6 +131,7 @@ const signUpConfig = {
       required: true,
       displayOrder: 1,
       type: "string",
+      desc: "Full_Name",
     },
     {
       label: "Email",
@@ -139,6 +139,7 @@ const signUpConfig = {
       required: true,
       displayOrder: 2,
       type: "string",
+      testID: "New_Email"
     },
     {
       label: "Username",
@@ -146,6 +147,7 @@ const signUpConfig = {
       required: true,
       displayOrder: 3,
       type: "string",
+      testID: "New_Username",
     },
     {
       label: "Password",
@@ -153,6 +155,7 @@ const signUpConfig = {
       required: true,
       displayOrder: 4,
       type: "password",
+      testID: "New_Password",
     },
   ],
 };
