@@ -38,7 +38,7 @@ import { NotificationsScreen } from "../../screens/NotificationsScreen";
 /**
  * Creates the header that will go above the two home screens (Mutual and Explore)
  */
-const HomeHeader = ({ handlePress, refresh, setRefresh, blowup, setBlowup }) => {
+const HomeHeader = ({ handlePress, refresh, setRefresh, blowup, setBlowup, testID }) => {
   const navigation = useNavigation();
   //const [refresh, setRefresh] = useState(true);
   const [text, setText] = useState(""); // the caption you write
@@ -190,7 +190,7 @@ const HomeHeader = ({ handlePress, refresh, setRefresh, blowup, setBlowup }) => 
 
   return (
     <>
-      <View style={styles.container}>
+      <View style={styles.container} testID={testID}>
         <TouchableOpacity
           style={styles.notiButton}
           onPress={() => {
@@ -204,8 +204,7 @@ const HomeHeader = ({ handlePress, refresh, setRefresh, blowup, setBlowup }) => 
         <TouchableOpacity style={styles.logoContainer} onPress={handlePress}>
           <Image style={styles.logo} source={require("../../../assets/icons/Gymbit_Icons_Trans/Logo_Trans.png")} />
         </TouchableOpacity>
-
-        <TouchableOpacity style={styles.settingsButton} onPress={handleCreatePostBlowUp}>
+        <TouchableOpacity style={styles.settingsButton} onPress={handleCreatePostBlowUp} testID={`${testID}.Create_Post_Button`}>
           <Image style={styles.settings} source={require("../../../assets/icons/Gymbit_Icons_Black/Create_Post_Icon_Black.png")} />
         </TouchableOpacity>
       </View>
@@ -225,7 +224,7 @@ const HomeHeader = ({ handlePress, refresh, setRefresh, blowup, setBlowup }) => 
               />
             )}
             <View style={{ flex: 1 }}>
-              <Pressable onPressOut={handleBlowUp} style={styles.backArrow}>
+              <Pressable onPressOut={handleBlowUp} style={styles.backArrow} testID={`${testID}.Create_Post_Back_Button`}>
                 <AntDesign name="arrowleft" size={40} style={styles.backArrow} />
               </Pressable>
               <View style={styles.header} />
@@ -238,14 +237,21 @@ const HomeHeader = ({ handlePress, refresh, setRefresh, blowup, setBlowup }) => 
                   setShowCreateWorkout={setShowCreateWorkout}
                   scrollToBottom={scrollToBottom}
                   setScrollToBottom={setScrollToBottom}
+                  testID={`${testID}.Workout_Selection`}
                 />
               </View>
               <View style={{ alignItems: "center", flex: 2 }}>
-                <TextInput style={styles.input} placeholder="Write your caption here" value={text} onChangeText={setText} />
+                <TextInput
+                  style={styles.input}
+                  placeholder="Write your caption here"
+                  value={text}
+                  onChangeText={setText}
+                  testID={`${testID}.Create_Post_Caption`}
+                />
                 {showUploading ? (
                   <ActivityIndicator size="large" color="#2E8CFF" />
                 ) : (
-                  <TouchableOpacity style={styles.submit} onPress={attemptToCreatePost}>
+                  <TouchableOpacity style={styles.submit} onPress={attemptToCreatePost} testID={`${testID}.Create_Post_Submit`}>
                     <Text style={styles.submitText}>Post Gymbit</Text>
                   </TouchableOpacity>
                 )}
