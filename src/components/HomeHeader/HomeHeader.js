@@ -1,6 +1,6 @@
-import React, { useRef } from "react";
+import React, { useCallback, useRef } from "react";
 import { Image, View, TouchableOpacity, StyleSheet, Touchable, Text, TextInput, Pressable, Button, ActivityIndicator } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { useState, useEffect } from "react";
 import { Storage } from "@aws-amplify/storage";
 import { Auth } from "aws-amplify";
@@ -51,6 +51,12 @@ const HomeHeader = ({ handlePress, refresh, setRefresh, blowup, setBlowup }) => 
       setRefresh(!refresh);
     });
   };
+
+  useFocusEffect(
+    useCallback(() => {
+      setShowCamera(false);
+    }, [])
+  );
 
   useEffect(() => {
     const subscription = retrieveNotificationCount();
