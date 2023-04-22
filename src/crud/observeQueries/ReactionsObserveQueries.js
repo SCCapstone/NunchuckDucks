@@ -1,16 +1,20 @@
 import { DataStore } from "aws-amplify";
 import { Reaction } from "../../models";
 
-export async function getAndObserveReactions(postID, setReactions) {
+export async function getAndObserveReactions(postID, setRetrieveReactions) {
   try {
-    const subscription = DataStore.observeQuery(Reaction, (r) =>
+    const subscription = DataStore.observe(Reaction, (r) =>
       r.postID.eq(postID)
-    ).subscribe((snapshot) => {
-      const { items, isSynced } = snapshot;
-      if (isSynced) setReactions(items);
-    });
+    ).subscribe(
+      (snapshot) => {
+        setRetrieveReactions(Math.random());
+      },
+      (error) => {
+        console.error("Reaction Subscription Error: ", error);
+      }
+    );
     return subscription;
   } catch (error) {
-    console.log(error);
+    console.error(error);
   }
 }

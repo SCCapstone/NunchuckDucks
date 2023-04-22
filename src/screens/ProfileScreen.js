@@ -1,29 +1,33 @@
-import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView, FlatList } from "react-native";
-import { Auth } from "aws-amplify";
+import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
 import GoalSummary from "../components/GoalSummary";
 import { blueThemeColor, grayThemeColor } from "../library/constants";
 import React from "react";
 import { getFollowsList } from "../crud/FollowingOperations";
 import { getFollowersList } from "../crud/FollowersOperations";
-import { getBio, updateCurrentStreak, getWeeklyGoal } from "../crud/UserOperations";
-import { saveImageToAWS, getCurrentUser, cacheRemoteUri } from "../crud/CacheOperations";
+import { updateCurrentStreak } from "../crud/UserOperations";
+import {
+  saveImageToAWS,
+  getCurrentUser,
+  cacheRemoteUri,
+} from "../crud/CacheOperations";
 import ProfileMini from "../components/ProfileMini";
 import Bio from "../components/Bio";
-import CustomButton from "../components/CustomButton";
 import { useNavigation } from "@react-navigation/native";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import SignOutButton from "../components/signoutbutton/SignOutButton";
 import * as ImagePicker from "expo-image-picker";
 import ChangeBioModal from "../components/modals/ChangeBioModal";
-import * as FileSystem from "expo-file-system";
 import "react-native-url-polyfill/auto";
 import "react-native-get-random-values";
 import Header from "../components/Header";
-import { getCurrentAuthenticatedUser } from "../library/GetAuthenticatedUser";
 import { Toast } from "react-native-toast-message/lib/src/Toast";
 import { useNetInfo } from "@react-native-community/netinfo";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import ProfilePostList from "../components/ProfilePostList/ProfilePostList";
+import {
+  getAndObserveFollowers,
+  getAndObserveFollowing,
+} from "../crud/observeQueries/FollowerFollowingObserveQueries";
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -37,6 +41,8 @@ export function ProfileScreen(props) {
   const setRefresh = props.setRefresh;
   const [usernameSet, setUsernameSet] = useState(false);
   const [username, setUsername] = useState("");
+  const [retrieveFollowerCount, setRetrieveFollowerCount] = useState(0);
+  const [retrieveFollowingCount, setRetrieveFollowingCount] = useState(0);
   const [followercount, setFollowerCount] = useState("-");
   const [followingcount, setFollowingCount] = useState("-");
   const [modalVisible, setModalVisible] = useState(false);
@@ -46,11 +52,16 @@ export function ProfileScreen(props) {
 
   useEffect(() => {
     renderProfileInfo();
-    if (username !== "") {
-      getFollowersCount(username);
-      getFollowingCount(username);
-    }
-  }, [modalVisible, username]);
+    createObservers();
+  }, []);
+
+  useEffect(() => {
+    getFollowersCount(username);
+  }, [username, retrieveFollowerCount]);
+
+  useEffect(() => {
+    getFollowingCount(username);
+  }, [username, retrieveFollowingCount]);
 
   const showPfpUploadedToast = (usr) => {
     Toast.show({
@@ -87,10 +98,25 @@ export function ProfileScreen(props) {
     });
   };
 
+  async function createObservers() {
+    let newUsername = await getCurrentUser();
+    if (!newUsername) {
+      console.error("Retrieving username on Profile Screen");
+      return;
+    }
+    getAndObserveFollowers(newUsername, setRetrieveFollowerCount);
+    getAndObserveFollowing(newUsername, setRetrieveFollowingCount);
+  }
+
   async function renderProfileInfo() {
-    let username = await getCurrentUser();
-    setUsername(username);
-    let currStreak = await updateCurrentStreak(username);
+    let newUsername = await getCurrentUser();
+    if (newUsername !== username) {
+      setUsername(newUsername);
+    } else {
+      console.error("Fetching username for Profile Screen");
+      return;
+    }
+    let currStreak = await updateCurrentStreak(newUsername);
     setStreak(currStreak);
     if (streak > 0) {
       setShowStreak(true);
@@ -101,12 +127,16 @@ export function ProfileScreen(props) {
   }
 
   async function getFollowingCount(username) {
+    if (!username) return;
     const followingList = await getFollowsList(username);
+    if (!followingList || !Array.isArray(followingList)) return;
     setFollowingCount(followingList.length);
   }
 
   async function getFollowersCount(username) {
+    if (!username) return;
     const followersList = await getFollowersList(username);
+    if (!followersList || !Array.isArray(followersList)) return;
     setFollowerCount(followersList.length);
   }
 
@@ -119,7 +149,8 @@ export function ProfileScreen(props) {
   }
   const addProfileImage = async () => {
     let _image = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images /*Only allow image upload */,
+      mediaTypes:
+        ImagePicker.MediaTypeOptions.Images /*Only allow image upload */,
       allowsEditing: true /*true= pull up an editing interface after image upload */,
       aspect: [1, 1] /*1:1 image ratio, so it will be a square */,
       quality: 1 /*highest quality image possible, on a scale of 0-1 we want 1 lol */,
@@ -163,23 +194,49 @@ export function ProfileScreen(props) {
           <View style={{ flexDirection: "row" }}>
             {usernameSet && showStreak && (
               <View>
-                <Image source={require("../../assets/icons/Gymbit_Icons_Trans/flame.png")} style={styles.flame} />
+                <Image
+                  source={require("../../assets/icons/Gymbit_Icons_Trans/flame.png")}
+                  style={styles.flame}
+                />
                 <Text style={styles.streak}>{streak}</Text>
               </View>
             )}
-            <ProfileMini onClick={() => handleProfileImageClick()} username={username} refresh={refresh} setRefresh={setRefresh} />
-            <View style={{ flexdirection: "column", paddingTop: 5, paddingLeft: 15 }}>
+            <ProfileMini
+              onClick={() => handleProfileImageClick()}
+              username={username}
+              refresh={refresh}
+              setRefresh={setRefresh}
+            />
+            <View
+              style={{
+                flexdirection: "column",
+                paddingTop: 5,
+                paddingLeft: 15,
+              }}
+            >
               <Text style={styles.username}>@{username}</Text>
               <View style={{ paddingTop: 5, flexDirection: "row" }}>
                 <View style={styles.followingContainer}>
                   <Text style={styles.followingText}>Following</Text>
-                  <Text style={styles.followingNumber} onPress={() => navigation.navigate("Followers", { isFollowerPage: true })}>
+                  <Text
+                    style={styles.followingNumber}
+                    onPress={() =>
+                      navigation.navigate("Followers", { isFollowerPage: true })
+                    }
+                  >
                     {followingcount}
                   </Text>
                 </View>
                 <View style={styles.followingContainer}>
                   <Text style={styles.followingText}>Followers</Text>
-                  <Text style={styles.followingNumber} onPress={() => navigation.navigate("Followers", { isFollowerPage: false })}>
+                  <Text
+                    style={styles.followingNumber}
+                    onPress={() =>
+                      navigation.navigate("Followers", {
+                        isFollowerPage: false,
+                      })
+                    }
+                  >
                     {followercount}
                   </Text>
                 </View>
@@ -192,8 +249,17 @@ export function ProfileScreen(props) {
           </TouchableOpacity>
         </View>
       </View>
-      <View style={{ alignItems: "center", backgroundColor: "white", justifyContent: "center" }}>
-        <ChangeBioModal modalVisible={modalVisible} setModalVisible={setModalVisible} />
+      <View
+        style={{
+          alignItems: "center",
+          backgroundColor: "white",
+          justifyContent: "center",
+        }}
+      >
+        <ChangeBioModal
+          modalVisible={modalVisible}
+          setModalVisible={setModalVisible}
+        />
         <View
           style={{
             flexDirection: "row",
@@ -202,11 +268,14 @@ export function ProfileScreen(props) {
             maxWidth: 250,
           }}
         >
-          <SignOutButton />
         </View>
       </View>
       <Tab.Navigator initialRouteName="GoalSummary" tabBarPosition="top">
-        <Tab.Screen name="Goals Summary">{(props) => <GoalSummary {...props} username={username} isCurrentUser={true} />}</Tab.Screen>
+        <Tab.Screen name="Goals Summary">
+          {(props) => (
+            <GoalSummary {...props} username={username} isCurrentUser={true} />
+          )}
+        </Tab.Screen>
         <Tab.Screen name="Your Posts" component={ProfilePostList} />
       </Tab.Navigator>
     </>

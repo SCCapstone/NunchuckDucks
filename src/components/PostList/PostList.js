@@ -2,11 +2,21 @@ import { ScrollView, StyleSheet, Text, FlatList } from "react-native";
 import { useState, useEffect, useRef } from "react";
 import { DataStore, Predicates, SortDirection } from "@aws-amplify/datastore";
 import { Post as PostSchema } from "../../models";
-import { getPostsForMutualFeedFromAWS, getUsersFollowed, getUsersFollowedIds } from "../../crud/PostOperations";
+import {
+  getPostsForMutualFeedFromAWS,
+  getUsersFollowed,
+  getUsersFollowedIds,
+} from "../../crud/PostOperations";
 import { useNetInfo } from "@react-native-community/netinfo";
 // PostSchema, the schema above, and Post, the component below
 import Post from "../Post";
-import { getPostsFromCache, cachePosts, getCachedCurrUser, cacheCurrUser, cacheRemoteUri } from "../../crud/CacheOperations";
+import {
+  getPostsFromCache,
+  cachePosts,
+  getCachedCurrUser,
+  cacheCurrUser,
+  cacheRemoteUri,
+} from "../../crud/CacheOperations";
 import { getFollowsList } from "../../crud/FollowingOperations";
 import { Toast } from "react-native-toast-message/lib/src/Toast";
 import FastImage from "react-native-fast-image";
@@ -33,7 +43,12 @@ export default function PostList(props) {
     let postsFromAWS = await getPostsForMutualFeedFromAWS(usernameFromAWS);
     // turns posts into a true JSON object, allowing for augmentation as needed
     let postsString = JSON.stringify(postsFromAWS);
-    let postsObject = JSON.parse(postsString);
+    let postsObject;
+    try {
+      postsObject = JSON.parse(postsString);
+    } catch (error) {
+      console.log("PostList postsObject: ", error);
+    }
     return postsObject;
   }
 
