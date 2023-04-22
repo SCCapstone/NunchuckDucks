@@ -95,24 +95,99 @@ const app = () => {
               tabBarShowIcon: true,
               tabBarScrollEnabled: false,
               tabBarIconStyle: {
-                width: 'auto',
+                width: "auto",
                 height: 20,
-              }
+              },
             }}
             initialRouteName="Mutuals"
             tabBarPosition="bottom"
           >
-            <Stack.Screen name="Mutuals" options={{tabBarIcon: () => <AntDesign name="home" size={20}></AntDesign>}}>
-              {(props) => <MutualScreen {...props} refresh={refresh} setRefresh={setRefresh} />}
-              </Stack.Screen>
-            <Stack.Screen name="Workouts" component={WorkoutsScreen} options={{tabBarIcon: () => <Image source={require("./assets/icons/tab-bar/tabWorkoutThick.png")} style={styles.tabIcon}/>}}/>
-            <Stack.Screen name="Goals" component={GoalsScreen} options={{tabBarIcon: () => <Image source={require("./assets/icons/tab-bar/tabGoalThick.png")} style={styles.tabIcon}/>}}/>
-            <Stack.Screen name="Followers" component={FollowerScreen} initialParams={{ isFollowerPage: false }} options={{tabBarIcon: () => <AntDesign name={"team"} size={20}></AntDesign>}}/>
-            <Stack.Screen name="Profile" options={{tabBarIcon: () => <AntDesign name={"user"} size={20}></AntDesign>}}>
-              {(props) => <ProfileScreen {...props} refresh={refresh} setRefresh={setRefresh} />}
-              </Stack.Screen>
-            <Stack.Screen name="Settings" component={SettingsScreen} options={{tabBarIcon: () => <Image source={require("./assets/icons/tab-bar/tabSettingsThick.png")} style={styles.tabIcon}/>}}/>
-            <Stack.Screen name="Notifications" component={NotificationsScreen} options={{tabBarIcon: () => <AntDesign name={"bells"} size={20}></AntDesign>}}/>
+            <Stack.Screen
+              name="Mutuals"
+              options={{
+                tabBarIcon: () => <AntDesign name="home" size={20}></AntDesign>,
+              }}
+            >
+              {(props) => (
+                <MutualScreen
+                  {...props}
+                  refresh={refresh}
+                  setRefresh={setRefresh}
+                />
+              )}
+            </Stack.Screen>
+            <Stack.Screen
+              name="Workouts"
+              component={WorkoutsScreen}
+              options={{
+                tabBarIcon: () => (
+                  <Image
+                    source={require("./assets/icons/tab-bar/tabWorkoutThick.png")}
+                    style={styles.tabIcon}
+                  />
+                ),
+              }}
+            />
+            <Stack.Screen
+              name="Goals"
+              component={GoalsScreen}
+              initialParams={{ isCompletedPage: false }}
+              options={{
+                tabBarIcon: () => (
+                  <Image
+                    source={require("./assets/icons/tab-bar/tabGoalThick.png")}
+                    style={styles.tabIcon}
+                  />
+                ),
+              }}
+            />
+            <Stack.Screen
+              name="Followers"
+              component={FollowerScreen}
+              initialParams={{ isFollowerPage: false }}
+              options={{
+                tabBarIcon: () => (
+                  <AntDesign name={"team"} size={20}></AntDesign>
+                ),
+              }}
+            />
+            <Stack.Screen
+              name="Profile"
+              options={{
+                tabBarIcon: () => (
+                  <AntDesign name={"user"} size={20}></AntDesign>
+                ),
+              }}
+            >
+              {(props) => (
+                <ProfileScreen
+                  {...props}
+                  refresh={refresh}
+                  setRefresh={setRefresh}
+                />
+              )}
+            </Stack.Screen>
+            <Stack.Screen
+              name="Settings"
+              component={SettingsScreen}
+              options={{
+                tabBarIcon: () => (
+                  <Image
+                    source={require("./assets/icons/tab-bar/tabSettingsThick.png")}
+                    style={styles.tabIcon}
+                  />
+                ),
+              }}
+            />
+            <Stack.Screen
+              name="Notifications"
+              component={NotificationsScreen}
+              options={{
+                tabBarIcon: () => (
+                  <AntDesign name={"bells"} size={20}></AntDesign>
+                ),
+              }}
+            />
           </Stack.Navigator>
         </NavigationContainer>
       ) : (
@@ -233,6 +308,6 @@ const styles = StyleSheet.create({
     width: 20,
     height: 20,
   },
-})
+});
 
 export default withAuthenticator(app, { signUpConfig, theme: customTheme });
