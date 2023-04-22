@@ -39,6 +39,7 @@ export function MutualScreen(props) {
         blowup={blowup}
         setBlowup={setBlowup}
         handlePress={() => setRefresh(!refresh)}
+        testID="HomeHeader"
       />
       {isEmpty && (
         <View>
