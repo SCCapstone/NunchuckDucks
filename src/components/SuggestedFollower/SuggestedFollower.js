@@ -1,10 +1,9 @@
-import { View, Modal, StyleSheet, Pressable, Text, ScrollView } from "react-native";
-import React, { useState, useEffect } from "react";
+import { View, StyleSheet, Text } from "react-native";
+import React from "react";
 
 import CustomButton from "../CustomButton";
 import ProfileMini from "../ProfileMini";
 import { blueThemeColor } from "../../library/constants";
-import { getImageFromCache } from "../../crud/CacheOperations";
 
 const SuggestedFollower = ({ username, addNewFollower }) => {
   return (
@@ -13,7 +12,11 @@ const SuggestedFollower = ({ username, addNewFollower }) => {
         <ProfileMini username={username} />
         <Text style={styles.textStyles}>{username}</Text>
       </View>
-      <CustomButton text={"Follow"} style={{ width: "30%", marginRight: 5 }} onClick={addNewFollower.bind(this, username)}></CustomButton>
+      <CustomButton
+        text={"Follow"}
+        style={{ width: "30%", marginRight: 5 }}
+        onClick={addNewFollower.bind(this, username)}
+      ></CustomButton>
     </View>
   );
 };

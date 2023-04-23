@@ -15,16 +15,16 @@ import getPictureFileName from "../../library/getPictureFileName";
 import { createPost } from "../../crud/PostOperations";
 import ImageSelector from "../../components/ImageSelector";
 import { getCurrentUser } from "../../crud/CacheOperations";
-import { getWorkouts } from "../../crud/WorkoutOperations";
-import { blueThemeColor, grayThemeColor } from "../../library/constants";
+import { blueThemeColor } from "../../library/constants";
 import { useNetInfo } from "@react-native-community/netinfo";
 import { Toast } from "react-native-toast-message/lib/src/Toast";
 import CreateWorkoutModal from "../modals/CreateWorkoutModal";
-import { getNotifications } from "../../crud/NotificationOperations";
 import WorkoutSelection from "../WorkoutSelection";
 import { getAndObserveNotificationCount } from "../../crud/observeQueries/NotificationObserveQueries";
 import { AntDesign } from "@expo/vector-icons";
 import { NotificationsScreen } from "../../screens/NotificationsScreen";
+import { grayThemeColor } from "../../library/constants";
+import { getNotifications } from "../../crud/NotificationOperations";
 
 /**
  * Creates the header that will go above the two home screens (Mutual and Explore)
