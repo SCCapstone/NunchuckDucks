@@ -66,7 +66,7 @@ const GoalSummary = ({ username, isCurrentUser = false }) => {
           />
         </View>
       ) : (
-        <View style={styles.container}>
+        <View style={styles.container} testID="Goal_Summary">
           <View style={styles.titleBox}>
             <Text style={styles.title}>{username + "'s"} goals</Text>
           </View>

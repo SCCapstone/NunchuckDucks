@@ -107,7 +107,13 @@ const app = () => {
               name="Workouts"
               component={WorkoutsScreen}
               options={{
-                tabBarIcon: () => <Image source={require("./assets/icons/tab-bar/tabWorkoutThick.png")} style={styles.tabIcon} />,
+                tabBarIcon: () => (
+                  <Image
+                    source={require("./assets/icons/tab-bar/tabWorkoutThick.png")}
+                    style={styles.tabIcon}
+                    testID="Workout_Screen"
+                  />
+                ),
               }}
             />
             <Stack.Screen
@@ -115,7 +121,13 @@ const app = () => {
               component={GoalsScreen}
               initialParams={{ isCompletedPage: false }}
               options={{
-                tabBarIcon: () => <Image source={require("./assets/icons/tab-bar/tabGoalThick.png")} style={styles.tabIcon} />,
+                tabBarIcon: () => (
+                  <Image
+                    source={require("./assets/icons/tab-bar/tabGoalThick.png")}
+                    style={styles.tabIcon}
+                    testID="Goals_Screen"
+                  />
+                ),
               }}
             />
             <Stack.Screen
@@ -129,7 +141,9 @@ const app = () => {
             <Stack.Screen
               name="Profile"
               options={{
-                tabBarIcon: () => <AntDesign name={"user"} size={20}></AntDesign>,
+                tabBarIcon: () => (
+                  <AntDesign name={"user"} size={20} testID="Profile_Screen"></AntDesign>
+                ),
               }}
             >
               {(props) => <ProfileScreen {...props} refresh={refresh} setRefresh={setRefresh} />}

@@ -235,8 +235,12 @@ const HomeHeader = ({ handlePress, refresh, setRefresh, blowup, setBlowup, testI
                 />
                 {showUploading ? (
                   <ActivityIndicator size="large" color="#2E8CFF" />
-                ) : (
-                  <TouchableOpacity style={styles.submit} onPress={attemptToCreatePost} testID={`${testID}.Create_Post_Submit`}>
+                ) : (               
+                  <TouchableOpacity
+                    style={styles.submit}
+                    onPress={attemptToCreatePost}
+                    testID={`${testID}.Create_Post_Submit`}
+                  >
                     <Text style={styles.submitText}>Post Gymbit</Text>
                   </TouchableOpacity>
                 )}
