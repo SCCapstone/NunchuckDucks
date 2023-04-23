@@ -60,7 +60,7 @@ const HomeHeader = ({ handlePress, refresh, setRefresh, blowup, setBlowup, testI
   async function subscribeToNotificationCount() {
     try {
       const username = await getCurrentUser();
-      const subscription = await getAndObserveNotificationCount(username, setNotificationCount);
+      const subscription = await getAndObserveNotificationCount(username, setRetrieveNotificationCount);
       return subscription;
     } catch (error) {
       console.error("Retrieving Notification Count in HomeHeader: ", error);
@@ -70,7 +70,6 @@ const HomeHeader = ({ handlePress, refresh, setRefresh, blowup, setBlowup, testI
   async function updateNotificationCount() {
     try {
       const username = await getCurrentUser();
-      console.log("NOTIFICATION: ", username);
       const notifications = await getNotifications(username);
       setNotificationCount(notifications.length);
     } catch (err) {
