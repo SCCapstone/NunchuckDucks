@@ -122,6 +122,7 @@ const styles = StyleSheet.create({
   },
   titleBoxCurrUser: {
     padding: 3,
+    //height: 50,
     backgroundColor: grayThemeColor,
     borderColor: "#000000",
     borderBottomWidth: 3,
@@ -131,7 +132,7 @@ const styles = StyleSheet.create({
     width: "auto", //this changes length of line/ box the text exits on
     fontSize: 35,
     paddingTop: 2,
-    height: 35,
+
     color: blueThemeColor,
     fontWeight: "bold",
   },

@@ -74,7 +74,6 @@ local.properties
 *.iml
 *.hprof
 .cxx/
-# android/gradle.properties
 
 # node.js
 #

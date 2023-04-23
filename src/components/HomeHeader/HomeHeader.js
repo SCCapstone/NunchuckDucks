@@ -233,11 +233,14 @@ const HomeHeader = ({ handlePress, refresh, setRefresh, blowup, setBlowup, testI
                 />
               </View>
               <View style={{ alignItems: "center", flex: 2 }}>
+                {text.length < 500 && <Text style={{fontSize: 14, color: "gray", paddingTop: 10}}>{text.length}/500</Text>}
+                {text.length === 500 && <Text style={{fontSize: 14, color: "red", paddingTop: 10}}>{text.length}/500</Text>}
                 <TextInput
                   style={styles.input}
                   placeholder="Write your caption here"
                   value={text}
                   onChangeText={setText}
+                  maxLength={500}
                   testID={`${testID}.Create_Post_Caption`}
                 />
                 {showUploading ? (
