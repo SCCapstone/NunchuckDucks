@@ -108,3 +108,13 @@ jest.mock("./src/crud/CommentOperations", () => {
     deleteComment: () => true,
   };
 });
+jest.mock("./src/crud/ReactionOperations", () => {
+  return {
+    getReactions: () => [],
+  };
+});
+jest.mock("./src/crud/GoalOperations", () => {
+  return {
+    getGoals: () => [],
+  };
+});

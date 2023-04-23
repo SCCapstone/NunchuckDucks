@@ -23,6 +23,8 @@ import WorkoutSelection from "../WorkoutSelection";
 import { getAndObserveNotificationCount } from "../../crud/observeQueries/NotificationObserveQueries";
 import { AntDesign } from "@expo/vector-icons";
 import { NotificationsScreen } from "../../screens/NotificationsScreen";
+import { grayThemeColor } from "../../library/constants";
+import { getNotifications } from "../../crud/NotificationOperations";
 
 /**
  * Creates the header that will go above the two home screens (Mutual and Explore)
