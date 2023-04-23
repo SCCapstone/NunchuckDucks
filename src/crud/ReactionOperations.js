@@ -6,6 +6,12 @@ import { getDate } from "../library/getDate";
 import { getCreatedAt } from "./PostOperations";
 import { getTimeElapsed } from "../library/getTimeElapsed";
 
+/**
+ * function to create a reaction on a post
+ * @param {String} username 
+ * @param {String} reactionType 
+ * @param {String} postID 
+ */
 export async function createReaction(username, reactionType, postID) {
   try {
     const reaction = new Reaction({
@@ -28,6 +34,12 @@ export async function createReaction(username, reactionType, postID) {
   }
 }
 
+/**
+ * function to delete a reaction on a post.
+ * @param {String} username 
+ * @param {String} reactionType 
+ * @param {String} postID 
+ */
 export async function removeReaction(username, reactionType, postID) {
   try {
     const reactionToDelete = await DataStore.query(Reaction, (r) =>
@@ -42,6 +54,11 @@ export async function removeReaction(username, reactionType, postID) {
   }
 }
 
+/**
+ * function to get reactions on a post.
+ * @param {String} postID 
+ * @returns reactionList
+ */
 export async function getReactions(postID) {
   try {
     const reactionList = await DataStore.query(Reaction, (r) => r.postID.eq(postID));
@@ -51,6 +68,13 @@ export async function getReactions(postID) {
   }
 }
 
+/**
+ * function to get user reactions.
+ * @param {String} postID 
+ * @param {String} username 
+ * @param {String} reactionType 
+ * @returns reactions
+ */
 export async function getUserReactions(postID, username, reactionType) {
   try {
     const reactions = await DataStore.query(Reaction, (r) =>

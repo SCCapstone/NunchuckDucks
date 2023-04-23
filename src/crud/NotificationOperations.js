@@ -2,6 +2,13 @@ import { DataStore, SortDirection } from "aws-amplify";
 import { Notification } from "../models";
 import { getUserId } from "./UserOperations";
 
+/**
+ * creates a notification for a user on interaction with content
+ * @param {String} username 
+ * @param {String} date 
+ * @param {String} content 
+ * @param {String} interactingUserUsername 
+ */
 export async function createNotification(username, date, content, interactingUserUsername) {
     try {
         const userId = await getUserId(username);
@@ -22,7 +29,6 @@ export async function createNotification(username, date, content, interactingUse
 
 /**
  * Return a list of all notifications for a user based on username
- *
  * @param {String} username
  * @returns notifications
  */
@@ -39,6 +45,11 @@ export async function getNotifications(username) {
         console.error("Error retrieving notification list", error);
     }
 }
+
+/**
+ * Function to delete a specific notification from its ID
+ * @param {String} notificationId 
+ */
 export async function deleteNotification(notificationId) {
     try {
         const notiToDelete = await DataStore.query(Notification, notificationId);
@@ -49,6 +60,10 @@ export async function deleteNotification(notificationId) {
     }
 }
 
+/**
+ * Function to delete all notifications for a user.
+ * @param {String} notiUsername 
+ */
 export async function deleteAllNotifications(notiUsername) {
     try {
         const notifications = await DataStore.query(Notification, (u) => u.username.eq(notiUsername._z));
