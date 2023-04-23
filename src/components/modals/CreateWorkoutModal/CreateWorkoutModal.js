@@ -172,7 +172,7 @@ export default function CreateWorkoutModal({
           </View>
           <ScrollView>
             {exercises}
-            <CustomButton onClick={handleAddExercise} style={{ alignSelf: "center", marginTop: 20 }} text="Add Exercise" />
+            <CustomButton onClick={handleAddExercise} style={{ alignSelf: "center", marginTop: 20 }} text="Add Exercise" testID={`${testID}.Add_Exercise`}/>
           </ScrollView>
           <CustomButton
             onClick={handleSubmit}
