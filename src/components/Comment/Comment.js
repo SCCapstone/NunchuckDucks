@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { StyleSheet, View, Text, Image, TouchableOpacity } from "react-native";
 import { blueThemeColor, grayThemeColor } from "../../library/constants";
 import ProfileMini from "../ProfileMini";
-import { Storage } from "@aws-amplify/storage";
 import CustomButton from "../CustomButton/CustomButton";
 import CustomTextInput from "../CustomTextInput/CustomTextInput";
 import {
@@ -10,12 +9,12 @@ import {
   createComment,
   deleteComment,
 } from "../../crud/CommentOperations";
-import { getCurrentUser, getImageFromCache } from "../../crud/CacheOperations";
+import { getCurrentUser } from "../../crud/CacheOperations";
 import NonCurrUserProfileModal from "../modals/NonCurrUserProfileModal.js/NonCurrUserProfileModal";
-import { getCurrentAuthenticatedUser } from "../../library/GetAuthenticatedUser";
 import ConfirmDelete from "../modals/ConfirmDelete";
 import ErrorModal from "../modals/ErrorModal/ErrorModal";
 import { useNavigation } from "@react-navigation/native";
+import { getUserId } from "../../crud/UserOperations";
 
 const OptionsButton = require("../../../assets/icons/Gymbit_Icons_Black/X_Icon_Black.png");
 
@@ -27,6 +26,8 @@ const Comment = ({ commentModel, postID, replies, style, refresh }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [commentModalVisible, setCommentModalVisible] = useState(false);
   const [errorModalVisible, setErrorModalVisible] = useState(false);
+  const [userId, setUserId] = useState("");
+  const [show, setShow] = useState(false);
   const errorMessage = "You do not have permission to delete this comment.";
 
   const replyUI = replies
@@ -39,6 +40,10 @@ const Comment = ({ commentModel, postID, replies, style, refresh }) => {
     })
     .map((val) => {
       return <Comment commentModel={val} postID={postID} key={val.id} />;
+    });
+
+    useEffect(() => {
+      showDelete(postID, commentModel?.username);
     });
 
   const showRepliesButton = (
@@ -56,6 +61,13 @@ const Comment = ({ commentModel, postID, replies, style, refresh }) => {
     if (await checkForDeletability(postID, username)) {
       setCommentModalVisible(true);
     } else setErrorModalVisible(true);
+  }
+
+  async function showDelete(postID, username) {
+    if (await checkForDeletability(postID, username)) {
+      setShow(true);
+    }
+    else  setShow(false);
   }
 
   async function handleUserClick() {
@@ -116,11 +128,13 @@ const Comment = ({ commentModel, postID, replies, style, refresh }) => {
           <Text style={styles.username} onPress={() => handleUserClick()}>
             {commentModel?.username}
           </Text>
+          {show &&
           <TouchableOpacity
             onPress={() => checkIfDeletable(postID, commentModel?.username,commentModel?.id)}
           >
             <Image style={styles.deleteButton} source={OptionsButton}></Image>
           </TouchableOpacity>
+          }
         </View>
 
         <Text style={styles.content}>{commentModel?.content}</Text>

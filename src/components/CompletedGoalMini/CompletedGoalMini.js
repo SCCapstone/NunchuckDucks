@@ -1,4 +1,4 @@
-import { View, Image, Text, StyleSheet, Pressable } from "react-native";
+import { View, Text, StyleSheet, Pressable } from "react-native";
 import { blueThemeColor, grayThemeColor } from "../../library/constants";
 import React from "react";
 import { AntDesign } from "@expo/vector-icons";

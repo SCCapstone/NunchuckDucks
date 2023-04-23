@@ -1,4 +1,4 @@
-import { View, ScrollView, StyleSheet } from "react-native";
+import { View, ScrollView, StyleSheet, Text } from "react-native";
 import { useState, useEffect, useCallback } from "react";
 import { Auth } from "aws-amplify";
 import { DataStore } from "aws-amplify";
@@ -8,10 +8,7 @@ import CustomTextInput from "../components/CustomTextInput";
 import FollowerMini from "../components/FollowerMini";
 import AddFollowerModal from "../components/modals/AddFollowerModal";
 import { getFollowersList, deleteFollower } from "../crud/FollowersOperations";
-import {
-  getFollowsList,
-  deleteFollower as deleteFollowing,
-} from "../crud/FollowingOperations";
+import { getFollowsList, deleteFollower as deleteFollowing } from "../crud/FollowingOperations";
 import { getCurrentUser } from "../crud/CacheOperations";
 import { Toast } from "react-native-toast-message/lib/src/Toast";
 
@@ -32,18 +29,14 @@ export function FollowerScreen({ route, navigation }) {
 
   const getLists = useCallback(async (isFollowerPage) => {
     const currUser = await getCurrentUser();
-    const list = isFollowerPage
-      ? await getFollowersList(currUser)
-      : await getFollowsList(currUser);
+    const list = isFollowerPage ? await getFollowersList(currUser) : await getFollowsList(currUser);
     // Maybe include guard clause to guarantee array
     if (!Array.isArray(list)) return;
     setList(list);
   }, []);
 
   const showFollowerDeletionSuccess = (usernameRemoved, isFollower) => {
-    const message = isFollower
-      ? `${usernameRemoved} is no longer following you`
-      : `You have stopped following ${usernameRemoved}`;
+    const message = isFollower ? `${usernameRemoved} is no longer following you` : `You have stopped following ${usernameRemoved}`;
 
     Toast.show({
       type: "success",
@@ -60,8 +53,7 @@ export function FollowerScreen({ route, navigation }) {
       <FollowerMini
         username={val.username}
         onDelete={async () => {
-          const { attributes } = await Auth.currentAuthenticatedUser();
-          let currUser = attributes.preferred_username;
+          let currUser = getCurrentUser();
           if (isFollowerPage) {
             await deleteFollower(currUser, val.username);
             showFollowerDeletionSuccess(val.username, isFollowerPage);
@@ -70,9 +62,7 @@ export function FollowerScreen({ route, navigation }) {
             showFollowerDeletionSuccess(val.username, isFollowerPage);
           }
           setForceRefresh(!forceRefresh);
-          console.log(
-            `Removed ${val.username}'s profile from your follower / following list!`
-          );
+          console.log(`Removed ${val.username}'s profile from your follower / following list!`);
         }}
         key={val.username}
         style={styles.followerMiniStyle}
@@ -86,26 +76,17 @@ export function FollowerScreen({ route, navigation }) {
 
   return (
     <View style={styles.container}>
-      <AddFollowerModal
-        modalVisible={modalVisible}
-        setModalVisible={setModalVisible}
-      ></AddFollowerModal>
+      <AddFollowerModal modalVisible={modalVisible} setModalVisible={setModalVisible}></AddFollowerModal>
       <View style={styles.stickyHeader}>
         <Header title={"Followers"}></Header>
-        <CustomButton
-          buttonType={"default"}
-          text={"Follow New User"}
-          onClick={() => setModalVisible(true)}
-        ></CustomButton>
+        <CustomButton buttonType={"default"} text={"Follow New User"} onClick={() => setModalVisible(true)}></CustomButton>
         <View style={styles.pageChangeButtons}>
           <CustomButton
             buttonType={"hyperlink"}
             isUnderlined={true}
             isSelected={!isFollowerPage}
             text={"Following"}
-            onClick={() =>
-              navigation.navigate("Followers", { isFollowerPage: false })
-            }
+            onClick={() => navigation.navigate("Followers", { isFollowerPage: false })}
             textStyle={styles.pageChangeButtonsText}
           ></CustomButton>
           <CustomButton
@@ -113,21 +94,28 @@ export function FollowerScreen({ route, navigation }) {
             isUnderlined={true}
             isSelected={isFollowerPage}
             text={"Followers"}
-            onClick={() =>
-              navigation.navigate("Followers", { isFollowerPage: true })
-            }
+            onClick={() => navigation.navigate("Followers", { isFollowerPage: true })}
             textStyle={styles.pageChangeButtonsText}
           ></CustomButton>
         </View>
-        <CustomTextInput
-          customStyles={styles.searchBar}
-          placeholder={"Search current friends..."}
-          enteredValue={searchValue}
-          onChangeHandler={(text) => setSearchValue(text)}
-        ></CustomTextInput>
+        {listItems.length !== 0 && (
+          <CustomTextInput
+            customStyles={styles.searchBar}
+            placeholder={"Search current friends..."}
+            enteredValue={searchValue}
+            onChangeHandler={(text) => setSearchValue(text)}
+          ></CustomTextInput>
+        )}
       </View>
       {/* TODO add "add friend" button and modal for user to enter this data */}
-      <ScrollView style={styles.followerList}>{listItems}</ScrollView>
+
+      {listItems.length !== 0 ? (
+        <ScrollView style={styles.followerList}>{listItems}</ScrollView>
+      ) : (
+        <Text style={{ fontSize: 18, padding: 10, alignSelf: "center" }}>
+          {route.params.isFollowerPage ? "No followers to show" : "Not following any users"}
+        </Text>
+      )}
     </View>
   );
 }
@@ -171,58 +159,47 @@ const styles = StyleSheet.create({
 
 const sampleFollowersList = [
   {
-    userImageSrc:
-      "https://images.unsplash.com/photo-1526045612212-70caf35c14df",
+    userImageSrc: "https://images.unsplash.com/photo-1526045612212-70caf35c14df",
     username: "John1",
   },
   {
-    userImageSrc:
-      "https://images.unsplash.com/photo-1526045612212-70caf35c14df",
+    userImageSrc: "https://images.unsplash.com/photo-1526045612212-70caf35c14df",
     username: "John2",
   },
   {
-    userImageSrc:
-      "https://images.unsplash.com/photo-1526045612212-70caf35c14df",
+    userImageSrc: "https://images.unsplash.com/photo-1526045612212-70caf35c14df",
     username: "John3",
   },
   {
-    userImageSrc:
-      "https://images.unsplash.com/photo-1526045612212-70caf35c14df",
+    userImageSrc: "https://images.unsplash.com/photo-1526045612212-70caf35c14df",
     username: "John4",
   },
   {
-    userImageSrc:
-      "https://images.unsplash.com/photo-1526045612212-70caf35c14df",
+    userImageSrc: "https://images.unsplash.com/photo-1526045612212-70caf35c14df",
     username: "John5",
   },
   {
-    userImageSrc:
-      "https://images.unsplash.com/photo-1526045612212-70caf35c14df",
+    userImageSrc: "https://images.unsplash.com/photo-1526045612212-70caf35c14df",
     username: "John6",
   },
   {
-    userImageSrc:
-      "https://images.unsplash.com/photo-1526045612212-70caf35c14df",
+    userImageSrc: "https://images.unsplash.com/photo-1526045612212-70caf35c14df",
     username: "John7",
   },
   {
-    userImageSrc:
-      "https://images.unsplash.com/photo-1526045612212-70caf35c14df",
+    userImageSrc: "https://images.unsplash.com/photo-1526045612212-70caf35c14df",
     username: "John8",
   },
   {
-    userImageSrc:
-      "https://images.unsplash.com/photo-1526045612212-70caf35c14df",
+    userImageSrc: "https://images.unsplash.com/photo-1526045612212-70caf35c14df",
     username: "John9",
   },
   {
-    userImageSrc:
-      "https://images.unsplash.com/photo-1526045612212-70caf35c14df",
+    userImageSrc: "https://images.unsplash.com/photo-1526045612212-70caf35c14df",
     username: "John10",
   },
   {
-    userImageSrc:
-      "https://images.unsplash.com/photo-1526045612212-70caf35c14df",
+    userImageSrc: "https://images.unsplash.com/photo-1526045612212-70caf35c14df",
     username: "John11",
   },
   {
@@ -232,58 +209,47 @@ const sampleFollowersList = [
 ];
 const sampleFollowingList = [
   {
-    userImageSrc:
-      "https://images.unsplash.com/photo-1526045612212-70caf35c14df",
+    userImageSrc: "https://images.unsplash.com/photo-1526045612212-70caf35c14df",
     username: "David1",
   },
   {
-    userImageSrc:
-      "https://images.unsplash.com/photo-1526045612212-70caf35c14df",
+    userImageSrc: "https://images.unsplash.com/photo-1526045612212-70caf35c14df",
     username: "David2",
   },
   {
-    userImageSrc:
-      "https://images.unsplash.com/photo-1526045612212-70caf35c14df",
+    userImageSrc: "https://images.unsplash.com/photo-1526045612212-70caf35c14df",
     username: "David3",
   },
   {
-    userImageSrc:
-      "https://images.unsplash.com/photo-1526045612212-70caf35c14df",
+    userImageSrc: "https://images.unsplash.com/photo-1526045612212-70caf35c14df",
     username: "David4",
   },
   {
-    userImageSrc:
-      "https://images.unsplash.com/photo-1526045612212-70caf35c14df",
+    userImageSrc: "https://images.unsplash.com/photo-1526045612212-70caf35c14df",
     username: "David5",
   },
   {
-    userImageSrc:
-      "https://images.unsplash.com/photo-1526045612212-70caf35c14df",
+    userImageSrc: "https://images.unsplash.com/photo-1526045612212-70caf35c14df",
     username: "David6",
   },
   {
-    userImageSrc:
-      "https://images.unsplash.com/photo-1526045612212-70caf35c14df",
+    userImageSrc: "https://images.unsplash.com/photo-1526045612212-70caf35c14df",
     username: "David7",
   },
   {
-    userImageSrc:
-      "https://images.unsplash.com/photo-1526045612212-70caf35c14df",
+    userImageSrc: "https://images.unsplash.com/photo-1526045612212-70caf35c14df",
     username: "David8",
   },
   {
-    userImageSrc:
-      "https://images.unsplash.com/photo-1526045612212-70caf35c14df",
+    userImageSrc: "https://images.unsplash.com/photo-1526045612212-70caf35c14df",
     username: "David9",
   },
   {
-    userImageSrc:
-      "https://images.unsplash.com/photo-1526045612212-70caf35c14df",
+    userImageSrc: "https://images.unsplash.com/photo-1526045612212-70caf35c14df",
     username: "David10",
   },
   {
-    userImageSrc:
-      "https://images.unsplash.com/photo-1526045612212-70caf35c14df",
+    userImageSrc: "https://images.unsplash.com/photo-1526045612212-70caf35c14df",
     username: "David11",
   },
   {
