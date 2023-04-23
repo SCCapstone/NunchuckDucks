@@ -33,13 +33,10 @@ export function CreateGoalScreen() {
           onChangeText={onChangeText}
           placeholder={"Enter details about your goal"}
           value={text}
+          multiline={true}
         />
         <View style={styles.miniContainer}>
-          <CustomButton
-            text="Create Goal"
-            style={styles.button}
-            onClick={saveGoal}
-          />
+          <CustomButton text="Create Goal" style={styles.button} onClick={saveGoal} />
         </View>
       </View>
     </View>
