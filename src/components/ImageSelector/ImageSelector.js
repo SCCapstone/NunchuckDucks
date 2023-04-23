@@ -19,7 +19,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     //opacity: 0.7,
     //alignItems: "center",
-    paddingTop: 5,
+    //paddingTop: 5,
     justifyContent: "center",
     //right: 0,
     //bottom: 0,
@@ -67,13 +67,13 @@ export default function ImageSelector({ image, setImage, setShowCamera }) {
         <View style={{ flexDirection: "column", width: "50%", justifyContent: "center" }}>
           <TouchableOpacity onPress={addImage} style={styles.uploadBtn}>
             <AntDesign name="upload" size={20} color="black" />
-            <Text>Upload</Text>
+            <Text style={{ fontSize: 12 }}>Upload</Text>
           </TouchableOpacity>
         </View>
         <View style={{ flexDirection: "column", width: "50%", justifyContent: "center" }}>
           <TouchableOpacity onPress={() => setShowCamera(true)} style={styles.uploadBtn}>
             <AntDesign name="camera" size={20} color="black" />
-            <Text>Capture</Text>
+            <Text style={{ fontSize: 12 }}>Capture</Text>
           </TouchableOpacity>
         </View>
       </View>
