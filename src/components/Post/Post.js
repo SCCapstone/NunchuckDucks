@@ -19,6 +19,7 @@ import { getAndObserveComments } from "../../crud/observeQueries/CommentObserveQ
 import { getUriFromCache, cacheRemoteUri } from "../../crud/CacheOperations";
 import FastImage from "react-native-fast-image";
 import * as Progress from "react-native-progress";
+import { Toast } from "react-native-toast-message/lib/src/Toast";
 
 export default function Post(props) {
   const entry = props.entry;
@@ -235,9 +236,18 @@ export default function Post(props) {
               marginBottom: 5,
             }}
             multiline={true}
+            maxLength={250}
           />
         )}
-        {showCommentOption && <CustomButton onClick={onCommentSubmit} text={"Submit"} />}
+        {showCommentOption && (
+          <CustomButton onClick={onCommentSubmit} text={"Submit"} />
+        )}
+        {showCommentOption && commentText.length < 250 &&(
+          <Text style={{fontSize: 14, color: "gray"}}>{commentText.length}/250</Text>
+        )}
+        {showCommentOption && commentText.length === 250 && (
+          <Text style={{fontSize: 14, color: "red"}}>{commentText.length}/250</Text>
+        )}
         {shortCommentDisplay ? commentList.slice(0, 2) : commentList}
         {comments.length > 2 && (
           <CustomButton

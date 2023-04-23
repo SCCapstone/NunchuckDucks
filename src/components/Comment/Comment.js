@@ -147,9 +147,12 @@ const Comment = ({ commentModel, postID, replies, style, refresh }) => {
               marginBottom: 5,
             }}
             multiline={true}
+            maxLength={250}
           />
         )}
         {replyOpen && <CustomButton onClick={onReplySubmit} text={"Submit"} />}
+        {replyOpen && replyText.length < 250 && <Text style={{fontSize: 12, color: "gray"}}>{replyText.length}/250</Text>}
+        {replyOpen && replyText.length === 250 && <Text style={{fontSize: 12, color: "red"}}>{replyText.length}/250</Text>}
         {!commentModel.reply && replies?.length > 0 && showRepliesButton}
         {repliesOpen && replyUI}
       </View>
