@@ -8,6 +8,9 @@ import { useNavigation } from "@react-navigation/native";
 import { blueThemeColor, grayThemeColor } from "../library/constants";
 import InfoModal from "../components/modals/InfoModal";
 import { Toast } from "react-native-toast-message/lib/src/Toast.js";
+import ChangeGoalModal from "../components/modals/ChangeGoalModal/ChangeGoalModal";
+import SignOutButton from "../components/signoutbutton/SignOutButton";
+import CustomButton from "../components/CustomButton/CustomButton";
 
 export function SettingsScreen() {
   const styles = StyleSheet.create({
@@ -38,7 +41,6 @@ export function SettingsScreen() {
     },
     goalText: {
       padding: 20,
-      textAlign: "center",
       fontWeight: "bold",
       fontSize: 15,
     },
@@ -47,11 +49,10 @@ export function SettingsScreen() {
       textAlign: "center",
       justifyContent: "center",
       alignContent: "center",
-      width: 180,
-      //left: "25%",
-      top: 15,
+      width: 220,
+      //top: 15,
       borderRadius: 50,
-      padding: 10,
+      margin: 10,
     },
   });
 
@@ -65,14 +66,16 @@ export function SettingsScreen() {
   const navigation = useNavigation();
   const [modalVisible, setModalVisible] = useState(false);
   const [message, setMessage] = useState("test");
+  const [GoalModalVisible, setGoalModalVisible] = useState(false);
 
   useEffect(() => {
     renderSettings();
-  }, []);
+  }, [GoalModalVisible]);
 
   const toggleSwitch = async () => {
     await togglePrivacy(username, !privacy);
     setPrivacy(!privacy);
+    setIsEnabled(!isEnabled);
     /*if (privacy === true) {
       await togglePrivacy(username, false);
       // setIsEnabled((previousState) => false);
@@ -87,6 +90,10 @@ export function SettingsScreen() {
   const showModal = (message) => {
     setModalVisible(true);
     setMessage(message);
+  };
+
+  const showGoalModal = () => {
+    setModalVisible(true);
   };
 
   async function renderSettings() {
@@ -104,31 +111,12 @@ export function SettingsScreen() {
     setUsername(username);
   }
 
-  async function saveNewGoal() {
-    let number = parseInt(text, 10);
-
-    if (text.length > 1 || !Number.isInteger(number)) {
-      setText("");
-      Toast.show({
-        type: "error",
-        text1: "Please enter a number 1-7",
-        position: "bottom",
-        visibilityTime: 3000,
-        bottomOffset: 80,
-      });
-    } else {
-      let confirm = await setWeeklyGoal(username, number);
-      if (confirm !== null) {
-        setGoal(text);
-      }
-    }
-  }
-
   return (
     <View style={styles.container}>
       <Header title={"Settings"} />
-      <View style={{ flexDirection: "row" }}>
+      <View style={{ flexDirection: "row", alignItems: "center" }}>
         <InfoModal modalVisible={modalVisible} setModalVisible={setModalVisible} message={message}></InfoModal>
+        <ChangeGoalModal modalVisible={GoalModalVisible} setModalVisible={setGoalModalVisible} />
         <Text style={styles.goalText}>Toggle privacy</Text>
         <Switch
           trackColor={{ false: "#767577", true: "#81b0ff" }}
@@ -138,8 +126,6 @@ export function SettingsScreen() {
           value={isEnabled}
           style={styles.switch}
         />
-      </View>
-      <View style={{ alignContent: "center", alignItems: "center", bottom: "2%" }}>
         <TouchableOpacity
           onPress={() =>
             showModal(
@@ -147,13 +133,12 @@ export function SettingsScreen() {
             )
           }
         >
-          <Text style={{ fontSize: 12, color: "gray", top: 20 }}>more info</Text>
+          <Text style={{ fontSize: 12, color: "gray", paddingLeft: 10 }}>more info</Text>
         </TouchableOpacity>
       </View>
-      <Text style={styles.goalText}>Your current weekly workout goal is {goal}. Change goal below</Text>
-      <View style={{ alignContent: "center", alignItems: "center", bottom: "2%" }}>
+      <View style={{ flexDirection: "row", alignItems: "center" }}>
+        <Text style={styles.goalText}>Your current weekly workout goal is {goal}.</Text>
         <TouchableOpacity
-          style={{ bottom: "2%" }}
           onPress={() =>
             showModal(
               "Your weekly goal will keep track of how many times per week you would like to work out.  We track your goal progress through the number of posts that you have made in the past week.\nIf you meet your goal for a week your streak will inscrease on your profile."
@@ -163,13 +148,14 @@ export function SettingsScreen() {
           <Text style={{ fontSize: 12, color: "gray" }}>more info</Text>
         </TouchableOpacity>
       </View>
-      <View style={styles.goalContainer}>
-        <TextInput style={styles.textInput} placeholder={"Current Goal: " + goal} value={text} onChangeText={setText} />
+      <View style={{ alignItems: "center", alignContent: "center" }}>
+        <CustomButton text="Change weekly goal" onClick={() => setGoalModalVisible(true)} />
+        {/*<TouchableOpacity style={styles.goalButton} onPress={() => setGoalModalVisible(true)}>
+          <Text style={{ textAlign: "center", color: "white", fontWeight: "bold", fontSize: 18 }}>Change weekly goal</Text>
+        </TouchableOpacity>*/}
       </View>
-      <View style={{ alignContent: "center", alignItems: "center" }}>
-        <TouchableOpacity style={styles.goalButton} onPress={saveNewGoal}>
-          <Text style={{ textAlign: "center", color: "white" }}>Change weekly goal</Text>
-        </TouchableOpacity>
+      <View style={{ alignContent: "center", alignItems: "center", marginTop: 30 }}>
+        <SignOutButton />
       </View>
     </View>
   );

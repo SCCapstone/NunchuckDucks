@@ -1,9 +1,12 @@
-import { Text, Pressable } from "react-native";
-import { Auth, DataStore } from "aws-amplify";
+import { Text, Image, TouchableOpacity, View, Pressable, ImageBackground, ImageBackgroundComponent } from "react-native";
+import { Auth, Amplify, DataStore } from "aws-amplify";
 import { deleteAllCache } from "../../crud/CacheOperations";
 import FastImage from "react-native-fast-image";
+import { useState } from "react";
 
 const SignOutButton = () => {
+  const [isClicked, setIsClicked] = useState(false);
+
   const signOut = async () => {
     let subsCleared = false;
     while (!subsCleared) {
@@ -18,6 +21,8 @@ const SignOutButton = () => {
     }
   };
   async function signOutOps() {
+    if (isClicked) return;
+    setIsClicked(true);
     await deleteAllCache();
     await FastImage.clearDiskCache();
     await FastImage.clearMemoryCache();
@@ -40,7 +45,7 @@ const SignOutButton = () => {
         backgroundColor: "#2e8cff",
         width: 100,
         height: 40,
-        borderRadius: 30,
+        borderRadius: 10,
         justifyContent: "center",
       }}
       onPress={() => {
@@ -49,9 +54,9 @@ const SignOutButton = () => {
     >
       <Text
         style={{
-          fontWeight: "bold",
+          //fontWeight: "bold",
           textAlign: "center",
-          fontSize: 18,
+          //fontSize: 18,
           color: "white",
         }}
       >

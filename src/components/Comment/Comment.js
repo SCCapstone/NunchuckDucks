@@ -15,7 +15,7 @@ import ConfirmDelete from "../modals/ConfirmDelete";
 import ErrorModal from "../modals/ErrorModal/ErrorModal";
 import { useNavigation } from "@react-navigation/native";
 
-const OptionsButton = require("../../../assets/icons/Gymbit_Icons_Black/Three_Dots_Black.png");
+const OptionsButton = require("../../../assets/icons/Gymbit_Icons_Black/X_Icon_Black.png");
 
 const Comment = ({ commentModel, postID, replies, style, refresh }) => {
   const navigation = useNavigation();
@@ -50,7 +50,7 @@ const Comment = ({ commentModel, postID, replies, style, refresh }) => {
     ></CustomButton>
   );
 
-  async function checkIfDeletable(postID, username) {
+  async function checkIfDeletable(postID, username, commentId) {
     if (await checkForDeletability(postID, username)) {
       setCommentModalVisible(true);
     } else setErrorModalVisible(true);
@@ -115,7 +115,7 @@ const Comment = ({ commentModel, postID, replies, style, refresh }) => {
             {commentModel?.username}
           </Text>
           <TouchableOpacity
-            onPress={() => checkIfDeletable(postID, commentModel?.username)}
+            onPress={() => checkIfDeletable(postID, commentModel?.username,commentModel?.id)}
           >
             <Image style={styles.deleteButton} source={OptionsButton}></Image>
           </TouchableOpacity>
@@ -145,9 +145,12 @@ const Comment = ({ commentModel, postID, replies, style, refresh }) => {
               marginBottom: 5,
             }}
             multiline={true}
+            maxLength={250}
           />
         )}
         {replyOpen && <CustomButton onClick={onReplySubmit} text={"Submit"} />}
+        {replyOpen && replyText.length < 250 && <Text style={{fontSize: 12, color: "gray"}}>{replyText.length}/250</Text>}
+        {replyOpen && replyText.length === 250 && <Text style={{fontSize: 12, color: "red"}}>{replyText.length}/250</Text>}
         {!commentModel.reply && replies?.length > 0 && showRepliesButton}
         {repliesOpen && replyUI}
       </View>

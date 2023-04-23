@@ -18,6 +18,8 @@ import { getWorkoutById } from "../../crud/WorkoutOperations";
 import { getAndObserveComments } from "../../crud/observeQueries/CommentObserveQueries";
 import { getUriFromCache, cacheRemoteUri } from "../../crud/CacheOperations";
 import FastImage from "react-native-fast-image";
+import * as Progress from "react-native-progress";
+import { Toast } from "react-native-toast-message/lib/src/Toast";
 
 export default function Post(props) {
   const entry = props.entry;
@@ -32,6 +34,7 @@ export default function Post(props) {
   const navigation = useNavigation();
   const networkConnection = useNetInfo();
   const [modalVisible, setModalVisible] = useState("");
+  const [retrieveComments, setRetrieveComments] = useState(0);
   const [allComments, setAllComments] = useState([]);
   const [comments, setComments] = useState([]);
   const [replies, setReplies] = useState(new Map());
@@ -42,6 +45,8 @@ export default function Post(props) {
   const [workout, setWorkout] = useState(null);
   const [uriIsSet, setUriIsSet] = useState(false);
   const [imageUri, setImageUri] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [loadingPercent, setLoadingPercent] = useState(0);
 
   const handleBlowUp = () => {
     setBlowup(!blowup);
@@ -56,16 +61,16 @@ export default function Post(props) {
     // Call CRUD to make new datastore object
     try {
       const comenterName = await getCurrentUser();
-      createComment(commentText, comenterName, entry.id, null);
+      await createComment(commentText, comenterName, entry.id, null);
     } catch (error) {
       console.error("Error: Could not create comment", error);
     }
     setCommentText("");
   }
 
-  async function retrieveComments() {
+  async function observeComments() {
     try {
-      const subscription = getAndObserveComments(entry.id, setAllComments);
+      const subscription = await getAndObserveComments(entry.id, setRetrieveComments);
       return subscription;
     } catch (error) {
       console.error("Retrieving Comments in Post: ", error);
@@ -86,11 +91,24 @@ export default function Post(props) {
 
   useEffect(() => {
     setImageFromCacheOrAWS();
-    const subscription = retrieveComments();
+    const subscription = observeComments();
     return () => {
       if (subscription && subscription.unsubscribe) subscription.unsubscribe();
     };
   }, [refresh]);
+
+  useEffect(() => {
+    const updateAllComments = async () => {
+      try {
+        const comments = await getComments(entry.id);
+        setAllComments(comments);
+      } catch (error) {
+        console.error("Retrieving Comments in Post: ", error);
+      }
+    };
+    updateAllComments().catch((err) => console.error(err));
+    return () => {};
+  }, [retrieveComments]);
 
   useEffect(() => {
     const topLevelComments = allComments.filter((val) => !val.reply);
@@ -150,19 +168,51 @@ export default function Post(props) {
         </Text>
         <Text style={styles.createdAt}>{getTimeElapsed(entry.createdAt)}</Text>
       </View>
-      <Pressable onPress={handleBlowUp} style={{ backgroundColor: "rgba(30,144,255,0.5)", position: "relative" }}>
+      <Pressable onPress={handleBlowUp} style={{ backgroundColor: grayThemeColor, position: "relative" }}>
         {uriIsSet ? (
-          <FastImage
-            source={{
-              uri: imageUri,
-              headers: {},
-              priority: FastImage.priority.normal,
-            }}
-            style={{ height: 400 }}
-            resizeMode={FastImage.resizeMode.cover}
-          />
+          <View>
+            {loading && (
+              <View
+                style={{
+                  position: "absolute",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  height: 400,
+                  width: "100%",
+                  backgroundColor: grayThemeColor,
+                }}
+              >
+                {/*<ActivityIndicator color={blueThemeColor} />*/}
+                <Progress.Bar width={200} progress={loadingPercent} color={blueThemeColor} unfilledColor={grayThemeColor} />
+              </View>
+            )}
+            <FastImage
+              style={{ height: 400 }}
+              source={{
+                uri: imageUri,
+                headers: {},
+                priority: FastImage.priority.normal,
+              }}
+              resizeMode={FastImage.resizeMode.cover}
+              onLoadStart={() => setLoading(true)}
+              onProgress={(e) => {
+                let loaded = e.nativeEvent.loaded / e.nativeEvent.total;
+                if (loaded % 0.2 < 0.01) {
+                  setLoadingPercent(loaded);
+                }
+              }}
+              onLoadEnd={() => setLoading(false)}
+            />
+          </View>
         ) : (
-          <View style={{ height: 400, alignItems: "center", justifyContent: "center", backgroundColor: grayThemeColor }}>
+          <View
+            style={{
+              height: 400,
+              alignItems: "center",
+              justifyContent: "center",
+              backgroundColor: grayThemeColor,
+            }}
+          >
             <ActivityIndicator size="large" color="#2E8CFF" />
           </View>
         )}
@@ -186,9 +236,18 @@ export default function Post(props) {
               marginBottom: 5,
             }}
             multiline={true}
+            maxLength={250}
           />
         )}
-        {showCommentOption && <CustomButton onClick={onCommentSubmit} text={"Submit"} />}
+        {showCommentOption && (
+          <CustomButton onClick={onCommentSubmit} text={"Submit"} />
+        )}
+        {showCommentOption && commentText.length < 250 &&(
+          <Text style={{fontSize: 14, color: "gray"}}>{commentText.length}/250</Text>
+        )}
+        {showCommentOption && commentText.length === 250 && (
+          <Text style={{fontSize: 14, color: "red"}}>{commentText.length}/250</Text>
+        )}
         {shortCommentDisplay ? commentList.slice(0, 2) : commentList}
         {comments.length > 2 && (
           <CustomButton
@@ -295,15 +354,17 @@ export function getTimeElapsed(createdAt) {
   if (minutesDifference < 1) {
     ans = "less than a minute ago";
   } else if (minutesDifference <= 60) {
-    ans = Math.round(minutesDifference.toString()) + ` minute${minutesDifference === 1 ? "" : "s"} ago`;
+    ans = Math.round(minutesDifference.toString()) + ` minute${Math.floor(minutesDifference) === 1 ? "" : "s"} ago`;
   } else if (hoursDifference <= 24) {
-    ans = Math.round(hoursDifference.toString()) + ` hour${hoursDifference === 1 ? "" : "s"} ago`;
+    ans = Math.round(hoursDifference.toString()) + ` hour${Math.floor(hoursDifference) === 1 ? "" : "s"} ago`;
   } else if (daysDifference <= 30) {
-    ans = Math.round(daysDifference.toString()) + ` day${daysDifference === 1 ? "" : "s"} ago`;
+    ans = Math.round(daysDifference.toString()) + ` day${Math.floor(daysDifference) === 1 ? "" : "s"} ago`;
+  } else if (monthsDifference === 1) {
+    ans = "1 month ago";
   } else if (monthsDifference <= 12) {
-    ans = Math.round(monthsDifference.toString()) + ` month${monthsDifference === 1 ? "" : "s"} ago`;
+    ans = Math.round(monthsDifference.toString()) + ` month${Math.floor(monthsDifference) === 1 ? "" : "s"} ago`;
   } else {
-    ans = Math.round(yearsDifference.toString()) + ` year${yearsDifference === 1 ? "" : "s"} ago`;
+    ans = Math.round(yearsDifference.toString()) + ` year${Math.floor(yearsDifference) === 1 ? "" : "s"} ago`;
   }
   return ans;
 }

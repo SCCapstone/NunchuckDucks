@@ -1,24 +1,15 @@
 import { useEffect, useState } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  Pressable,
-  Modal,
-  ScrollView,
-} from "react-native";
+import { View, Image, Text, StyleSheet, Pressable, TouchableOpacity, Modal, TextInput, Button, ScrollView } from "react-native";
 
 import CustomButton from "../../CustomButton";
 import { blueThemeColor } from "../../../library/constants";
 import { getCurrentUser } from "../../../crud/CacheOperations";
-import {
-  createWorkout,
-  updateWorkoutById,
-} from "../../../crud/WorkoutOperations";
+import { createWorkout, updateWorkoutById } from "../../../crud/WorkoutOperations";
 import CustomTextInputWithError from "../../CustomTextInputWithError/CustomTextInputWithError";
 import useInput from "../../../hooks/useInput";
 import ExerciseInput from "../../ExerciseInput/ExerciseInput";
 import { validateWorkoutTitle } from "../../../library/Validators";
+import ConfirmDelete from "../ConfirmDelete/ConfirmDelete";
 
 export default function CreateWorkoutModal({
   modalVisible,
@@ -34,7 +25,9 @@ export default function CreateWorkoutModal({
 }) {
   const [exerciseList, setExerciseList] = useState([]);
   const [exerciseListIsValid, setExerciseListIsValid] = useState([]);
+  const [exerciseListIsModified, setExerciseListIsModified] = useState(false);
   const [submitTouched, setSubmitTouched] = useState(false);
+  const [confirmCloseModalVisible, setConfirmCloseModalVisible] = useState(false);
   const {
     value: workoutTitle,
     isValid: workoutTitleIsValid,
@@ -43,7 +36,11 @@ export default function CreateWorkoutModal({
     inputBlurHandler: workoutTitleBlurHandler,
     onChangeHandler: workoutTitleOnChangeHandler,
     reset: workoutTitleReset,
+    isTouched: workoutIsTouched,
   } = useInput(validateWorkoutTitle, workout?.workoutName);
+
+  // TODO: More effective check for if the form was modified
+  const formIsModified = (workoutTitleIsValid && workoutIsTouched) || exerciseListIsModified;
 
   useEffect(() => {
     if (!modelExerciseList) return;
@@ -53,19 +50,11 @@ export default function CreateWorkoutModal({
 
   const validateForm = () => {
     // Check for overall form errors (combined exercises)
-    const allExercisesConfirmed = exerciseListIsValid.reduce(
-      (prev, curr) => prev && curr,
-      true
-    );
+    const allExercisesConfirmed = exerciseListIsValid.reduce((prev, curr) => prev && curr, true);
     if (!allExercisesConfirmed) {
       return {
         hasError: true,
         errorMessage: "All exercises must be confirmed",
-      };
-    } else if (exerciseList.length === 0) {
-      return {
-        hasError: true,
-        errorMessage: "A workout must have at least one exercise",
       };
     } else if (!workoutTitleIsValid || !allExercisesConfirmed) {
       // We don't want to display an errorMessage at the form level here
@@ -86,6 +75,7 @@ export default function CreateWorkoutModal({
         setExerciseListIsValid={setExerciseListIsValid}
         exerciseList={exerciseList}
         setExerciseList={setExerciseList}
+        setExerciseListIsModified={setExerciseListIsModified}
       />
     );
   });
@@ -95,13 +85,21 @@ export default function CreateWorkoutModal({
     setModalVisible(false);
   };
 
+  const optionalCloseModal = () => {
+    if (!formIsModified) {
+      closeModal();
+      return;
+    }
+    setConfirmCloseModalVisible(true);
+  };
+
   const resetForm = () => {
     setExerciseList([]);
     setExerciseListIsValid([]);
     setSubmitTouched(false);
     workoutTitleReset();
-    setWorkout(null);
-    setModelExerciseList(null);
+    if(setWorkout) setWorkout(null);
+    if (setModelExerciseList) setModelExerciseList(null);
   };
 
   const handleAddExercise = () => {
@@ -135,11 +133,7 @@ export default function CreateWorkoutModal({
   async function createOrUpdateWorkout() {
     if (!workout) {
       let currUser = await getCurrentUser();
-      let newWorkout = await createWorkout(
-        currUser,
-        workoutTitle,
-        exerciseList
-      );
+      let newWorkout = await createWorkout(currUser, workoutTitle, exerciseList);
     } else {
       await updateWorkoutById(workout.id, workoutTitle, exerciseList);
     }
@@ -153,14 +147,15 @@ export default function CreateWorkoutModal({
   }
 
   return (
-    <Modal
-      visible={modalVisible}
-      animationType="fade"
-      transparent={true}
-      onRequestClose={() => setModalVisible(false)}
-    >
+    <Modal visible={modalVisible} animationType="fade" transparent={true} onRequestClose={optionalCloseModal}>
+      <ConfirmDelete
+        modalVisible={confirmCloseModalVisible}
+        setModalVisible={setConfirmCloseModalVisible}
+        deletefunc={closeModal}
+        text={"Close create workout screen? You will lose all your progress."}
+      ></ConfirmDelete>
       <View style={styles.centeredView}>
-        <Pressable onPress={closeModal} style={styles.transparentView} />
+        <Pressable onPress={optionalCloseModal} style={styles.transparentView} />
         <View style={styles.blowupmain}>
           <View style={styles.blowupheader}>
             <CustomTextInputWithError
@@ -174,11 +169,7 @@ export default function CreateWorkoutModal({
           </View>
           <ScrollView>
             {exercises}
-            <CustomButton
-              onClick={handleAddExercise}
-              style={{ alignSelf: "center", marginTop: 20 }}
-              text="Add Exercise"
-            />
+            <CustomButton onClick={handleAddExercise} style={{ alignSelf: "center", marginTop: 20 }} text="Add Exercise" />
           </ScrollView>
           <CustomButton
             onClick={handleSubmit}
