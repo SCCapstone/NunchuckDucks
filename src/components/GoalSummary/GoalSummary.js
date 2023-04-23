@@ -54,7 +54,7 @@ const GoalSummary = ({ username, isCurrentUser = false }) => {
   return (
     <>
       {isCurrentUser ? (
-        <View style={{ backgroundColor: "white", height: "100%" }}>
+        <View style={{ backgroundColor: "white", height: "100%" }} testID="Goal_Summary">
           <View style={styles.titleBoxCurrUser}>
             <Text style={styles.title}>Your Goals</Text>
           </View>

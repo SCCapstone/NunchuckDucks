@@ -145,6 +145,7 @@ export default function ExerciseInput({
               marginLeft: 10,
             }}
             text="Delete"
+            testID={`${testID}.Delete_Button`}
           />
         </View>
       )}

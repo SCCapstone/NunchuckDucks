@@ -51,7 +51,7 @@ export function WorkoutsScreen() {
           setModelExerciseList={setExercisesForModal}
           testID="Create_Workout_Modal"
         />
-        <View style={styles.stickyHeader} testID="Workout_Screen.Create_New_Workout_Button">
+        <View style={styles.stickyHeader}>
           <CustomButton
             style={{ position: "relative" }}
             buttonType={"default"}
@@ -59,6 +59,7 @@ export function WorkoutsScreen() {
             onClick={() => {
               openCreateWorkoutModal();
             }}
+            testID="Workout_Screen.Create_New_Workout_Button"
           />
         </View>
         <ScrollView style={{ width: "100%" }} contentContainerStyle={{ paddingBottom: 125 }}>

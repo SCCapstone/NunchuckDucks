@@ -177,6 +177,7 @@ const HomeHeader = ({ handlePress, refresh, setRefresh, blowup, setBlowup, testI
           onPress={() => {
             setShowNotifications(true);
           }}
+          testID={`${testID}.Notifications_Button`}
         >
           <Text style={styles.counter}>{notificationCount}</Text>
           <Image style={styles.notification} source={require("../../../assets/icons/Gymbit_Icons_Black/Alert_Icon_Black.png")} />

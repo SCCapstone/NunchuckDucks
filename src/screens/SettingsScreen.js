@@ -116,7 +116,7 @@ export function SettingsScreen() {
   }
 
   return (
-    <View style={styles.container}>
+    <View style={styles.container} testID="Settings_Screen_Header">
       <Header title={"Settings"} />
       <View style={{ flexDirection: "row", alignItems: "center" }}>
         <InfoModal modalVisible={modalVisible} setModalVisible={setModalVisible} message={message}></InfoModal>
@@ -159,7 +159,7 @@ export function SettingsScreen() {
         </TouchableOpacity>*/}
       </View>
       <View style={{ alignContent: "center", alignItems: "center", marginTop: 30 }}>
-        <SignOutButton />
+        <SignOutButton testID="Sign_Out_Button"/>
       </View>
     </View>
   );

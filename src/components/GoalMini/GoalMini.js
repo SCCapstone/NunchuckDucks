@@ -11,7 +11,7 @@ const GoalMini = ({ description, onDeleteHandler, onCompleteHandler, testID }) =
         <AntDesign name="checkcircleo" color={blueThemeColor} size={40} />
       </Pressable>
       <Text style={styles.text}>{description}</Text>
-      <Pressable onPress={onDeleteHandler} style={styles.imgContainer}>
+      <Pressable onPress={onDeleteHandler} style={styles.imgContainer} testID={`${testID}.Delete`}>
         <AntDesign name="close" size={40} />
         {/*<Image
           source={require("../../../assets/icons/Gymbit_Icons_Black/X_Icon_Black.png")} // Placeholder Icon

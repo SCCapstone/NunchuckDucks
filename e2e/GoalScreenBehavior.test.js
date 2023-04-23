@@ -5,6 +5,7 @@ const { device } = require("detox");
 describe("Goal tests", () => {
   beforeAll(async () => {
     await device.launchApp();
+    await signInAction();
   });
 
   beforeEach(async () => {
@@ -12,7 +13,6 @@ describe("Goal tests", () => {
   });
 
   it('Navigates to the goals screen successfully', async () => {
-     await signInAction();
      await element(by.id("Goals_Screen")).atIndex(0).tap();
      await expect(element(by.id("Goals_Screen_Header"))).toBeVisible();
   });
@@ -38,6 +38,20 @@ describe("Goal tests", () => {
      await element(by.id("Goal_Screen.Complete")).tap();
      await element(by.id("Goals_Screen.In_Progress_Button")).tap();
      await expect(element(by.text(mockGoal))).not.toBeVisible();
+  });
+
+  it('Created goal shows up on the goal summary page', async () => {
+     await element(by.id("Goals_Screen")).atIndex(0).tap();
+     await element(by.id("Goal_Screen.Create_Goal_Button")).tap();
+     await element(by.id("Goal_Screen.Create_Goal_Text_Input")).tap();
+     await element(by.id("Goal_Screen.Create_Goal_Text_Input")).typeText(mockGoal);
+     await element(by.id("Goal_Screen.Create_Goal_Submit_Button")).tap();
+
+     await element(by.id("Profile_Screen")).atIndex(0).tap();
+
+     await expect(element(by.text(mockGoal))).toBeVisible();
+     await element(by.id("Goals_Screen")).atIndex(0).tap();
+     await element(by.id("Goal_Screen.Incomplete.Delete")).tap();
   });
 
 });
