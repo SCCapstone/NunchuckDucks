@@ -12,6 +12,7 @@ export default function WorkoutSelection({
   setShowCreateWorkout,
   scrollToBottom,
   setScrollToBottom,
+  testID
 }) {
   const scrollviewRef = useRef();
   useEffect(() => {

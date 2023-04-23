@@ -6,16 +6,16 @@ import { render } from "@testing-library/react";
 it(`renders correctly`, async () => {
   const tree = await act(async () =>
     renderer.create(
-      <NotificationMini username={"testusername"}></NotificationMini>
+      <NotificationMini username={"testusername"} content={""}></NotificationMini>
     )
   );
   expect(tree).toBeDefined();
 });
 
-let test = "notification content"
+let test = "notification content";
 
 it(`shows content`, async () => {
-  const tree = await act(async () => renderer.create(<NotificationMini content={test}></NotificationMini>));
+  const tree = await act(async () => renderer.create(<NotificationMini content={test} username={"testusername"}></NotificationMini>));
   const treeInstance = tree.root;
   expect(treeInstance.findByType(NotificationMini).props.content).toBe("notification content");
 })
@@ -23,7 +23,7 @@ it(`shows content`, async () => {
 const func = jest.fn();
 
 it(`shows content`, async () => {
-  const tree = await act(async () => renderer.create(<NotificationMini onDeleteHandler={func}></NotificationMini>));
+  const tree = await act(async () => renderer.create(<NotificationMini onDeleteHandler={func} username={"testusername"} content={""}></NotificationMini>));
   const treeInstance = tree.root;
   expect(treeInstance.findByType(NotificationMini).props.onDeleteHandler).toBe(func);
 })

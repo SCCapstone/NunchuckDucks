@@ -15,6 +15,7 @@ export default function ExerciseInput({
   setExerciseListIsValid,
   exerciseList,
   setExerciseList,
+  setExerciseListIsModified,
 }) {
   const [isConfirmed, setisConfirmed] = useState(() => {
     if (exercise?.exerciseName) return true;
@@ -57,6 +58,7 @@ export default function ExerciseInput({
     };
     setExerciseList(newExerciseList);
     setisConfirmed(true);
+    setExerciseListIsModified(true);
   };
 
   const editExercise = () => {
@@ -81,8 +83,12 @@ export default function ExerciseInput({
     setExerciseListIsValid(newExerciseListIsValid);
   };
 
+  let containerStyles = styles.container;
+  if (isConfirmed)
+    containerStyles = { ...styles.container, flexDirection: "row" };
+
   return (
-    <View style={styles.container}>
+    <View style={containerStyles}>
       {!isConfirmed && (
         <View style={styles.textInputContainer}>
           <CustomTextInputWithError
@@ -109,21 +115,31 @@ export default function ExerciseInput({
       {!isConfirmed && (
         <View
           style={{
-            width: "30%",
+            width: "100%",
             display: "flex",
-            flexDirection: "column",
+            flexDirection: "row",
             alignContent: "center",
-            justifyContent: "space-around",
+            justifyContent: "center",
           }}
         >
           <CustomButton
             onClick={confirmExercise}
-            style={{ alignSelf: "center", width: "75%", marginBottom: 10 }}
+            style={{
+              alignSelf: "center",
+              width: "25%",
+              marginBottom: 10,
+              marginRight: 10,
+            }}
             text="Confirm"
           />
           <CustomButton
             onClick={deleteExercise}
-            style={{ alignSelf: "center", width: "75%", marginBottom: 15 }}
+            style={{
+              alignSelf: "center",
+              width: "25%",
+              marginBottom: 10,
+              marginLeft: 10,
+            }}
             text="Delete"
           />
         </View>
@@ -160,21 +176,24 @@ export default function ExerciseInput({
 const styles = StyleSheet.create({
   container: {
     display: "flex",
-    flexDirection: "row",
+    flexDirection: "column",
     justifyContent: "space-between",
     alignContent: "center",
     width: "100%",
     minWidth: "100%",
 
     marginTop: 10,
-    borderBottomWidth: 0.25,
+    borderBottomWidth: 0.75,
     borderBottomColor: "grey",
   },
   textInputContainer: {
     display: "flex",
     flexDirection: "column",
-    width: "70%",
-    paddingLeft: 10,
+    alignSelf: "center",
+    justifyContent: "center",
+    alignContent: "center",
+    // backgroundColor: "green",
+    width: "80%",
   },
   buttonsContainer: {
     display: "flex",

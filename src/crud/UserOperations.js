@@ -155,7 +155,8 @@ export async function getBio(username) {
 
     return user.bio;
   } catch (error) {
-    console.error(`Error retrieving the bio for ${username}`, error);
+    console.log(`Error retrieving the bio for ${username}`, error);
+    return "";
   }
 }
 
@@ -317,7 +318,8 @@ export async function updateCurrentStreak(username) {
     const user = await DataStore.query(User, userId);
     return user.currentStreak;
   } catch (error) {
-    console.error("Error updating streak ", error);
+    console.log("Error updating streak ", error);
+    return 0;
   }
 }
 
@@ -377,7 +379,7 @@ export async function getWeeklyGoal(username) {
 
     return user.WeeklyGoal;
   } catch (error) {
-    console.error("Error getting weekly goal ", error);
+    console.log("Error getting weekly goal ", error);
   }
 }
 

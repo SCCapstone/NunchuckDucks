@@ -9,7 +9,7 @@ const CompletedGoalMini = ({ description, onDeleteHandler }) => {
     <View style={styles.container}>
       <Text style={styles.text}>{description}</Text>
       <Pressable onPress={onDeleteHandler} style={styles.imgContainer}>
-        <AntDesign name="closecircleo" color={blueThemeColor} size={40} />
+        <AntDesign name="close" size={40} />
       </Pressable>
     </View>
   );

@@ -7,6 +7,7 @@ import {
 } from "../../crud/ReactionOperations";
 import { getCurrentUser } from "../../crud/CacheOperations";
 import { getAndObserveReactions } from "../../crud/observeQueries/ReactionsObserveQueries";
+import { getReactions } from "../../crud/ReactionOperations";
 
 export default function Reactions({
   postID,
@@ -15,9 +16,19 @@ export default function Reactions({
 }) {
   const [applauseClicked, setApplauseClicked] = useState(false);
   const [strongClicked, setStrongClicked] = useState(false);
+  const [retrieveReactions, setRetrieveReactions] = useState(0);
   const [reactions, setReactions] = useState([]);
   const [numApplause, setNumApplause] = useState(0);
   const [numStrong, setNumStrong] = useState(0);
+
+  async function updateReactionCount() {
+    const reactions = await getReactions(postID);
+    if (!reactions) {
+      console.error("Failed to retrieve reactions: ", reactions);
+      return;
+    }
+    setReactions(reactions);
+  }
 
   async function setup() {
     const username = await getCurrentUser();
@@ -25,7 +36,7 @@ export default function Reactions({
     const userReactionFlex = await getUserReactions(postID, username, "FLEX");
     if (userReactionClap.length > 0) setApplauseClicked(true);
     if (userReactionFlex.length > 0) setStrongClicked(true);
-    const subscription = getAndObserveReactions(postID, setReactions);
+    await updateReactionCount();
   }
 
   async function newReaction(reactionType) {
@@ -39,14 +50,21 @@ export default function Reactions({
   }
 
   useEffect(() => {
-    const subscription = setup();
-    // if (!subscription) return () => {};
+    const createReactionsObserver = async () => {
+      const subscription = getAndObserveReactions(postID, setRetrieveReactions);
+      return subscription;
+    };
+    setup();
+    const subscription = createReactionsObserver();
     return () => {
-      if (subscription && subscription.unsubscribe) {
-        subscription.unsubscribe();
-      }
+      if (subscription && subscription.unsubscribe) subscription.unsubscribe();
     };
   }, []);
+
+  useEffect(() => {
+    updateReactionCount().catch((err) => console.error(err));
+    return () => {};
+  }, [retrieveReactions]);
 
   useEffect(() => {
     setNumApplause(

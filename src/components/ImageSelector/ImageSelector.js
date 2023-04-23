@@ -13,13 +13,15 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
   uploadBtnContainer: {
-    opacity: 0.7,
-    position: "absolute",
-    right: 0,
-    bottom: 0,
+    flex: 1,
+    //opacity: 0.7,
+    //alignItems: "center",
+    paddingTop: 5,
+    justifyContent: "center",
+    //right: 0,
+    //bottom: 0,
     backgroundColor: "lightgrey",
     width: "100%",
-    height: "25%",
   },
   uploadBtn: {
     display: "flex",
@@ -59,7 +61,9 @@ export default function ImageSelector(props) {
   };
   return (
     <View style={styles.container}>
-      {image && <Image source={{ uri: image }} style={{ width: 200, height: 200 }} />}
+      <View style={{ width: "100%", aspectRatio: 1 }}>
+        {image && <Image source={{ uri: image }} style={{ width: "100%", aspectRatio: 1 }} />}
+      </View>
       <View style={styles.uploadBtnContainer}>
         <TouchableOpacity onPress={addImage} style={styles.uploadBtn}>
           <Text>{image ? "Edit" : "Upload"} Image</Text>
