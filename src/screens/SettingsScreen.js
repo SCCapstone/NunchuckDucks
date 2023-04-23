@@ -71,7 +71,12 @@ export function SettingsScreen() {
     renderSettings();
   }, [GoalModalVisible]);
 
+  // useEffect(() => {
+  //   checkPrivacy();
+  // })
+
   const toggleSwitch = async () => {
+    setIsEnabled(!isEnabled);
     await togglePrivacy(username, !privacy);
     setPrivacy(!privacy);
     setIsEnabled(!isEnabled);
@@ -99,6 +104,15 @@ export function SettingsScreen() {
     setGoal(weeklyGoal);
     setText(null);
     setUsername(username);
+  }
+
+  async function checkPrivacy() {
+    let username = await getCurrentUser();
+
+    let privacy = await isUserPrivate(username);
+    if (privacy === true)
+      setIsEnabled(true);
+    setPrivacy(privacy);
   }
 
   return (
@@ -131,7 +145,7 @@ export function SettingsScreen() {
         <TouchableOpacity
           onPress={() =>
             showModal(
-              "Your weekly goal will keep track of how many times per week you would like to work out.  We track your goal progress through the number of posts that you have made in the past week.\nIf you meet your goal for a week your streak will inscrease on your profile."
+              "Your weekly goal will keep track of how many times per week you would like to work out.  We track your goal progress through the number of posts that you have made in the past week.\nIf you meet your goal for a week, your streak will increase on your profile."
             )
           }
         >

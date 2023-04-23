@@ -1,6 +1,5 @@
-import { View, ScrollView, StyleSheet } from "react-native";
+import { View, ScrollView, StyleSheet, Text } from "react-native";
 import { useState, useEffect, useCallback } from "react";
-import { Auth } from "aws-amplify";
 import Header from "../components/Header";
 import CustomButton from "../components/CustomButton";
 import CustomTextInput from "../components/CustomTextInput";
@@ -28,18 +27,14 @@ export function FollowerScreen({ route, navigation }) {
 
   const getLists = useCallback(async (isFollowerPage) => {
     const currUser = await getCurrentUser();
-    const list = isFollowerPage
-      ? await getFollowersList(currUser)
-      : await getFollowsList(currUser);
+    const list = isFollowerPage ? await getFollowersList(currUser) : await getFollowsList(currUser);
     // Maybe include guard clause to guarantee array
     if (!Array.isArray(list)) return;
     setList(list);
   }, []);
 
   const showFollowerDeletionSuccess = (usernameRemoved, isFollower) => {
-    const message = isFollower
-      ? `${usernameRemoved} is no longer following you`
-      : `You have stopped following ${usernameRemoved}`;
+    const message = isFollower ? `${usernameRemoved} is no longer following you` : `You have stopped following ${usernameRemoved}`;
 
     Toast.show({
       type: "success",
@@ -56,8 +51,7 @@ export function FollowerScreen({ route, navigation }) {
       <FollowerMini
         username={val.username}
         onDelete={async () => {
-          const { attributes } = await Auth.currentAuthenticatedUser();
-          let currUser = attributes.preferred_username;
+          let currUser = getCurrentUser();
           if (isFollowerPage) {
             await deleteFollower(currUser, val.username);
             showFollowerDeletionSuccess(val.username, isFollowerPage);
@@ -66,9 +60,7 @@ export function FollowerScreen({ route, navigation }) {
             showFollowerDeletionSuccess(val.username, isFollowerPage);
           }
           setForceRefresh(!forceRefresh);
-          console.log(
-            `Removed ${val.username}'s profile from your follower / following list!`
-          );
+          console.log(`Removed ${val.username}'s profile from your follower / following list!`);
         }}
         key={val.username}
         style={styles.followerMiniStyle}
@@ -82,26 +74,17 @@ export function FollowerScreen({ route, navigation }) {
 
   return (
     <View style={styles.container}>
-      <AddFollowerModal
-        modalVisible={modalVisible}
-        setModalVisible={setModalVisible}
-      ></AddFollowerModal>
+      <AddFollowerModal modalVisible={modalVisible} setModalVisible={setModalVisible}></AddFollowerModal>
       <View style={styles.stickyHeader}>
         <Header title={"Followers"}></Header>
-        <CustomButton
-          buttonType={"default"}
-          text={"Follow New User"}
-          onClick={() => setModalVisible(true)}
-        ></CustomButton>
+        <CustomButton buttonType={"default"} text={"Follow New User"} onClick={() => setModalVisible(true)}></CustomButton>
         <View style={styles.pageChangeButtons}>
           <CustomButton
             buttonType={"hyperlink"}
             isUnderlined={true}
             isSelected={!isFollowerPage}
             text={"Following"}
-            onClick={() =>
-              navigation.navigate("Followers", { isFollowerPage: false })
-            }
+            onClick={() => navigation.navigate("Followers", { isFollowerPage: false })}
             textStyle={styles.pageChangeButtonsText}
           ></CustomButton>
           <CustomButton
@@ -109,21 +92,28 @@ export function FollowerScreen({ route, navigation }) {
             isUnderlined={true}
             isSelected={isFollowerPage}
             text={"Followers"}
-            onClick={() =>
-              navigation.navigate("Followers", { isFollowerPage: true })
-            }
+            onClick={() => navigation.navigate("Followers", { isFollowerPage: true })}
             textStyle={styles.pageChangeButtonsText}
           ></CustomButton>
         </View>
-        <CustomTextInput
-          customStyles={styles.searchBar}
-          placeholder={"Search current friends..."}
-          enteredValue={searchValue}
-          onChangeHandler={(text) => setSearchValue(text)}
-        ></CustomTextInput>
+        {listItems.length !== 0 && (
+          <CustomTextInput
+            customStyles={styles.searchBar}
+            placeholder={"Search current friends..."}
+            enteredValue={searchValue}
+            onChangeHandler={(text) => setSearchValue(text)}
+          ></CustomTextInput>
+        )}
       </View>
       {/* TODO add "add friend" button and modal for user to enter this data */}
-      <ScrollView style={styles.followerList}>{listItems}</ScrollView>
+
+      {listItems.length !== 0 ? (
+        <ScrollView style={styles.followerList}>{listItems}</ScrollView>
+      ) : (
+        <Text style={{ fontSize: 18, padding: 10, alignSelf: "center" }}>
+          {route.params.isFollowerPage ? "No followers to show" : "Not following any users"}
+        </Text>
+      )}
     </View>
   );
 }

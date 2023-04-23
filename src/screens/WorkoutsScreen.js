@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import {View,StyleSheet,ScrollView} from "react-native";
+import { View, Text, StyleSheet, ScrollView } from "react-native";
 import CustomButton from "../components/CustomButton";
 import CreateWorkoutModal from "../components/modals/CreateWorkoutModal";
 import { getWorkouts } from "../crud/WorkoutOperations";
@@ -59,19 +59,20 @@ export function WorkoutsScreen() {
             }}
           />
         </View>
-        <ScrollView
-          style={{ width: "100%" }}
-          contentContainerStyle={{ paddingBottom: 125 }}
-        >
-          {workouts.map((workout) => (
-            <WorkoutMini
-              key={workout.id}
-              workout={workout}
-              refreshWorkouts={refreshWorkouts}
-              setRefreshWorkouts={setRefreshWorkouts}
-              openCreateWorkoutModal={openCreateWorkoutModal}
-            />
-          ))}
+        <ScrollView style={{ width: "100%" }} contentContainerStyle={{ paddingBottom: 125 }}>
+          {workouts.length !== 0 ? (
+            workouts.map((workout) => (
+              <WorkoutMini
+                key={workout.id}
+                workout={workout}
+                refreshWorkouts={refreshWorkouts}
+                setRefreshWorkouts={setRefreshWorkouts}
+                openCreateWorkoutModal={openCreateWorkoutModal}
+              />
+            ))
+          ) : (
+            <Text style={{ fontSize: 18, padding: 10, alignSelf: "center" }}>No workouts created</Text>
+          )}
         </ScrollView>
       </View>
     </>

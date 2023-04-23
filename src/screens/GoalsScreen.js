@@ -1,4 +1,4 @@
-import {View,StyleSheet,ScrollView,Text,TextInput,Image,TouchableOpacity} from "react-native";
+import {View,StyleSheet,ScrollView,Text,TextInput,Pressable} from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import Header from "../components/Header/Header";
 import CustomButton from "../components/CustomButton/CustomButton";
@@ -85,10 +85,7 @@ export function GoalsScreen({ route }) {
       }}
     />
   ));
-  if (!incompletegoals?.length)
-    incompleteListGoals = (
-      <Text style={styles.placeholder}>No In Progress Goals</Text>
-    );
+  if (!incompletegoals?.length) incompleteListGoals = <Text style={styles.placeholder}>No In Progress Goals</Text>;
 
   let completedListGoals = completegoals.map((goal) => (
     <CompletedGoalMini
@@ -102,9 +99,7 @@ export function GoalsScreen({ route }) {
     />
   ));
   if (!completegoals?.length) {
-    completedListGoals = (
-      <Text style={styles.placeholder}>No Completed Goals</Text>
-    );
+    completedListGoals = <Text style={styles.placeholder}>No Completed Goals</Text>;
   }
 
   return (
@@ -142,22 +137,9 @@ export function GoalsScreen({ route }) {
           <View style={styles.blowup}>
             <View>
               <View style={styles.headerContainer}>
-                <TouchableOpacity
-                  style={{
-                    width: 100,
-                    height: 100,
-                  }}
-                  onPress={handleBlowUp}
-                >
-                  <Image
-                    source={require("../../assets/icons/Gymbit_Icons_Black/Back_Icon_Black.png")}
-                    resizeMode="cover"
-                    style={{
-                      width: "100%",
-                      height: "100%",
-                    }}
-                  />
-                </TouchableOpacity>
+                <Pressable onPressOut={handleBlowUp} style={styles.backArrow}>
+                  <AntDesign name="arrowleft" size={40} style={styles.backArrow} />
+                </Pressable>
                 <Text style={styles.headerText}>Create Goal</Text>
               </View>
 
@@ -167,13 +149,10 @@ export function GoalsScreen({ route }) {
                   onChangeText={onChangeText}
                   placeholder={"Enter details about your goal"}
                   value={text}
+                  multiline={true}
                 />
                 <View style={styles.miniContainer}>
-                  <CustomButton
-                    text="Create Goal"
-                    style={styles.button0}
-                    onClick={saveGoal}
-                  />
+                  <CustomButton text="Create Goal" style={styles.button0} onClick={saveGoal} />
                 </View>
               </View>
             </View>
@@ -230,6 +209,13 @@ const styles = StyleSheet.create({
   },
   miniContainer: {
     alignItems: "center",
+  },
+  backArrow: {
+    alignSelf: "flex-start",
+    paddingLeft: 10,
+    marginBottom: 5,
+    marginTop: 5,
+    //backgroundColor: "rgba(200,212,225,0.75)",
   },
   blowup: {
     width: "100%",
