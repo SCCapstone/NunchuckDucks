@@ -78,7 +78,7 @@ export function NotificationsScreen({ showNotifications, setShowNotifications })
             )}
             {!isEmpty && <CustomButton buttonType={"default"} text={"Delete All"} onClick={() => deleteAllButton(currUser)}></CustomButton>}
           </View>
-          <View>
+          <View style={{ flex: 1 }}>
             <ScrollView contentContainerStyle={styles.scroll}>{listNotifications}</ScrollView>
           </View>
         </View>
@@ -93,7 +93,8 @@ const styles = StyleSheet.create({
   },
   scroll: {
     alignItems: "center",
-    display: "flex",
+    //flex: 1,
+    //display: "flex",
     backgroundColor: DefaultTheme,
     paddingBottom: 50,
   },

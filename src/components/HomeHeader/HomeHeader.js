@@ -1,13 +1,4 @@
-import {
-  Image,
-  View,
-  TouchableOpacity,
-  StyleSheet,
-  Text,
-  TextInput,
-  Pressable,
-  ActivityIndicator,
-} from "react-native";
+import { Image, View, TouchableOpacity, StyleSheet, Text, TextInput, Pressable, ActivityIndicator } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useState, useEffect } from "react";
 import { Storage } from "@aws-amplify/storage";
@@ -232,8 +223,8 @@ const HomeHeader = ({ handlePress, refresh, setRefresh, blowup, setBlowup, testI
                 />
               </View>
               <View style={{ alignItems: "center", flex: 2 }}>
-                {text.length < 500 && <Text style={{fontSize: 14, color: "gray", paddingTop: 10}}>{text.length}/500</Text>}
-                {text.length === 500 && <Text style={{fontSize: 14, color: "red", paddingTop: 10}}>{text.length}/500</Text>}
+                {text.length < 500 && <Text style={{ fontSize: 14, color: "gray", paddingTop: 10 }}>{text.length}/500</Text>}
+                {text.length === 500 && <Text style={{ fontSize: 14, color: "red", paddingTop: 10 }}>{text.length}/500</Text>}
                 <TextInput
                   style={styles.input}
                   placeholder="Write your caption here"
@@ -241,6 +232,7 @@ const HomeHeader = ({ handlePress, refresh, setRefresh, blowup, setBlowup, testI
                   onChangeText={setText}
                   maxLength={500}
                   testID={`${testID}.Create_Post_Caption`}
+                  multiline={true}
                 />
                 {showUploading ? (
                   <ActivityIndicator size="large" color="#2E8CFF" />
