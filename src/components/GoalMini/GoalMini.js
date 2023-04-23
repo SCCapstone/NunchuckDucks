@@ -8,11 +8,11 @@ const GoalMini = ({ description, onDeleteHandler, onCompleteHandler }) => {
   return (
     <View style={styles.container}>
       <Pressable onPress={onCompleteHandler} style={styles.imgContainer}>
-        <AntDesign name="checkcircleo" color={blueThemeColor} size={40} />
+        <AntDesign name="check" size={40} />
       </Pressable>
       <Text style={styles.text}>{description}</Text>
       <Pressable onPress={onDeleteHandler} style={styles.imgContainer}>
-        <AntDesign name="closecircleo" color={blueThemeColor} size={40} />
+        <AntDesign name="close" size={40} />
         {/*<Image
           source={require("../../../assets/icons/Gymbit_Icons_Black/X_Icon_Black.png")} // Placeholder Icon
           style={styles.icon}

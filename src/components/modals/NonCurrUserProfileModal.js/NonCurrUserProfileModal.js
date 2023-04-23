@@ -8,19 +8,16 @@ import { getFollowersList } from "../../../crud/FollowersOperations";
 import GoalSummary from "../../GoalSummary";
 import { blueThemeColor, grayThemeColor } from "../../../library/constants";
 import FastImage from "react-native-fast-image";
+import Bio from "../../Bio/Bio";
+import { AntDesign } from "@expo/vector-icons";
 
 const imageSRC = require("../../../../assets/icons/Gymbit_Icons_Black/Back_Icon_Black.png");
 
-const NonCurrUserProfileModal = ({
-  modalVisible,
-  setModalVisible,
-  username,
-  image,
-}) => {
+const NonCurrUserProfileModal = ({ modalVisible, setModalVisible, username, image }) => {
   const [user, setUser] = useState("");
   const [followingCount, setFollowingCount] = useState("");
   const [followersCount, setFollowersCount] = useState("");
-  const [isPrivate, setIsPrivate] = useState(false);
+  const [isPrivate, setIsPrivate] = useState(true);
 
   useEffect(() => {
     getUserObject(username);
@@ -61,12 +58,7 @@ const NonCurrUserProfileModal = ({
   }
 
   return (
-    <Modal
-      visible={modalVisible}
-      animationType="fade"
-      transparent={true}
-      onRequestClose={closeModal}
-    >
+    <Modal visible={modalVisible} animationType="fade" transparent={true} onRequestClose={closeModal}>
       <View
         style={{
           flex: 1,
@@ -76,7 +68,7 @@ const NonCurrUserProfileModal = ({
       >
         <View style={{ height: "10%" }} />
         <Pressable onPressOut={closeModal} style={styles.backArrow}>
-          <Image source={imageSRC} style={styles.backArrow} />
+          <AntDesign name="arrowleft" size={40} style={styles.backArrow} />
         </Pressable>
         <View
           style={{
@@ -118,9 +110,7 @@ const NonCurrUserProfileModal = ({
               </View>
             </View>
           </View>
-          <View style={styles.bioContainer}>
-            <Text style={styles.bio}>{user?.bio ? user.bio : ""}</Text>
-          </View>
+          <Bio username={username} />
         </View>
         {isPrivate ? (
           <View style={{ marginTop: "10%", maxWidth: "85%" }}>
