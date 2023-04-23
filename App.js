@@ -98,7 +98,7 @@ const app = () => {
             <Stack.Screen
               name="Mutuals"
               options={{
-                tabBarIcon: () => <AntDesign name="home" size={20}></AntDesign>,
+                tabBarIcon: () => <AntDesign name="home" size={20} testID="Mutuals_Screen" accessibilityLabel="Mutuals_Screen"></AntDesign>,
               }}
             >
               {(props) => <MutualScreen {...props} refresh={refresh} setRefresh={setRefresh} />}
@@ -112,6 +112,7 @@ const app = () => {
                     source={require("./assets/icons/tab-bar/tabWorkoutThick.png")}
                     style={styles.tabIcon}
                     testID="Workout_Screen"
+                    accessibilityLabel="Workout_Screen"
                   />
                 ),
               }}
@@ -126,6 +127,7 @@ const app = () => {
                     source={require("./assets/icons/tab-bar/tabGoalThick.png")}
                     style={styles.tabIcon}
                     testID="Goals_Screen"
+                    accessibilityLabel="Goals_Screen"
                   />
                 ),
               }}
@@ -135,14 +137,14 @@ const app = () => {
               component={FollowerScreen}
               initialParams={{ isFollowerPage: false }}
               options={{
-                tabBarIcon: () => <AntDesign name={"team"} size={20}></AntDesign>,
+                tabBarIcon: () => <AntDesign name={"team"} size={20} testID="Followers_Screen" accessibilityLabel="Followers_Screen"></AntDesign>,
               }}
             />
             <Stack.Screen
               name="Profile"
               options={{
                 tabBarIcon: () => (
-                  <AntDesign name={"user"} size={20} testID="Profile_Screen"></AntDesign>
+                  <AntDesign name={"user"} size={20} testID="Profile_Screen" accessibilityLabel="Profile_Screen"></AntDesign>
                 ),
               }}
             >
@@ -152,7 +154,8 @@ const app = () => {
               name="Settings"
               component={SettingsScreen}
               options={{
-                tabBarIcon: () => <Image source={require("./assets/icons/tab-bar/tabSettingsThick.png")} style={styles.tabIcon} />,
+                tabBarIcon: () => <Image source={require("./assets/icons/tab-bar/tabSettingsThick.png")} style={styles.tabIcon} 
+                testID="Settings_Screen" accessibilityLabel="Settings_Screen"/>,
               }}
             />
             {/*<Stack.Screen
