@@ -99,8 +99,8 @@ export default function CreateWorkoutModal({
     setExerciseListIsValid([]);
     setSubmitTouched(false);
     workoutTitleReset();
-    setWorkout(null);
-    setModelExerciseList(null);
+    if(setWorkout) setWorkout(null);
+    if (setModelExerciseList) setModelExerciseList(null);
   };
 
   const handleAddExercise = () => {

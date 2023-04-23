@@ -10,7 +10,7 @@ export default function Workout({ workout, isAbsolute = false }) {
   }
   let JsonWorkout = workout;
   try {
-    JsonWorkout = JSON.parse(JsonWorkout);
+    if (typeof JsonWorkout === "string") JsonWorkout = JSON.parse(JsonWorkout);
   } catch (error) {
     console.log("Workout Parsing: ", error);
     JsonWorkout = workout;

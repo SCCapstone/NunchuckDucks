@@ -3,34 +3,25 @@ import {
   View,
   TouchableOpacity,
   StyleSheet,
-  Touchable,
   Text,
   TextInput,
-  ScrollView,
   Pressable,
   ActivityIndicator,
 } from "react-native";
-import React, { useRef } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { useState, useEffect } from "react";
 import { Storage } from "@aws-amplify/storage";
-import { Auth } from "aws-amplify";
-import { createGoal } from "../../crud/GoalOperations";
-import { getDate } from "../../library/getDate";
 import getPictureFileName from "../../library/getPictureFileName";
 import { createPost } from "../../crud/PostOperations";
 import ImageSelector from "../../components/ImageSelector";
-import { DataStore } from "@aws-amplify/datastore";
 import { getCurrentUser } from "../../crud/CacheOperations";
 import { getWorkouts } from "../../crud/WorkoutOperations";
 import { blueThemeColor, grayThemeColor } from "../../library/constants";
 import { useNetInfo } from "@react-native-community/netinfo";
 import { Toast } from "react-native-toast-message/lib/src/Toast";
-import CustomButton from "../CustomButton/CustomButton";
 import CreateWorkoutModal from "../modals/CreateWorkoutModal";
 import { getNotifications } from "../../crud/NotificationOperations";
 import WorkoutSelection from "../WorkoutSelection";
-import FastImage from "react-native-fast-image";
 import { getAndObserveNotificationCount } from "../../crud/observeQueries/NotificationObserveQueries";
 import { AntDesign } from "@expo/vector-icons";
 import { NotificationsScreen } from "../../screens/NotificationsScreen";
