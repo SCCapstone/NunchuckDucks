@@ -51,7 +51,7 @@ export function WorkoutsScreen() {
           setModelExerciseList={setExercisesForModal}
           testID="Create_Workout_Modal"
         />
-        <View style={styles.stickyHeader}>
+        <View style={styles.stickyHeader} testID="Workout_Screen.Create_New_Workout_Button">
           <CustomButton
             style={{ position: "relative" }}
             buttonType={"default"}
