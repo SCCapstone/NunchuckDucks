@@ -1,12 +1,4 @@
-import {
-  View,
-  Image,
-  Text,
-  StyleSheet,
-  Pressable,
-  TouchableOpacity,
-  ActivityIndicator,
-} from "react-native";
+import { View, Image, Text, StyleSheet, Pressable, TouchableOpacity, ActivityIndicator } from "react-native";
 import { useState, useEffect } from "react";
 import { Storage } from "@aws-amplify/storage";
 import Reactions from "../Reactions";
@@ -26,6 +18,7 @@ import { getWorkoutById } from "../../crud/WorkoutOperations";
 import { getAndObserveComments } from "../../crud/observeQueries/CommentObserveQueries";
 import { getUriFromCache, cacheRemoteUri } from "../../crud/CacheOperations";
 import FastImage from "react-native-fast-image";
+import * as Progress from "react-native-progress";
 
 export default function Post(props) {
   const entry = props.entry;
@@ -51,20 +44,15 @@ export default function Post(props) {
   const [workout, setWorkout] = useState(null);
   const [uriIsSet, setUriIsSet] = useState(false);
   const [imageUri, setImageUri] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [loadingPercent, setLoadingPercent] = useState(0);
 
   const handleBlowUp = () => {
     setBlowup(!blowup);
   };
 
   let commentList = comments.map((val) => {
-    return (
-      <Comment
-        key={val.id}
-        postID={entry.id}
-        commentModel={val}
-        replies={replies.get(val.id)}
-      />
-    );
+    return <Comment key={val.id} postID={entry.id} commentModel={val} replies={replies.get(val.id)} />;
   });
 
   async function onCommentSubmit() {
@@ -81,10 +69,7 @@ export default function Post(props) {
 
   async function observeComments() {
     try {
-      const subscription = await getAndObserveComments(
-        entry.id,
-        setRetrieveComments
-      );
+      const subscription = await getAndObserveComments(entry.id, setRetrieveComments);
       return subscription;
     } catch (error) {
       console.error("Retrieving Comments in Post: ", error);
@@ -177,31 +162,47 @@ export default function Post(props) {
           onClick={() => handleUserClick(username)}
         />
         {/*Need to make it navigate to users specific profile*/}
-        <Text
-          style={styles.postUsername}
-          onPress={() => handleUserClick(username)}
-        >
+        <Text style={styles.postUsername} onPress={() => handleUserClick(username)}>
           {username}
         </Text>
         <Text style={styles.createdAt}>{getTimeElapsed(entry.createdAt)}</Text>
       </View>
-      <Pressable
-        onPress={handleBlowUp}
-        style={{
-          backgroundColor: "rgba(30,144,255,0.5)",
-          position: "relative",
-        }}
-      >
+      <Pressable onPress={handleBlowUp} style={{ backgroundColor: grayThemeColor, position: "relative" }}>
         {uriIsSet ? (
-          <FastImage
-            source={{
-              uri: imageUri,
-              headers: {},
-              priority: FastImage.priority.normal,
-            }}
-            style={{ height: 400 }}
-            resizeMode={FastImage.resizeMode.cover}
-          />
+          <View>
+            {loading && (
+              <View
+                style={{
+                  position: "absolute",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  height: 400,
+                  width: "100%",
+                  backgroundColor: grayThemeColor,
+                }}
+              >
+                {/*<ActivityIndicator color={blueThemeColor} />*/}
+                <Progress.Bar width={200} progress={loadingPercent} color={blueThemeColor} unfilledColor={grayThemeColor} />
+              </View>
+            )}
+            <FastImage
+              style={{ height: 400 }}
+              source={{
+                uri: imageUri,
+                headers: {},
+                priority: FastImage.priority.normal,
+              }}
+              resizeMode={FastImage.resizeMode.cover}
+              onLoadStart={() => setLoading(true)}
+              onProgress={(e) => {
+                let loaded = e.nativeEvent.loaded / e.nativeEvent.total;
+                if (loaded % 0.2 < 0.01) {
+                  setLoadingPercent(loaded);
+                }
+              }}
+              onLoadEnd={() => setLoading(false)}
+            />
+          </View>
         ) : (
           <View
             style={{
@@ -214,19 +215,13 @@ export default function Post(props) {
             <ActivityIndicator size="large" color="#2E8CFF" />
           </View>
         )}
-        {blowup && hasWorkout && (
-          <Workout workout={workout} isAbsolute={true} />
-        )}
+        {blowup && hasWorkout && <Workout workout={workout} isAbsolute={true} />}
       </Pressable>
       {/*replace get time elapsed w/ actual on click utility*/}
       {/*<View style={styles.captionBox} /> Need to implement caption box as intended*/}
       <View name="Footer" style={styles.footer}>
         <Text>{entry.caption}</Text>
-        <Reactions
-          postID={entry.id}
-          commentsClicked={showCommentOption}
-          setCommentsClicked={setCommentOption}
-        />
+        <Reactions postID={entry.id} commentsClicked={showCommentOption} setCommentsClicked={setCommentOption} />
 
         {showCommentOption && (
           <CustomTextInput
@@ -242,9 +237,7 @@ export default function Post(props) {
             multiline={true}
           />
         )}
-        {showCommentOption && (
-          <CustomButton onClick={onCommentSubmit} text={"Submit"} />
-        )}
+        {showCommentOption && <CustomButton onClick={onCommentSubmit} text={"Submit"} />}
         {shortCommentDisplay ? commentList.slice(0, 2) : commentList}
         {comments.length > 2 && (
           <CustomButton
@@ -362,6 +355,6 @@ export function getTimeElapsed(createdAt) {
     ans = Math.round(monthsDifference.toString()) + ` month${Math.floor(monthsDifference) === 1 ? "" : "s"} ago`;
   } else {
     ans = Math.round(yearsDifference.toString()) + ` year${Math.floor(yearsDifference) === 1 ? "" : "s"} ago`;
-    }
+  }
   return ans;
 }

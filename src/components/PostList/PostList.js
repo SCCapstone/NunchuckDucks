@@ -82,12 +82,10 @@ export default function PostList(props) {
     } else {
       usernameFromAWS = username;
     }
-
     let followers = await getUsersFollowed(usernameFromAWS);
     if (onlineInitial === true) {
       await cachePfpInitially(usernameFromAWS, followers);
     }
-
     if (offlineInitialCompleted === true) {
       showOnlineToast(usernameFromAWS);
     } else if (onlineInitial === true) {
@@ -110,6 +108,7 @@ export default function PostList(props) {
       setIsEmpty(false);
     }
     setPosts(postsFromAWS);
+
     let isCacheRefreshNeeded = await checkIfRefreshCacheNeeded(postsFromAWS);
     if (isCacheRefreshNeeded === true) {
       cacheAllPostsFromAWS(postsFromAWS);

@@ -58,25 +58,23 @@ const GoalSummary = ({ username, isCurrentUser = false }) => {
   return (
     <>
       {isCurrentUser ? (
-        <>
-          <Pressable
-            onPress={() => navigation.navigate("Goals")}
-            style={styles.titleBox}
-          >
+        <View style={{ backgroundColor: "white", height: "100%" }}>
+          <View style={styles.titleBoxCurrUser}>
             <Text style={styles.title}>Your Goals</Text>
-          </Pressable>
-          <ScrollView style={{ backgroundColor: "white" }}>
-            {listGoals.length === 0 ? defaultForNoGoals : listGoals}
-          </ScrollView>
-        </>
+          </View>
+          <ScrollView style={{ backgroundColor: "white" }}>{listGoals.length === 0 ? defaultForNoGoals : listGoals}</ScrollView>
+          <CustomButton
+            style={{ alignSelf: "center", marginBottom: "5%", position: "absolute", bottom: "0%" }}
+            text="Go to Goals"
+            onClick={() => navigation.navigate("Goals")}
+          />
+        </View>
       ) : (
         <View style={styles.container}>
           <View style={styles.titleBox}>
             <Text style={styles.title}>{username + "'s"} goals</Text>
           </View>
-          <ScrollView>
-            {listGoals.length === 0 ? defaultForNoGoals : listGoals}
-          </ScrollView>
+          <ScrollView>{listGoals.length === 0 ? defaultForNoGoals : listGoals}</ScrollView>
         </View>
       )}
     </>
@@ -97,7 +95,7 @@ const styles = StyleSheet.create({
     flexDirection: "column",
   },
   goaltext: {
-    fontSize: 30,
+    fontSize: 25,
     flex: 1,
     //maxWidth: 300,
   },
@@ -105,6 +103,7 @@ const styles = StyleSheet.create({
     paddingTop: 5,
     flex: 1,
     flexDirection: "row",
+    alignItems: "center",
     textAlign: "left",
   },
   goaltitle: {
@@ -114,18 +113,25 @@ const styles = StyleSheet.create({
   },
   titleBox: {
     //position: "absolute",
+    padding: 3,
     backgroundColor: grayThemeColor,
     borderTopRightRadius: 15,
     borderTopLeftRadius: 15,
     borderColor: "#000000",
     borderBottomWidth: 3,
   },
+  titleBoxCurrUser: {
+    padding: 3,
+    backgroundColor: grayThemeColor,
+    borderColor: "#000000",
+    borderBottomWidth: 3,
+  },
   title: {
     textAlign: "center",
     width: "auto", //this changes length of line/ box the text exits on
-    fontSize: 22,
+    fontSize: 35,
     paddingTop: 2,
-    height: 33,
+    height: 35,
     color: blueThemeColor,
     fontWeight: "bold",
   },

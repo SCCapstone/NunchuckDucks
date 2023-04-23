@@ -32,6 +32,7 @@ const useInput = (validateValue, initialValue = "") => {
     onChangeHandler: setEnteredValue,
     inputBlurHandler,
     reset,
+    isTouched,
   };
 };
 

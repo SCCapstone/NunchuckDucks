@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import { getImageFromCache } from "../../crud/CacheOperations";
 import { Storage } from "aws-amplify";
 import NonCurrUserProfileModal from "../modals/NonCurrUserProfileModal.js/NonCurrUserProfileModal";
+import { AntDesign } from "@expo/vector-icons";
 
 const NotificationMini = ({ content, onDeleteHandler, username }) => {
   const [userImageSrc, setUserImageSrc] = useState("");
@@ -19,22 +20,19 @@ const NotificationMini = ({ content, onDeleteHandler, username }) => {
     setUserImageSrc(pfp);
   }
 
-  useEffect(() => {
-    getUserImageSrc(username);
-  }, [username]);
-
   return (
-    <View
-      style={
-        isHidden ? { ...styles.container, display: "none" } : styles.container
-      }
-    >
-    <NonCurrUserProfileModal modalVisible={modalVisible} setModalVisible={setModalVisible} username={username} image={userImageSrc}>
-    </NonCurrUserProfileModal>
-      <ProfileMini src={userImageSrc} />
-      <Text style={styles.usernameText} onPress={() => setModalVisible(true)}>{username}
+    <View style={isHidden ? { ...styles.container, display: "none" } : styles.container}>
+      <NonCurrUserProfileModal
+        modalVisible={modalVisible}
+        setModalVisible={setModalVisible}
+        username={username}
+        image={userImageSrc}
+      ></NonCurrUserProfileModal>
+      <ProfileMini username={username} />
+      <Text style={styles.usernameText} onPress={() => setModalVisible(true)}>
+        {username}
         <Text style={styles.text}>{content.substring(username.length)}</Text>
-        </Text>
+      </Text>
       <TouchableOpacity
         onPress={() => {
           setIsHidden(true);
@@ -42,11 +40,7 @@ const NotificationMini = ({ content, onDeleteHandler, username }) => {
         }}
         style={styles.imgContainer}
       >
-        <Image
-          source={require("../../../assets/icons/Gymbit_Icons_Black/X_Icon_Black.png")} // Placeholder Icon
-          style={styles.icon}
-          resizeMethod={"auto"}
-        />
+        <AntDesign name="close" size={40} />
       </TouchableOpacity>
     </View>
   );
@@ -73,14 +67,14 @@ const styles = StyleSheet.create({
     textAlignVertical: "center",
     width: "60%",
     fontSize: 17,
-    color: "black"
+    color: "black",
   },
   usernameText: {
     textAlign: "center",
     textAlignVertical: "center",
     width: "60%",
     fontSize: 17,
-    color: blueThemeColor
+    color: blueThemeColor,
   },
   icon: {
     width: 64,
