@@ -64,7 +64,7 @@ const GoalSummary = ({ username, isCurrentUser = false }) => {
           </View>
           <ScrollView style={{ backgroundColor: "white" }}>{listGoals.length === 0 ? defaultForNoGoals : listGoals}</ScrollView>
           <CustomButton
-            style={{ alignSelf: "center", marginBottom: "5%", position: "absolute", bottom: "0%" }}
+            style={{ alignSelf: "center", marginBottom: "5%", bottom: "0%" }}
             text="Go to Goals"
             onClick={() => navigation.navigate("Goals")}
           />
