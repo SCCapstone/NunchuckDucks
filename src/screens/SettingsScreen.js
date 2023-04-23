@@ -50,7 +50,6 @@ export function SettingsScreen() {
       justifyContent: "center",
       alignContent: "center",
       width: 220,
-      //top: 15,
       borderRadius: 50,
       margin: 10,
     },
@@ -76,15 +75,6 @@ export function SettingsScreen() {
     await togglePrivacy(username, !privacy);
     setPrivacy(!privacy);
     setIsEnabled(!isEnabled);
-    /*if (privacy === true) {
-      await togglePrivacy(username, false);
-      // setIsEnabled((previousState) => false);
-      setPrivacy(false);
-    } else {
-      await togglePrivacy(username, true);
-      // setIsEnabled((previousState) => true);
-      setPrivacy(true);
-    }*/
   };
 
   const showModal = (message) => {
@@ -150,9 +140,7 @@ export function SettingsScreen() {
       </View>
       <View style={{ alignItems: "center", alignContent: "center" }}>
         <CustomButton text="Change weekly goal" onClick={() => setGoalModalVisible(true)} />
-        {/*<TouchableOpacity style={styles.goalButton} onPress={() => setGoalModalVisible(true)}>
-          <Text style={{ textAlign: "center", color: "white", fontWeight: "bold", fontSize: 18 }}>Change weekly goal</Text>
-        </TouchableOpacity>*/}
+        {}
       </View>
       <View style={{ alignContent: "center", alignItems: "center", marginTop: 30 }}>
         <SignOutButton />
