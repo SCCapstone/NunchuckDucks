@@ -17,14 +17,7 @@ import { Amplify, API, Hub } from "@aws-amplify/core";
 import awsmobile from "./src/aws-exports";
 import { withAuthenticator, AmplifyTheme } from "aws-amplify-react-native";
 import { DataStore, Predicates } from "@aws-amplify/datastore";
-import {
-  StyleSheet,
-  View,
-  TitleText,
-  Text,
-  Image,
-  ActivityIndicator,
-} from "react-native";
+import { StyleSheet, View, TitleText, Text, Image, ActivityIndicator } from "react-native";
 import { Storage } from "@aws-amplify/storage";
 import * as clients3 from "@aws-sdk/client-s3";
 import { useState, useEffect } from "react";
@@ -108,24 +101,13 @@ const app = () => {
                 tabBarIcon: () => <AntDesign name="home" size={20}></AntDesign>,
               }}
             >
-              {(props) => (
-                <MutualScreen
-                  {...props}
-                  refresh={refresh}
-                  setRefresh={setRefresh}
-                />
-              )}
+              {(props) => <MutualScreen {...props} refresh={refresh} setRefresh={setRefresh} />}
             </Stack.Screen>
             <Stack.Screen
               name="Workouts"
               component={WorkoutsScreen}
               options={{
-                tabBarIcon: () => (
-                  <Image
-                    source={require("./assets/icons/tab-bar/tabWorkoutThick.png")}
-                    style={styles.tabIcon}
-                  />
-                ),
+                tabBarIcon: () => <Image source={require("./assets/icons/tab-bar/tabWorkoutThick.png")} style={styles.tabIcon} />,
               }}
             />
             <Stack.Screen
@@ -133,12 +115,7 @@ const app = () => {
               component={GoalsScreen}
               initialParams={{ isCompletedPage: false }}
               options={{
-                tabBarIcon: () => (
-                  <Image
-                    source={require("./assets/icons/tab-bar/tabGoalThick.png")}
-                    style={styles.tabIcon}
-                  />
-                ),
+                tabBarIcon: () => <Image source={require("./assets/icons/tab-bar/tabGoalThick.png")} style={styles.tabIcon} />,
               }}
             />
             <Stack.Screen
@@ -146,63 +123,35 @@ const app = () => {
               component={FollowerScreen}
               initialParams={{ isFollowerPage: false }}
               options={{
-                tabBarIcon: () => (
-                  <AntDesign name={"team"} size={20}></AntDesign>
-                ),
+                tabBarIcon: () => <AntDesign name={"team"} size={20}></AntDesign>,
               }}
             />
             <Stack.Screen
               name="Profile"
               options={{
-                tabBarIcon: () => (
-                  <AntDesign name={"user"} size={20}></AntDesign>
-                ),
+                tabBarIcon: () => <AntDesign name={"user"} size={20}></AntDesign>,
               }}
             >
-              {(props) => (
-                <ProfileScreen
-                  {...props}
-                  refresh={refresh}
-                  setRefresh={setRefresh}
-                />
-              )}
+              {(props) => <ProfileScreen {...props} refresh={refresh} setRefresh={setRefresh} />}
             </Stack.Screen>
             <Stack.Screen
               name="Settings"
               component={SettingsScreen}
               options={{
-                tabBarIcon: () => (
-                  <Image
-                    source={require("./assets/icons/tab-bar/tabSettingsThick.png")}
-                    style={styles.tabIcon}
-                  />
-                ),
+                tabBarIcon: () => <Image source={require("./assets/icons/tab-bar/tabSettingsThick.png")} style={styles.tabIcon} />,
               }}
             />
-            <Stack.Screen
+            {/*<Stack.Screen
               name="Notifications"
               component={NotificationsScreen}
-              options={{
-                tabBarIcon: () => (
-                  <AntDesign name={"bells"} size={20}></AntDesign>
-                ),
-              }}
-            />
+              
+            />*/}
           </Stack.Navigator>
         </NavigationContainer>
       ) : (
-        <View
-          style={{ alignItems: "center", justifyContent: "center", flex: 1 }}
-        >
-          <Image
-            style={{ width: 300 }}
-            source={require("./assets/icons/Gymbit_Icons_Trans/Logo_Trans.png")}
-          />
-          <ActivityIndicator
-            style={{ transform: [{ scaleX: 2 }, { scaleY: 2 }] }}
-            size="large"
-            color="#2E8CFF"
-          />
+        <View style={{ alignItems: "center", justifyContent: "center", flex: 1 }}>
+          <Image style={{ width: 300 }} source={require("./assets/icons/Gymbit_Icons_Trans/Logo_Trans.png")} />
+          <ActivityIndicator style={{ transform: [{ scaleX: 2 }, { scaleY: 2 }] }} size="large" color="#2E8CFF" />
         </View>
       )}
       <Toast />

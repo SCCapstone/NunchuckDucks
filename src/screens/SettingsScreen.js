@@ -10,6 +10,7 @@ import InfoModal from "../components/modals/InfoModal";
 import { Toast } from "react-native-toast-message/lib/src/Toast.js";
 import ChangeGoalModal from "../components/modals/ChangeGoalModal/ChangeGoalModal";
 import SignOutButton from "../components/signoutbutton/SignOutButton";
+import CustomButton from "../components/CustomButton/CustomButton";
 
 export function SettingsScreen() {
   const styles = StyleSheet.create({
@@ -48,10 +49,10 @@ export function SettingsScreen() {
       textAlign: "center",
       justifyContent: "center",
       alignContent: "center",
-      width: 180,
-      top: 15,
+      width: 220,
+      //top: 15,
       borderRadius: 50,
-      padding: 10,
+      margin: 10,
     },
   });
 
@@ -93,7 +94,7 @@ export function SettingsScreen() {
 
   const showGoalModal = () => {
     setModalVisible(true);
-  }
+  };
 
   async function renderSettings() {
     let username = await getCurrentUser();
@@ -135,9 +136,9 @@ export function SettingsScreen() {
           <Text style={{ fontSize: 12, color: "gray", paddingLeft: 10 }}>more info</Text>
         </TouchableOpacity>
       </View>
-      <View style={{flexDirection: "row", alignItems: "center"}}>
-      <Text style={styles.goalText}>Your current weekly workout goal is {goal}.</Text>
-      <TouchableOpacity
+      <View style={{ flexDirection: "row", alignItems: "center" }}>
+        <Text style={styles.goalText}>Your current weekly workout goal is {goal}.</Text>
+        <TouchableOpacity
           onPress={() =>
             showModal(
               "Your weekly goal will keep track of how many times per week you would like to work out.  We track your goal progress through the number of posts that you have made in the past week.\nIf you meet your goal for a week your streak will inscrease on your profile."
@@ -148,14 +149,14 @@ export function SettingsScreen() {
         </TouchableOpacity>
       </View>
       <View style={{ alignItems: "center", alignContent: "center" }}>
-        <TouchableOpacity style={styles.goalButton} onPress={() => setGoalModalVisible(true)}>
-          <Text style={{ textAlign: "center", color: "white" }}>Change weekly goal</Text>
-        </TouchableOpacity>
+        <CustomButton text="Change weekly goal" onClick={() => setGoalModalVisible(true)} />
+        {/*<TouchableOpacity style={styles.goalButton} onPress={() => setGoalModalVisible(true)}>
+          <Text style={{ textAlign: "center", color: "white", fontWeight: "bold", fontSize: 18 }}>Change weekly goal</Text>
+        </TouchableOpacity>*/}
       </View>
-      <View style={{ alignContent: "center", alignItems: "center", top: "47%"}}>
+      <View style={{ alignContent: "center", alignItems: "center", marginTop: 30 }}>
         <SignOutButton />
       </View>
-
     </View>
   );
 }

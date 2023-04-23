@@ -1,18 +1,13 @@
 import { View, Text, StyleSheet, Pressable, Image } from "react-native";
 
-import { blueThemeColor } from "../../library/constants";
+import { blueThemeColor, grayThemeColor } from "../../library/constants";
 import Exercise from "../Exercise/Exercise";
 import { useState } from "react";
 import CustomButton from "../CustomButton/CustomButton";
 import { deleteWorkout } from "../../crud/WorkoutOperations";
 import ConfirmDelete from "../modals/ConfirmDelete/ConfirmDelete";
 
-export default function WorkoutMini({
-  workout,
-  refreshWorkouts,
-  setRefreshWorkouts,
-  openCreateWorkoutModal,
-}) {
+export default function WorkoutMini({ workout, refreshWorkouts, setRefreshWorkouts, openCreateWorkoutModal }) {
   const [viewMore, setViewMore] = useState(false);
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
 
@@ -34,9 +29,7 @@ export default function WorkoutMini({
   }
   let workoutName = JsonWorkout.workoutName;
 
-  const displayedExercises = viewMore
-    ? JsonExercises
-    : JsonExercises.slice(0, 2);
+  const displayedExercises = viewMore ? JsonExercises : JsonExercises.slice(0, 2);
 
   let blowUpMainStyles = styles.blowupmain;
   let blowUpHeaderStyles = styles.blowupheader;
@@ -64,23 +57,11 @@ export default function WorkoutMini({
         <View style={styles.buttonsContainer}></View>
         <Text style={styles.workoutName}>{workoutName}</Text>
         <View style={styles.buttonsContainer}>
-          <Pressable
-            onPress={() => openCreateWorkoutModal(JsonWorkout, JsonExercises)}
-            style={styles.buttonConfirmed}
-          >
-            <Image
-              style={styles.button}
-              source={require("../../../assets/icons/Gymbit_Icons_Black/Edit_Icon_Black.png")}
-            />
+          <Pressable onPress={() => openCreateWorkoutModal(JsonWorkout, JsonExercises)} style={styles.buttonConfirmed}>
+            <Image style={styles.button} source={require("../../../assets/icons/Gymbit_Icons_Black/Edit_Icon_Black.png")} />
           </Pressable>
-          <Pressable
-            onPress={() => setDeleteModalVisible(true)}
-            style={styles.buttonConfirmed}
-          >
-            <Image
-              style={styles.button}
-              source={require("../../../assets/icons/Gymbit_Icons_Black/X_Icon_Black.png")}
-            />
+          <Pressable onPress={() => setDeleteModalVisible(true)} style={styles.buttonConfirmed}>
+            <Image style={styles.button} source={require("../../../assets/icons/Gymbit_Icons_Black/X_Icon_Black.png")} />
           </Pressable>
         </View>
       </View>
@@ -104,7 +85,7 @@ export default function WorkoutMini({
 const styles = StyleSheet.create({
   blowupmain: {
     width: "100%",
-    backgroundColor: "rgba(200,212,225,0.7)",
+    backgroundColor: grayThemeColor,
     borderRightWidth: 0,
     borderLeftWidth: 0,
     borderWidth: 1,
