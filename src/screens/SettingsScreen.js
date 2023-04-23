@@ -72,19 +72,14 @@ export function SettingsScreen() {
     renderSettings();
   }, [GoalModalVisible]);
 
+  // useEffect(() => {
+  //   checkPrivacy();
+  // })
+
   const toggleSwitch = async () => {
+    setIsEnabled(!isEnabled);
     await togglePrivacy(username, !privacy);
     setPrivacy(!privacy);
-    setIsEnabled(!isEnabled);
-    /*if (privacy === true) {
-      await togglePrivacy(username, false);
-      // setIsEnabled((previousState) => false);
-      setPrivacy(false);
-    } else {
-      await togglePrivacy(username, true);
-      // setIsEnabled((previousState) => true);
-      setPrivacy(true);
-    }*/
   };
 
   const showModal = (message) => {
@@ -109,6 +104,15 @@ export function SettingsScreen() {
     setGoal(weeklyGoal);
     setText(null);
     setUsername(username);
+  }
+
+  async function checkPrivacy() {
+    let username = await getCurrentUser();
+
+    let privacy = await isUserPrivate(username);
+    if (privacy === true)
+      setIsEnabled(true);
+    setPrivacy(privacy);
   }
 
   return (
