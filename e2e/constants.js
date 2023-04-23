@@ -4,6 +4,14 @@ export const mockPassword = "Mockpassword1";
 
 export const mockCaption = "MOCK_CAPTION";
 
+export const mockWorkoutName = "MOCK_WORKOUT_NAME";
+
+export const mockExerciseName = "MOCK_EXERCISE_NAME";
+
+export const mockExerciseNotes = "MOCK_EXERCISE_NOTES";
+
+export const mockGoal = "MOCK_GOAL";
+
 export const signInAction = async () => {
     await element(by.label("aws-amplify__auth--username-input")).tap();
         await element(by.label("aws-amplify__auth--username-input")).typeText(mockUsername);

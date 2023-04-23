@@ -124,6 +124,7 @@ const app = () => {
                   <Image
                     source={require("./assets/icons/tab-bar/tabWorkoutThick.png")}
                     style={styles.tabIcon}
+                    testID="Workout_Screen"
                   />
                 ),
               }}
@@ -137,6 +138,7 @@ const app = () => {
                   <Image
                     source={require("./assets/icons/tab-bar/tabGoalThick.png")}
                     style={styles.tabIcon}
+                    testID="Goals_Screen"
                   />
                 ),
               }}
@@ -155,7 +157,7 @@ const app = () => {
               name="Profile"
               options={{
                 tabBarIcon: () => (
-                  <AntDesign name={"user"} size={20}></AntDesign>
+                  <AntDesign name={"user"} size={20} testID="Profile_Screen"></AntDesign>
                 ),
               }}
             >

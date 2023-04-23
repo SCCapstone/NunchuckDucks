@@ -271,12 +271,12 @@ export function ProfileScreen(props) {
         </View>
       </View>
       <Tab.Navigator initialRouteName="GoalSummary" tabBarPosition="top">
-        <Tab.Screen name="Goals Summary">
+        <Tab.Screen name="Goals Summary" testID="Profile_Screen.Goals_Summary_Button">
           {(props) => (
             <GoalSummary {...props} username={username} isCurrentUser={true} />
           )}
         </Tab.Screen>
-        <Tab.Screen name="Your Posts" component={ProfilePostList} />
+        <Tab.Screen name="Your Posts" component={ProfilePostList} testID="Profile_Screen.User_Posts"/>
       </Tab.Navigator>
     </>
   );

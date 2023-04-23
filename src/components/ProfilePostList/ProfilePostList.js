@@ -31,6 +31,7 @@ export default function ProfilePostList() {
         data={posts}
         renderItem={({ item }) => <Post entry={item} />}
         keyExtractor={(item) => item.id}
+        testID="User_Post_List"
       />
     </>
   );

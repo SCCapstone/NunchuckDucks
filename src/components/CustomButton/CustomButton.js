@@ -21,6 +21,7 @@ const CustomButton = ({
   text,
   style,
   textStyle,
+  testID
 }) => {
   // Retrieve dynamic styles
   let dynamicContainerStyles = {};
@@ -46,7 +47,7 @@ const CustomButton = ({
   const textStyles = { ...styles.text, ...dynamicTextStyles, ...textStyle };
 
   return (
-    <Pressable onPressOut={onClick} style={containerStyles}>
+    <Pressable onPressOut={onClick} style={containerStyles} testID={testID}>
       <Text style={textStyles}>{text}</Text>
     </Pressable>
   );

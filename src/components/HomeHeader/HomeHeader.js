@@ -274,7 +274,7 @@ const HomeHeader = ({
                   <TouchableOpacity
                     style={styles.submit}
                     onPress={attemptToCreatePost}
-                    testID={`${testID}.Create_Post_Submit`
+                    testID={`${testID}.Create_Post_Submit`}
                   >
                     <Text style={styles.submitText}>Post Gymbit</Text>
                   </TouchableOpacity>
@@ -292,6 +292,7 @@ const HomeHeader = ({
       </View>
     </>
   );
+};
 };
 
 const styles = StyleSheet.create({

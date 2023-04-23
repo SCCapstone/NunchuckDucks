@@ -4,11 +4,11 @@ import React from "react";
 import { AntDesign } from "@expo/vector-icons";
 
 // Component that provides a short goal description and handles a custom click event
-const CompletedGoalMini = ({ description, onDeleteHandler }) => {
+const CompletedGoalMini = ({ description, onDeleteHandler, testID }) => {
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>{description}</Text>
-      <Pressable onPress={onDeleteHandler} style={styles.imgContainer}>
+      <Text style={styles.text} >{description}</Text>
+      <Pressable onPress={onDeleteHandler} style={styles.imgContainer} testID={testID}>
         <AntDesign name="closecircleo" color={blueThemeColor} size={40} />
       </Pressable>
     </View>
