@@ -19,5 +19,5 @@ describe("Create Post Tests", () => {
         await element(by.id("HomeHeader.Create_Post_Submit")).tap();
 
         await expect(element(by.text(mockCaption))).toBeVisible();
-    */});
+    });*/
 });

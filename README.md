@@ -80,6 +80,8 @@ section that explains how to run them.
 
 The unit tests are in `/test/unit`.
 
+The behavioral tests are all located at e2e/*.test.js.
+
 ## Testing Technology
 
 No test runners required
@@ -90,11 +92,23 @@ The behavioral (end-to-end) tests are in `/e2e/starter.test.js`
 
 To run the end-to-end test, perform these steps:
 
+(For iOS)
 1. Download the application binary from the Expo Dev builds section. Decompress the file; it should become a folder of type Application, and named "NunchuckDucks.app".
 2. Open two terminals. In one, run the app with `npm start`
 3. In the other, enter the command `detox test --configuration <config>`
    1. `<config>` should be one of the configurations listed under .detoxrc.js
-      1. If using an iOS emulator, consider using **ios.sim.release for `<config>`**
+      1. If using an iOS emulator, consider using **ios.sim.release for `<config>`**\
+
+(For Android)
+1. In `.detoxrc.js` make sure to change the name of the emulator under `devices.emulator.device.avdName` to the name of the emulator
+you are using. (if you are using an emulator)
+2. If using windows make sure the path in `.detoxrc.js` under `apps.android.release.build` has `&&` instead of `;` and double back-slashes
+instead of a single forward slash. If using a Mac, these configurations should be the opposite.
+3. run the command `detox build -c android.emu.release`. Or download the .apk to the path `android/app/build/outputs/apk/release/app-release.apk`.js
+4. run the command `detox test <test-file-name> -c android.emu.release`. The <test-file-name> is the name of the individual detox test suite
+you want to run. If you want to run them all, run `detox test -c android.emu.release`
+
+**The tess files generally take about 1-3 minutes each to run completely**
 
 # Authors
 
