@@ -5,7 +5,7 @@ import { getCurrentUser } from "../../crud/CacheOperations";
 import { grayThemeColor } from "../../library/constants";
 import { isEmpty } from "@aws-amplify/core";
 
-const Bio = ({ username, testID }) => {
+const Bio = ({ username }) => {
   const [bio, setBio] = useState("");
   const [bioEmpty, setBioEmpty] = useState(false);
 

@@ -7,7 +7,7 @@ import { Storage } from "aws-amplify";
 import NonCurrUserProfileModal from "../modals/NonCurrUserProfileModal.js/NonCurrUserProfileModal";
 import { AntDesign } from "@expo/vector-icons";
 
-const NotificationMini = ({ content, onDeleteHandler, username, testID }) => {
+const NotificationMini = ({ content, onDeleteHandler, username }) => {
   const [userImageSrc, setUserImageSrc] = useState("");
   const [isHidden, setIsHidden] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
@@ -29,7 +29,7 @@ const NotificationMini = ({ content, onDeleteHandler, username, testID }) => {
         image={userImageSrc}
       ></NonCurrUserProfileModal>
       <ProfileMini username={username} />
-      <Text style={styles.usernameText} onPress={() => setModalVisible(true)} testID={`${testID}.Text`}>
+      <Text style={styles.usernameText} onPress={() => setModalVisible(true)}>
         {username}
         <Text style={styles.text}>{content.substring(username.length)}</Text>
       </Text>

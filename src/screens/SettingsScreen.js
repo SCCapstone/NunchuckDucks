@@ -116,7 +116,7 @@ export function SettingsScreen() {
   }
 
   return (
-    <View style={styles.container} testID="Settings_Screen_Header">
+    <View style={styles.container}>
       <Header title={"Settings"} />
       <View style={{ flexDirection: "row", alignItems: "center" }}>
         <InfoModal modalVisible={modalVisible} setModalVisible={setModalVisible} message={message}></InfoModal>
@@ -157,7 +157,7 @@ export function SettingsScreen() {
         {}
       </View>
       <View style={{ alignContent: "center", alignItems: "center", marginTop: 30 }}>
-        <SignOutButton testID="Sign_Out_Button"/>
+        <SignOutButton />
       </View>
     </View>
   );

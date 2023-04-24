@@ -16,7 +16,6 @@ export default function ExerciseInput({
   exerciseList,
   setExerciseList,
   setExerciseListIsModified,
-  testID
 }) {
   const [isConfirmed, setisConfirmed] = useState(() => {
     if (exercise?.exerciseName) return true;
@@ -100,7 +99,6 @@ export default function ExerciseInput({
             hasError={exerciseNameHasError}
             errorMessage={exerciseNameErrorMessage}
             customStyles={{ marginLeft: 10 }}
-            testID={`${testID}.Exercise_Name`}
           ></CustomTextInputWithError>
           <CustomTextInputWithError
             enteredValue={exerciseNotes}
@@ -111,7 +109,6 @@ export default function ExerciseInput({
             errorMessage={exerciseNotesErrorMessage}
             customStyles={{ marginLeft: 10 }}
             multiline={true}
-            testID={`${testID}.Exercise_Notes`}
           ></CustomTextInputWithError>
         </View>
       )}
@@ -134,7 +131,6 @@ export default function ExerciseInput({
               marginRight: 10,
             }}
             text="Confirm"
-            testID={`${testID}.Confirm_Button`}
           />
           <CustomButton
             onClick={deleteExercise}
@@ -145,7 +141,6 @@ export default function ExerciseInput({
               marginLeft: 10,
             }}
             text="Delete"
-            testID={`${testID}.Delete_Button`}
           />
         </View>
       )}

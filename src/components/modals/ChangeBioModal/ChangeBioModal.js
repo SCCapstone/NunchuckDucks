@@ -6,7 +6,7 @@ import CustomButton from "../../CustomButton";
 import CustomTextInput from "../../CustomTextInput";
 import { Toast } from "react-native-toast-message/lib/src/Toast";
 
-const ChangeBioModal = ({ modalVisible, setModalVisible, testID }) => {
+const ChangeBioModal = ({ modalVisible, setModalVisible }) => {
   const [bioValue, setBioValue] = useState("");
 
   async function changeBio() {
@@ -29,11 +29,10 @@ const ChangeBioModal = ({ modalVisible, setModalVisible, testID }) => {
             enteredValue={bioValue}
             onChangeHandler={(text) => setBioValue(text)}
             maxLength={100}
-            testID={`${testID}.Text_Input`}
           ></CustomTextInput>
           {bioValue.length < 100 && <Text style={{fontSize: 14, color: "gray"}}>{bioValue.length}/100</Text>}
           {bioValue.length === 100 && <Text style={{fontSize: 14, color: "red"}}>{bioValue.length}/100</Text>}
-          <CustomButton buttonType={"default"} text={"Confirm Updated Bio"} onClick={changeBio} testID={`${testID}.Confirm_Button`}></CustomButton>
+          <CustomButton buttonType={"default"} text={"Confirm Updated Bio"} onClick={changeBio}></CustomButton>
         </View>
       </View>
     </Modal>

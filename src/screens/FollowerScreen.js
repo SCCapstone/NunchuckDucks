@@ -49,7 +49,6 @@ export function FollowerScreen({ route, navigation }) {
   const listItems = list
     .map((val) => (
       <FollowerMini
-        testID="Follower_Screen.Follower"
         username={val.username}
         onDelete={async () => {
           let currUser = getCurrentUser();
@@ -74,20 +73,11 @@ export function FollowerScreen({ route, navigation }) {
     });
 
   return (
-    <View style={styles.container} testID="Follower_Screen_Header">
-      <AddFollowerModal
-        modalVisible={modalVisible}
-        setModalVisible={setModalVisible}
-        testID="Follower_Screen"
-      ></AddFollowerModal>
+    <View style={styles.container}>
+      <AddFollowerModal modalVisible={modalVisible} setModalVisible={setModalVisible}></AddFollowerModal>
       <View style={styles.stickyHeader}>
         <Header title={"Followers"}></Header>
-        <CustomButton
-          buttonType={"default"}
-          text={"Follow New User"}
-          onClick={() => setModalVisible(true)}
-          testID="Follower_Screen.Follower_New_User"
-        ></CustomButton>
+        <CustomButton buttonType={"default"} text={"Follow New User"} onClick={() => setModalVisible(true)}></CustomButton>
         <View style={styles.pageChangeButtons}>
           <CustomButton
             buttonType={"hyperlink"}

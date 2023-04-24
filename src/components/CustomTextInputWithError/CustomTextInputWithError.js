@@ -9,7 +9,6 @@ const CustomTextInputWithError = ({
   customStyles,
   hasError,
   errorMessage,
-  testID,
   ...rest
 }) => {
   const textInputStyles = hasError
@@ -25,7 +24,6 @@ const CustomTextInputWithError = ({
         placeholder={placeholder}
         placeholderTextColor="gray"
         style={textInputStyles}
-        testID={testID}
         {...rest}
       ></TextInput>
       {hasError && <Text style={styles.errorText}>{errorMessage}</Text>}

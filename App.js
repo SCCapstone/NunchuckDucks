@@ -89,7 +89,7 @@ const app = () => {
             <Stack.Screen
               name="Mutuals"
               options={{
-                tabBarIcon: () => <AntDesign name="home" size={20} testID="Mutuals_Screen" accessibilityLabel="Mutuals_Screen"></AntDesign>,
+                tabBarIcon: () => <AntDesign name="home" size={20}></AntDesign>,
               }}
             >
               {(props) => <MutualScreen {...props} refresh={refresh} setRefresh={setRefresh} />}
@@ -98,14 +98,7 @@ const app = () => {
               name="Workouts"
               component={WorkoutsScreen}
               options={{
-                tabBarIcon: () => (
-                  <Image
-                    source={require("./assets/icons/tab-bar/tabWorkoutThick.png")}
-                    style={styles.tabIcon}
-                    testID="Workout_Screen"
-                    accessibilityLabel="Workout_Screen"
-                  />
-                ),
+                tabBarIcon: () => <Image source={require("./assets/icons/tab-bar/tabWorkoutThick.png")} style={styles.tabIcon} />,
               }}
             />
             <Stack.Screen
@@ -113,14 +106,7 @@ const app = () => {
               component={GoalsScreen}
               initialParams={{ isCompletedPage: false }}
               options={{
-                tabBarIcon: () => (
-                  <Image
-                    source={require("./assets/icons/tab-bar/tabGoalThick.png")}
-                    style={styles.tabIcon}
-                    testID="Goals_Screen"
-                    accessibilityLabel="Goals_Screen"
-                  />
-                ),
+                tabBarIcon: () => <Image source={require("./assets/icons/tab-bar/tabGoalThick.png")} style={styles.tabIcon} />,
               }}
             />
             <Stack.Screen
@@ -128,15 +114,13 @@ const app = () => {
               component={FollowerScreen}
               initialParams={{ isFollowerPage: false }}
               options={{
-                tabBarIcon: () => <AntDesign name={"team"} size={20} testID="Followers_Screen" accessibilityLabel="Followers_Screen"></AntDesign>,
+                tabBarIcon: () => <AntDesign name={"team"} size={20}></AntDesign>,
               }}
             />
             <Stack.Screen
               name="Profile"
               options={{
-                tabBarIcon: () => (
-                  <AntDesign name={"user"} size={20} testID="Profile_Screen" accessibilityLabel="Profile_Screen"></AntDesign>
-                ),
+                tabBarIcon: () => <AntDesign name={"user"} size={20}></AntDesign>,
               }}
             >
               {(props) => <ProfileScreen {...props} refresh={refresh} setRefresh={setRefresh} />}
@@ -145,8 +129,7 @@ const app = () => {
               name="Settings"
               component={SettingsScreen}
               options={{
-                tabBarIcon: () => <Image source={require("./assets/icons/tab-bar/tabSettingsThick.png")} style={styles.tabIcon} 
-                testID="Settings_Screen" accessibilityLabel="Settings_Screen"/>,
+                tabBarIcon: () => <Image source={require("./assets/icons/tab-bar/tabSettingsThick.png")} style={styles.tabIcon} />,
               }}
             />
             {}

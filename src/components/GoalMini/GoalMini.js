@@ -4,14 +4,14 @@ import React from "react";
 import { AntDesign } from "@expo/vector-icons";
 
 // Component that provides a short goal description and handles a custom click event
-const GoalMini = ({ description, onDeleteHandler, onCompleteHandler, testID }) => {
+const GoalMini = ({ description, onDeleteHandler, onCompleteHandler }) => {
   return (
     <View style={styles.container}>
-      <Pressable onPress={onCompleteHandler} style={styles.imgContainer} testID={testID}>
+      <Pressable onPress={onCompleteHandler} style={styles.imgContainer}>
         <AntDesign name="check" size={40} />
       </Pressable>
       <Text style={styles.text}>{description}</Text>
-      <Pressable onPress={onDeleteHandler} style={styles.imgContainer} testID={`${testID}.Delete`}>
+      <Pressable onPress={onDeleteHandler} style={styles.imgContainer}>
         <AntDesign name="close" size={40} />
         {/*<Image
           source={require("../../../assets/icons/Gymbit_Icons_Black/X_Icon_Black.png")} // Placeholder Icon

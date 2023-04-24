@@ -37,9 +37,9 @@ export function MutualScreen(props) {
       {isEmpty && (
         <View style={{ alignItems: "center", height: "100%" }}>
           <View style={{ flexDirection: "row", justifyContent: "center", marginTop: "50%" }}>
-            <CustomButton style={{ width: "40%" }} text="Create a post" onClick={() => setBlowup(true)} testID="Mutual_Screen.Empty_Create_Post"/>
+            <CustomButton style={{ width: "40%" }} text="Create a post" onClick={() => setBlowup(true)} />
             <View style={{ width: "5%" }} />
-            <CustomButton style={{ width: "40%" }} text="Add a friend" onClick={() => nav.navigate("Followers")}/>
+            <CustomButton style={{ width: "40%" }} text="Add a friend" onClick={() => nav.navigate("Followers")} />
           </View>
           <View style={{ height: "5%" }} />
           <Text

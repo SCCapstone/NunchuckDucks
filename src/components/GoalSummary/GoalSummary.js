@@ -58,7 +58,7 @@ const GoalSummary = ({ username, isCurrentUser = false }) => {
   return (
     <>
       {isCurrentUser ? (
-        <View style={{ backgroundColor: "white", height: "100%" }} testID="Goal_Summary">
+        <View style={{ backgroundColor: "white", height: "100%" }}>
           <View style={styles.titleBoxCurrUser}>
             <Text style={styles.title}>Your Goals</Text>
           </View>
@@ -70,7 +70,7 @@ const GoalSummary = ({ username, isCurrentUser = false }) => {
           />
         </View>
       ) : (
-        <View style={styles.container} testID="Goal_Summary">
+        <View style={styles.container}>
           <View style={styles.titleBox}>
             <Text style={styles.title}>{username + "'s"} goals</Text>
           </View>

@@ -54,17 +54,16 @@ export function NotificationsScreen({ showNotifications, setShowNotifications })
         // to rerender every time a deletion happens
       }}
       username={notification.interactingUserUsername}
-      testID="Notification"
     />
   ));
 
   return (
     <>
       <Modal visible={showNotifications} animationType="fade" transparent={true} onRequestClose={() => setShowNotifications(false)}>
-        <View style={{ backgroundColor: "white", height: "100%" }} testID="Notifications_Screen">
+        <View style={{ backgroundColor: "white", height: "100%" }}>
           <View style={{ alignItems: "center", paddingBottom: 20 }}>
             <Header title={"Notifications"} style={{ backgroundColor: "white" }} />
-            <Pressable onPressOut={() => setShowNotifications(false)} style={styles.backArrow} testID="Notifications_Back_Arrow">
+            <Pressable onPressOut={() => setShowNotifications(false)} style={styles.backArrow}>
               <AntDesign name="arrowleft" size={40} style={styles.backArrow} />
             </Pressable>
             {isEmpty && (
@@ -72,7 +71,7 @@ export function NotificationsScreen({ showNotifications, setShowNotifications })
                 <Text style={styles.defaultText}>Looks like there are no new notifications!</Text>
               </View>
             )}
-            {!isEmpty && <CustomButton buttonType={"default"} text={"Delete All"} onClick={() => deleteAllButton(currUser)} testID="Notifications_Delete_All"></CustomButton>}
+            {!isEmpty && <CustomButton buttonType={"default"} text={"Delete All"} onClick={() => deleteAllButton(currUser)}></CustomButton>}
           </View>
           <View>
             <ScrollView contentContainerStyle={styles.scroll}>{listNotifications}</ScrollView>

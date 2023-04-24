@@ -4,7 +4,7 @@ import { deleteAllCache } from "../../crud/CacheOperations";
 import FastImage from "react-native-fast-image";
 import { useState } from "react";
 
-const SignOutButton = ({ testID }) => {
+const SignOutButton = () => {
   const [isClicked, setIsClicked] = useState(false);
 
   const signOut = async () => {
@@ -51,7 +51,6 @@ const SignOutButton = ({ testID }) => {
       onPress={() => {
         signOutOps();
       }}
-      testID={testID}
     >
       <Text
         style={{

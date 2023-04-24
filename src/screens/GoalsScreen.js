@@ -83,7 +83,6 @@ export function GoalsScreen({ route }) {
         await deleteGoal(goalId);
         setForceRefresh(!forceRefresh);
       }}
-      testID="Goal_Screen.Incomplete"
     />
   ));
   if (!incompletegoals?.length) incompleteListGoals = <Text style={styles.placeholder}>No In Progress Goals</Text>;
@@ -97,7 +96,6 @@ export function GoalsScreen({ route }) {
         await deleteGoal(goalId);
         setForceRefresh(!forceRefresh);
       }}
-      testID="Goal_Screen.Complete"
     />
   ));
   if (!completegoals?.length) {
@@ -105,11 +103,11 @@ export function GoalsScreen({ route }) {
   }
 
   return (
-    <View style={{ backgroundColor: "white", height: "100%" }} testID="Goals_Screen_Header">
+    <View style={{ backgroundColor: "white", height: "100%" }}>
       <View style={styles.stickyHeader}>
         <Header title={"Goals"} />
 
-        <CustomButton text="Create Goal" onClick={handleBlowUp} testID="Goal_Screen.Create_Goal_Button"/>
+        <CustomButton text="Create Goal" onClick={handleBlowUp} />
 
         <View style={styles.pageChangeButtons}>
           <CustomButton
@@ -119,7 +117,6 @@ export function GoalsScreen({ route }) {
             text={"In Progress"}
             onClick={() => nav.navigate("Goals", { isCompletedPage: false })}
             textStyle={styles.pageChangeButtonsText}
-            testID="Goals_Screen.In_Progress_Button"
           ></CustomButton>
           <CustomButton
             buttonType={"hyperlink"}
@@ -128,7 +125,6 @@ export function GoalsScreen({ route }) {
             text={"Completed"}
             onClick={() => nav.navigate("Goals", { isCompletedPage: true })}
             textStyle={styles.pageChangeButtonsText}
-            testID="Goals_Screen.Completed_Button"
           ></CustomButton>
         </View>
       </View>
@@ -153,15 +149,10 @@ export function GoalsScreen({ route }) {
                   onChangeText={onChangeText}
                   placeholder={"Enter details about your goal"}
                   value={text}
-                  testID="Goal_Screen.Create_Goal_Text_Input"
+                  multiline={true}
                 />
                 <View style={styles.miniContainer}>
-                  <CustomButton
-                    text="Create Goal"
-                    style={styles.button0}
-                    onClick={saveGoal}
-                    testID="Goal_Screen.Create_Goal_Submit_Button"
-                  />
+                  <CustomButton text="Create Goal" style={styles.button0} onClick={saveGoal} />
                 </View>
               </View>
             </View>
