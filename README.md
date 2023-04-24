@@ -50,20 +50,35 @@ If there are errors with a script running you will need to do the following in a
 To run the app, use one of the following commands.
 `expo start`
 `npm start`
-`yarn start`
 
 The user can then either use a connected emulator or a web browser to use the app.
 The user can also download the Expo Go app and scan the QR code with their smartphone camera to use the app.
 
 # Deployment
 
-Webapps need a deployment section that explains how to get it deployed on the
-Internet. These should be detailed enough so anyone can re-deploy if needed
-. Note that you **do not put passwords in git**.
+EAS build is the technology used to make all of the necessary builds for the project.
 
-Mobile apps will also sometimes need some instructions on how to build a
-"release" version, maybe how to sign it, and how to run that binary in an
-emulator or in a physical phone.
+The first step to creating a new build is to download the eas command line tool:
+
+`npm install -g eas-cli`
+
+Now, if you are a GymBit adminstrator with build creation permission, sign in to Expo from the command line:
+
+`eas login`
+
+You are now able to create builds using EAS.
+
+The most common command we use is to make a new Android production build:
+
+`eas build -p android --profile preview`
+
+This profile, called preview, can be found in the eas.json file. 
+
+Other profiles have been created, such as ones for making an iOS build, a development build, and more. 
+
+To learn more about making new build profiles, check out https://docs.expo.dev/build/eas-json/
+
+To check on the build status and to download new builds, go to https://expo.dev/
 
 # Testing
 
