@@ -30,7 +30,15 @@
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "plugins": ["@config-plugins/detox"],
+    "plugins": [
+      "@config-plugins/detox",
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Allow GymBit to access your camera."
+        }
+      ]
+    ],
     "extra": {
       "eas": {
         "projectId": "0777130d-6706-4342-aa9d-630e787674cd"

@@ -1,6 +1,8 @@
 import { View, Image, TouchableOpacity, Text, StyleSheet, Pressable } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
+import CameraComponent from "../CameraComponent/CameraComponent";
+import { useState } from "react";
 
 const styles = StyleSheet.create({
   container: {
@@ -13,10 +15,14 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
   uploadBtnContainer: {
-    flex: 1,
+    //flex: 1,
+    position: "absolute",
+    flexDirection: "row",
+    bottom: 0,
     //opacity: 0.7,
     //alignItems: "center",
-    paddingTop: 5,
+    //paddingTop: 5,
+    minHeight: 40,
     justifyContent: "center",
     //right: 0,
     //bottom: 0,
@@ -44,12 +50,7 @@ const styles = StyleSheet.create({
  * @param {*} props MUST USE A useState() [image,setImage] FOR THIS FUNCTION TO BE EFFECTIVE
  * @returns
  */
-export default function ImageSelector(props) {
-  const image = props.image;
-  const setImage = props.setImage;
-  function chooseCameraOrUpload() {
-    <Pressable onPress={closeModal} style={styles.transparentView} />;
-  }
+export default function ImageSelector({ image, setImage, setShowCamera }) {
   const addImage = async () => {
     let _image = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images /*Only allow image upload */,
@@ -59,16 +60,25 @@ export default function ImageSelector(props) {
     });
     setImage(_image.uri);
   };
+
   return (
     <View style={styles.container}>
       <View style={{ width: "100%", aspectRatio: 1 }}>
         {image && <Image source={{ uri: image }} style={{ width: "100%", aspectRatio: 1 }} />}
       </View>
       <View style={styles.uploadBtnContainer}>
-        <TouchableOpacity onPress={addImage} style={styles.uploadBtn}>
-          <Text>{image ? "Edit" : "Upload"} Image</Text>
-          <AntDesign name="camera" size={20} color="black" />
-        </TouchableOpacity>
+        <View style={{ flexDirection: "column", width: "50%", justifyContent: "center" }}>
+          <TouchableOpacity onPress={addImage} style={styles.uploadBtn}>
+            <AntDesign name="upload" size={20} color="black" />
+            <Text style={{ fontSize: 12 }}>Upload</Text>
+          </TouchableOpacity>
+        </View>
+        <View style={{ flexDirection: "column", width: "50%", justifyContent: "center" }}>
+          <TouchableOpacity onPress={() => setShowCamera(true)} style={styles.uploadBtn}>
+            <AntDesign name="camera" size={20} color="black" />
+            <Text style={{ fontSize: 12 }}>Capture</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </View>
   );

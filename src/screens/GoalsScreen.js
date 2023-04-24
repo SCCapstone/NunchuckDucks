@@ -1,4 +1,4 @@
-import {View,StyleSheet,ScrollView,Text,TextInput,Pressable} from "react-native";
+import { View, StyleSheet, ScrollView, Text, TextInput, Image, TouchableOpacity, Pressable } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import Header from "../components/Header/Header";
 import CustomButton from "../components/CustomButton/CustomButton";
@@ -11,6 +11,7 @@ import { Storage } from "@aws-amplify/storage";
 import { createGoal } from "../crud/GoalOperations";
 import { getDate } from "../library/getDate";
 import { getCurrentUser } from "../crud/CacheOperations";
+import { AntDesign } from "@expo/vector-icons";
 
 Storage.configure();
 
@@ -45,8 +46,8 @@ export function GoalsScreen({ route }) {
     const username = await getCurrentUser();
     //if checkcompleted is true -> add to this comp list of goals, else incomplete list
     const goals = await getGoals(username);
-    tempincgoals = [];
-    tempcompgoals = [];
+    let tempincgoals = [];
+    let tempcompgoals = [];
     for (let i = 0; i < goals.length; i++) {
       if (!goals[i].isCompleted) {
         tempincgoals.push(goals[i]);
@@ -109,7 +110,7 @@ export function GoalsScreen({ route }) {
       <View style={styles.stickyHeader}>
         <Header title={"Goals"} />
 
-        <CustomButton text="Create Goal" onClick={handleBlowUp} testID="Goal_Screen.Create_Goal_Button"/>
+        <CustomButton text="Create Goal" onClick={handleBlowUp} testID="Goal_Screen.Create_Goal_Button" />
 
         <View style={styles.pageChangeButtons}>
           <CustomButton
