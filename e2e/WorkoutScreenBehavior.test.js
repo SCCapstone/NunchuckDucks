@@ -18,7 +18,7 @@ describe("Workout tests", () => {
     await expect(element(by.id("Workout_Screen_Header"))).toBeVisible();
   });
 
-  it("Successfully creates a workout and then deletes it", async () => {
+  it("Successfully creates a workout", async () => {
     await element(by.id("Workout_Screen")).atIndex(0).tap();
     await element(by.id("Workout_Screen.Create_New_Workout_Button")).tap();
     await element(by.id("Create_Workout_Modal.Text_Input")).tap();
@@ -33,9 +33,6 @@ describe("Workout tests", () => {
     await element(by.id("Create_Workout_Modal.Confirm_Button")).tap();
 
     await expect(element(by.text(mockExerciseName))).toBeVisible();
-
-    //await element(by.id("Create_Workout_Modal.Delete_Button")).atIndex(0).tap();
-    //await expect(element(by.text(mockExerciseName))).not.toBeVisible();
   });
 
  });

@@ -8,7 +8,7 @@ const GoalMini = ({ description, onDeleteHandler, onCompleteHandler, testID }) =
   return (
     <View style={styles.container}>
       <Pressable onPress={onCompleteHandler} style={styles.imgContainer} testID={testID}>
-        <AntDesign name="checkcircleo" color={blueThemeColor} size={40} />
+        <AntDesign name="check" size={40} />
       </Pressable>
       <Text style={styles.text}>{description}</Text>
       <Pressable onPress={onDeleteHandler} style={styles.imgContainer} testID={`${testID}.Delete`}>
