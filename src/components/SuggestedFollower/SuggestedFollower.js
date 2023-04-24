@@ -4,7 +4,6 @@ import React, { useState, useEffect } from "react";
 import CustomButton from "../CustomButton";
 import ProfileMini from "../ProfileMini";
 import { blueThemeColor } from "../../library/constants";
-import { getImageFromCache } from "../../crud/CacheOperations";
 
 const SuggestedFollower = ({ username, addNewFollower, testID }) => {
   return (
