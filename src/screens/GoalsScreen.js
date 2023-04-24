@@ -1,4 +1,4 @@
-import { View, StyleSheet, ScrollView, Text, TextInput, Image, TouchableOpacity } from "react-native";
+import { View, StyleSheet, ScrollView, Text, TextInput, Image, TouchableOpacity, Pressable } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import Header from "../components/Header/Header";
 import CustomButton from "../components/CustomButton/CustomButton";
@@ -46,8 +46,8 @@ export function GoalsScreen({ route }) {
     const username = await getCurrentUser();
     //if checkcompleted is true -> add to this comp list of goals, else incomplete list
     const goals = await getGoals(username);
-    tempincgoals = [];
-    tempcompgoals = [];
+    let tempincgoals = [];
+    let tempcompgoals = [];
     for (let i = 0; i < goals.length; i++) {
       if (!goals[i].isCompleted) {
         tempincgoals.push(goals[i]);
