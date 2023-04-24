@@ -1,5 +1,7 @@
-
-
+/**
+ * function to get date for timetracking
+ * @returns date
+ */
 export function getDate() {
     var today = new Date();
     console.log(today);

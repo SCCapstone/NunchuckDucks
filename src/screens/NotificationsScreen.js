@@ -1,16 +1,11 @@
-import { Text, View, TouchableOpacity, StyleSheet, ScrollView, Pressable, Modal } from "react-native";
+import { Text, View, StyleSheet, ScrollView, Pressable, Modal } from "react-native";
 import Header from "../components/Header/Header";
 import CustomButton from "../components/CustomButton";
-import { DataStore } from "aws-amplify";
 import { useState, useEffect } from "react";
 import { Storage } from "aws-amplify";
-import { Notification } from "../models";
-import { Auth } from "aws-amplify";
 import React from "react";
-import { refresh } from "@react-native-community/netinfo";
 import { useNavigation } from "@react-navigation/native";
-import { getDate } from "../library/getDate";
-import { getNotifications, deleteNotification, getNotificationCount, deleteAllNotifications } from "../crud/NotificationOperations";
+import { getNotifications, deleteNotification, deleteAllNotifications } from "../crud/NotificationOperations";
 import { getCurrentUser } from "../crud/CacheOperations";
 import NotificationMini from "../components/Notification/NotificationMini";
 import DefaultTheme from "@react-navigation/native";
@@ -78,7 +73,7 @@ export function NotificationsScreen({ showNotifications, setShowNotifications })
             )}
             {!isEmpty && <CustomButton buttonType={"default"} text={"Delete All"} onClick={() => deleteAllButton(currUser)}></CustomButton>}
           </View>
-          <View style={{ flex: 1 }}>
+          <View>
             <ScrollView contentContainerStyle={styles.scroll}>{listNotifications}</ScrollView>
           </View>
         </View>
@@ -93,8 +88,7 @@ const styles = StyleSheet.create({
   },
   scroll: {
     alignItems: "center",
-    //flex: 1,
-    //display: "flex",
+    display: "flex",
     backgroundColor: DefaultTheme,
     paddingBottom: 50,
   },

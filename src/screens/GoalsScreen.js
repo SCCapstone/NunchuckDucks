@@ -1,11 +1,10 @@
-import { View, StyleSheet, ScrollView, Text, TextInput, Image, TouchableOpacity } from "react-native";
+import {View,StyleSheet,ScrollView,Text,TextInput,Pressable} from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import Header from "../components/Header/Header";
 import CustomButton from "../components/CustomButton/CustomButton";
 import GoalMini from "../components/GoalMini/GoalMini";
 import CompletedGoalMini from "../components/CompletedGoalMini";
 import { getGoals, deleteGoal, updateGoal } from "../crud/GoalOperations";
-import { Auth } from "aws-amplify";
 import { useEffect, useState, useRef } from "react";
 import React from "react";
 import { Storage } from "@aws-amplify/storage";

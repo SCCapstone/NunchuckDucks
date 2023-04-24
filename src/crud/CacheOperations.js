@@ -1,10 +1,12 @@
-import { API } from "aws-amplify";
 import * as FileSystem from "expo-file-system";
 import { Storage } from "@aws-amplify/storage";
 import { getCurrentAuthenticatedUser } from "../library/GetAuthenticatedUser";
 
 const cacheDirectory = FileSystem.cacheDirectory;
 
+/**
+ * @param {String} file file that should be deleted.
+ **/
 export async function deleteCachedFile(file) {
   try {
     const cachedFile = cacheDirectory + file;
@@ -14,6 +16,9 @@ export async function deleteCachedFile(file) {
   }
 }
 
+/**
+ * Deletes all files in cache system
+ */
 export async function deleteAllCache() {
   try {
     console.log("Attempting to delete all cached files");
@@ -33,6 +38,10 @@ export async function deleteAllCache() {
     console.log("Error: Could not delete all cached files", e);
   }
 }
+
+/**
+ * Deletes out of date cache
+ */
 export async function deleteOldCache() {
   let postNames = await getPostsThatShouldBeCached();
   if (postNames === null) {
@@ -58,12 +67,19 @@ export async function deleteOldCache() {
     }
   }
 }
-
+/**
+ * gets all cached files and 
+ * @returns files
+ */
 export async function getAllCachedFiles() {
   let files = await FileSystem.readDirectoryAsync(cacheDirectory);
   return files;
 }
 
+/**
+ * gets the current user
+ * @returns username
+ */
 export async function getCurrentUser() {
   let username = "";
   try {
@@ -77,7 +93,10 @@ export async function getCurrentUser() {
     return "";
   }
 }
-
+/**
+ * @param {String} username username for the user to cache last changed message
+ * @param {String} lastModifiedMessage the last modified message
+ */
 export async function cacheLastModified(username, lastModifiedMessage) {
   const cacheLastModifiedUri =
     cacheDirectory + username + "pfplastModified.txt";
@@ -94,6 +113,12 @@ export async function cacheLastModified(username, lastModifiedMessage) {
   }
 }
 
+/**
+ * 
+ * @param {String} username username of user
+ * @param {String} fileName filename of the file to cache
+ * @returns remoteUri
+ */
 export async function cacheRemoteUri(username, fileName) {
   const cacheLastModifiedUri = cacheDirectory + username + fileName + "Uri.txt";
   let remoteUri = await Storage.get(username + "/" + fileName);
@@ -111,6 +136,13 @@ export async function cacheRemoteUri(username, fileName) {
     return "";
   }
 }
+
+/**
+ * 
+ * @param {String} username username of the user
+ * @param {String} fileName filename of file we are getting from cache
+ * @returns blah aka complete Uri from cache
+ */
 export async function getUriFromCache(username, fileName) {
   const cacheLastModifiedUri = cacheDirectory + username + fileName + "Uri.txt";
   try {
@@ -124,6 +156,12 @@ export async function getUriFromCache(username, fileName) {
   }
 }
 
+/**
+ * 
+ * @param {String} username username of the user
+ * @param {String} ending 
+ * @returns lastModified cached item
+ */
 export async function getLastModifiedCache(username, ending) {
   const cacheLastModifiedUri =
     cacheDirectory + username + ending + "lastModified.txt";
@@ -141,6 +179,10 @@ export async function getLastModifiedCache(username, ending) {
   }
 }
 
+/**
+ * gets posts in the cache 
+ * @returns posts
+ */
 export async function getPostsFromCache() {
   try {
     let files = await FileSystem.readDirectoryAsync(cacheDirectory);
@@ -156,6 +198,10 @@ export async function getPostsFromCache() {
   }
 }
 
+/**
+ * function to get the curr cached user.
+ * @returns cachedUserString
+ */
 export async function getCachedCurrUser() {
   try {
     const cachedUserUri = cacheDirectory + "currUser.txt";
@@ -169,6 +215,10 @@ export async function getCachedCurrUser() {
   }
 }
 
+/**
+ * function to cach the current user and username
+ * @returns username
+ */
 export async function cacheCurrUser() {
   const cachedUserUri = cacheDirectory + "currUser.txt";
   try {
@@ -184,6 +234,10 @@ export async function cacheCurrUser() {
   }
 }
 
+/**
+ * function to cache posts 
+ * @param {String} posts 
+ */
 export async function cachePosts(posts) {
   const cachedPostsUri = cacheDirectory + "posts.txt";
   try {
@@ -196,6 +250,10 @@ export async function cachePosts(posts) {
   }
 }
 
+/**
+ * function that returns a list of posts that should be cached
+ * @returns cachedPostsArray
+ */
 export async function getPostsThatShouldBeCached() {
   try {
     const cachedPostsUri = cacheDirectory + "postsCached.txt";
@@ -212,10 +270,12 @@ export async function getPostsThatShouldBeCached() {
     return null;
   }
 }
-/*function setLastModifed(lastModified) {
 
-  }*/
-
+/**
+ * 
+ * @param {String} uri 
+ * @returns info if file exits, else exists (boolean) and the error msg
+ */
 export async function findFileInCache(uri) {
   try {
     let info = await FileSystem.getInfoAsync(uri);
@@ -228,6 +288,13 @@ export async function findFileInCache(uri) {
     };
   }
 }
+
+/**
+ * 
+ * @param {String} uri 
+ * @param {String} cacheUri 
+ * @returns path of img uri, and cached booloen with errors if applicable
+ */
 export async function cacheImage(uri, cacheUri) {
   try {
     const downloadImage = FileSystem.createDownloadResumable(uri, cacheUri);
@@ -245,6 +312,13 @@ export async function cacheImage(uri, cacheUri) {
     };
   }
 }
+
+/**
+ * 
+ * @param {String} username 
+ * @param {String} ending 
+ * @returns image
+ */
 export async function getImage(username, ending) {
   let image = "";
   image = await getImageFromCache(username, ending);
@@ -253,6 +327,13 @@ export async function getImage(username, ending) {
   }
   return image;
 }
+
+/**
+ * 
+ * @param {String} username 
+ * @param {String} ending 
+ * @returns cacheImageFileUri
+ */
 export async function getImageFromCache(username, ending) {
   const cacheImageFileUri = cacheDirectory + username + ending;
   let imageExistsInCache = "";
@@ -269,6 +350,12 @@ export async function getImageFromCache(username, ending) {
   }
 }
 
+/**
+ * 
+ * @param {String} username username string
+ * @param {String} ending of the file grabbing
+ * @returns  uriAWS
+ */
 export async function getImageFromAWS(username, ending) {
   try {
     const uriAWS = await Storage.get(username + "/" + ending);
@@ -286,6 +373,12 @@ export async function getImageFromAWS(username, ending) {
   }
 }
 
+/**
+ * 
+ * @param {String} username of user
+ * @param {String} ending of file path
+ * @returns uriAWS (cached uri for image/file)
+ */
 export async function cacheUriForImageFromAWS(username, ending) {
   try {
     const uriAWS = await Storage.get(username + "/" + ending);
@@ -305,18 +398,16 @@ export async function cacheUriForImageFromAWS(username, ending) {
   }
 }
 
-export async function movePfpToCache(oldUri, username) {
-  const pfpCache = cacheDirectory + username + "pfp.png";
-}
-
+/**
+ * 
+ * @param {String} username of user
+ * @param {String} ending of file/image path 
+ * @returns cached.path which is the path of the cached img from AWS
+ */
 export async function cacheImageFromAWS(username, ending) {
   const uriAWS = await Storage.get(username + "/" + ending);
-  //console.log(uriAWS);
+
   let cacheImageFileUri = cacheDirectory + username + ending;
-  /*if ((addPng = true)) {
-    cacheImageFileUri = cacheImageFileUri + ".png";
-  }*/
-  //if uriAWS does not exist
   let cached = await cacheImage(uriAWS, cacheImageFileUri);
   if (cached.cached) {
     return cached.path;
@@ -326,6 +417,12 @@ export async function cacheImageFromAWS(username, ending) {
   }
 }
 
+/**
+ * 
+ * @param {String} fileName 
+ * @param {String} blob 
+ * @returns boolean if img was stored or not.
+ */
 export async function saveImageToAWS(fileName, blob) {
   try {
     await Storage.put(fileName, blob);
@@ -336,6 +433,11 @@ export async function saveImageToAWS(fileName, blob) {
   }
 }
 
+/**
+ * 
+ * @param {String} username of the user
+ * @returns remoteUriAWS (cached uri of profile picture)
+ */
 export async function updatePfpCache(username) {
   let remoteUriAWS = await cacheRemoteUri(username, "pfp.png");
   return remoteUriAWS;
