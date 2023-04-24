@@ -2,7 +2,7 @@ import { DataStore, SortDirection } from "aws-amplify";
 import { Post, User } from "../models";
 import { Storage } from "aws-amplify";
 import { getCurrentUser } from "./CacheOperations";
-import { ConsoleLogger } from "@aws-amplify/core";
+
 
 /**
  * Creates a user and saves the new user in the backend
@@ -70,7 +70,6 @@ export async function getProfilePicture(username) {
     return pic;
   } catch {
     return "";
-    console.error("error getting image of current authenticated user");
   }
 }
 
@@ -144,7 +143,11 @@ export async function updateBio(username, newBio) {
     console.error(`Error updating ${username} bio.`);
   }
 }
-
+/**
+ * function to get bio for a user
+ * @param {*} username 
+ * @returns user.bio
+ */
 export async function getBio(username) {
   try {
     const userId = await getUserId(username);
@@ -190,6 +193,10 @@ export async function doesUserExist(username) {
   }
 }
 
+/**
+ * Checks to see if user exits.
+ * @param {String} lowerUsername 
+ */
 export async function doesUserExistLower(lowerUsername) {
   try {
     const user = await DataStore.query(User, (u) => u.lowerUsername.eq(lowerUsername));
@@ -202,6 +209,11 @@ export async function doesUserExistLower(lowerUsername) {
   }
 }
 
+/**
+ * function to get user by username but lowercase
+ * @param {String} lowerUsername 
+ * @returns user
+ */
 export async function getUserIdByLowerUsername(lowerUsername) {
   try {
     const user = await DataStore.query(User, (u) => u.lowerUsername.eq(lowerUsername));
@@ -232,6 +244,11 @@ export async function isUserPrivate(username) {
   }
 }
 
+/**
+ * Function to toggle privacy and update it
+ * @param {String} username 
+ * @param {Boolean} privacy 
+ */
 export async function togglePrivacy(username, privacy) {
   try {
     const userId = await getUserId(username);
@@ -266,6 +283,11 @@ export async function getUsersbyStartofUsername(username) {
   }
 }
 
+/**
+ * function to get streak of user
+ * @param {String} username 
+ * @returns user.currentStreak
+ */
 export async function getCurrentStreak(username) {
   try {
     const userId = await getUserId(username);
@@ -279,6 +301,11 @@ export async function getCurrentStreak(username) {
   }
 }
 
+/**
+ * function to update current streak for a user
+ * @param {String} username 
+ * @returns user.currentStreak
+ */
 export async function updateCurrentStreak(username) {
   try {
     var currDate = new Date();
@@ -323,6 +350,11 @@ export async function updateCurrentStreak(username) {
   }
 }
 
+/**
+ * 
+ * @param {String} username 
+ * @returns posts (an array of the times a users posts were at.)
+ */
 export async function getUsersPostTimes(username) {
   try {
     const userId = await getUserId(username);
@@ -342,6 +374,11 @@ export async function getUsersPostTimes(username) {
   }
 }
 
+/**
+ * checks a users streak.
+ * @param {String} username 
+ * @returns boolean
+ */
 export async function checkStreak(username) {
   const posts = await getUsersPostTimes(username);
   let goalDays = await getWeeklyGoal(username);
@@ -360,6 +397,11 @@ export async function checkStreak(username) {
   return true;
 }
 
+/**
+ * gets weekly goals for a username
+ * @param {String} username 
+ * @returns user.WeeklyGoal
+ */
 export async function getWeeklyGoal(username) {
   try {
     const userId = await getUserId(username);
@@ -383,6 +425,12 @@ export async function getWeeklyGoal(username) {
   }
 }
 
+/**
+ * sets the Weekly Goal
+ * @param {String} username 
+ * @param {String} weeklyGoal 
+ * 
+ */
 export async function setWeeklyGoal(username, weeklyGoal) {
   try {
     const userId = await getUserId(username);
@@ -401,6 +449,10 @@ export async function setWeeklyGoal(username, weeklyGoal) {
   }
 }
 
+/**
+ * function to make username lowercase
+ * @param {String} username 
+ */
 export async function setLowerUsername(username) {
   try {
     const userId = await getUserId(username);

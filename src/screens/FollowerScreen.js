@@ -1,7 +1,5 @@
 import { View, ScrollView, StyleSheet, Text } from "react-native";
 import { useState, useEffect, useCallback } from "react";
-import { Auth } from "aws-amplify";
-import { DataStore } from "aws-amplify";
 import Header from "../components/Header";
 import CustomButton from "../components/CustomButton";
 import CustomTextInput from "../components/CustomTextInput";
@@ -51,6 +49,7 @@ export function FollowerScreen({ route, navigation }) {
   const listItems = list
     .map((val) => (
       <FollowerMini
+        testID="Follower_Screen.Follower"
         username={val.username}
         onDelete={async () => {
           let currUser = await getCurrentUser();
@@ -75,11 +74,16 @@ export function FollowerScreen({ route, navigation }) {
     });
 
   return (
-    <View style={styles.container}>
-      <AddFollowerModal modalVisible={modalVisible} setModalVisible={setModalVisible}></AddFollowerModal>
+    <View style={styles.container} testID="Follower_Screen_Header">
+      <AddFollowerModal modalVisible={modalVisible} setModalVisible={setModalVisible} testID="Follower_Screen"></AddFollowerModal>
       <View style={styles.stickyHeader}>
         <Header title={"Followers"}></Header>
-        <CustomButton buttonType={"default"} text={"Follow New User"} onClick={() => setModalVisible(true)}></CustomButton>
+        <CustomButton
+          buttonType={"default"}
+          text={"Follow New User"}
+          onClick={() => setModalVisible(true)}
+          testID="Follower_Screen.Follower_New_User"
+        ></CustomButton>
         <View style={styles.pageChangeButtons}>
           <CustomButton
             buttonType={"hyperlink"}
@@ -98,7 +102,7 @@ export function FollowerScreen({ route, navigation }) {
             textStyle={styles.pageChangeButtonsText}
           ></CustomButton>
         </View>
-        {listItems.length !== 0 && (
+        {(listItems.length !== 0 || searchValue !== "") && (
           <CustomTextInput
             customStyles={styles.searchBar}
             placeholder={"Search current friends..."}
@@ -113,7 +117,7 @@ export function FollowerScreen({ route, navigation }) {
         <ScrollView style={styles.followerList}>{listItems}</ScrollView>
       ) : (
         <Text style={{ fontSize: 18, padding: 10, alignSelf: "center" }}>
-          {route.params.isFollowerPage ? "No followers to show" : "Not following any users"}
+          {route.params.isFollowerPage ? "No followers to show" : "No followed users to show"}
         </Text>
       )}
     </View>
@@ -156,104 +160,3 @@ const styles = StyleSheet.create({
     margin: 5,
   },
 });
-
-const sampleFollowersList = [
-  {
-    userImageSrc: "https://images.unsplash.com/photo-1526045612212-70caf35c14df",
-    username: "John1",
-  },
-  {
-    userImageSrc: "https://images.unsplash.com/photo-1526045612212-70caf35c14df",
-    username: "John2",
-  },
-  {
-    userImageSrc: "https://images.unsplash.com/photo-1526045612212-70caf35c14df",
-    username: "John3",
-  },
-  {
-    userImageSrc: "https://images.unsplash.com/photo-1526045612212-70caf35c14df",
-    username: "John4",
-  },
-  {
-    userImageSrc: "https://images.unsplash.com/photo-1526045612212-70caf35c14df",
-    username: "John5",
-  },
-  {
-    userImageSrc: "https://images.unsplash.com/photo-1526045612212-70caf35c14df",
-    username: "John6",
-  },
-  {
-    userImageSrc: "https://images.unsplash.com/photo-1526045612212-70caf35c14df",
-    username: "John7",
-  },
-  {
-    userImageSrc: "https://images.unsplash.com/photo-1526045612212-70caf35c14df",
-    username: "John8",
-  },
-  {
-    userImageSrc: "https://images.unsplash.com/photo-1526045612212-70caf35c14df",
-    username: "John9",
-  },
-  {
-    userImageSrc: "https://images.unsplash.com/photo-1526045612212-70caf35c14df",
-    username: "John10",
-  },
-  {
-    userImageSrc: "https://images.unsplash.com/photo-1526045612212-70caf35c14df",
-    username: "John11",
-  },
-  {
-    userImageSrc: "invalid",
-    username: "John12",
-  },
-];
-const sampleFollowingList = [
-  {
-    userImageSrc: "https://images.unsplash.com/photo-1526045612212-70caf35c14df",
-    username: "David1",
-  },
-  {
-    userImageSrc: "https://images.unsplash.com/photo-1526045612212-70caf35c14df",
-    username: "David2",
-  },
-  {
-    userImageSrc: "https://images.unsplash.com/photo-1526045612212-70caf35c14df",
-    username: "David3",
-  },
-  {
-    userImageSrc: "https://images.unsplash.com/photo-1526045612212-70caf35c14df",
-    username: "David4",
-  },
-  {
-    userImageSrc: "https://images.unsplash.com/photo-1526045612212-70caf35c14df",
-    username: "David5",
-  },
-  {
-    userImageSrc: "https://images.unsplash.com/photo-1526045612212-70caf35c14df",
-    username: "David6",
-  },
-  {
-    userImageSrc: "https://images.unsplash.com/photo-1526045612212-70caf35c14df",
-    username: "David7",
-  },
-  {
-    userImageSrc: "https://images.unsplash.com/photo-1526045612212-70caf35c14df",
-    username: "David8",
-  },
-  {
-    userImageSrc: "https://images.unsplash.com/photo-1526045612212-70caf35c14df",
-    username: "David9",
-  },
-  {
-    userImageSrc: "https://images.unsplash.com/photo-1526045612212-70caf35c14df",
-    username: "David10",
-  },
-  {
-    userImageSrc: "https://images.unsplash.com/photo-1526045612212-70caf35c14df",
-    username: "David11",
-  },
-  {
-    userImageSrc: "invalid",
-    username: "David12",
-  },
-];

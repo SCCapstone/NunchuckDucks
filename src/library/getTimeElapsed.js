@@ -1,3 +1,8 @@
+/**
+ * function to return the time difference between npw and when created
+ * @param {String} createdAt 
+ * @returns ans
+ */
 export function getTimeElapsed(createdAt) {
     var ans = ""; // the output
     if (createdAt == undefined) {

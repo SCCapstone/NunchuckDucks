@@ -2,12 +2,13 @@ import { View, Image, Text, StyleSheet, Pressable } from "react-native";
 import { useEffect, useState } from "react";
 import {
   createReaction,
+  getReactions,
   getUserReactions,
   removeReaction,
 } from "../../crud/ReactionOperations";
+import { ReactionType } from "../../models/index";
 import { getCurrentUser } from "../../crud/CacheOperations";
 import { getAndObserveReactions } from "../../crud/observeQueries/ReactionsObserveQueries";
-import { getReactions } from "../../crud/ReactionOperations";
 
 export default function Reactions({
   postID,

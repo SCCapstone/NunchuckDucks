@@ -5,10 +5,11 @@ import { getUserId } from "../UserOperations";
 /**
  * Return a subscription of notificationCount
  *
- * @param {String} username
- * @param {Function} setNotificationCount
+ * @param {String} username user notifications 
+ * @param {String} setNotificationCount getting the amount of notifications of the user.
  * @returns subscription
  */
+
 export async function getAndObserveNotificationCount(
   username,
   setRetrieveNotificationCount

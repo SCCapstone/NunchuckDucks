@@ -13,12 +13,7 @@ import { AntDesign } from "@expo/vector-icons";
 
 const imageSRC = require("../../../../assets/icons/Gymbit_Icons_Black/Back_Icon_Black.png");
 
-const NonCurrUserProfileModal = ({
-  modalVisible,
-  setModalVisible,
-  username,
-  image,
-}) => {
+const NonCurrUserProfileModal = ({ modalVisible, setModalVisible, username, image }) => {
   const [user, setUser] = useState("");
   const [followingCount, setFollowingCount] = useState("");
   const [followersCount, setFollowersCount] = useState("");
@@ -63,12 +58,7 @@ const NonCurrUserProfileModal = ({
   }
 
   return (
-    <Modal
-      visible={modalVisible}
-      animationType="fade"
-      transparent={true}
-      onRequestClose={closeModal}
-    >
+    <Modal visible={modalVisible} animationType="fade" transparent={true} onRequestClose={closeModal}>
       <View
         style={{
           flex: 1,

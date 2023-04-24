@@ -8,6 +8,7 @@ const ConfirmDelete = ({
   id,
   deletefunc,
   text,
+  testID,
 }) => {
   const closeModal = () => {
     setModalVisible(false);
@@ -31,6 +32,7 @@ const ConfirmDelete = ({
             <Text>{text}</Text>
             <CustomButton
               buttonType={"default"}
+              testID={testID}
               text={"Confirm"}
               onClick={() => {
                 if (id) {

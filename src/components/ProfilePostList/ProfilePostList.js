@@ -1,4 +1,4 @@
-import { FlatList, Text, View } from "react-native";
+import { FlatList } from "react-native";
 import { getUserPostsForProfileScreenFromAWS } from "../../crud/PostOperations";
 import { useState, useEffect } from "react";
 import Post from "../Post";
@@ -27,13 +27,12 @@ export default function ProfilePostList() {
   }, [retrievePosts]);
   return (
     <>
-      {posts.length !== 0 ? (
-        <FlatList data={posts} renderItem={({ item }) => <Post entry={item} />} keyExtractor={(item) => item.id} />
-      ) : (
-        <View style={{ flex: 1, backgroundColor: "white" }}>
-          <Text style={{ fontSize: 18, padding: 10, alignSelf: "center" }}>No posts to show... yet!</Text>
-        </View>
-      )}
+      <FlatList
+        data={posts}
+        renderItem={({ item }) => <Post entry={item} />}
+        keyExtractor={(item) => item.id}
+        testID="User_Post_List"
+      />
     </>
   );
 }

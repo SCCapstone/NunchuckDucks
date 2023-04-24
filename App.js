@@ -1,25 +1,16 @@
 import { NavigationContainer } from "@react-navigation/native";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import { SettingsScreen } from "./src/screens/SettingsScreen.js";
-import { ExploreScreen } from "./src/screens/ExploreScreen.js";
 import { MutualScreen } from "./src/screens/MutualScreen.js";
-import { CreatePost } from "./src/screens/CreatePost.js";
-import { CalendarScreen } from "./src/screens/CalendarScreen.js";
 import { WorkoutsScreen } from "./src/screens/WorkoutsScreen.js";
 import { GoalsScreen } from "./src/screens/GoalsScreen.js";
 import { ProfileScreen } from "./src/screens/ProfileScreen.js";
 import { FollowerScreen } from "./src/screens/FollowerScreen.js";
-import { CreateGoalScreen } from "./src/screens/CreateGoalScreen.js";
-import { NotificationsScreen } from "./src/screens/NotificationsScreen.js";
-import Navbar from "./src/components/Navbar";
-import { Amplify, API, Hub } from "@aws-amplify/core";
+import { Amplify, Hub } from "@aws-amplify/core";
 import awsmobile from "./src/aws-exports";
 import { withAuthenticator, AmplifyTheme } from "aws-amplify-react-native";
-import { DataStore, Predicates } from "@aws-amplify/datastore";
-import { StyleSheet, View, TitleText, Text, Image, ActivityIndicator } from "react-native";
-import { Storage } from "@aws-amplify/storage";
-import * as clients3 from "@aws-sdk/client-s3";
+import { DataStore} from "@aws-amplify/datastore";
+import { StyleSheet, View, Image, ActivityIndicator } from "react-native";
 import { useState, useEffect } from "react";
 import { Toast } from "react-native-toast-message/lib/src/Toast.js";
 import { blueThemeColor } from "./src/library/constants.js";
@@ -98,7 +89,7 @@ const app = () => {
             <Stack.Screen
               name="Mutuals"
               options={{
-                tabBarIcon: () => <AntDesign name="home" size={20}></AntDesign>,
+                tabBarIcon: () => <AntDesign name="home" size={20} testID="Mutuals_Screen" accessibilityLabel="Mutuals_Screen"></AntDesign>,
               }}
             >
               {(props) => <MutualScreen {...props} refresh={refresh} setRefresh={setRefresh} />}
@@ -107,7 +98,14 @@ const app = () => {
               name="Workouts"
               component={WorkoutsScreen}
               options={{
-                tabBarIcon: () => <Image source={require("./assets/icons/tab-bar/tabWorkoutThick.png")} style={styles.tabIcon} />,
+                tabBarIcon: () => (
+                  <Image
+                    source={require("./assets/icons/tab-bar/tabWorkoutThick.png")}
+                    style={styles.tabIcon}
+                    testID="Workout_Screen"
+                    accessibilityLabel="Workout_Screen"
+                  />
+                ),
               }}
             />
             <Stack.Screen
@@ -115,7 +113,14 @@ const app = () => {
               component={GoalsScreen}
               initialParams={{ isCompletedPage: false }}
               options={{
-                tabBarIcon: () => <Image source={require("./assets/icons/tab-bar/tabGoalThick.png")} style={styles.tabIcon} />,
+                tabBarIcon: () => (
+                  <Image
+                    source={require("./assets/icons/tab-bar/tabGoalThick.png")}
+                    style={styles.tabIcon}
+                    testID="Goals_Screen"
+                    accessibilityLabel="Goals_Screen"
+                  />
+                ),
               }}
             />
             <Stack.Screen
@@ -123,13 +128,15 @@ const app = () => {
               component={FollowerScreen}
               initialParams={{ isFollowerPage: false }}
               options={{
-                tabBarIcon: () => <AntDesign name={"team"} size={20}></AntDesign>,
+                tabBarIcon: () => <AntDesign name={"team"} size={20} testID="Followers_Screen" accessibilityLabel="Followers_Screen"></AntDesign>,
               }}
             />
             <Stack.Screen
               name="Profile"
               options={{
-                tabBarIcon: () => <AntDesign name={"user"} size={20}></AntDesign>,
+                tabBarIcon: () => (
+                  <AntDesign name={"user"} size={20} testID="Profile_Screen" accessibilityLabel="Profile_Screen"></AntDesign>
+                ),
               }}
             >
               {(props) => <ProfileScreen {...props} refresh={refresh} setRefresh={setRefresh} />}
@@ -138,14 +145,11 @@ const app = () => {
               name="Settings"
               component={SettingsScreen}
               options={{
-                tabBarIcon: () => <Image source={require("./assets/icons/tab-bar/tabSettingsThick.png")} style={styles.tabIcon} />,
+                tabBarIcon: () => <Image source={require("./assets/icons/tab-bar/tabSettingsThick.png")} style={styles.tabIcon} 
+                testID="Settings_Screen" accessibilityLabel="Settings_Screen"/>,
               }}
             />
-            {/*<Stack.Screen
-              name="Notifications"
-              component={NotificationsScreen}
-              
-            />*/}
+            {}
           </Stack.Navigator>
         </NavigationContainer>
       ) : (

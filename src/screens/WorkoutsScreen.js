@@ -1,17 +1,18 @@
 import { useEffect, useState } from "react";
-import { View, Image, Text, StyleSheet, Pressable, TouchableOpacity, ScrollView } from "react-native";
+import { View, Text, StyleSheet, ScrollView } from "react-native";
 import CustomButton from "../components/CustomButton";
 import CreateWorkoutModal from "../components/modals/CreateWorkoutModal";
 import { getWorkouts } from "../crud/WorkoutOperations";
 import { getCurrentUser } from "../crud/CacheOperations";
-import Workout from "../components/Workout/Workout";
 import WorkoutMini from "../components/WorkoutMini/WorkoutMini";
 import Header from "../components/Header";
+import { getAndObserveWorkouts } from "../crud/observeQueries/WorkoutObserveQueries";
 
 export function WorkoutsScreen() {
   const [modalVisible, setModalVisible] = useState(false);
   const [workouts, setWorkouts] = useState([]);
   const [refreshWorkouts, setRefreshWorkouts] = useState(false);
+  const [retrieveWorkouts, setRetrieveWorkouts] = useState(0);
   const [workoutForModal, setWorkoutForModal] = useState(null);
   const [exercisesForModal, setExercisesForModal] = useState(null);
 
@@ -31,12 +32,29 @@ export function WorkoutsScreen() {
     if (!ejercicios || !Array.isArray(ejercicios)) return;
     setWorkouts(ejercicios);
   }
+
+  useEffect(() => {
+    const createWorkoutsObserver = async () => {
+      const currUsername = await getCurrentUser();
+      const sub = await getAndObserveWorkouts(
+        currUsername,
+        setRetrieveWorkouts
+      );
+      return sub;
+    };
+
+    const subscription = createWorkoutsObserver();
+    return () => {
+      if (subscription && subscription.unsubscribe) subscription.unsubscribe();
+    };
+  }, []);
+
   useEffect(() => {
     getWorkoutsForScreen();
-  }, [refreshWorkouts]);
+  }, [refreshWorkouts, retrieveWorkouts]);
   return (
     <>
-      <View>
+      <View testID="Workout_Screen_Header">
         <Header title={"Profile"} style={{ backgroundColor: "white" }} />
       </View>
       <View style={styles.container}>
@@ -49,8 +67,12 @@ export function WorkoutsScreen() {
           setWorkout={setWorkoutForModal}
           modelExerciseList={exercisesForModal}
           setModelExerciseList={setExercisesForModal}
+          testID="Create_Workout_Modal"
         />
-        <View style={styles.stickyHeader}>
+        <View
+          style={styles.stickyHeader}
+          testID="Workout_Screen.Create_New_Workout_Button"
+        >
           <CustomButton
             style={{ position: "relative" }}
             buttonType={"default"}
@@ -58,9 +80,13 @@ export function WorkoutsScreen() {
             onClick={() => {
               openCreateWorkoutModal();
             }}
+            testID="Workout_Screen.Create_New_Workout_Button"
           />
         </View>
-        <ScrollView style={{ width: "100%" }} contentContainerStyle={{ paddingBottom: 125 }}>
+        <ScrollView
+          style={{ width: "100%" }}
+          contentContainerStyle={{ paddingBottom: 125 }}
+        >
           {workouts.length !== 0 ? (
             workouts.map((workout) => (
               <WorkoutMini
@@ -72,7 +98,9 @@ export function WorkoutsScreen() {
               />
             ))
           ) : (
-            <Text style={{ fontSize: 18, padding: 10, alignSelf: "center" }}>No workouts created</Text>
+            <Text style={{ fontSize: 18, padding: 10, alignSelf: "center" }}>
+              No workouts created
+            </Text>
           )}
         </ScrollView>
       </View>

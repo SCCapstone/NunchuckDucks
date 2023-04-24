@@ -1,12 +1,6 @@
 import { DataStore } from "aws-amplify";
-import { User, Follows } from "../models";
-import {
-  doesUserExist,
-  getUserId,
-  isCurrUser,
-  getUserIdByLowerUsername,
-  doesUserExistLower,
-} from "./UserOperations";
+import { User, Follows} from "../models";
+import {doesUserExist, getUserId, isCurrUser} from "./UserOperations";
 import { createNotification } from "./NotificationOperations";
 import { getDate } from "../library/getDate";
 
@@ -14,6 +8,7 @@ import { getDate } from "../library/getDate";
  * This method adds an external user to the primary user's followers list
  * @param {String} username this is the username of the user who will be followed
  * @param {String} followerUsername this is the username of the follower
+ * @returns True or false if the follower was created or not.
  */
 export async function createFollower(username, followerUsername) {
   try {

@@ -11,6 +11,7 @@ import {
 } from "../../crud/CommentOperations";
 import { getCurrentUser } from "../../crud/CacheOperations";
 import NonCurrUserProfileModal from "../modals/NonCurrUserProfileModal.js/NonCurrUserProfileModal";
+import { getCurrentAuthenticatedUser } from "../../library/GetAuthenticatedUser";
 import ConfirmDelete from "../modals/ConfirmDelete";
 import ErrorModal from "../modals/ErrorModal/ErrorModal";
 import { useNavigation } from "@react-navigation/native";

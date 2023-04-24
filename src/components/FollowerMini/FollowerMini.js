@@ -1,12 +1,15 @@
 import { Pressable, StyleSheet, View, Text } from "react-native";
 import ProfileMini from "../ProfileMini";
 import { grayThemeColor, blueThemeColor } from "../../library/constants";
+import { findUserByUsername } from "../../crud/UserOperations";
 import { useState, useEffect, useCallback } from "react";
 import NonCurrUserProfileModal from "../modals/NonCurrUserProfileModal.js/NonCurrUserProfileModal";
 import { AntDesign } from "@expo/vector-icons";
 import ConfirmDelete from "../modals/ConfirmDelete/ConfirmDelete";
 
-const FollowerMini = ({ username, onDelete, style, isFollowerPage }) => {
+const deleteIconPath = require("../../../assets/icons/Gymbit_Icons_Black/X_Icon_Black.png");
+
+const FollowerMini = ({ username, onDelete, style, isFollowerPage, testID }) => {
   const containerStyles = { ...styles.container, ...style };
   const [modalVisible, setModalVisible] = useState("");
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
@@ -23,6 +26,7 @@ const FollowerMini = ({ username, onDelete, style, isFollowerPage }) => {
             : `Are you sure you want to stop following ${username}?`
         }`}
         deletefunc={onDelete}
+        testID={`${testID}.Confirm_Delete`}
       ></ConfirmDelete>
       <View style={styles.leftSideContainer}>
         <ProfileMini username={username} onClick={() => setModalVisible(true)} />
@@ -30,7 +34,7 @@ const FollowerMini = ({ username, onDelete, style, isFollowerPage }) => {
           <Text style={styles.username}>@{username}</Text>
         </Pressable>
       </View>
-      <Pressable onPressOut={() => setDeleteModalVisible(true)}>
+      <Pressable onPressOut={() => setDeleteModalVisible(true)} testID={`${testID}.Delete`}>
         <AntDesign name="close" size={40} />
       </Pressable>
     </View>

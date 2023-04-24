@@ -7,16 +7,16 @@ import getPictureFileName from "../../library/getPictureFileName";
 import { createPost } from "../../crud/PostOperations";
 import ImageSelector from "../../components/ImageSelector";
 import { getCurrentUser } from "../../crud/CacheOperations";
-import { blueThemeColor } from "../../library/constants";
+import { getWorkouts } from "../../crud/WorkoutOperations";
+import { blueThemeColor, grayThemeColor } from "../../library/constants";
 import { useNetInfo } from "@react-native-community/netinfo";
 import { Toast } from "react-native-toast-message/lib/src/Toast";
 import CreateWorkoutModal from "../modals/CreateWorkoutModal";
+import { getNotifications } from "../../crud/NotificationOperations";
 import WorkoutSelection from "../WorkoutSelection";
 import { getAndObserveNotificationCount } from "../../crud/observeQueries/NotificationObserveQueries";
 import { AntDesign } from "@expo/vector-icons";
 import { NotificationsScreen } from "../../screens/NotificationsScreen";
-import { grayThemeColor } from "../../library/constants";
-import { getNotifications } from "../../crud/NotificationOperations";
 import { Camera, CameraType } from "expo-camera";
 import CameraComponent from "../CameraComponent/CameraComponent";
 
@@ -187,6 +187,7 @@ const HomeHeader = ({ handlePress, refresh, setRefresh, blowup, setBlowup, testI
           onPress={() => {
             setShowNotifications(true);
           }}
+          testID={`${testID}.Notifications_Button`}
         >
           <Text style={styles.counter}>{notificationCount}</Text>
           <Image style={styles.notification} source={require("../../../assets/icons/Gymbit_Icons_Black/Alert_Icon_Black.png")} />
@@ -241,7 +242,6 @@ const HomeHeader = ({ handlePress, refresh, setRefresh, blowup, setBlowup, testI
                   onChangeText={setText}
                   maxLength={500}
                   testID={`${testID}.Create_Post_Caption`}
-                  multiline={true}
                 />
                 {showUploading ? (
                   <ActivityIndicator size="large" color="#2E8CFF" />

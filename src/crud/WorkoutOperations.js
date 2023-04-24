@@ -2,6 +2,13 @@ import { DataStore } from "aws-amplify";
 import { Workout } from "../models";
 import { getUserId } from "./UserOperations";
 
+/**
+ * Creates a workout
+ * @param {String} username
+ * @param {String} workoutName
+ * @param {String} exercises
+ * @returns workout
+ */
 export async function createWorkout(username, workoutName, exercises) {
   try {
     const userId = await getUserId(username);
@@ -21,6 +28,13 @@ export async function createWorkout(username, workoutName, exercises) {
   }
 }
 
+/**
+ * Updates a created workout
+ * @param {String} workoutId
+ * @param {String} workoutName
+ * @param {String} exercises
+ * @returns workout
+ */
 export async function updateWorkoutById(workoutId, workoutName, exercises) {
   try {
     let queriedWorkout = await DataStore.query(Workout, workoutId);
@@ -41,6 +55,11 @@ export async function updateWorkoutById(workoutId, workoutName, exercises) {
   }
 }
 
+/**
+ * Grabs a given workout by ID
+ * @param {String} workoutId
+ * @returns workout
+ */
 export async function getWorkoutById(workoutId) {
   try {
     let workout = await DataStore.query(Workout, (w) => w.id.eq(workoutId));
@@ -51,13 +70,12 @@ export async function getWorkoutById(workoutId) {
 }
 
 /**
- * Returns all goals for any given user
+ * Returns all workouts for user
  * @param {String} username
- * @returns goals
+ * @returns workouts
  */
 export async function getWorkouts(username) {
   try {
-    const userId = await getUserId(username);
     const workouts = await DataStore.query(Workout, (w) =>
       w.username.eq(username)
     );
@@ -69,6 +87,10 @@ export async function getWorkouts(username) {
   }
 }
 
+/**
+ * Deletes a workout by ID
+ * @param {String} workoutId
+ */
 export async function deleteWorkout(workoutId) {
   try {
     const workoutToDelete = await DataStore.query(Workout, workoutId);

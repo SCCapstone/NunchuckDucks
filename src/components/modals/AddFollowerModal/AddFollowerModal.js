@@ -10,13 +10,13 @@ import { followerErrorMessage } from "../../../library/constants";
 import { getUsersbyStartofUsername } from "../../../crud/UserOperations";
 import SuggestedFollower from "../../SuggestedFollower";
 
-const AddFollowerModal = ({ modalVisible, setModalVisible }) => {
+const AddFollowerModal = ({ modalVisible, setModalVisible, testID }) => {
   const [addFriendValue, setAddFriendValue] = useState("");
   const [errorModal, setErrorModal] = useState(false);
   const [suggestedUsers, setSuggestedUsers] = useState([]);
 
   const renderedSuggestedUsers = suggestedUsers.map((suggestedUser) => (
-    <SuggestedFollower username={suggestedUser.username} addNewFollower={addNewFollower} key={suggestedUser.id}></SuggestedFollower>
+    <SuggestedFollower username={suggestedUser.username} addNewFollower={addNewFollower} key={suggestedUser.id} testID={testID}></SuggestedFollower>
   ));
 
   async function addNewFollower(desiredFollowValue) {
@@ -83,6 +83,7 @@ const AddFollowerModal = ({ modalVisible, setModalVisible }) => {
               enteredValue={addFriendValue}
               onChangeHandler={(text) => setAddFriendValue(text)}
               customStyles={{ width: "45%" }}
+              testID={`${testID}.Search_Bar`}
             ></CustomTextInput>
             <CustomButton
               buttonType={"default"}

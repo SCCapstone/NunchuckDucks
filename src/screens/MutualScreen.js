@@ -3,9 +3,6 @@ import { useState, useEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
 import PostList from "../components/PostList";
 import HomeHeader from "../components/HomeHeader/HomeHeader";
-import { setLowerUsername } from "../crud/UserOperations";
-import { getCurrentUser } from "../crud/CacheOperations";
-import { grayThemeColor } from "../library/constants";
 import CustomButton from "../components/CustomButton";
 
 export function MutualScreen(props) {
@@ -24,14 +21,10 @@ export function MutualScreen(props) {
     });
   }, [refresh, nav]);
 
-  // async function checkLowercaseUsername() {
-  //   const username = await getCurrentUser();
-  //   await setLowerUsername(username);
-  // }
   return (
     <View
       testID="mutualScreen"
-      style={{ height: "100%", backgroundColor: "white" /*,marginBottom:"22%" (i commented this out idk if it matters.*/ }}
+      style={{ height: "100%", backgroundColor: "white"  }}
     >
       <HomeHeader
         refresh={refresh}
@@ -44,9 +37,9 @@ export function MutualScreen(props) {
       {isEmpty && (
         <View style={{ alignItems: "center", height: "100%" }}>
           <View style={{ flexDirection: "row", justifyContent: "center", marginTop: "50%" }}>
-            <CustomButton style={{ width: "40%" }} text="Create a post" onClick={() => setBlowup(true)} />
+            <CustomButton style={{ width: "40%" }} text="Create a post" onClick={() => setBlowup(true)} testID="Mutual_Screen.Empty_Create_Post"/>
             <View style={{ width: "5%" }} />
-            <CustomButton style={{ width: "40%" }} text="Add a friend" onClick={() => nav.navigate("Followers")} />
+            <CustomButton style={{ width: "40%" }} text="Add a friend" onClick={() => nav.navigate("Followers")}/>
           </View>
           <View style={{ height: "5%" }} />
           <Text

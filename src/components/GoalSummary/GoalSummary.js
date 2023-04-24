@@ -1,10 +1,11 @@
 import { View, Text, StyleSheet, ScrollView, Pressable } from "react-native";
 import React, { useState, useEffect } from "react";
-import CustomButton from "../CustomButton/CustomButton"
+
+import { getGoals } from "../../crud/GoalOperations";
 import { blueThemeColor, grayThemeColor } from "../../library/constants";
 import { getAndObserveGoals } from "../../crud/observeQueries/GoalObserveQueries";
+import CustomButton from "../CustomButton";
 import { useNavigation } from "@react-navigation/native";
-import { getGoals } from "../../crud/GoalOperations";
 
 const GoalSummary = ({ username, isCurrentUser = false }) => {
   const [goals, setGoals] = useState([]);
@@ -54,7 +55,7 @@ const GoalSummary = ({ username, isCurrentUser = false }) => {
   return (
     <>
       {isCurrentUser ? (
-        <View style={{ backgroundColor: "white", height: "100%" }}>
+        <View style={{ backgroundColor: "white", height: "100%" }} testID="Goal_Summary">
           <View style={styles.titleBoxCurrUser}>
             <Text style={styles.title}>Your Goals</Text>
           </View>
@@ -66,7 +67,7 @@ const GoalSummary = ({ username, isCurrentUser = false }) => {
           />
         </View>
       ) : (
-        <View style={styles.container}>
+        <View style={styles.container} testID="Goal_Summary">
           <View style={styles.titleBox}>
             <Text style={styles.title}>{username + "'s"} goals</Text>
           </View>
