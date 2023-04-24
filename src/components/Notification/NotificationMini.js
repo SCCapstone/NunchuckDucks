@@ -12,14 +12,6 @@ const NotificationMini = ({ content, onDeleteHandler, username, testID }) => {
   const [isHidden, setIsHidden] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
 
-  async function getUserImageSrc(username) {
-    let pfp = await getImageFromCache(username, "pfp.png");
-    if (pfp === "") {
-      pfp = await Storage.get(username + "/pfp.png");
-    }
-    setUserImageSrc(pfp);
-  }
-
   return (
     <View style={isHidden ? { ...styles.container, display: "none" } : styles.container}>
       <NonCurrUserProfileModal
@@ -28,7 +20,7 @@ const NotificationMini = ({ content, onDeleteHandler, username, testID }) => {
         username={username}
         image={userImageSrc}
       ></NonCurrUserProfileModal>
-      <ProfileMini username={username} />
+      <ProfileMini username={username} onClick={() => setModalVisible(true)}/>
       <Text style={styles.usernameText} onPress={() => setModalVisible(true)} testID={`${testID}.Text`}>
         {username}
         <Text style={styles.text}>{content.substring(username.length)}</Text>
