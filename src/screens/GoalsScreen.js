@@ -12,6 +12,7 @@ import { Storage } from "@aws-amplify/storage";
 import { createGoal } from "../crud/GoalOperations";
 import { getDate } from "../library/getDate";
 import { getCurrentUser } from "../crud/CacheOperations";
+import { AntDesign } from "@expo/vector-icons";
 
 Storage.configure();
 
