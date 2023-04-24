@@ -52,7 +52,7 @@ export function FollowerScreen({ route, navigation }) {
         testID="Follower_Screen.Follower"
         username={val.username}
         onDelete={async () => {
-          let currUser = getCurrentUser();
+          let currUser = await getCurrentUser();
           if (isFollowerPage) {
             await deleteFollower(currUser, val.username);
             showFollowerDeletionSuccess(val.username, isFollowerPage);
