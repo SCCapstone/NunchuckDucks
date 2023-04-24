@@ -1,7 +1,10 @@
-import { Pressable, StyleSheet, View, Text } from "react-native";
+import { Pressable, Image, StyleSheet, View, Text } from "react-native";
 import ProfileMini from "../ProfileMini";
 import { grayThemeColor, blueThemeColor } from "../../library/constants";
+import { findUserByUsername } from "../../crud/UserOperations";
 import { useState, useEffect, useCallback } from "react";
+import { getImageFromCache } from "../../crud/CacheOperations";
+import { Storage } from "aws-amplify";
 import NonCurrUserProfileModal from "../modals/NonCurrUserProfileModal.js/NonCurrUserProfileModal";
 import { AntDesign } from "@expo/vector-icons";
 import ConfirmDelete from "../modals/ConfirmDelete/ConfirmDelete";

@@ -1,4 +1,4 @@
-import { FlatList, Text, View } from "react-native";
+import { FlatList } from "react-native";
 import { getUserPostsForProfileScreenFromAWS } from "../../crud/PostOperations";
 import { useState, useEffect } from "react";
 import Post from "../Post";

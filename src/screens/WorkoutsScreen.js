@@ -1,10 +1,9 @@
 import { useEffect, useState } from "react";
-import { View, Image, Text, StyleSheet, Pressable, TouchableOpacity, ScrollView } from "react-native";
+import { View, Text, StyleSheet, ScrollView } from "react-native";
 import CustomButton from "../components/CustomButton";
 import CreateWorkoutModal from "../components/modals/CreateWorkoutModal";
 import { getWorkouts } from "../crud/WorkoutOperations";
 import { getCurrentUser } from "../crud/CacheOperations";
-import Workout from "../components/Workout/Workout";
 import WorkoutMini from "../components/WorkoutMini/WorkoutMini";
 import Header from "../components/Header";
 

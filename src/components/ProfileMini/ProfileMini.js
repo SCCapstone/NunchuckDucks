@@ -1,5 +1,6 @@
 import { Image, StyleSheet, Pressable } from "react-native";
 import { useEffect, useState } from "react";
+import CachedImage from "../CachedImage/CachedImage";
 import { getUriFromCache, cacheRemoteUri } from "../../crud/CacheOperations";
 import FastImage from "react-native-fast-image";
 

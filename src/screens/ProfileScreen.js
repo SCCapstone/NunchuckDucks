@@ -27,8 +27,6 @@ const Tab = createMaterialTopTabNavigator();
 //Need to also create the buttons to be clickable and call different functions
 export function ProfileScreen(props) {
   const navigation = useNavigation();
-  //const [refresh, setRefresh] = useState(false);
-  //const { refresh, setRefresh } = route.params;
   const networkConnection = useNetInfo();
   const refresh = props.refresh;
   const setRefresh = props.setRefresh;
@@ -264,7 +262,6 @@ const styles = StyleSheet.create({
     backgroundColor: grayThemeColor,
   },
   username: {
-    //paddingTop: 30,
     paddingBottom: 0,
 
     fontSize: 20,
@@ -289,12 +286,9 @@ const styles = StyleSheet.create({
   followingContainer: {
     width: 80,
     height: 50,
-    //borderColor: "black",
-    //borderWidth: 1,
     minHeight: "auto",
     flexDirection: "column",
     alignItems: "center",
-    //alignSelf: "flex-start",
   },
   followingText: {
     fontSize: 11,

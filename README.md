@@ -73,7 +73,12 @@ To run unit tests, simply run the command `npm test`
 
 - You may need to run `npm i` before running npm test to ensure all dependencies are downloaded
 
-The Unit tests are located at ./src/library/\*.test.js and ./src/components/\*/\*.test. In other words, most components will have a component.test.js file alongside the file holding the actual code, and some other unit tests for library functions can be found in the library folder.
+The Unit tests are located at ./src/library/\*.test.js
+
+In 492 you will write automated tests. When you do you will need to add a
+section that explains how to run them.
+
+The unit tests are in `/test/unit`.
 
 The behavioral tests are all located at e2e/*.test.js.
 

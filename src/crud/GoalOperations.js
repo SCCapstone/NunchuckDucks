@@ -2,6 +2,12 @@ import { DataStore } from "aws-amplify";
 import { Goal } from "../models";
 import { getUserId } from "./UserOperations";
 
+/**
+ * function to create a goal and save it
+ * @param {String} username 
+ * @param {String} date 
+ * @param {String} content 
+ */
 export async function createGoal(username, date, content) {
   try {
     const userId = await getUserId(username);
@@ -36,7 +42,10 @@ export async function getGoals(username) {
     console.error(`Error retrieving goals for ${username}`);
   }
 }
-
+/**
+ * Function to update a specific goal
+ * @param {String} goalId 
+ */
 export async function updateGoal(goalId) {
   try {
     const original = await DataStore.query(Goal, goalId);
@@ -52,6 +61,10 @@ export async function updateGoal(goalId) {
   }
 }
 
+/**
+ * function to delete a specific goal passed in.
+ * @param {String} goalID 
+ */
 export async function deleteGoal(goalID) {
   try {
     const goalToDelete = await DataStore.query(Goal, goalID);

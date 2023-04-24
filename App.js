@@ -1,25 +1,16 @@
 import { NavigationContainer } from "@react-navigation/native";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import { SettingsScreen } from "./src/screens/SettingsScreen.js";
-import { ExploreScreen } from "./src/screens/ExploreScreen.js";
 import { MutualScreen } from "./src/screens/MutualScreen.js";
-import { CreatePost } from "./src/screens/CreatePost.js";
-import { CalendarScreen } from "./src/screens/CalendarScreen.js";
 import { WorkoutsScreen } from "./src/screens/WorkoutsScreen.js";
 import { GoalsScreen } from "./src/screens/GoalsScreen.js";
 import { ProfileScreen } from "./src/screens/ProfileScreen.js";
 import { FollowerScreen } from "./src/screens/FollowerScreen.js";
-import { CreateGoalScreen } from "./src/screens/CreateGoalScreen.js";
-import { NotificationsScreen } from "./src/screens/NotificationsScreen.js";
-import Navbar from "./src/components/Navbar";
-import { Amplify, API, Hub } from "@aws-amplify/core";
+import { Amplify, Hub } from "@aws-amplify/core";
 import awsmobile from "./src/aws-exports";
 import { withAuthenticator, AmplifyTheme } from "aws-amplify-react-native";
-import { DataStore, Predicates } from "@aws-amplify/datastore";
-import { StyleSheet, View, TitleText, Text, Image, ActivityIndicator } from "react-native";
-import { Storage } from "@aws-amplify/storage";
-import * as clients3 from "@aws-sdk/client-s3";
+import { DataStore} from "@aws-amplify/datastore";
+import { StyleSheet, View, Image, ActivityIndicator } from "react-native";
 import { useState, useEffect } from "react";
 import { Toast } from "react-native-toast-message/lib/src/Toast.js";
 import { blueThemeColor } from "./src/library/constants.js";
@@ -158,11 +149,7 @@ const app = () => {
                 testID="Settings_Screen" accessibilityLabel="Settings_Screen"/>,
               }}
             />
-            {/*<Stack.Screen
-              name="Notifications"
-              component={NotificationsScreen}
-              
-            />*/}
+            {}
           </Stack.Navigator>
         </NavigationContainer>
       ) : (
