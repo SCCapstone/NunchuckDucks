@@ -1,6 +1,6 @@
 #content{
 	/*Font Family Below to Change for the Website Upon Nathans Suggestion*/
-	font-family: "Gill Sans", sans-serif;
+	font-family: "Roboto", sans-serif;
 	color: black
 }
 
@@ -15,9 +15,9 @@ nav{
     text-align: center;
 }
 nav li{
-	background:black;
-	border: 2px solid white;
-	padding: 4px;
+	/*background:black;(/
+	/*border: 2px solid white;*/
+	margin: 10px;
     border-radius: 6px;
 }
 h2{
@@ -29,7 +29,8 @@ nav ul{
 }
 nav a{
 	text-decoration:none;
-	color:white;
+	color:black;
+	border-bottom-width: 2px;
 }
 main{
 	padding:5px;
@@ -118,5 +119,10 @@ h2{
 }
 .col-main{
 	flex:3;
+	justify-content: center;
+	text-align: center;
+	align-items: "center";
+	min-width: 500px;
+	
 }
 }
