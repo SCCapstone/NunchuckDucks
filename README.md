@@ -90,15 +90,13 @@ To run unit tests, simply run the command `npm test`
 
 The Unit tests are located at ./src/library/\*.test.js and ./src/components/\*/\*.test. In other words, most components will have a component.test.js file alongside the file holding the actual code, and some other unit tests for library functions can be found in the library folder.
 
-The behavioral tests are all located at e2e/*.test.js.
-
 ## Testing Technology
 
 No test runners required
 
 ## Behavioral Tests
 
-The behavioral (end-to-end) tests are in `/e2e/starter.test.js`
+The behavioral tests are all located at `e2e/*.test.js`.
 
 To run the end-to-end test, perform these steps:
 
@@ -114,11 +112,11 @@ To run the end-to-end test, perform these steps:
 you are using. (if you are using an emulator)
 2. If using windows make sure the path in `.detoxrc.js` under `apps.android.release.build` has `&&` instead of `;` and double back-slashes
 instead of a single forward slash. If using a Mac, these configurations should be the opposite.
-3. run the command `detox build -c android.emu.release`. Or download the .apk to the path `android/app/build/outputs/apk/release/app-release.apk`.js
+3. run the command `detox build -c android.emu.release`. Or download the .apk to the path `android/app/build/outputs/apk/release/app-release.apk`
 4. run the command `detox test <test-file-name> -c android.emu.release`. The <test-file-name> is the name of the individual detox test suite
 you want to run. If you want to run them all, run `detox test -c android.emu.release`
 
-**The tess files generally take about 1-3 minutes each to run completely**
+**The test files generally take about 1-3 minutes each to run completely**
 
 # Authors
 
