@@ -35,7 +35,7 @@ export function WorkoutsScreen() {
   }, [refreshWorkouts]);
   return (
     <>
-      <View>
+      <View testID="Workout_Screen_Header">
         <Header title={"Profile"} style={{ backgroundColor: "white" }} />
       </View>
       <View style={styles.container}>
@@ -48,8 +48,9 @@ export function WorkoutsScreen() {
           setWorkout={setWorkoutForModal}
           modelExerciseList={exercisesForModal}
           setModelExerciseList={setExercisesForModal}
+          testID="Create_Workout_Modal"
         />
-        <View style={styles.stickyHeader}>
+        <View style={styles.stickyHeader} testID="Workout_Screen.Create_New_Workout_Button">
           <CustomButton
             style={{ position: "relative" }}
             buttonType={"default"}
@@ -57,6 +58,7 @@ export function WorkoutsScreen() {
             onClick={() => {
               openCreateWorkoutModal();
             }}
+            testID="Workout_Screen.Create_New_Workout_Button"
           />
         </View>
         <ScrollView style={{ width: "100%" }} contentContainerStyle={{ paddingBottom: 125 }}>

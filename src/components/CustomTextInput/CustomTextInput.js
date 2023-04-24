@@ -7,6 +7,7 @@ const CustomTextInput = ({
   enteredValue,
   placeholder,
   customStyles,
+  testID,
   ...rest
 }) => {
   return (
@@ -17,6 +18,7 @@ const CustomTextInput = ({
       placeholder={placeholder}
       placeholderTextColor="gray"
       style={{ ...styles.TextInput, ...customStyles }}
+      testID={testID}
       {...rest}
     ></TextInput>
   );

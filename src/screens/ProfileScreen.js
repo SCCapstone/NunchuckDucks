@@ -167,7 +167,7 @@ export function ProfileScreen(props) {
 
   return (
     <>
-      <View>
+      <View testID="Profile_Screen_Header">
         <Header title={"Profile"} style={{ backgroundColor: "white" }} />
       </View>
       <View style={{ backgroundColor: "white" }}>
@@ -200,7 +200,7 @@ export function ProfileScreen(props) {
               <View style={{ paddingTop: 5, flexDirection: "row" }}>
                 <View style={styles.followingContainer}>
                   <Text style={styles.followingText}>Following</Text>
-                  <Text style={styles.followingNumber} onPress={() => navigation.navigate("Followers", { isFollowerPage: true })}>
+                  <Text testID="Profile_Screen.Follower_Number" style={styles.followingNumber} onPress={() => navigation.navigate("Followers", { isFollowerPage: true })}>
                     {followingcount}
                   </Text>
                 </View>
@@ -221,8 +221,8 @@ export function ProfileScreen(props) {
             </View>
           </View>
 
-          <TouchableOpacity onPress={() => setModalVisible(true)}>
-            <Bio username={username} />
+          <TouchableOpacity onPress={() => setModalVisible(true)} testID="Profile_Screen.Bio">
+            <Bio username={username}/>
           </TouchableOpacity>
         </View>
       </View>
@@ -233,7 +233,7 @@ export function ProfileScreen(props) {
           justifyContent: "center",
         }}
       >
-        <ChangeBioModal modalVisible={modalVisible} setModalVisible={setModalVisible} />
+        <ChangeBioModal modalVisible={modalVisible} setModalVisible={setModalVisible} testID="Profile_Screen.Bio_Modal" />
         <View
           style={{
             flexDirection: "row",
@@ -244,8 +244,12 @@ export function ProfileScreen(props) {
         ></View>
       </View>
       <Tab.Navigator initialRouteName="GoalSummary" tabBarPosition="top">
-        <Tab.Screen name="Goals Summary">{(props) => <GoalSummary {...props} username={username} isCurrentUser={true} />}</Tab.Screen>
-        <Tab.Screen name="Your Posts" component={ProfilePostList} />
+        <Tab.Screen name="Goals Summary" testID="Profile_Screen.Goals_Summary_Button">
+          {(props) => (
+            <GoalSummary {...props} username={username} isCurrentUser={true} />
+          )}
+        </Tab.Screen>
+        <Tab.Screen name="Your Posts" component={ProfilePostList}/>
       </Tab.Navigator>
     </>
   );

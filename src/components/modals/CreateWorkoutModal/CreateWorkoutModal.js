@@ -23,6 +23,7 @@ export default function CreateWorkoutModal({
   setModelExerciseList,
   scrollToBottom = null,
   setScrollToBottom = null,
+  testID
 }) {
   const [exerciseList, setExerciseList] = useState([]);
   const [exerciseListIsValid, setExerciseListIsValid] = useState([]);
@@ -77,6 +78,7 @@ export default function CreateWorkoutModal({
         exerciseList={exerciseList}
         setExerciseList={setExerciseList}
         setExerciseListIsModified={setExerciseListIsModified}
+        testID={testID}
       />
     );
   });
@@ -166,11 +168,12 @@ export default function CreateWorkoutModal({
               hasError={workoutTitleHasError}
               errorMessage={workoutTitleErrorMessage}
               placeholder={"Workout Name"}
+              testID={`${testID}.Text_Input`}
             ></CustomTextInputWithError>
           </View>
           <ScrollView>
             {exercises}
-            <CustomButton onClick={handleAddExercise} style={{ alignSelf: "center", marginTop: 20 }} text="Add Exercise" />
+            <CustomButton onClick={handleAddExercise} style={{ alignSelf: "center", marginTop: 20 }} text="Add Exercise" testID={`${testID}.Add_Exercise`}/>
           </ScrollView>
           <CustomButton
             onClick={handleSubmit}

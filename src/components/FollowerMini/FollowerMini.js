@@ -11,7 +11,7 @@ import ConfirmDelete from "../modals/ConfirmDelete/ConfirmDelete";
 
 const deleteIconPath = require("../../../assets/icons/Gymbit_Icons_Black/X_Icon_Black.png");
 
-const FollowerMini = ({ username, onDelete, style, isFollowerPage }) => {
+const FollowerMini = ({ username, onDelete, style, isFollowerPage, testID }) => {
   const containerStyles = { ...styles.container, ...style };
   const [modalVisible, setModalVisible] = useState("");
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
@@ -28,6 +28,7 @@ const FollowerMini = ({ username, onDelete, style, isFollowerPage }) => {
             : `Are you sure you want to stop following ${username}?`
         }`}
         deletefunc={onDelete}
+        testID={`${testID}.Confirm_Delete`}
       ></ConfirmDelete>
       <View style={styles.leftSideContainer}>
         <ProfileMini username={username} onClick={() => setModalVisible(true)} />
@@ -35,7 +36,7 @@ const FollowerMini = ({ username, onDelete, style, isFollowerPage }) => {
           <Text style={styles.username}>@{username}</Text>
         </Pressable>
       </View>
-      <Pressable onPressOut={() => setDeleteModalVisible(true)}>
+      <Pressable onPressOut={() => setDeleteModalVisible(true)} testID={`${testID}.Delete`}>
         <AntDesign name="close" size={40} />
       </Pressable>
     </View>

@@ -6,14 +6,14 @@ import ProfileMini from "../ProfileMini";
 import { blueThemeColor } from "../../library/constants";
 import { getImageFromCache } from "../../crud/CacheOperations";
 
-const SuggestedFollower = ({ username, addNewFollower }) => {
+const SuggestedFollower = ({ username, addNewFollower, testID }) => {
   return (
     <View style={styles.container}>
       <View style={styles.left}>
         <ProfileMini username={username} />
         <Text style={styles.textStyles}>{username}</Text>
       </View>
-      <CustomButton text={"Follow"} style={{ width: "30%", marginRight: 5 }} onClick={addNewFollower.bind(this, username)}></CustomButton>
+      <CustomButton text={"Follow"} style={{ width: "30%", marginRight: 5 }} onClick={addNewFollower.bind(this, username)} testID={`${testID}.Follow_Button`}></CustomButton>
     </View>
   );
 };
