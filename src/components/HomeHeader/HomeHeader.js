@@ -29,7 +29,14 @@ import { NotificationsScreen } from "../../screens/NotificationsScreen";
 /**
  * Creates the header that will go above the two home screens (Mutual and Explore)
  */
-const HomeHeader = ({ handlePress, refresh, setRefresh, blowup, setBlowup, testID }) => {
+const HomeHeader = ({
+  handlePress,
+  refresh,
+  setRefresh,
+  blowup,
+  setBlowup,
+  testID,
+}) => {
   const navigation = useNavigation();
   //const [refresh, setRefresh] = useState(true);
   const [text, setText] = useState(""); // the caption you write
@@ -59,7 +66,10 @@ const HomeHeader = ({ handlePress, refresh, setRefresh, blowup, setBlowup, testI
   async function subscribeToNotificationCount() {
     try {
       const username = await getCurrentUser();
-      const subscription = await getAndObserveNotificationCount(username, setRetrieveNotificationCount);
+      const subscription = await getAndObserveNotificationCount(
+        username,
+        setRetrieveNotificationCount
+      );
       return subscription;
     } catch (error) {
       console.error("Retrieving Notification Count in HomeHeader: ", error);
@@ -189,14 +199,29 @@ const HomeHeader = ({ handlePress, refresh, setRefresh, blowup, setBlowup, testI
           testID={`${testID}.Notifications_Button`}
         >
           <Text style={styles.counter}>{notificationCount}</Text>
-          <Image style={styles.notification} source={require("../../../assets/icons/Gymbit_Icons_Black/Alert_Icon_Black.png")} />
+          <Image
+            style={styles.notification}
+            source={require("../../../assets/icons/Gymbit_Icons_Black/Alert_Icon_Black.png")}
+          />
         </TouchableOpacity>
-        {showNotifications && <NotificationsScreen setShowNotifications={setShowNotifications} />}
+        {showNotifications && (
+          <NotificationsScreen setShowNotifications={setShowNotifications} />
+        )}
         <TouchableOpacity style={styles.logoContainer} onPress={handlePress}>
-          <Image style={styles.logo} source={require("../../../assets/icons/Gymbit_Icons_Trans/Logo_Trans.png")} />
+          <Image
+            style={styles.logo}
+            source={require("../../../assets/icons/Gymbit_Icons_Trans/Logo_Trans.png")}
+          />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.settingsButton} onPress={handleCreatePostBlowUp} testID={`${testID}.Create_Post_Button`}>
-          <Image style={styles.settings} source={require("../../../assets/icons/Gymbit_Icons_Black/Create_Post_Icon_Black.png")} />
+        <TouchableOpacity
+          style={styles.settingsButton}
+          onPress={handleCreatePostBlowUp}
+          testID={`${testID}.Create_Post_Button`}
+        >
+          <Image
+            style={styles.settings}
+            source={require("../../../assets/icons/Gymbit_Icons_Black/Create_Post_Icon_Black.png")}
+          />
         </TouchableOpacity>
       </View>
       <View>
@@ -215,8 +240,16 @@ const HomeHeader = ({ handlePress, refresh, setRefresh, blowup, setBlowup, testI
               />
             )}
             <View style={{ flex: 1 }}>
-              <Pressable onPressOut={handleBlowUp} style={styles.backArrow} testID={`${testID}.Create_Post_Back_Button`}>
-                <AntDesign name="arrowleft" size={40} style={styles.backArrow} />
+              <Pressable
+                onPressOut={handleBlowUp}
+                style={styles.backArrow}
+                testID={`${testID}.Create_Post_Back_Button`}
+              >
+                <AntDesign
+                  name="arrowleft"
+                  size={40}
+                  style={styles.backArrow}
+                />
               </Pressable>
               <View style={styles.header} />
               <View style={{ flexDirection: "row", flex: 1 }}>
@@ -232,8 +265,16 @@ const HomeHeader = ({ handlePress, refresh, setRefresh, blowup, setBlowup, testI
                 />
               </View>
               <View style={{ alignItems: "center", flex: 2 }}>
-                {text.length < 500 && <Text style={{fontSize: 14, color: "gray", paddingTop: 10}}>{text.length}/500</Text>}
-                {text.length === 500 && <Text style={{fontSize: 14, color: "red", paddingTop: 10}}>{text.length}/500</Text>}
+                {text.length < 500 && (
+                  <Text style={{ fontSize: 14, color: "gray", paddingTop: 10 }}>
+                    {text.length}/500
+                  </Text>
+                )}
+                {text.length === 500 && (
+                  <Text style={{ fontSize: 14, color: "red", paddingTop: 10 }}>
+                    {text.length}/500
+                  </Text>
+                )}
                 <TextInput
                   style={styles.input}
                   placeholder="Write your caption here"
@@ -244,7 +285,7 @@ const HomeHeader = ({ handlePress, refresh, setRefresh, blowup, setBlowup, testI
                 />
                 {showUploading ? (
                   <ActivityIndicator size="large" color="#2E8CFF" />
-                ) : (               
+                ) : (
                   <TouchableOpacity
                     style={styles.submit}
                     onPress={attemptToCreatePost}
@@ -253,8 +294,12 @@ const HomeHeader = ({ handlePress, refresh, setRefresh, blowup, setBlowup, testI
                     <Text style={styles.submitText}>Post Gymbit</Text>
                   </TouchableOpacity>
                 )}
-                {!showUploading && error && <Text style={styles.error}>{error}</Text>}
-                {!showUploading && !error && <Text style={styles.error}> </Text>}
+                {!showUploading && error && (
+                  <Text style={styles.error}>{error}</Text>
+                )}
+                {!showUploading && !error && (
+                  <Text style={styles.error}> </Text>
+                )}
               </View>
             </View>
           </View>

@@ -1,9 +1,16 @@
-import { View, TouchableOpacity, StyleSheet, Text, ScrollView } from "react-native";
+import {
+  View,
+  TouchableOpacity,
+  StyleSheet,
+  Text,
+  ScrollView,
+} from "react-native";
 import React, { useRef } from "react";
 import { useState, useEffect } from "react";
 import { getCurrentUser } from "../../crud/CacheOperations";
 import { getWorkouts } from "../../crud/WorkoutOperations";
 import { blueThemeColor } from "../../library/constants";
+import { getAndObserveWorkouts } from "../../crud/observeQueries/WorkoutObserveQueries";
 
 export default function WorkoutSelection({
   workoutSelection,
@@ -12,15 +19,37 @@ export default function WorkoutSelection({
   setShowCreateWorkout,
   scrollToBottom,
   setScrollToBottom,
-  testID
+  testID,
 }) {
   const scrollviewRef = useRef();
+  const [workouts, setWorkouts] = useState([]);
+  const [retrieveWorkout, setRetrieveWorkout] = useState(0);
+
+  useEffect(() => {
+    const createWorkoutObserver = async () => {
+      const currUsername = await getCurrentUser();
+      const subscription = await getAndObserveWorkouts(
+        currUsername,
+        setRetrieveWorkout
+      );
+      return subscription;
+    };
+    const sub = createWorkoutObserver();
+    return () => {
+      if (sub && sub.unsubscribe) sub.unsubscribe();
+    };
+  }, []);
+
+  useEffect(() => {
+    getWorkoutList();
+  }, [retrieveWorkout]);
+
   useEffect(() => {
     getWorkoutList();
 
     doStuff();
   }, [refreshWorkout]);
-  const [workouts, setWorkouts] = useState([]);
+
   async function getWorkoutList() {
     let username = await getCurrentUser();
     let workouts = await getWorkouts(username);
@@ -30,6 +59,7 @@ export default function WorkoutSelection({
     if (scrollToBottom === true) {
       //ScrollView.scrollToEnd
       //setWorkoutSelection(workouts[workouts.length - 1]);
+      if (!workouts?.length || workouts?.length <= 0) return;
       setWorkoutSelection(workouts[workouts.length - 1]);
       await scrollviewRef.current.scrollToEnd();
       setScrollToBottom(false);
@@ -44,11 +74,23 @@ export default function WorkoutSelection({
   return (
     <View style={styles.workoutSelectionContainer}>
       <View style={styles.what}>
-        <Text style={{ color: "white", fontSize: 14 }}>What workout did you do today?</Text>
+        <Text style={{ color: "white", fontSize: 14 }}>
+          What workout did you do today?
+        </Text>
       </View>
-      <ScrollView ref={scrollviewRef} contentContainerStyle={styles.workoutMainContainer} style={{ width: "100%", flex: 1 }}>
-        <TouchableOpacity id={-1} onPress={() => setShowCreateWorkout(true)} style={styles.workoutSelection}>
-          <Text style={{ color: blueThemeColor, fontWeight: "bold" }}>Create new workout</Text>
+      <ScrollView
+        ref={scrollviewRef}
+        contentContainerStyle={styles.workoutMainContainer}
+        style={{ width: "100%", flex: 1 }}
+      >
+        <TouchableOpacity
+          id={-1}
+          onPress={() => setShowCreateWorkout(true)}
+          style={styles.workoutSelection}
+        >
+          <Text style={{ color: blueThemeColor, fontWeight: "bold" }}>
+            Create new workout
+          </Text>
         </TouchableOpacity>
         {workouts.map((workout, index) => {
           return (
@@ -56,12 +98,23 @@ export default function WorkoutSelection({
               {workout === workoutSelection ? (
                 //console.log("THEY EQUAL EACH OTHER", workout);
                 // This will console.log successfully after creating a new workout, but won't return this. Will figure out later.
-                <TouchableOpacity onPress={() => handleSelectedWorkoutPress(workout)} style={styles.workoutSelectionHighlighted}>
-                  <Text style={{ color: "#ffffff", fontWeight: "bold" }}>{workout.workoutName}</Text>
+                <TouchableOpacity
+                  onPress={() => handleSelectedWorkoutPress(workout)}
+                  style={styles.workoutSelectionHighlighted}
+                >
+                  <Text style={{ color: "#ffffff", fontWeight: "bold" }}>
+                    {workout.workoutName}
+                  </Text>
                 </TouchableOpacity>
               ) : (
-                <TouchableOpacity id={index} onPress={() => handleWorkoutSelectionPress(workout)} style={styles.workoutSelection}>
-                  <Text style={{ color: blueThemeColor, fontWeight: "bold" }}>{workout.workoutName}</Text>
+                <TouchableOpacity
+                  id={index}
+                  onPress={() => handleWorkoutSelectionPress(workout)}
+                  style={styles.workoutSelection}
+                >
+                  <Text style={{ color: blueThemeColor, fontWeight: "bold" }}>
+                    {workout.workoutName}
+                  </Text>
                 </TouchableOpacity>
               )}
             </View>
