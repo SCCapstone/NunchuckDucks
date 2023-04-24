@@ -6,7 +6,7 @@ import CustomTextInput from "../components/CustomTextInput";
 import FollowerMini from "../components/FollowerMini";
 import AddFollowerModal from "../components/modals/AddFollowerModal";
 import { getFollowersList, deleteFollower } from "../crud/FollowersOperations";
-import {getFollowsList, deleteFollower as deleteFollowing,} from "../crud/FollowingOperations";
+import { getFollowsList, deleteFollower as deleteFollowing } from "../crud/FollowingOperations";
 import { getCurrentUser } from "../crud/CacheOperations";
 import { Toast } from "react-native-toast-message/lib/src/Toast";
 
@@ -75,11 +75,7 @@ export function FollowerScreen({ route, navigation }) {
 
   return (
     <View style={styles.container} testID="Follower_Screen_Header">
-      <AddFollowerModal
-        modalVisible={modalVisible}
-        setModalVisible={setModalVisible}
-        testID="Follower_Screen"
-      ></AddFollowerModal>
+      <AddFollowerModal modalVisible={modalVisible} setModalVisible={setModalVisible} testID="Follower_Screen"></AddFollowerModal>
       <View style={styles.stickyHeader}>
         <Header title={"Followers"}></Header>
         <CustomButton
@@ -106,7 +102,7 @@ export function FollowerScreen({ route, navigation }) {
             textStyle={styles.pageChangeButtonsText}
           ></CustomButton>
         </View>
-        {listItems.length !== 0 && (
+        {(listItems.length !== 0 || searchValue !== "") && (
           <CustomTextInput
             customStyles={styles.searchBar}
             placeholder={"Search current friends..."}
@@ -121,7 +117,7 @@ export function FollowerScreen({ route, navigation }) {
         <ScrollView style={styles.followerList}>{listItems}</ScrollView>
       ) : (
         <Text style={{ fontSize: 18, padding: 10, alignSelf: "center" }}>
-          {route.params.isFollowerPage ? "No followers to show" : "Not following any users"}
+          {route.params.isFollowerPage ? "No followers to show" : "No followed users to show"}
         </Text>
       )}
     </View>
